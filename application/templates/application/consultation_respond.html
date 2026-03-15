@@ -1,0 +1,324 @@
+<!-- TEMPLATE 7: consultation_respond.html - MARRON/BEIGE COMPLET -->
+{% extends 'application/base.html' %}
+
+{% block title %}Répondre à la consultation{% endblock %}
+
+{% block content %}
+<style>
+    .respond-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .back-link {
+        display: inline-block;
+        margin-bottom: 2rem;
+        color: #C9A66B;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .back-link:hover {
+        text-decoration: underline;
+    }
+
+    .header {
+        background: linear-gradient(135deg, #E8D4B8 0%, #F5E6D3 100%);
+        border-radius: 20px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        color: var(--brown-dark);
+        text-align: center;
+    }
+
+    .header h1 {
+        font-size: 1.8rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .request-info {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        margin-bottom: 2rem;
+        border-left: 5px solid #C9A66B;
+    }
+
+    .info-user {
+        margin-bottom: 1.5rem;
+    }
+
+    .info-user strong {
+        color: var(--brown-dark);
+    }
+
+    .info-user p {
+        color: var(--brown-light);
+        margin: 0.3rem 0;
+    }
+
+    .info-subject {
+        background: #FFFAF5;
+        padding: 1rem;
+        border-radius: 10px;
+        margin: 1rem 0;
+    }
+
+    .info-subject strong {
+        color: var(--brown-dark);
+    }
+
+    .info-subject p {
+        color: var(--brown);
+        margin: 0.5rem 0 0 0;
+        line-height: 1.6;
+    }
+
+    .response-form {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    }
+
+    .response-form h2 {
+        font-size: 1.5rem;
+        color: var(--brown-dark);
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #E8D4B8;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        font-weight: 600;
+        color: var(--brown-dark);
+        margin-bottom: 0.5rem;
+    }
+
+    .form-group select,
+    .form-group textarea,
+    .form-group input {
+        width: 100%;
+        padding: 0.8rem;
+        border: 2px solid #E8D4B8;
+        border-radius: 10px;
+        font-family: inherit;
+        font-size: 1rem;
+        box-sizing: border-box;
+    }
+
+    .form-group select:focus,
+    .form-group textarea:focus,
+    .form-group input:focus {
+        outline: none;
+        border-color: #C9A66B;
+        box-shadow: 0 0 0 3px rgba(201, 166, 107, 0.1);
+    }
+
+    .form-group textarea {
+        resize: vertical;
+        min-height: 150px;
+        line-height: 1.6;
+    }
+
+    .action-section {
+        display: none;
+        padding: 1rem;
+        background: #FFFAF5;
+        border-radius: 10px;
+        margin-bottom: 1.5rem;
+        border-left: 4px solid #C9A66B;
+    }
+
+    .action-section.show {
+        display: block;
+    }
+
+    .action-description {
+        color: var(--brown);
+        margin-bottom: 1rem;
+        line-height: 1.6;
+    }
+
+    .form-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .btn-submit {
+        padding: 1rem 3rem;
+        background: var(--brown);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-size: 1rem;
+    }
+
+    .btn-submit:hover {
+        background: var(--brown-dark);
+        transform: translateY(-2px);
+    }
+
+    .btn-cancel {
+        padding: 1rem 3rem;
+        background: transparent;
+        color: var(--brown);
+        border: 2px solid var(--brown);
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-size: 1rem;
+        text-decoration: none;
+    }
+
+    .btn-cancel:hover {
+        background: var(--brown);
+        color: white;
+    }
+
+    @media (max-width: 768px) {
+        .form-buttons {
+            flex-direction: column;
+        }
+
+        .btn-submit, .btn-cancel {
+            width: 100%;
+        }
+    }
+</style>
+
+<a href="{% url 'consultation_requests_list' %}" class="back-link">← Retour aux demandes</a>
+
+<div class="respond-container">
+    <div class="header">
+        <h1>Répondre à la demande</h1>
+        <p>De {{ consultation.utilisateur.pseudonyme }}</p>
+    </div>
+
+    <div class="request-info">
+        <div class="info-user">
+            <strong>👤 De:</strong>
+            <p>{{ consultation.utilisateur.pseudonyme }}</p>
+        </div>
+
+        <div class="info-subject">
+            <strong>📋 Sujet:</strong>
+            <p>{{ consultation.sujet }}</p>
+        </div>
+
+        <div class="info-subject">
+            <strong>💬 Message initial:</strong>
+            <p>{{ consultation.message }}</p>
+        </div>
+
+        <div style="color: var(--brown-light); font-size: 0.9rem;">
+            📅 Reçu le {{ consultation.date_demande|date:"d/m/Y à H:i" }}
+        </div>
+    </div>
+
+    <form method="post" class="response-form">
+        {% csrf_token %}
+
+        <h2>Votre réponse</h2>
+
+        <div class="form-group">
+            <label for="action">Que souhaitez-vous faire? *</label>
+            <select name="action" id="action" required>
+                <option value="">-- Sélectionnez une action --</option>
+                <option value="confirmer">✅ Confirmer la consultation</option>
+                <option value="rejeter">❌ Rejeter la demande</option>
+                <option value="programmer">🗓️ Programmer une session</option>
+            </select>
+        </div>
+
+        <!-- Section pour Confirmer -->
+        <div class="action-section" id="confirmer-section">
+            <div class="action-description">
+                <strong>✅ Confirmer la consultation</strong><br>
+                La consultation sera confirmée. L'utilisateur pourra alors vous contacter pour discuter des détails.
+            </div>
+        </div>
+
+        <!-- Section pour Rejeter -->
+        <div class="action-section" id="rejeter-section">
+            <div class="action-description">
+                <strong>❌ Rejeter la demande</strong><br>
+                Expliquez poliment pourquoi vous ne pouvez pas accepter cette demande.
+            </div>
+            <div class="form-group">
+                <label for="raison">Raison du rejet *</label>
+                <textarea 
+                    id="raison" 
+                    name="raison" 
+                    placeholder="Expliquez poliment votre refus..."
+                ></textarea>
+            </div>
+        </div>
+
+        <!-- Section pour Programmer -->
+        <div class="action-section" id="programmer-section">
+            <div class="action-description">
+                <strong>🗓️ Programmer une session</strong><br>
+                Proposez une date et heure pour la première consultation.
+            </div>
+            <div class="form-group">
+                <label for="date_session">Date et heure de la session *</label>
+                <input 
+                    type="datetime-local" 
+                    id="date_session" 
+                    name="date_session"
+                >
+            </div>
+        </div>
+
+        <div class="form-buttons">
+            <button type="submit" class="btn-submit">Envoyer la réponse</button>
+            <a href="{% url 'consultation_requests_list' %}" class="btn-cancel">Annuler</a>
+        </div>
+    </form>
+</div>
+
+<script>
+    const actionSelect = document.getElementById('action');
+    const confirmerSection = document.getElementById('confirmer-section');
+    const rejeterSection = document.getElementById('rejeter-section');
+    const programmerSection = document.getElementById('programmer-section');
+    const raisonTextarea = document.getElementById('raison');
+    const dateSessionInput = document.getElementById('date_session');
+
+    actionSelect.addEventListener('change', function() {
+        // Masquer toutes les sections
+        confirmerSection.classList.remove('show');
+        rejeterSection.classList.remove('show');
+        programmerSection.classList.remove('show');
+
+        // Réinitialiser les champs requis
+        raisonTextarea.required = false;
+        dateSessionInput.required = false;
+
+        // Afficher la section correspondante
+        if (this.value === 'confirmer') {
+            confirmerSection.classList.add('show');
+        } else if (this.value === 'rejeter') {
+            rejeterSection.classList.add('show');
+            raisonTextarea.required = true;
+        } else if (this.value === 'programmer') {
+            programmerSection.classList.add('show');
+            dateSessionInput.required = true;
+        }
+    });
+</script>
+
+{% endblock %}

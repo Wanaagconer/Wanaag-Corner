@@ -1,0 +1,426 @@
+{% extends 'application/base.html' %}
+
+{% block title %}{{ ressource.titre }} - Wanaag Corner{% endblock %}
+
+{% block content %}
+<style>
+    .ressource-detail-header {
+        background: white;
+        border-radius: 20px;
+        padding: 3rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    }
+
+    .ressource-meta-info {
+        display: flex;
+        gap: 2rem;
+        flex-wrap: wrap;
+        margin-bottom: 1.5rem;
+        color: var(--brown-light);
+    }
+
+    .ressource-meta-info span {
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    .event-details-box {
+        background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+        padding: 2rem;
+        border-radius: 15px;
+        margin-top: 2rem;
+        border-left: 5px solid #2196f3;
+    }
+
+    .event-details-box h3 {
+        color: #1976d2;
+        margin-bottom: 1.5rem;
+        font-size: 1.3rem;
+    }
+
+    .event-detail-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        padding: 0.8rem;
+        background: white;
+        border-radius: 10px;
+    }
+
+    .event-detail-icon {
+        font-size: 1.5rem;
+        min-width: 30px;
+    }
+
+    .event-detail-content strong {
+        display: block;
+        color: var(--brown-dark);
+        margin-bottom: 0.3rem;
+    }
+
+    .event-detail-content span {
+        color: var(--brown-light);
+    }
+
+    .places-info {
+        background: white;
+        padding: 1rem;
+        border-radius: 10px;
+        text-align: center;
+        margin-top: 1rem;
+    }
+
+    .places-info.disponible {
+        border: 2px solid #4caf50;
+    }
+
+    .places-info.limited {
+        border: 2px solid #ff9800;
+    }
+
+    .places-info.complet {
+        border: 2px solid #f44336;
+    }
+
+    .places-number {
+        font-size: 2rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+    }
+
+    .places-number.disponible { color: #4caf50; }
+    .places-number.limited { color: #ff9800; }
+    .places-number.complet { color: #f44336; }
+
+    .ressource-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+        flex-wrap: wrap;
+    }
+
+    .btn-action {
+        padding: 0.8rem 1.5rem;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-favori {
+        background: var(--beige);
+        color: var(--brown);
+    }
+
+    .btn-favori.active {
+        background: var(--accent);
+        color: white;
+    }
+
+    .btn-complete {
+        background: var(--brown);
+        color: white;
+    }
+
+    .btn-complete.completed {
+        background: #28a745;
+    }
+
+    .btn-inscription {
+        background: #2196f3;
+        color: white;
+        font-size: 1.1rem;
+        padding: 1rem 2rem;
+    }
+
+    .btn-inscription:hover {
+        background: #1976d2;
+    }
+
+    .btn-inscription:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+    }
+
+    .ressource-content-section {
+        background: white;
+        border-radius: 20px;
+        padding: 3rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        line-height: 1.8;
+    }
+
+    .ressource-content-section h2 {
+        color: var(--brown-dark);
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+    }
+
+    .ressource-content-section h3 {
+        color: var(--brown);
+        margin-top: 1.5rem;
+        margin-bottom: 0.8rem;
+    }
+
+    .ressource-content-section p {
+        margin-bottom: 1rem;
+        color: var(--brown-light);
+    }
+
+    .ressource-content-section ul, .ressource-content-section ol {
+        margin-left: 2rem;
+        margin-bottom: 1rem;
+    }
+
+    .video-container {
+        position: relative;
+        padding-bottom: 56.25%;
+        height: 0;
+        overflow: hidden;
+        margin: 2rem 0;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .video-container iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+    .audio-player {
+        background: var(--beige-light);
+        padding: 1.5rem;
+        border-radius: 10px;
+        margin: 2rem 0;
+    }
+
+    .audio-player audio {
+        width: 100%;
+    }
+
+    .commentaires-section {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    }
+
+    .commentaire-form {
+        margin-bottom: 2rem;
+    }
+
+    .commentaire-form textarea {
+        width: 100%;
+        padding: 1rem;
+        border: 2px solid var(--beige);
+        border-radius: 10px;
+        font-size: 1rem;
+        font-family: inherit;
+        resize: vertical;
+        min-height: 100px;
+    }
+
+    .commentaire-form button {
+        margin-top: 1rem;
+        padding: 0.8rem 2rem;
+        background: var(--brown);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s;
+    }
+
+    .commentaire-form button:hover {
+        background: var(--brown-dark);
+    }
+
+    .commentaire {
+        padding: 1.5rem;
+        background: var(--beige-light);
+        border-radius: 10px;
+        margin-bottom: 1rem;
+    }
+
+    .commentaire-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.8rem;
+    }
+
+    .commentaire-auteur {
+        font-weight: 600;
+        color: var(--brown-dark);
+    }
+
+    .commentaire-date {
+        color: var(--brown-light);
+        font-size: 0.9rem;
+    }
+
+    .commentaire-contenu {
+        color: var(--brown);
+        line-height: 1.6;
+    }
+
+    .ressources-similaires {
+        margin-top: 3rem;
+    }
+
+    .ressources-similaires h2 {
+        font-size: 1.8rem;
+        color: var(--brown-dark);
+        margin-bottom: 1.5rem;
+    }
+
+    .similaires-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .similaire-card {
+        background: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+        transition: all 0.3s;
+        text-decoration: none;
+        color: inherit;
+        display: block;
+    }
+
+    .similaire-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 20px rgba(0,0,0,0.12);
+    }
+
+    .similaire-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--brown-dark);
+        margin-bottom: 0.5rem;
+    }
+
+    .similaire-description {
+        font-size: 0.9rem;
+        color: var(--brown-light);
+    }
+
+    @media (max-width: 768px) {
+        .ressource-detail-header, .ressource-content-section {
+            padding: 1.5rem;
+        }
+        
+        .ressource-actions {
+            flex-direction: column;
+        }
+
+        .ressource-meta-info {
+            gap: 1rem;
+        }
+
+        .event-details-box {
+            padding: 1.5rem;
+        }
+    }
+</style>
+
+<div class="ressource-detail-header">
+    <span class="ressource-type">{{ ressource.get_type_ressource_display }}</span>
+    <h1>{{ ressource.titre }}</h1>
+    
+    <div class="ressource-meta-info">
+        <span>📂 {{ ressource.categorie }}</span>
+        <span>⏱️ {{ ressource.duree_lecture }} min</span>
+        <span>📊 {{ ressource.get_niveau_display }}</span>
+        <span>👁️ {{ ressource.vues }} vues</span>
+        {% if ressource.auteur %}
+        <span>✍️ Par {{ ressource.auteur.pseudonyme }}</span>
+        {% endif %}
+    </div>
+    
+    {% if ressource.tags %}
+    <div style="margin-top: 1rem;">
+        {% for tag in ressource.tags.split ',' %}
+        <span style="display: inline-block; padding: 0.3rem 0.8rem; background: var(--beige-light); border-radius: 20px; margin-right: 0.5rem; font-size: 0.9rem;">
+            #{{ tag|trim }}
+        </span>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    {% if ressource.is_evenement %}
+    <div class="event-details-box">
+        <h3>📅 Informations sur l'événement</h3>
+        
+        {% if ressource.date_debut %}
+        <div class="event-detail-item">
+            <div class="event-detail-icon">📅</div>
+            <div class="event-detail-content">
+                <strong>Date et heure</strong>
+                <span>{{ ressource.date_debut|date:"l d F Y à H:i" }}</span>
+                {% if ressource.date_fin %}
+                <span> - Fin: {{ ressource.date_fin|date:"H:i" }}</span>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+        
+        {% if ressource.lieu %}
+        <div class="event-detail-item">
+            <div class="event-detail-icon">📍</div>
+            <div class="event-detail-content">
+                <strong>Lieu</strong>
+                <span>{{ ressource.lieu }}</span>
+            </div>
+        </div>
+        {% endif %}
+        
+        {% if ressource.intervenant %}
+        <div class="event-detail-item">
+            <div class="event-detail-icon">👤</div>
+            <div class="event-detail-content">
+                <strong>Intervenant</strong>
+                <span>{{ ressource.intervenant }}</span>
+            </div>
+        </div>
+        {% endif %}
+        
+        {% if ressource.places_disponibles %}
+        {% with places=ressource.places_restantes %}
+        <div class="places-info {% if places == 0 %}complet{% elif places <= 5 %}limited{% else %}disponible{% endif %}">
+            <div class="places-number {% if places == 0 %}complet{% elif places <= 5 %}limited{% else %}disponible{% endif %}">
+                {% if places == 0 %}
+                    🔴 COMPLET
+                {% else %}
+                    {{ places }}
+                {% endif %}
+            </div>
+            <div>
+                {% if places == 0 %}
+                    Plus de places disponibles
+                {% elif places == 1 %}
+                    Dernière place disponible !
+                {% else %}
+                    Places restantes
+                {% endif %}
+            </div>
+        </div>
+        {% endwith %}
+        {% endif %}
+    </div>
+    {% endif %}

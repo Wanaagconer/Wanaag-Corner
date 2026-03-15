@@ -1,0 +1,415 @@
+{% extends 'application/base.html' %}
+
+{% block content %}
+<style>
+    /* Style pour le logo plus grand */
+    .logo-container {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .logo-container img,
+    .logo-container .logo-icon {
+        width: 80px !important;
+        height: 80px !important;
+        transition: transform 0.3s ease;
+    }
+
+    .logo-container:hover img,
+    .logo-container:hover .logo-icon {
+        transform: scale(1.05);
+    }
+
+    .logo-text {
+        font-size: 2rem !important;
+        font-weight: 700;
+    }
+
+    /* Style pour le bouton S'inscrire avec effet hover */
+    .btn-register {
+        background: transparent;
+        color: var(--brown-dark);
+        border: 2px solid var(--brown-dark);
+        padding: 0.8rem 2rem;
+        border-radius: 25px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-register:hover {
+        background: var(--brown-dark);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    .hero {
+        background: linear-gradient(135deg, rgba(232, 212, 184, 0.9) 0%, rgba(245, 230, 211, 0.9) 100%);
+        border-radius: 30px;
+        padding: 4rem 3rem;
+        text-align: center;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        margin-bottom: 4rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .hero::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(201, 166, 107, 0.1) 0%, transparent 70%);
+        animation: pulse 8s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 1;
+    }
+
+    .hero h1 {
+        font-size: 3.5rem;
+        color: var(--brown-dark);
+        margin-bottom: 1rem;
+        font-weight: 800;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .hero .tagline {
+        font-size: 1.5rem;
+        color: var(--brown);
+        margin-bottom: 2rem;
+        font-weight: 300;
+    }
+
+    .hero .subtitle {
+        font-size: 1.2rem;
+        color: var(--brown-light);
+        max-width: 800px;
+        margin: 0 auto 2rem;
+        line-height: 1.8;
+    }
+
+    .hero-buttons {
+        display: flex;
+        gap: 1.5rem;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 2rem;
+    }
+
+    .hero-buttons .btn {
+        padding: 1.2rem 3rem;
+        font-size: 1.1rem;
+    }
+
+    .about-section {
+        background: white;
+        border-radius: 30px;
+        padding: 3rem;
+        margin-bottom: 3rem;
+        box-shadow: 0 5px 30px rgba(0,0,0,0.08);
+    }
+
+    .about-section h2 {
+        font-size: 2.5rem;
+        color: var(--brown-dark);
+        margin-bottom: 2rem;
+        text-align: center;
+        position: relative;
+        padding-bottom: 1rem;
+    }
+
+    .about-section h2::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100px;
+        height: 4px;
+        background: var(--accent);
+        border-radius: 2px;
+    }
+
+    .about-content {
+        max-width: 900px;
+        margin: 0 auto;
+        font-size: 1.1rem;
+        line-height: 2;
+        color: var(--brown);
+    }
+
+    .about-content p {
+        margin-bottom: 1.5rem;
+    }
+
+    .objectives-section {
+        margin-bottom: 3rem;
+    }
+
+    .objectives-section h2 {
+        font-size: 2.5rem;
+        color: var(--brown-dark);
+        margin-bottom: 3rem;
+        text-align: center;
+    }
+
+    .objectives-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 2rem;
+    }
+
+    .objective-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2.5rem 2rem;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        transition: all 0.3s ease;
+        border-top: 5px solid var(--accent);
+        text-align: center;
+    }
+
+    .objective-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+    }
+
+    .objective-icon {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, var(--beige) 0%, var(--accent) 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        font-size: 2.5rem;
+    }
+
+    .objective-card h3 {
+        font-size: 1.4rem;
+        color: var(--brown-dark);
+        margin-bottom: 1rem;
+    }
+
+    .objective-card p {
+        color: var(--brown-light);
+        line-height: 1.6;
+    }
+
+    .cta-section {
+        background: linear-gradient(135deg, var(--brown) 0%, var(--brown-dark) 100%);
+        color: white;
+        border-radius: 30px;
+        padding: 4rem 3rem;
+        text-align: center;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        margin-top: 4rem;
+    }
+
+    .cta-section h2 {
+        font-size: 2.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .cta-section p {
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+        opacity: 0.9;
+        max-width: 700px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .cta-section .btn {
+        background: white;
+        color: var(--brown-dark);
+        padding: 1.2rem 3rem;
+        font-size: 1.1rem;
+    }
+
+    .cta-section .btn:hover {
+        background: var(--beige);
+        transform: scale(1.05);
+    }
+
+    .stats-section {
+        display: flex;
+        justify-content: space-around;
+        flex-wrap: wrap;
+        gap: 2rem;
+        margin: 3rem 0;
+        padding: 2rem;
+        background: rgba(255, 255, 255, 0.6);
+        border-radius: 20px;
+    }
+
+    .stat-item {
+        text-align: center;
+    }
+
+    .stat-number {
+        font-size: 3rem;
+        font-weight: 800;
+        color: var(--accent);
+        display: block;
+    }
+
+    .stat-label {
+        font-size: 1.1rem;
+        color: var(--brown);
+        margin-top: 0.5rem;
+    }
+
+    @media (max-width: 768px) {
+        .logo-container img,
+        .logo-container .logo-icon {
+            width: 60px !important;
+            height: 60px !important;
+        }
+
+        .logo-text {
+            font-size: 1.5rem !important;
+        }
+
+        .hero h1 {
+            font-size: 2.2rem;
+        }
+
+        .hero .tagline {
+            font-size: 1.2rem;
+        }
+
+        .hero .subtitle {
+            font-size: 1rem;
+        }
+
+        .hero-buttons {
+            flex-direction: column;
+        }
+
+        .about-section h2,
+        .objectives-section h2,
+        .cta-section h2 {
+            font-size: 2rem;
+        }
+
+        .objectives-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+        }
+    }
+</style>
+
+<div class="hero">
+    <div class="hero-content">
+        <h1>Wanaag Corner</h1>
+        <p class="tagline">Votre safe place pour la santé mentale</p>
+        <p class="subtitle">
+            Bienvenue dans un espace bienveillant dédié à votre bien-être mental à Djibouti. 
+            Parce que votre santé mentale compte autant que votre santé physique.
+        </p>
+        <div class="hero-buttons">
+            <a href="{% url 'register' %}" class="btn btn-primary">Rejoindre la communauté</a>
+            <a href="{% url 'about' %}" class="btn btn-secondary">En savoir plus</a>
+        </div>
+    </div>
+</div>
+
+<div class="stats-section">
+    <div class="stat-item">
+        <span class="stat-number">100%</span>
+        <span class="stat-label">Anonyme</span>
+    </div>
+    <div class="stat-item">
+        <span class="stat-number">0</span>
+        <span class="stat-label">Jugement</span>
+    </div>
+    <div class="stat-item">
+        <span class="stat-number">24/7</span>
+        <span class="stat-label">Disponible</span>
+    </div>
+</div>
+
+<div class="about-section" id="about">
+    <h2>À propos de Wanaag Corner</h2>
+    <div class="about-content">
+        <p>
+            <strong>Wanaag Corner</strong> est né d'une conviction profonde : la santé mentale est un sujet crucial 
+            qui mérite toute notre attention, mais qui reste trop souvent négligée et entourée de préjugés à Djibouti.
+        </p>
+        <p>
+            Cette plateforme est bien plus qu'un simple site web. C'est un <strong>espace sécurisé</strong> où chacun 
+            peut s'exprimer librement, sans crainte d'être jugé. Un lieu où les tabous se déconstruisent et où 
+            la bienveillance est notre valeur première.
+        </p>
+        <p>
+            Nous croyons fermement qu'en parlant ouvertement de santé mentale, nous pouvons créer un 
+            <strong>Djibouti plus inclusif, plus conscient et plus solidaire</strong>.
+        </p>
+    </div>
+</div>
+
+<div class="objectives-section">
+    <h2>Nos Objectifs</h2>
+    <div class="objectives-grid">
+        <div class="objective-card">
+            <div class="objective-icon">🔓</div>
+            <h3>Déconstruire les tabous</h3>
+            <p>
+                Briser les idées reçues et les préjugés autour de la santé mentale pour libérer la parole.
+            </p>
+        </div>
+
+        <div class="objective-card">
+            <div class="objective-icon">💡</div>
+            <h3>Partager des ressources</h3>
+            <p>
+                Vous offrir des conseils pratiques et des outils pour prendre soin de votre bien-être au quotidien.
+            </p>
+        </div>
+
+        <div class="objective-card">
+            <div class="objective-icon">📚</div>
+            <h3>Éduquer et informer</h3>
+            <p>
+                Publier des contenus éducatifs de qualité pour approfondir vos connaissances sur la santé mentale.
+            </p>
+        </div>
+
+        <div class="objective-card">
+            <div class="objective-icon">🤝</div>
+            <h3>Créer du lien</h3>
+            <p>
+                Construire une communauté bienveillante où chacun peut partager son vécu et trouver du soutien.
+            </p>
+        </div>
+    </div>
+</div>
+
+<div class="cta-section">
+    <h2>Prêt à prendre soin de vous ?</h2>
+    <p>
+        Rejoignez Wanaag Corner dès aujourd'hui et faites partie d'une communauté qui prend 
+        la santé mentale au sérieux. Votre anonymat est garanti, votre voix est importante.
+    </p>
+    <a href="{% url 'register' %}" class="btn">Créer mon compte anonyme</a>
+</div>
+{% endblock %}

@@ -1,0 +1,210 @@
+<!-- TEMPLATE 2: consultation_request_form.html - MARRON/BEIGE UNIQUEMENT -->
+{% extends 'application/base.html' %}
+
+{% block title %}Demander une consultation - {{ psychologue.user.pseudonyme }}{% endblock %}
+
+{% block content %}
+<style>
+    .form-container {
+        max-width: 700px;
+        margin: 0 auto;
+    }
+
+    .form-header {
+        background: linear-gradient(135deg, #E8D4B8 0%, #F5E6D3 100%);
+        border-radius: 20px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+
+    .form-header h1 {
+        font-size: 2rem;
+        color: var(--brown-dark);
+        margin-bottom: 1rem;
+    }
+
+    .psycho-info {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        text-align: center;
+        border-left: 5px solid #C9A66B;
+    }
+
+    .psycho-info h3 {
+        font-size: 1.5rem;
+        color: var(--brown-dark);
+        margin-bottom: 0.5rem;
+    }
+
+    .form-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        margin-bottom: 2rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        font-weight: 600;
+        color: var(--brown-dark);
+        margin-bottom: 0.5rem;
+    }
+
+    .form-group input,
+    .form-group textarea {
+        width: 100%;
+        padding: 0.8rem;
+        border: 2px solid #E8D4B8;
+        border-radius: 10px;
+        font-family: inherit;
+        font-size: 1rem;
+        transition: all 0.3s;
+        box-sizing: border-box;
+    }
+
+    .form-group textarea {
+        resize: vertical;
+        min-height: 200px;
+        line-height: 1.6;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: #C9A66B;
+        box-shadow: 0 0 0 3px rgba(201, 166, 107, 0.1);
+    }
+
+    .char-count {
+        font-size: 0.85rem;
+        color: var(--brown-light);
+        margin-top: 0.3rem;
+    }
+
+    .form-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 2rem;
+    }
+
+    .btn-submit {
+        padding: 1rem 3rem;
+        background: var(--brown);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-size: 1rem;
+    }
+
+    .btn-submit:hover {
+        background: var(--brown-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    .btn-cancel {
+        padding: 1rem 3rem;
+        background: transparent;
+        color: var(--brown);
+        border: 2px solid var(--brown);
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-size: 1rem;
+        text-decoration: none;
+    }
+
+    .btn-cancel:hover {
+        background: var(--brown);
+        color: white;
+    }
+
+    @media (max-width: 768px) {
+        .form-buttons {
+            flex-direction: column;
+        }
+
+        .btn-submit, .btn-cancel {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="form-container">
+    <div class="form-header">
+        <h1>Demander une consultation</h1>
+        <p>Écrivez votre message au psychologue</p>
+    </div>
+
+    <div class="psycho-info">
+        <h3>Dr. {{ psychologue.user.pseudonyme }}</h3>
+        {% if psychologue.specialites %}
+            <p style="color: #C9A66B; margin: 0.5rem 0;">Spécialités: {{ psychologue.specialites }}</p>
+        {% endif %}
+        <p style="color: var(--brown-light);">{{ psychologue.experience_ans }} ans d'expérience</p>
+    </div>
+
+    <form method="post" class="form-card">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="sujet">Sujet de la consultation *</label>
+            <input 
+                type="text" 
+                id="sujet" 
+                name="sujet" 
+                placeholder="Ex: Gestion de l'anxiété, Dépression..." 
+                required
+                maxlength="200"
+            >
+            <div class="char-count"><span id="sujet-count">0</span>/200</div>
+        </div>
+
+        <div class="form-group">
+            <label for="message">Votre message *</label>
+            <textarea 
+                id="message" 
+                name="message" 
+                placeholder="Décrivez votre situation et ce qui vous amène à consulter..."
+                required
+                maxlength="2000"
+            ></textarea>
+            <div class="char-count"><span id="message-count">0</span>/2000</div>
+        </div>
+
+        <div class="form-buttons">
+            <button type="submit" class="btn-submit">Envoyer la demande</button>
+            <a href="{% url 'psychologues_list' %}" class="btn-cancel">Annuler</a>
+        </div>
+    </form>
+</div>
+
+<script>
+    const sujetInput = document.getElementById('sujet');
+    const messageInput = document.getElementById('message');
+    const sujetCount = document.getElementById('sujet-count');
+    const messageCount = document.getElementById('message-count');
+
+    sujetInput.addEventListener('input', function() {
+        sujetCount.textContent = this.value.length;
+    });
+
+    messageInput.addEventListener('input', function() {
+        messageCount.textContent = this.value.length;
+    });
+</script>
+{% endblock %}

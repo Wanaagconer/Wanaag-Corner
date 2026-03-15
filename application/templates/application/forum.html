@@ -1,0 +1,518 @@
+{% extends 'application/base.html' %}
+{% load static %}
+
+{% block title %}Forum Communautaire - Wanaag Corner{% endblock %}
+
+{% block content %}
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background: linear-gradient(135deg, #fef3c7 0%, #fed7aa 50%, #fecaca 100%);
+        min-height: 100vh;
+    }
+
+    .header {
+        background: white;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        padding: 1.5rem 2rem;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+    }
+
+    .header-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .header-title {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .icon-circle {
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, #fbbf24, #f97316);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+    }
+
+    h1 {
+        font-size: 2rem;
+        color: #1f2937;
+    }
+
+    .btn {
+        background: linear-gradient(135deg, #fbbf24, #f97316);
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.2s;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+    }
+
+    .search-bar {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 2rem;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 1rem;
+        border: 2px solid #fcd34d;
+        border-radius: 10px;
+        font-size: 1rem;
+    }
+
+    .categories {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 2rem;
+        display: flex;
+        gap: 0.5rem;
+        overflow-x: auto;
+    }
+
+    .category-btn {
+        background: #fef3c7;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 10px;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: all 0.2s;
+    }
+
+    .category-btn.active {
+        background: linear-gradient(135deg, #fbbf24, #f97316);
+        color: white;
+    }
+
+    .groups-container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 2rem;
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        color: #1f2937;
+    }
+
+    .groups-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 3rem;
+    }
+
+    .group-card {
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        transition: transform 0.2s, box-shadow 0.2s;
+        cursor: pointer;
+    }
+
+    .group-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+
+    .group-header {
+        height: 5px;
+        background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    }
+
+    .group-header.purple { background: linear-gradient(135deg, #a855f7, #7c3aed); }
+    .group-header.pink { background: linear-gradient(135deg, #ec4899, #db2777); }
+    .group-header.indigo { background: linear-gradient(135deg, #6366f1, #4f46e5); }
+    .group-header.green { background: linear-gradient(135deg, #10b981, #059669); }
+    .group-header.cyan { background: linear-gradient(135deg, #06b6d4, #0891b2); }
+
+    .group-body {
+        padding: 1.5rem;
+    }
+
+    .group-title {
+        font-size: 1.25rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+        color: #1f2937;
+    }
+
+    .group-desc {
+        color: #6b7280;
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+        line-height: 1.5;
+    }
+
+    .group-stats {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #9ca3af;
+        font-size: 0.9rem;
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid #f3f4f6;
+    }
+
+    .badge {
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+        color: white;
+        padding: 0.25rem 0.5rem;
+        border-radius: 50%;
+        font-size: 0.75rem;
+        font-weight: bold;
+    }
+
+    .join-btn {
+        width: 100%;
+        background: linear-gradient(135deg, #fbbf24, #f97316);
+        color: white;
+        border: none;
+        padding: 0.75rem;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: 1rem;
+    }
+
+    .last-message {
+        background: #fef3c7;
+        padding: 0.75rem;
+        border-radius: 8px;
+        margin-top: 1rem;
+        font-size: 0.85rem;
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal.show {
+        display: flex;
+    }
+
+    .modal-content {
+        background: white;
+        padding: 2rem;
+        border-radius: 20px;
+        max-width: 500px;
+        width: 90%;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: #1f2937;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+        width: 100%;
+        padding: 0.75rem;
+        border: 2px solid #fcd34d;
+        border-radius: 8px;
+        font-size: 1rem;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+    }
+
+    .btn-secondary {
+        background: #e5e7eb;
+        color: #1f2937;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem;
+        color: #6b7280;
+    }
+
+    .empty-state-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+    }
+</style>
+
+<!-- Header -->
+<div class="header">
+    <div class="header-content">
+        <div class="header-title">
+            <div class="icon-circle">💬</div>
+            <div>
+                <h1>Forum Communautaire</h1>
+                <p style="color: #6b7280;">Échangez avec bienveillance</p>
+            </div>
+        </div>
+        <button class="btn" onclick="showCreateModal()">➕ Créer un groupe</button>
+    </div>
+</div>
+
+<!-- Barre de recherche -->
+<div class="search-bar">
+    <input type="text" class="search-input" placeholder="🔍 Rechercher un groupe..." id="searchInput" oninput="filterGroups()">
+</div>
+
+<!-- Catégories -->
+<div class="categories">
+    <button class="category-btn active" onclick="filterCategory('all')">🌍 Tous</button>
+    <button class="category-btn" onclick="filterCategory('anxiete')">💭 Anxiété</button>
+    <button class="category-btn" onclick="filterCategory('depression')">💙 Dépression</button>
+    <button class="category-btn" onclick="filterCategory('meditation')">🧘 Méditation</button>
+    <button class="category-btn" onclick="filterCategory('famille')">👨‍👩‍👧‍👦 Famille</button>
+    <button class="category-btn" onclick="filterCategory('developpement')">🌱 Développement</button>
+</div>
+
+<!-- Mes groupes -->
+<div class="groups-container">
+    <h2 class="section-title">👥 Mes groupes ({{ my_groups|length }})</h2>
+    
+    {% if my_groups %}
+        <div class="groups-grid" id="myGroups">
+            {% for item in my_groups %}
+            <div class="group-card" data-category="{{ item.group.category }}" onclick="window.location.href='{% url 'group_chat' item.group.id %}'">
+                <div class="group-header {% cycle 'blue' 'purple' 'pink' 'indigo' 'green' 'cyan' %}"></div>
+                <div class="group-body">
+                    <div style="display: flex; justify-content: space-between;">
+                        <h3 class="group-title">{{ item.group.name }}</h3>
+                        {% if item.unread > 0 %}
+                        <span class="badge">{{ item.unread }}</span>
+                        {% endif %}
+                    </div>
+                    <p class="group-desc">{{ item.group.description|truncatewords:20 }}</p>
+                    <div class="group-stats">
+                        👥 {{ item.group.member_count }} membre{{ item.group.member_count|pluralize }}
+                    </div>
+                    {% if item.last_message %}
+                    <div class="last-message">
+                        <strong>{{ item.last_message.sender.pseudonyme }}:</strong> {{ item.last_message.content|truncatewords:10 }}
+                        <div style="color: #9ca3af; font-size: 0.75rem; margin-top: 0.25rem;">
+                            {{ item.last_message.created_at|date:"H:i" }}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <div class="empty-state-icon">📭</div>
+            <h3>Vous n'avez rejoint aucun groupe</h3>
+            <p>Explorez les groupes ci-dessous et rejoignez une communauté !</p>
+        </div>
+    {% endif %}
+
+    <h2 class="section-title">🔍 Découvrir des groupes</h2>
+    
+    {% if discover_groups %}
+        <div class="groups-grid" id="discoverGroups">
+            {% for group in discover_groups %}
+            <div class="group-card" data-category="{{ group.category }}">
+                <div class="group-header {% cycle 'pink' 'green' 'purple' 'cyan' 'indigo' %}"></div>
+                <div class="group-body">
+                    <h3 class="group-title">{{ group.name }}</h3>
+                    <p class="group-desc">{{ group.description|truncatewords:20 }}</p>
+                    <div class="group-stats">
+                        👥 {{ group.member_count }} membre{{ group.member_count|pluralize }}
+                    </div>
+                    <button class="join-btn" onclick="joinGroup(event, {{ group.id }})">Rejoindre</button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <div class="empty-state-icon">🎉</div>
+            <h3>Vous avez rejoint tous les groupes disponibles !</h3>
+            <p>Créez un nouveau groupe pour démarrer une nouvelle communauté.</p>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Modal Créer un groupe -->
+<div class="modal" id="createModal">
+    <div class="modal-content">
+        <h2 style="margin-bottom: 1.5rem;">Créer un groupe</h2>
+        <form id="createGroupForm">
+            {% csrf_token %}
+            <div class="form-group">
+                <label>Nom du groupe *</label>
+                <input type="text" name="name" id="groupName" placeholder="Ex: Gestion du stress au quotidien" required>
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea rows="4" name="description" id="groupDesc" placeholder="Décrivez l'objectif et l'ambiance de votre groupe..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Catégorie</label>
+                <select name="category" id="groupCategory">
+                    <option value="anxiete">💭 Anxiété</option>
+                    <option value="depression">💙 Dépression</option>
+                    <option value="meditation">🧘 Méditation</option>
+                    <option value="famille">👨‍👩‍👧‍👦 Famille</option>
+                    <option value="developpement">🌱 Développement</option>
+                </select>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" onclick="hideCreateModal()">Annuler</button>
+                <button type="submit" class="btn">Créer</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    let currentCategory = 'all';
+
+    function showCreateModal() {
+        document.getElementById('createModal').classList.add('show');
+    }
+
+    function hideCreateModal() {
+        document.getElementById('createModal').classList.remove('show');
+        document.getElementById('createGroupForm').reset();
+    }
+
+    // Créer un groupe
+    document.getElementById('createGroupForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const formData = new FormData(e.target);
+        
+        try {
+            const response = await fetch('{% url "create_group" %}', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                alert('✅ Groupe créé avec succès!');
+                window.location.href = `/forum/group/${data.group_id}/`;
+            } else {
+                alert('❌ Erreur: ' + data.message);
+            }
+        } catch (error) {
+            alert('❌ Erreur lors de la création du groupe');
+            console.error(error);
+        }
+    });
+
+    // Rejoindre un groupe
+    async function joinGroup(event, groupId) {
+        event.stopPropagation();
+        const btn = event.target;
+        
+        try {
+            const response = await fetch(`/forum/join-group/${groupId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                btn.textContent = '✓ Membre';
+                btn.style.background = '#10b981';
+                btn.disabled = true;
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+            } else {
+                alert(data.message);
+            }
+        } catch (error) {
+            alert('Erreur lors de l\'adhésion au groupe');
+            console.error(error);
+        }
+    }
+
+    function filterCategory(category) {
+        currentCategory = category;
+        
+        document.querySelectorAll('.category-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        event.target.classList.add('active');
+        
+        filterGroups();
+    }
+
+    function filterGroups() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        const allCards = document.querySelectorAll('.group-card');
+        
+        allCards.forEach(card => {
+            const category = card.dataset.category;
+            const title = card.querySelector('.group-title').textContent.toLowerCase();
+            const desc = card.querySelector('.group-desc').textContent.toLowerCase();
+            
+            const matchesCategory = currentCategory === 'all' || category === currentCategory;
+            const matchesSearch = title.includes(searchTerm) || desc.includes(searchTerm);
+            
+            card.style.display = (matchesCategory && matchesSearch) ? 'block' : 'none';
+        });
+    }
+
+    // Fermer le modal en cliquant à l'extérieur
+    document.getElementById('createModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            hideCreateModal();
+        }
+    });
+</script>
+{% endblock %}

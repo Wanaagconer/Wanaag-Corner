@@ -1,0 +1,354 @@
+<!-- TEMPLATE 5: psychologue_dashboard.html - CORRIGÉ -->
+{% extends 'application/base.html' %}
+
+{% block title %}Tableau de bord Psychologue - Wanaag Corner{% endblock %}
+
+{% block content %}
+<style>
+    .psychologue-header {
+        background: linear-gradient(135deg, #E8D4B8 0%, #F5E6D3 100%);
+        border-radius: 30px;
+        padding: 3rem;
+        margin-bottom: 3rem;
+        box-shadow: 0 5px 30px rgba(0,0,0,0.1);
+        text-align: center;
+    }
+
+    .psychologue-header h1 {
+        font-size: 2.5rem;
+        color: var(--brown-dark);
+        margin-bottom: 0.5rem;
+    }
+
+    .psychologue-header p {
+        font-size: 1.1rem;
+        color: var(--brown);
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        text-align: center;
+        border-top: 5px solid #C9A66B;
+        transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
+
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: #C9A66B;
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+        font-size: 1rem;
+        color: var(--brown-light);
+    }
+
+    .quick-actions {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 3rem;
+    }
+
+    .action-card {
+        background: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        text-align: center;
+        border-left: 4px solid #C9A66B;
+        transition: all 0.3s;
+    }
+
+    .action-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
+
+    .action-icon {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+    }
+
+    .action-card h3 {
+        color: var(--brown-dark);
+        margin-bottom: 0.5rem;
+    }
+
+    .action-card p {
+        color: var(--brown-light);
+        font-size: 0.9rem;
+    }
+
+    .action-card a {
+        display: inline-block;
+        margin-top: 1rem;
+        padding: 0.6rem 1.5rem;
+        background: var(--brown);
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: all 0.3s;
+    }
+
+    .action-card a:hover {
+        background: var(--brown-dark);
+    }
+
+    .consultations-section {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        margin-bottom: 3rem;
+    }
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .section-header h2 {
+        font-size: 1.8rem;
+        color: var(--brown-dark);
+    }
+
+    .view-all-btn {
+        padding: 0.8rem 2rem;
+        background: var(--brown);
+        color: white;
+        text-decoration: none;
+        border-radius: 10px;
+        font-weight: 600;
+        transition: all 0.3s;
+    }
+
+    .view-all-btn:hover {
+        background: var(--brown-dark);
+        transform: translateX(5px);
+    }
+
+    .consultation-item {
+        padding: 1.5rem;
+        border: 1px solid var(--beige-light);
+        border-radius: 15px;
+        margin-bottom: 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        gap: 1rem;
+        transition: all 0.3s;
+    }
+
+    .consultation-item:hover {
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .consultation-item-info {
+        flex: 1;
+    }
+
+    .consultation-item-user {
+        font-weight: 600;
+        color: var(--brown-dark);
+        font-size: 1rem;
+        margin-bottom: 0.3rem;
+    }
+
+    .consultation-item-subject {
+        color: var(--brown-light);
+        font-size: 0.95rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .consultation-item-date {
+        font-size: 0.85rem;
+        color: var(--brown-light);
+    }
+
+    .consultation-status {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .status-en-attente {
+        background: #FFF3CD;
+        color: #856404;
+    }
+
+    .consultation-actions {
+        display: flex;
+        gap: 0.5rem;
+        flex-direction: column;
+    }
+
+    .btn-respond {
+        padding: 0.6rem 1.2rem;
+        background: var(--brown);
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        transition: all 0.3s;
+        text-align: center;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-respond:hover {
+        background: var(--brown-dark);
+        transform: translateY(-2px);
+    }
+
+    .empty-consultations {
+        text-align: center;
+        padding: 3rem 1rem;
+        color: var(--brown-light);
+    }
+
+    .empty-consultations p {
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+    }
+
+    @media (max-width: 768px) {
+        .psychologue-header h1 {
+            font-size: 2rem;
+        }
+
+        .section-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .consultation-item {
+            flex-direction: column;
+        }
+
+        .consultation-actions {
+            flex-direction: row;
+            width: 100%;
+        }
+
+        .btn-respond {
+            flex: 1;
+        }
+    }
+</style>
+
+<div class="psychologue-header">
+    <h1>👨‍⚕️ Tableau de bord Psychologue</h1>
+    <p>Bienvenue Dr. {{ psychologue.user.pseudonyme }}</p>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <span class="stat-number">{{ consultations_en_attente }}</span>
+        <span class="stat-label">Demandes en attente</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-number">{{ consultations_confirmees }}</span>
+        <span class="stat-label">Consultations confirmées</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-number">{{ psychologue.experience_ans }}</span>
+        <span class="stat-label">Ans d'expérience</span>
+    </div>
+</div>
+
+<div class="quick-actions">
+    <div class="action-card">
+        <div class="action-icon">📋</div>
+        <h3>Mes demandes</h3>
+        <p>Gérer toutes les demandes de consultation</p>
+        <a href="{% url 'consultation_requests_list' %}">Voir les demandes</a>
+    </div>
+
+    <div class="action-card">
+        <div class="action-icon">👤</div>
+        <h3>Mon profil</h3>
+        <p>Mettre à jour mes informations</p>
+        <a href="#">Modifier le profil</a>
+    </div>
+
+    <div class="action-card">
+        <div class="action-icon">📊</div>
+        <h3>Statistiques</h3>
+        <p>Consulter mes statistiques</p>
+        <a href="#">Voir les stats</a>
+    </div>
+</div>
+
+{% if consultations %}
+    <div class="consultations-section">
+        <div class="section-header">
+            <h2>Demandes récentes</h2>
+            <a href="{% url 'consultation_requests_list' %}" class="view-all-btn">Voir toutes les demandes</a>
+        </div>
+
+        {% for consultation in consultations %}
+            <div class="consultation-item">
+                <div class="consultation-item-info">
+                    <div class="consultation-item-user">
+                        👤 {{ consultation.utilisateur.pseudonyme }}
+                    </div>
+                    <div class="consultation-item-subject">
+                        📋 {{ consultation.sujet }}
+                    </div>
+                    <div class="consultation-item-date">
+                        📅 {{ consultation.date_demande|date:"d/m/Y H:i" }}
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+                    <span class="consultation-status status-{{ consultation.statut }}">
+                        {{ consultation.get_statut_display }}
+                    </span>
+
+                    <div class="consultation-actions">
+                        <a href="{% url 'consultation_respond' consultation.id %}" class="btn-respond">
+                            Répondre
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="consultations-section">
+        <div class="empty-consultations">
+            <p>Aucune demande de consultation pour le moment.</p>
+            <p style="color: #C9A66B; font-size: 1rem;">Attendez que les utilisateurs vous envoient leurs demandes.</p>
+        </div>
+    </div>
+{% endif %}
+
+{% endblock %}

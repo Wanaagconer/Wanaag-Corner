@@ -1,0 +1,525 @@
+{% extends 'application/base.html' %}
+
+{% block title %}Ressources éducatives - Wanaag Corner{% endblock %}
+
+{% block content %}
+<style>
+    .ressources-header {
+        background: linear-gradient(135deg, var(--accent) 0%, var(--brown-light) 100%);
+        color: white;
+        border-radius: 30px;
+        padding: 3rem;
+        margin-bottom: 3rem;
+        text-align: center;
+    }
+
+    .ressources-header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .search-filter-section {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        margin-bottom: 3rem;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    }
+
+    .search-box {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .search-box input {
+        flex: 1;
+        padding: 1rem;
+        border: 2px solid var(--beige);
+        border-radius: 10px;
+        font-size: 1rem;
+    }
+
+    .search-box button {
+        padding: 1rem 2rem;
+        background: var(--brown);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s;
+    }
+
+    .search-box button:hover {
+        background: var(--brown-dark);
+    }
+
+    .filters {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .filters select {
+        padding: 0.8rem 1.5rem;
+        border: 2px solid var(--beige);
+        border-radius: 10px;
+        font-size: 1rem;
+        cursor: pointer;
+        background: white;
+        transition: all 0.3s;
+    }
+
+    .filters select:hover {
+        border-color: var(--accent);
+    }
+
+    .ressources-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+
+    .ressource-card {
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        transition: all 0.3s;
+        position: relative;
+    }
+
+    .ressource-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
+
+    .ressource-badge {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        padding: 0.4rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        z-index: 10;
+    }
+
+    .badge-evenement {
+        background: #2196f3;
+        color: white;
+    }
+
+    .badge-complet {
+        background: #f44336;
+        color: white;
+    }
+
+    .ressource-image {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        background: linear-gradient(135deg, var(--beige-light), var(--beige));
+    }
+
+    .ressource-content {
+        padding: 1.5rem;
+    }
+
+    .ressource-type {
+        display: inline-block;
+        padding: 0.3rem 0.8rem;
+        background: var(--beige-light);
+        color: var(--brown);
+        border-radius: 20px;
+        font-size: 0.85rem;
+        margin-bottom: 0.8rem;
+        font-weight: 500;
+    }
+
+    .ressource-title {
+        font-size: 1.3rem;
+        color: var(--brown-dark);
+        margin-bottom: 0.8rem;
+        line-height: 1.4;
+    }
+
+    .ressource-description {
+        color: var(--brown-light);
+        line-height: 1.6;
+        margin-bottom: 1rem;
+        font-size: 0.95rem;
+    }
+
+    .event-info {
+        background: #e3f2fd;
+        padding: 1rem;
+        border-radius: 10px;
+        margin-bottom: 1rem;
+        border-left: 4px solid #2196f3;
+    }
+
+    .event-info-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.4rem;
+        color: var(--brown);
+        font-size: 0.9rem;
+    }
+
+    .event-info-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .places-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        padding: 0.3rem 0.8rem;
+        background: #4caf50;
+        color: white;
+        border-radius: 15px;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+    .places-badge.limited {
+        background: #ff9800;
+    }
+
+    .places-badge.full {
+        background: #f44336;
+    }
+
+    .ressource-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--beige);
+        font-size: 0.9rem;
+        color: var(--brown-light);
+    }
+
+    .ressource-link {
+        display: inline-block;
+        width: 100%;
+        padding: 0.8rem 1.5rem;
+        background: var(--brown);
+        color: white;
+        text-decoration: none;
+        border-radius: 10px;
+        font-weight: 600;
+        transition: all 0.3s;
+        margin-top: 1rem;
+        text-align: center;
+    }
+
+    .ressource-link:hover {
+        background: var(--brown-dark);
+        transform: translateX(3px);
+    }
+
+    .section-title {
+        font-size: 1.8rem;
+        color: var(--brown-dark);
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem;
+        color: var(--brown-light);
+        background: white;
+        border-radius: 20px;
+    }
+
+    .empty-state-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+    }
+
+    @media (max-width: 768px) {
+        .ressources-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .search-box {
+            flex-direction: column;
+        }
+        
+        .filters {
+            flex-direction: column;
+        }
+
+        .ressources-header h1 {
+            font-size: 2rem;
+        }
+    }
+</style>
+
+<div class="ressources-header">
+    <h1>📚 Ressources Éducatives</h1>
+    <p>Articles, guides, vidéos, podcasts, formations et événements pour votre bien-être</p>
+</div>
+
+<div class="search-filter-section">
+    <form method="get" action="{% url 'ressources_home' %}">
+        <div class="search-box">
+            <input type="text" name="search" placeholder="🔍 Rechercher une ressource..." value="{{ search_query }}">
+            <button type="submit">Rechercher</button>
+        </div>
+        
+        <div class="filters">
+            <select name="type" onchange="this.form.submit()">
+                <option value="">Tous les types</option>
+                <option value="article" {% if type_filter == 'article' %}selected{% endif %}>📝 Article</option>
+                <option value="guide" {% if type_filter == 'guide' %}selected{% endif %}>📖 Guide</option>
+                <option value="video" {% if type_filter == 'video' %}selected{% endif %}>🎥 Vidéo</option>
+                <option value="podcast" {% if type_filter == 'podcast' %}selected{% endif %}>🎧 Podcast</option>
+                <option value="formation" {% if type_filter == 'formation' %}selected{% endif %}>🎓 Formation</option>
+                <option value="atelier" {% if type_filter == 'atelier' %}selected{% endif %}>🛠️ Atelier</option>
+                <option value="conference" {% if type_filter == 'conference' %}selected{% endif %}>🎤 Conférence</option>
+            </select>
+            
+            <select name="niveau" onchange="this.form.submit()">
+                <option value="">Tous les niveaux</option>
+                <option value="debutant" {% if niveau_filter == 'debutant' %}selected{% endif %}>Débutant</option>
+                <option value="intermediaire" {% if niveau_filter == 'intermediaire' %}selected{% endif %}>Intermédiaire</option>
+                <option value="avance" {% if niveau_filter == 'avance' %}selected{% endif %}>Avancé</option>
+            </select>
+            
+            <select name="categorie" onchange="this.form.submit()">
+                <option value="">Toutes les catégories</option>
+                {% for cat in categories %}
+                <option value="{{ cat.slug }}" {% if categorie_filter == cat.slug %}selected{% endif %}>{{ cat }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </form>
+</div>
+
+{% if ressources_populaires %}
+<section style="margin-bottom: 3rem;">
+    <h2 class="section-title">🔥 Ressources populaires</h2>
+    <div class="ressources-grid">
+        {% for ressource in ressources_populaires %}
+        <div class="ressource-card">
+            {% if ressource.is_evenement %}
+                {% if ressource.is_complet %}
+                <span class="ressource-badge badge-complet">COMPLET</span>
+                {% else %}
+                <span class="ressource-badge badge-evenement">ÉVÉNEMENT</span>
+                {% endif %}
+            {% endif %}
+
+            {% if ressource.image_couverture %}
+            <img src="{{ ressource.image_couverture.url }}" alt="{{ ressource.titre }}" class="ressource-image">
+            {% else %}
+            <div class="ressource-image"></div>
+            {% endif %}
+            
+            <div class="ressource-content">
+                <span class="ressource-type">{{ ressource.get_type_ressource_display }}</span>
+                <h3 class="ressource-title">{{ ressource.titre }}</h3>
+                <p class="ressource-description">{{ ressource.description }}</p>
+                
+                {% if ressource.is_evenement %}
+                <div class="event-info">
+                    {% if ressource.date_debut %}
+                    <div class="event-info-item">
+                        <strong>📅</strong>
+                        <span>{{ ressource.date_debut|date:"d/m/Y à H:i" }}</span>
+                    </div>
+                    {% endif %}
+                    {% if ressource.lieu %}
+                    <div class="event-info-item">
+                        <strong>📍</strong>
+                        <span>{{ ressource.lieu }}</span>
+                    </div>
+                    {% endif %}
+                    {% if ressource.intervenant %}
+                    <div class="event-info-item">
+                        <strong>👤</strong>
+                        <span>{{ ressource.intervenant }}</span>
+                    </div>
+                    {% endif %}
+                    {% if ressource.places_disponibles %}
+                    <div class="event-info-item">
+                        {% with places=ressource.places_restantes %}
+                            {% if places == 0 %}
+                            <span class="places-badge full">🔴 Complet</span>
+                            {% elif places <= 5 %}
+                            <span class="places-badge limited">🟠 {{ places }} places</span>
+                            {% else %}
+                            <span class="places-badge">🟢 {{ places }} places</span>
+                            {% endif %}
+                        {% endwith %}
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
+                
+                <div class="ressource-meta">
+                    <span>⏱️ {{ ressource.duree_lecture }} min</span>
+                    <span>👁️ {{ ressource.vues }} vues</span>
+                </div>
+                
+                <a href="{% url 'ressource_detail' ressource.slug %}" class="ressource-link">
+                    {% if ressource.is_evenement %}S'inscrire →{% else %}Lire plus →{% endif %}
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+{% if mes_favoris %}
+<section style="margin-bottom: 3rem;">
+    <h2 class="section-title">⭐ Mes favoris</h2>
+    <div class="ressources-grid">
+        {% for ressource in mes_favoris %}
+        <div class="ressource-card">
+            {% if ressource.is_evenement %}
+                {% if ressource.is_complet %}
+                <span class="ressource-badge badge-complet">COMPLET</span>
+                {% else %}
+                <span class="ressource-badge badge-evenement">ÉVÉNEMENT</span>
+                {% endif %}
+            {% endif %}
+
+            {% if ressource.image_couverture %}
+            <img src="{{ ressource.image_couverture.url }}" alt="{{ ressource.titre }}" class="ressource-image">
+            {% else %}
+            <div class="ressource-image"></div>
+            {% endif %}
+            
+            <div class="ressource-content">
+                <span class="ressource-type">{{ ressource.get_type_ressource_display }}</span>
+                <h3 class="ressource-title">{{ ressource.titre }}</h3>
+                <p class="ressource-description">{{ ressource.description }}</p>
+                
+                {% if ressource.is_evenement %}
+                <div class="event-info">
+                    {% if ressource.date_debut %}
+                    <div class="event-info-item">
+                        <strong>📅</strong>
+                        <span>{{ ressource.date_debut|date:"d/m/Y à H:i" }}</span>
+                    </div>
+                    {% endif %}
+                    {% if ressource.lieu %}
+                    <div class="event-info-item">
+                        <strong>📍</strong>
+                        <span>{{ ressource.lieu }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
+                
+                <div class="ressource-meta">
+                    <span>⏱️ {{ ressource.duree_lecture }} min</span>
+                    <span>👁️ {{ ressource.vues }} vues</span>
+                </div>
+                
+                <a href="{% url 'ressource_detail' ressource.slug %}" class="ressource-link">
+                    {% if ressource.is_evenement %}S'inscrire →{% else %}Lire plus →{% endif %}
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+<section>
+    <h2 class="section-title">📖 Toutes les ressources</h2>
+    
+    {% if ressources %}
+    <div class="ressources-grid">
+        {% for ressource in ressources %}
+        <div class="ressource-card">
+            {% if ressource.is_evenement %}
+                {% if ressource.is_complet %}
+                <span class="ressource-badge badge-complet">COMPLET</span>
+                {% else %}
+                <span class="ressource-badge badge-evenement">ÉVÉNEMENT</span>
+                {% endif %}
+            {% endif %}
+
+            {% if ressource.image_couverture %}
+            <img src="{{ ressource.image_couverture.url }}" alt="{{ ressource.titre }}" class="ressource-image">
+            {% else %}
+            <div class="ressource-image"></div>
+            {% endif %}
+            
+            <div class="ressource-content">
+                <span class="ressource-type">{{ ressource.get_type_ressource_display }}</span>
+                <h3 class="ressource-title">{{ ressource.titre }}</h3>
+                <p class="ressource-description">{{ ressource.description }}</p>
+                
+                {% if ressource.is_evenement %}
+                <div class="event-info">
+                    {% if ressource.date_debut %}
+                    <div class="event-info-item">
+                        <strong>📅</strong>
+                        <span>{{ ressource.date_debut|date:"d/m/Y à H:i" }}</span>
+                    </div>
+                    {% endif %}
+                    {% if ressource.lieu %}
+                    <div class="event-info-item">
+                        <strong>📍</strong>
+                        <span>{{ ressource.lieu }}</span>
+                    </div>
+                    {% endif %}
+                    {% if ressource.intervenant %}
+                    <div class="event-info-item">
+                        <strong>👤</strong>
+                        <span>{{ ressource.intervenant }}</span>
+                    </div>
+                    {% endif %}
+                    {% if ressource.places_disponibles %}
+                    <div class="event-info-item">
+                        {% with places=ressource.places_restantes %}
+                            {% if places == 0 %}
+                            <span class="places-badge full">🔴 Complet</span>
+                            {% elif places and places <= 5 %}
+                            <span class="places-badge limited">🟠 {{ places }} places</span>
+                            {% elif places %}
+                            <span class="places-badge">🟢 {{ places }} places</span>
+                            {% endif %}
+                        {% endwith %}
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
+                
+                <div class="ressource-meta">
+                    <span>⏱️ {{ ressource.duree_lecture }} min</span>
+                    <span>👁️ {{ ressource.vues }} vues</span>
+                </div>
+                
+                <a href="{% url 'ressource_detail' ressource.slug %}" class="ressource-link">
+                    {% if ressource.is_evenement %}Voir détails →{% else %}Lire plus →{% endif %}
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-state-icon">📭</div>
+        <h3>Aucune ressource trouvée</h3>
+        <p>Essayez de modifier vos filtres de recherche</p>
+    </div>
+    {% endif %}
+</section>
+
+{% endblock %}

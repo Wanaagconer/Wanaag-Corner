@@ -1,0 +1,309 @@
+<!-- TEMPLATE 3: mes_consultations.html -->
+{% extends 'application/base.html' %}
+
+{% block title %}Mes Consultations - Wanaag Corner{% endblock %}
+
+{% block content %}
+<style>
+    .consultations-header {
+        background: linear-gradient(135deg, #E8D4B8 0%, #F5E6D3 100%);
+        border-radius: 30px;
+        padding: 3rem;
+        margin-bottom: 3rem;
+        text-align: center;
+    }
+
+    .consultations-header h1 {
+        font-size: 2.5rem;
+        color: var(--brown-dark);
+        margin-bottom: 1rem;
+    }
+
+    .consultation-status-filter {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+    }
+
+    .filter-btn {
+        padding: 0.6rem 1.5rem;
+        border: 2px solid #C9A66B;
+        background: white;
+        color: #C9A66B;
+        border-radius: 20px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s;
+        text-decoration: none;
+    }
+
+    .filter-btn.active {
+        background: #C9A66B;
+        color: white;
+    }
+
+    .filter-btn:hover {
+        background: #C9A66B;
+        color: white;
+    }
+
+    .consultations-list {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        margin-bottom: 3rem;
+    }
+
+    .consultation-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        border-left: 5px solid #C9A66B;
+        transition: all 0.3s ease;
+    }
+
+    .consultation-card:hover {
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
+
+    .consultation-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .consultation-psycho h3 {
+        font-size: 1.3rem;
+        color: var(--brown-dark);
+        margin-bottom: 0.3rem;
+    }
+
+    .consultation-psycho p {
+        color: var(--brown-light);
+        font-size: 0.95rem;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+
+    .status-en-attente {
+        background: #FFF3CD;
+        color: #856404;
+    }
+
+    .status-confirmee {
+        background: #D4EDDA;
+        color: #155724;
+    }
+
+    .status-rejetee {
+        background: #F8D7DA;
+        color: #721C24;
+    }
+
+    .consultation-info {
+        margin: 1rem 0;
+        padding: 1rem;
+        background: #FFFAF5;
+        border-radius: 10px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+    }
+
+    .info-item {
+        font-size: 0.9rem;
+    }
+
+    .info-item strong {
+        color: var(--brown-dark);
+    }
+
+    .info-item span {
+        color: var(--brown-light);
+    }
+
+    .consultation-sujet {
+        margin: 1rem 0;
+    }
+
+    .consultation-sujet strong {
+        color: var(--brown-dark);
+    }
+
+    .consultation-sujet p {
+        color: var(--brown);
+        margin: 0.5rem 0;
+    }
+
+    .consultation-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .btn-view {
+        padding: 0.8rem 2rem;
+        background: var(--brown);
+        color: white;
+        text-decoration: none;
+        border-radius: 10px;
+        font-weight: 600;
+        transition: all 0.3s;
+    }
+
+    .btn-view:hover {
+        background: var(--brown-dark);
+        transform: translateY(-2px);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        margin-bottom: 2rem;
+    }
+
+    .empty-state p {
+        font-size: 1.1rem;
+        color: var(--brown-light);
+        margin-bottom: 1rem;
+    }
+
+    .empty-state a {
+        display: inline-block;
+        padding: 1rem 2rem;
+        background: var(--brown);
+        color: white;
+        text-decoration: none;
+        border-radius: 10px;
+        font-weight: 600;
+        transition: all 0.3s;
+    }
+
+    .empty-state a:hover {
+        background: var(--brown-dark);
+    }
+
+    .back-link {
+        display: inline-block;
+        margin-bottom: 2rem;
+        color: #C9A66B;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .back-link:hover {
+        text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+        .consultation-header {
+            flex-direction: column;
+        }
+
+        .consultation-info {
+            grid-template-columns: 1fr;
+        }
+
+        .consultation-actions {
+            flex-direction: column;
+        }
+
+        .btn-view {
+            width: 100%;
+            text-align: center;
+        }
+    }
+</style>
+
+<a href="{% url 'psychologues_list' %}" class="back-link">← Retour à la liste des psychologues</a>
+
+<div class="consultations-header">
+    <h1>📋 Mes Consultations</h1>
+    <p>Suivez l'état de vos demandes de consultation</p>
+</div>
+
+{% if consultations %}
+    <div class="consultation-status-filter">
+        <a href="{% url 'mes_consultations' %}" class="filter-btn {% if not request.GET.status %}active{% endif %}">
+            Toutes
+        </a>
+        <a href="?status=en_attente" class="filter-btn {% if request.GET.status == 'en_attente' %}active{% endif %}">
+            ⏳ En attente
+        </a>
+        <a href="?status=confirmee" class="filter-btn {% if request.GET.status == 'confirmee' %}active{% endif %}">
+            ✅ Confirmées
+        </a>
+        <a href="?status=rejetee" class="filter-btn {% if request.GET.status == 'rejetee' %}active{% endif %}">
+            ❌ Rejetées
+        </a>
+    </div>
+
+    <div class="consultations-list">
+        {% for consultation in consultations %}
+            <div class="consultation-card">
+                <div class="consultation-header">
+                    <div class="consultation-psycho">
+                        <h3>Dr. {{ consultation.psychologue.user.pseudonyme }}</h3>
+                        <p>{{ consultation.psychologue.specialites }}</p>
+                    </div>
+                    <span class="status-badge status-{{ consultation.statut }}">
+                        {{ consultation.get_statut_display }}
+                    </span>
+                </div>
+
+                <div class="consultation-sujet">
+                    <strong>Sujet:</strong>
+                    <p>{{ consultation.sujet }}</p>
+                </div>
+
+                <div class="consultation-info">
+                    <div class="info-item">
+                        <strong>📅 Demande:</strong>
+                        <span>{{ consultation.date_demande|date:"d/m/Y H:i" }}</span>
+                    </div>
+                    {% if consultation.date_reponse %}
+                        <div class="info-item">
+                            <strong>⏰ Réponse:</strong>
+                            <span>{{ consultation.date_reponse|date:"d/m/Y H:i" }}</span>
+                        </div>
+                    {% endif %}
+                    {% if consultation.date_prochaine_session %}
+                        <div class="info-item">
+                            <strong>🗓️ Prochaine session:</strong>
+                            <span>{{ consultation.date_prochaine_session|date:"d/m/Y H:i" }}</span>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="consultation-actions">
+                    <a href="{% url 'consultation_detail' consultation.id %}" class="btn-view">
+                        Voir les détails
+                    </a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+{% else %}
+    <div class="empty-state">
+        <p>Vous n'avez pas encore de consultations.</p>
+        <a href="{% url 'psychologues_list' %}">Consulter un psychologue</a>
+    </div>
+{% endif %}
+{% endblock %}
