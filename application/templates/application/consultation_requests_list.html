@@ -170,12 +170,31 @@
 .req-empty-icon { font-size: 3rem; margin-bottom: 1rem; }
 .req-empty p { color: #b0a090; font-size: .95rem; }
 
+@media(max-width:900px) {
+    .req-hero { padding: 1.8rem 2rem; }
+}
+
 @media(max-width:640px) {
-    .req-hero { flex-wrap: wrap; }
+    .req-hero { flex-wrap: wrap; padding: 1.5rem 1.4rem; gap: 1.2rem; }
     .req-hero-stats { display: none; }
     .req-card-top { flex-direction: column; }
+    .req-card-body { padding: 1.3rem 1.4rem; }
     .req-filters { gap: .4rem; }
     .req-tab { font-size: .8rem; padding: .45rem .9rem; }
+}
+
+@media(max-width:480px) {
+    .req-hero { padding: 1.3rem 1.1rem; }
+    .req-hero-icon { width: 48px; height: 48px; border-radius: 14px; }
+    .req-hero-icon svg { width: 22px; height: 22px; }
+    .req-hero-title { font-size: 1.35rem; }
+    .req-hero-sub { font-size: .8rem; }
+    .req-card-body { padding: 1.1rem 1rem; }
+    .req-filters { padding: .7rem .8rem; }
+    .req-tab { flex: 1 1 auto; justify-content: center; }
+    .req-subject { padding: .85rem 1rem; }
+    .req-actions { justify-content: stretch; }
+    .req-btn { width: 100%; justify-content: center; }
 }
 </style>
 {% endblock %}

@@ -231,15 +231,47 @@
     .btn-cta-sec:hover{border-color:var(--brown-dark);background:rgba(74,60,47,.04);}
 
     @media(max-width:900px){
+        .hero{min-height:auto;}
         .hero-inner{grid-template-columns:1fr;gap:3rem;padding:4rem 6% 3rem;}
         .hero-visual{display:none;}
         .hero-stats{gap:1.5rem;}
+        .features-section{padding:4rem 6%;}
+        .quote-section{padding:4rem 6%;}
+        .cta-section{padding:4rem 6%;}
+        .section-header{margin-bottom:2.5rem;}
+        .features-grid{grid-template-columns:repeat(auto-fit,minmax(220px,1fr));}
     }
     @media(max-width:600px){
-        .hero-actions{flex-direction:column;}
+        .hero-inner{padding:3rem 6% 2.5rem;}
+        .hero-title{font-size:clamp(2.1rem,8vw,2.8rem);}
+        .hero-subtitle{max-width:100%;}
+        .hero-actions{flex-direction:column;align-items:stretch;}
+        .btn-hero-primary,.btn-hero-secondary{justify-content:center;text-align:center;}
         .hero-stats{flex-wrap:wrap;gap:1.2rem;}
+        .features-section{padding:3rem 6%;}
+        .features-grid{grid-template-columns:1fr;gap:1.2rem;}
+        .quote-section{padding:3.5rem 6%;}
+        .quote-section::before{font-size:8rem;}
+        .cta-section{padding:3rem 6%;}
         .cta-box{padding:2.5rem 1.5rem;}
-        .cta-actions{flex-direction:column;align-items:center;}
+        .cta-title{font-size:1.6rem;}
+        .cta-actions{flex-direction:column;align-items:stretch;}
+        .btn-cta-main,.btn-cta-sec{text-align:center;}
+    }
+    @media(max-width:480px){
+        .hero-inner{padding:2.5rem 5.5% 2rem;}
+        .hero-eyebrow{font-size:.7rem;padding:.35rem .75rem;}
+        .hero-title{font-size:clamp(1.85rem,9vw,2.3rem);}
+        .hero-subtitle{font-size:.95rem;}
+        .hero-stats{gap:1rem;padding-top:1.5rem;}
+        .hstat-num{font-size:1.5rem;}
+        .section-title{font-size:1.6rem;}
+        .section-subtitle{font-size:.9rem;}
+        .feature-card-body{padding:1.2rem 1.2rem;}
+        .quote-text{font-size:1.2rem;}
+        .cta-box{padding:2rem 1.2rem;border-radius:20px;}
+        .cta-title{font-size:1.4rem;}
+        .cta-icon{font-size:2.4rem;}
     }
 </style>
 {% endblock %}

@@ -320,13 +320,19 @@
         color: var(--brown-light);
     }
 
-    @media (max-width: 768px) {
-        .ressource-detail-header, .ressource-content-section {
+    @media (max-width: 900px) {
+        .ressource-detail-header, .ressource-content-section, .commentaires-section {
             padding: 1.5rem;
         }
-        
+
         .ressource-actions {
             flex-direction: column;
+        }
+
+        .btn-action {
+            width: 100%;
+            justify-content: center;
+            box-sizing: border-box;
         }
 
         .ressource-meta-info {
@@ -335,6 +341,67 @@
 
         .event-details-box {
             padding: 1.5rem;
+        }
+    }
+
+    @media (max-width: 600px) {
+        .ressource-detail-header, .ressource-content-section, .commentaires-section {
+            padding: 1.1rem;
+            border-radius: 16px;
+        }
+
+        .ressource-meta-info {
+            gap: .7rem;
+            font-size: .85rem;
+        }
+
+        .event-details-box {
+            padding: 1.1rem;
+        }
+
+        .event-detail-item {
+            gap: .7rem;
+            padding: .6rem;
+        }
+
+        .btn-inscription {
+            width: 100%;
+            justify-content: center;
+            box-sizing: border-box;
+            font-size: 1rem;
+        }
+
+        .commentaire-form textarea {
+            font-size: 16px;
+        }
+
+        .commentaire-form button {
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .commentaire-header {
+            flex-wrap: wrap;
+            gap: .3rem;
+        }
+
+        .similaires-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .ressource-detail-header, .ressource-content-section, .commentaires-section {
+            padding: .9rem;
+        }
+
+        .places-number {
+            font-size: 1.6rem;
+        }
+
+        .event-detail-icon {
+            font-size: 1.2rem;
+            min-width: 24px;
         }
     }
 </style>
@@ -355,7 +422,7 @@
     
     {% if ressource.tags %}
     <div style="margin-top: 1rem;">
-        {% for tag in ressource.tags.split ',' %}
+        {% for tag in ressource.tags|split:',' %}
         <span style="display: inline-block; padding: 0.3rem 0.8rem; background: var(--beige-light); border-radius: 20px; margin-right: 0.5rem; font-size: 0.9rem;">
             #{{ tag|trim }}
         </span>
@@ -424,3 +491,4 @@
         {% endif %}
     </div>
     {% endif %}
+{% endblock %}

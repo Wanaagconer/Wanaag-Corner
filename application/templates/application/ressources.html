@@ -356,21 +356,124 @@
         margin-bottom: 1rem;
     }
 
-    @media (max-width: 768px) {
+    @media (max-width: 900px) {
         .ressources-grid {
             grid-template-columns: 1fr;
         }
-        
+
         .search-box {
             flex-direction: column;
         }
-        
+
         .filters {
             flex-direction: column;
         }
 
         .ressources-header h1 {
             font-size: 2rem;
+        }
+
+        .ressources-hero {
+            height: auto;
+        }
+
+        .ressources-hero-overlay {
+            position: relative;
+            padding: 1.5rem;
+        }
+    }
+
+    @media (max-width: 600px) {
+        .search-filter-section {
+            padding: 1.25rem;
+        }
+
+        .search-box input,
+        .search-box button {
+            width: 100%;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        .acces-filter-wrap {
+            flex-wrap: wrap;
+        }
+
+        .acces-btn {
+            flex: 1 1 100%;
+            max-width: 100%;
+            padding: .85rem 1.2rem;
+        }
+
+        .type-btn {
+            font-size: .85rem;
+        }
+
+        .type-btn img,
+        .type-btn-all {
+            width: 44px;
+            height: 44px;
+        }
+
+        .ressources-hero-left {
+            flex-wrap: wrap;
+        }
+
+        .ressources-hero-avatar {
+            width: 52px;
+            height: 52px;
+        }
+
+        .ressources-hero-title {
+            font-size: 1.5rem;
+        }
+
+        .ressources-hero-sub {
+            font-size: .8rem;
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+        }
+
+        .ressource-content {
+            padding: 1.2rem;
+        }
+
+        .ressource-meta {
+            flex-wrap: wrap;
+            gap: .5rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .ressources-hero-overlay {
+            padding: 1.1rem;
+        }
+
+        .ressources-hero-title {
+            font-size: 1.3rem;
+        }
+
+        .search-filter-section {
+            padding: 1rem;
+            border-radius: 16px;
+        }
+
+        .acces-btn {
+            padding: .75rem 1rem;
+            font-size: .9rem;
+        }
+
+        .type-filter-wrap {
+            gap: .5rem;
+        }
+
+        .ressource-badge {
+            top: 10px;
+            right: 10px;
+            font-size: .75rem;
+            padding: .3rem .6rem;
         }
     }
 </style>

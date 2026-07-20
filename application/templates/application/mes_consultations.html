@@ -164,10 +164,25 @@
 .mc-empty-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(201,166,107,.55); }
 
 @media(max-width:640px) {
-    .mc-hero { flex-wrap: wrap; }
+    .mc-hero { flex-wrap: wrap; padding: 1.5rem 1.4rem; gap: 1.2rem; }
     .mc-hero-stats { display: none; }
     .mc-card-top { flex-direction: column; }
+    .mc-card-body { padding: 1.3rem 1.4rem; }
     .mc-filters { gap: .4rem; }
+}
+
+@media(max-width:480px) {
+    .mc-hero { padding: 1.3rem 1.1rem; }
+    .mc-hero-icon { width: 48px; height: 48px; border-radius: 14px; }
+    .mc-hero-icon svg { width: 22px; height: 22px; }
+    .mc-hero-title { font-size: 1.35rem; }
+    .mc-hero-sub { font-size: .8rem; }
+    .mc-card-body { padding: 1.1rem 1rem; }
+    .mc-filters { padding: .7rem .8rem; }
+    .mc-tab { flex: 1 1 auto; justify-content: center; }
+    .mc-info-grid { padding: .8rem 1rem; }
+    .mc-actions { justify-content: stretch; }
+    .mc-btn { width: 100%; justify-content: center; }
 }
 </style>
 {% endblock %}

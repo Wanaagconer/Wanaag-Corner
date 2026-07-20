@@ -344,23 +344,47 @@ body { background:#1a1008 !important; }
 }
 @keyframes snModalIn { from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);} }
 
-@media(max-width:960px) { .sn-today-grid { grid-template-columns:1fr; } }
-@media(max-width:700px) {
-  .sn-bio { grid-template-columns:1fr; }
-  .sn-row { grid-template-columns:1fr 1fr; }
-  .sn-hero { padding:2rem 1.5rem; }
+@media(max-width:900px) {
+  .sn-today-grid { grid-template-columns:1fr; gap:2rem; }
+}
+@media(max-width:600px) {
+  .sn-bio { grid-template-columns:1fr; gap:1rem; }
+  .sn-row { grid-template-columns:1fr 1fr; gap:.9rem; }
+  .sn-hero { padding:2rem 1.25rem; border-radius:20px; }
   .sn-hero-title { font-size:1.8rem; }
+  .sn-hero-sub { max-width:100%; }
+  .sn-hero-top { gap:.75rem; }
+  .sn-input, select.sn-input { font-size:16px; }
+  .sn-timeline { padding-left:2.2rem; }
+  .sn-meal-node { left:-2.2rem; }
+  .sn-workout-head { padding:1rem 1.1rem; gap:.8rem; flex-wrap:wrap; }
+  .sn-wh-emoji { font-size:1.8rem; }
+  .sn-ex-stats { gap:.7rem; }
+  .sn-cal-row { flex-wrap:wrap; gap:.2rem; }
+  .sn-tab { padding:.55rem 1rem; }
+  .sn-edit-btn { padding:.4rem .8rem; font-size:.72rem; }
 }
 @media(max-width:480px) {
   .sn-hero { padding:1.5rem 1rem; }
   .sn-hero-title { font-size:1.5rem; }
+  .sn-hero-sub { font-size:.82rem; }
   .sn-hero-chips { gap:.5rem; }
-  .sn-chip { padding:.4rem .7rem; font-size:.72rem; }
-  .sn-row { grid-template-columns:1fr; }
+  .sn-chip { padding:.4rem .7rem; font-size:.72rem; width:100%; box-sizing:border-box; }
+  .sn-row { grid-template-columns:1fr; gap:.9rem; }
   .sn-form-wrap { padding:1.5rem 1rem; border-radius:18px; }
-  .sn-modal { padding:1.5rem 1rem; border-radius:18px; margin:0 .75rem; }
+  .sn-modal { padding:1.5rem 1rem; border-radius:18px; margin:0 .75rem; max-width:calc(100% - 1.5rem); }
   .sn-bio-card { padding:1.2rem 1rem; }
   .sn-section-title { font-size:1rem; }
+  .sn-sec-head h2 { font-size:1.1rem; }
+  .sn-imc-val { font-size:2.4rem; }
+  .sn-cal-num { font-size:2.2rem; }
+  .sn-imc-scale { font-size:.5rem; flex-wrap:wrap; gap:.2rem .4rem; justify-content:flex-start; }
+  .sn-bio-stats { gap:1rem; }
+  .sn-ex-stats { justify-content:space-between; gap:.4rem; }
+  .sn-ex-stat { min-width:auto; flex:1; }
+  .sn-workout-head { flex-direction:column; align-items:flex-start; text-align:left; }
+  .sn-repos-card { padding:2rem 1rem; }
+  .sn-submit { font-size:.95rem; }
 }
 </style>
 

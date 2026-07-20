@@ -107,7 +107,7 @@
     .post-action{
         background:white;border-radius:18px;padding:1.3rem 1.5rem;
         box-shadow:0 2px 12px rgba(74,60,47,.07);margin-bottom:1.8rem;
-        display:flex;align-items:center;gap:1rem;
+        display:flex;align-items:center;gap:1rem;flex-wrap:wrap;
     }
     .post-action-text{flex:1;}
     .post-action-text h3{font-size:.95rem;font-weight:700;color:var(--brown-dark);margin-bottom:.2rem;}
@@ -120,8 +120,27 @@
     }
     .btn-post-link:hover{transform:translateY(-2px);}
 
-    @media(max-width:900px){.psy-hero{flex-direction:column;}.psy-hero-right{flex-wrap:wrap;}}
-    @media(max-width:600px){.quick-grid{grid-template-columns:1fr 1fr;}.consult-item{flex-wrap:wrap;}}
+    @media(max-width:900px){
+        .psy-hero{flex-direction:column;align-items:flex-start;padding:1.8rem 1.6rem;}
+        .psy-hero-right{flex-wrap:wrap;width:100%;}
+        .psy-stat{flex:1;min-width:90px;}
+    }
+    @media(max-width:600px){
+        .quick-grid{grid-template-columns:1fr 1fr;gap:1rem;}
+        .consult-item{flex-wrap:wrap;padding:1rem;}
+        .consult-right{align-items:flex-start;flex-direction:row;width:100%;justify-content:space-between;}
+        .post-action{padding:1.1rem;text-align:left;}
+        .btn-post-link{width:100%;text-align:center;}
+        .psy-hero-title{font-size:1.4rem;}
+    }
+    @media(max-width:480px){
+        .quick-grid{grid-template-columns:1fr;}
+        .psy-stat{min-width:80px;padding:.7rem .9rem;}
+        .psy-stat .num{font-size:1.3rem;}
+        .consult-avatar{width:36px;height:36px;font-size:.8rem;}
+        .consult-subject{white-space:normal;}
+        .post-action img{width:44px;height:44px;}
+    }
 </style>
 {% endblock %}
 

@@ -42,8 +42,18 @@
     .auth-link a{color:var(--accent-dark);font-weight:600;text-decoration:none;}
     .auth-link a:hover{text-decoration:underline;}
 
-    @media(max-width:800px){.auth-page{grid-template-columns:1fr;}.auth-visual{display:none;}}
-    @media(max-width:480px){.auth-form-panel{padding:1.5rem 1rem;}.auth-form-box{padding:1.8rem 1.4rem;border-radius:16px;}}
+    @media(max-width:800px){.auth-page{grid-template-columns:1fr;min-height:auto;}.auth-visual{display:none;}}
+    @media(max-width:600px){
+        .auth-form-panel{padding:2rem 1.2rem;}
+        .form-input{font-size:16px;}
+        .btn-auth{font-size:1rem;}
+    }
+    @media(max-width:480px){
+        .auth-form-panel{padding:1.5rem 1rem;}
+        .auth-form-box{padding:1.6rem 1.2rem;border-radius:16px;}
+        .auth-form-header h2{font-size:1.25rem;}
+        .info-banner{font-size:.75rem;padding:.6rem .85rem;}
+    }
 </style>
 {% endblock %}
 

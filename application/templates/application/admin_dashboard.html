@@ -245,14 +245,59 @@
 .adm-confirm p { color: var(--brown); margin-bottom: 1.5rem; }
 .adm-confirm strong { color: var(--red); }
 
+/* ===== TABLE SCROLL UTILITY ===== */
+.adm-table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
 /* ===== RESPONSIVE ===== */
+@media(max-width:900px) {
+    .stat-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
 @media(max-width:700px) {
     .adm-form-grid { grid-template-columns: 1fr; }
     .stat-grid { grid-template-columns: repeat(2, 1fr); }
-    .adm-tabs { gap: .3rem; }
+    .adm-tabs { gap: .3rem; padding: .8rem 1rem; }
     .adm-tab { font-size: .75rem; padding: .4rem .8rem; }
     .adm-search { width: 150px; }
     .adm-search:focus { width: 150px; }
+    .adm-table-head { flex-wrap: wrap; gap: .8rem; }
+    .adm-modal { width: 92%; max-width: calc(100vw - 2rem); }
+}
+
+@media(max-width:600px) {
+    .adm-form-row input,
+    .adm-form-row select,
+    .adm-form-row textarea,
+    .adm-search { font-size: 16px; }
+}
+
+@media(max-width:480px) {
+    .adm-tabs { padding: .7rem .8rem; gap: .35rem; }
+    .adm-tab { font-size: .7rem; padding: .35rem .65rem; }
+    .adm-tab .tab-badge { font-size: .68rem; }
+
+    .stat-grid { grid-template-columns: repeat(2, 1fr); gap: .8rem; }
+    .stat-card { padding: 1.1rem 1.1rem; }
+    .stat-value { font-size: 1.65rem; }
+    .stat-label { font-size: .7rem; }
+    .stat-icon { font-size: 1.2rem; right: .8rem; top: .8rem; }
+
+    .adm-table-head { padding: 1rem 1.1rem; align-items: flex-start; }
+    .adm-table-head > div { width: 100%; flex-wrap: wrap; gap: .6rem; }
+    .adm-search { width: 100% !important; box-sizing: border-box; flex: 1 1 100%; }
+    .adm-search:focus { width: 100% !important; }
+    .adm-table-head .btn-adm { width: 100%; justify-content: center; flex: 1 1 100%; }
+
+    .adm-table th, .adm-table td { padding: .6rem .7rem; font-size: .8rem; }
+
+    .adm-modal { width: 100%; max-width: calc(100vw - 2rem); }
+    .adm-modal-header { padding: 1.1rem 1.2rem; }
+    .adm-modal-body { padding: 1.2rem; }
+    .adm-modal-footer { padding: 1rem 1.2rem; flex-direction: column; }
+    .adm-modal-footer .btn-adm { width: 100%; justify-content: center; }
+
+    .panel-card-title { padding: .9rem 1.1rem; }
+    .adm-mini-table td { padding: .5rem .6rem; font-size: .78rem; }
 }
 </style>
 {% endblock %}
@@ -324,6 +369,7 @@
       <div class="panel-card">
         <div class="panel-card-title">Derniers utilisateurs inscrits</div>
         <div class="panel-card-body">
+          <div class="adm-table-scroll">
           <table class="adm-mini-table">
             {% for u in users|slice:":8" %}
             <tr>
@@ -339,12 +385,14 @@
             {% empty %}<tr><td colspan="3" style="color:var(--brown-light);padding:1rem;">Aucun utilisateur</td></tr>
             {% endfor %}
           </table>
+          </div>
         </div>
       </div>
       <!-- Consultations en attente -->
       <div class="panel-card">
         <div class="panel-card-title">Consultations en attente</div>
         <div class="panel-card-body">
+          <div class="adm-table-scroll">
           <table class="adm-mini-table">
             {% for c in consultations %}{% if c.statut == 'en_attente' %}
             <tr>
@@ -354,6 +402,7 @@
             </tr>
             {% endif %}{% empty %}{% endfor %}
           </table>
+          </div>
         </div>
       </div>
     </div>
@@ -372,7 +421,7 @@
           <button class="btn-adm btn-adm-primary" onclick="openModal('modal-add-ressource')">+ Ajouter</button>
         </div>
       </div>
-      <div style="overflow-x:auto;">
+      <div class="adm-table-scroll">
         <table class="adm-table" id="res-table">
           <thead>
             <tr>
@@ -434,7 +483,7 @@
         </div>
         <button class="btn-adm btn-adm-primary" onclick="openModal('modal-add-cat')">+ Ajouter</button>
       </div>
-      <div style="overflow-x:auto;">
+      <div class="adm-table-scroll">
         <table class="adm-table" id="cat-table">
           <thead>
             <tr><th>Icône</th><th>Nom</th><th>Slug</th><th>Description</th><th>Ordre</th><th>Ressources</th><th>Actions</th></tr>
@@ -472,7 +521,7 @@
         </div>
         <input class="adm-search" placeholder="Rechercher..." oninput="filterTable('users-table',this.value)">
       </div>
-      <div style="overflow-x:auto;">
+      <div class="adm-table-scroll">
         <table class="adm-table" id="users-table">
           <thead>
             <tr><th>Pseudo</th><th>Email</th><th>Rôle</th><th>Statut</th><th>Inscrit le</th><th>Actions</th></tr>
@@ -525,7 +574,7 @@
         </div>
         <button class="btn-adm btn-adm-primary" onclick="openModal('modal-add-psy')">+ Ajouter un psychologue</button>
       </div>
-      <div style="overflow-x:auto;">
+      <div class="adm-table-scroll">
         <table class="adm-table" id="psy-table">
           <thead>
             <tr><th>Nom</th><th>Email</th><th>Spécialités</th><th>Expérience</th><th>Statut</th><th>Actions</th></tr>
@@ -566,7 +615,7 @@
         </div>
         <input class="adm-search" placeholder="Rechercher..." oninput="filterTable('cons-table',this.value)">
       </div>
-      <div style="overflow-x:auto;">
+      <div class="adm-table-scroll">
         <table class="adm-table" id="cons-table">
           <thead>
             <tr><th>Utilisateur</th><th>Psychologue</th><th>Sujet</th><th>Statut</th><th>Date</th><th>Actions</th></tr>
@@ -611,7 +660,7 @@
         </div>
         <input class="adm-search" placeholder="Rechercher..." oninput="filterTable('posts-table',this.value)">
       </div>
-      <div style="overflow-x:auto;">
+      <div class="adm-table-scroll">
         <table class="adm-table" id="posts-table">
           <thead>
             <tr><th>Auteur</th><th>Contenu</th><th>Image</th><th>Likes</th><th>Commentaires</th><th>Date</th><th>Actions</th></tr>
@@ -648,7 +697,7 @@
         </div>
         <input class="adm-search" placeholder="Rechercher..." oninput="filterTable('groups-table',this.value)">
       </div>
-      <div style="overflow-x:auto;">
+      <div class="adm-table-scroll">
         <table class="adm-table" id="groups-table">
           <thead>
             <tr><th>Nom</th><th>Catégorie</th><th>Créateur</th><th>Membres</th><th>Messages</th><th>Privé</th><th>Date</th><th>Actions</th></tr>

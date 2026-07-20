@@ -292,8 +292,27 @@
         padding: 0 .3rem;
     }
 
-    @media(max-width:700px){
+    @media(max-width:900px){
         .members-panel { display: none; }
+    }
+    @media(max-width:600px){
+        .chat-topbar { padding:.75rem 1rem; }
+        .chat-topbar-title { font-size:.95rem; }
+        .messages-zone { padding:1rem .9rem; }
+        .msg-body { max-width:82%; }
+        .input-zone { padding:.75rem .8rem; }
+        .input-row { padding:.5rem .6rem .5rem .8rem; }
+        .msg-textarea { font-size:16px; }
+        .send-btn { width:42px; height:42px; }
+        .input-hint { font-size:.65rem; }
+    }
+    @media(max-width:480px){
+        .chat-topbar { padding:.65rem .85rem; }
+        .messages-zone { padding:.85rem .7rem; }
+        .msg-body { max-width:88%; }
+        .msg-av { width:28px; height:28px; font-size:.7rem; }
+        .msg-bubble { padding:.55rem .75rem; font-size:.86rem; }
+        .input-zone { padding:.6rem .6rem; }
     }
 </style>
 {% endblock %}

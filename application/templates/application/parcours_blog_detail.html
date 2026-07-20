@@ -142,10 +142,26 @@ body { background:#1a1008 !important; }
 .art-related-name   { font-size:.82rem; font-weight:600; color:rgba(245,230,211,.75); line-height:1.35; }
 .art-related-author { font-size:.68rem; color:rgba(245,230,211,.3); margin-top:.3rem; }
 
-@media(max-width:700px) {
+@media(max-width:600px) {
     .art-related-grid { grid-template-columns:1fr; }
     .art-hero-body { padding:1.5rem; }
     .art-cover { height:220px; }
+    .art-byline { gap:.75rem; }
+    .art-stats { margin-left:0; gap:.9rem; }
+    .art-actions { gap:.75rem; }
+    .art-delete-btn { margin-left:0; }
+}
+@media(max-width:480px) {
+    .art-hero { border-radius:18px; }
+    .art-hero-body { padding:1.2rem 1rem; }
+    .art-cover { height:170px; }
+    .art-title { font-size:1.5rem; margin-bottom:1rem; }
+    .art-content { font-size:1rem; }
+    .art-content::first-letter { font-size:3rem; }
+    .art-actions { flex-direction:column; align-items:stretch; }
+    .art-like-btn, .art-share-btn, .art-delete-btn { width:100%; justify-content:center; margin-left:0 !important; }
+    .art-avatar { width:36px; height:36px; }
+    .art-related-head { font-size:1.1rem; }
 }
 </style>
 

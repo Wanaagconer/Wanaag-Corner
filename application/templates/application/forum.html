@@ -246,16 +246,34 @@
     }
     .btn-modal-submit:hover { transform: translateY(-1px); }
 
-    @media(max-width:700px){
+    @media(max-width:900px){
+        .groups-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+    }
+    @media(max-width:600px){
         .forum-hero { height:auto; }
         .forum-hero-overlay { flex-direction:column; align-items:flex-start; gap:1rem; padding:1.5rem; }
         .forum-hero-title { font-size:1.4rem; }
         .btn-create { width:100%; justify-content:center; }
         .forum-hero-left { gap:.8rem; }
         .forum-hero-avatar { width:46px; height:46px; }
+        .groups-grid { grid-template-columns: 1fr; gap:1rem; }
+        .cat-btn { padding:.55rem 1.1rem; }
+        .modal-box { width:92%; padding:1.6rem; }
+        .modal-actions { flex-wrap:wrap; }
+        .modal-actions .btn-modal-cancel,
+        .modal-actions .btn-modal-submit { flex:1; text-align:center; }
+        .forum-search input,
+        .form-group input,
+        .form-group textarea,
+        .form-group select { font-size:16px; }
     }
-    @media(max-width:500px){
-        .groups-grid { grid-template-columns: 1fr; }
+    @media(max-width:480px){
+        .forum-hero-overlay { padding:1.1rem; }
+        .forum-hero-title { font-size:1.15rem; }
+        .forum-search input { padding:.8rem 1rem .8rem 2.6rem; }
+        .group-card-body { padding:1.1rem 1.15rem; }
+        .modal-box { padding:1.3rem; }
+        .sec-title { font-size:1rem; }
     }
 </style>
 {% endblock %}

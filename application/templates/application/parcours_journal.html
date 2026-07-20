@@ -407,6 +407,9 @@ body { background:#1a1008 !important; }
 }
 .writer-save-btn:hover { transform:translateY(-2px); box-shadow:0 8px 22px rgba(201,166,107,.5); }
 
+@media(max-width:900px){
+    .jnl-pages-grid { grid-template-columns: repeat(auto-fill, minmax(220px,1fr)); }
+}
 @media(max-width:700px){
     .jnl-hero { flex-direction:column; padding:2rem 1.5rem; gap:1.2rem; }
     .jnl-hero-left { text-align:center; }
@@ -416,6 +419,30 @@ body { background:#1a1008 !important; }
     .jnl-stats-strip { gap:.6rem; }
     .jnl-stat-pill { font-size:.72rem; padding:.45rem .85rem; }
     .journal-writer { width:100% !important; border-radius:0; }
+
+    /* Full-screen writer: adapt to narrow screens */
+    .writer-topbar { padding:.6rem 1rem; flex-wrap: wrap; gap:.5rem; }
+    .writer-page { padding: 2rem 1rem 5rem; max-width: 100%; }
+    /* Decorative margin rule is positioned relative to a 680px page — remove it
+       on mobile so it doesn't push a negative offset and cause overflow */
+    .writer-page::before { display: none; }
+    .writer-page-num { top: 1.5rem; right: 1rem; }
+    .writer-date-heading { padding-left: 0; }
+    .writer-title-input { padding-left: 0; font-size: 1.5rem; }
+    .writer-textarea { padding-left: 0; font-size: 1.15rem; min-height: 320px; }
+    .writer-bottom { padding:.75rem 1rem; flex-direction: column; align-items: stretch; gap:.7rem; }
+    .writer-moods { justify-content: center; flex-wrap: wrap; }
+    .writer-bottom-stats { justify-content: center; }
+    .writer-save-btn { width: 100%; box-sizing: border-box; }
+}
+@media(max-width:480px){
+    .jnl-hero-title { font-size: 1.7rem; }
+    .jnl-stat-pill { font-size:.68rem; padding:.4rem .7rem; }
+    .jnl-pages-grid { grid-template-columns: 1fr; gap: 1.2rem; }
+    .jnl-fab { width: 52px; height: 52px; right: 1.2rem; bottom: 1.5rem; font-size: 1.4rem; }
+    .writer-mood-btn { width: 34px; height: 34px; font-size: 1rem; }
+    .writer-title-input { font-size: 1.3rem; }
+    .writer-textarea { font-size: 1.1rem; }
 }
 </style>
 

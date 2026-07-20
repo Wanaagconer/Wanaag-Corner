@@ -21,7 +21,7 @@
                 radial-gradient(ellipse at 85% 20%, rgba(201,166,107,.10) 0%, transparent 55%);
     pointer-events: none;
 }
-.ab-hero-inner { position: relative; z-index: 1; display: flex; align-items: center; gap: 2rem; }
+.ab-hero-inner { position: relative; z-index: 1; display: flex; align-items: center; gap: 2rem; flex-wrap: wrap; }
 .ab-hero-logo {
     width: 80px; height: 80px; border-radius: 20px; overflow: hidden; flex-shrink: 0;
     box-shadow: 0 0 0 2px rgba(201,166,107,.4), 0 8px 24px rgba(0,0,0,.4);
@@ -311,6 +311,44 @@
 .ab-social-link:hover { border-color: rgba(201,166,107,.5); color: #c9a66b; background: rgba(201,166,107,.08); }
 .ab-social-link svg { width: 18px; height: 18px; flex-shrink: 0; }
 .ab-social-divider { color: rgba(245,230,211,.2); font-size: 1.2rem; }
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:900px){
+    .ab-hero { padding: 2.2rem 1.6rem; }
+    .ab-hero-badge { margin-left: 0; }
+    .ab-founder-right { padding: 2rem 2rem; }
+    .ab-contact { padding: 2.2rem 1.6rem; }
+}
+@media(max-width:600px){
+    .about-wrap { gap: 1.4rem; }
+    .ab-hero-inner { gap: 1.2rem; }
+    .ab-hero-logo { width: 64px; height: 64px; border-radius: 16px; }
+    .ab-hero-text h1 { font-size: 1.5rem; }
+    .ab-hero-text p { font-size: .85rem; }
+    .ab-card-top { padding: 1.4rem 1.4rem 0; gap: .85rem; }
+    .ab-card-divider { margin: 1rem 1.4rem 0; }
+    .ab-card-body { padding: 1.1rem 1.4rem 1.4rem; }
+    .ab-card-header { padding: 1.1rem 1.3rem .9rem; }
+    .ab-card-img-wrap { height: 150px; }
+    .ab-card-title-over { font-size: 1.1rem; }
+    .ab-founder-info { padding: 1.4rem 1.4rem 1.2rem; }
+    .ab-founder-right { padding: 1.8rem 1.4rem; }
+    .ab-founder-right h3 { font-size: 1.2rem; }
+    .ab-contact h2 { font-size: 1.4rem; }
+    .ab-contact p { font-size: .85rem; }
+    .ab-contact-btn, .ab-contact-email { width: 100%; justify-content: center; }
+    .ab-socials { flex-wrap: wrap; gap: .7rem; }
+}
+@media(max-width:480px){
+    .ab-hero { padding: 1.8rem 1.2rem; border-radius: 18px; }
+    .ab-hero-logo { width: 56px; height: 56px; }
+    .ab-hero-text h1 { font-size: 1.3rem; }
+    .ab-values-grid { gap: .9rem; }
+    .ab-val-img { height: 100px; }
+    .ab-founder-left { min-height: 240px; }
+    .ab-contact { padding: 1.6rem 1.1rem; border-radius: 18px; }
+    .ab-contact-btn { padding: .85rem 1.6rem; font-size: .85rem; }
+}
 </style>
 {% endblock %}
 

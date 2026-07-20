@@ -139,9 +139,23 @@
 .rsp-btn-cancel svg { width: 15px; height: 15px; }
 
 @media(max-width:600px) {
-    .rsp-hero { flex-wrap: wrap; }
+    .rsp-hero { flex-wrap: wrap; padding: 1.6rem 1.4rem; gap: 1.2rem; }
     .rsp-actions { flex-direction: column; }
     .rsp-form-body, .rsp-card-body { padding: 1.2rem; }
+    .rsp-card-header, .rsp-form-header { padding: 1.1rem 1.2rem; }
+}
+
+@media(max-width:480px) {
+    .rsp-hero { padding: 1.3rem 1.1rem; gap: 1rem; }
+    .rsp-avatar { width: 52px; height: 52px; font-size: 1.2rem; }
+    .rsp-hero-title { font-size: 1.2rem; }
+    .rsp-hero-sub { font-size: .78rem; }
+    .rsp-card-header, .rsp-form-header { padding: 1rem; }
+    .rsp-form-body, .rsp-card-body { padding: 1rem; }
+    .rsp-field { padding: .85rem 1rem; }
+    .rsp-actions { padding: 1rem; }
+    .rsp-select, .rsp-textarea, .rsp-input { font-size: 16px; }
+    .rsp-btn-submit, .rsp-btn-cancel { width: 100%; box-sizing: border-box; }
 }
 </style>
 {% endblock %}

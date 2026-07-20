@@ -215,9 +215,30 @@
 .cd-back svg { width: 15px; height: 15px; }
 
 @media(max-width:600px) {
-    .cd-hero { flex-wrap: wrap; }
+    .cd-hero { flex-wrap: wrap; padding: 1.6rem 1.4rem; gap: 1.2rem; }
     .cd-info-body { grid-template-columns: 1fr; }
     .cd-msg-bubble { max-width: 85%; }
+    .cd-visio-banner { flex-wrap: wrap; padding: 1.2rem 1.4rem; }
+    .cd-visio-btn { width: 100%; justify-content: center; }
+}
+
+@media(max-width:480px) {
+    .cd-hero { padding: 1.3rem 1.1rem; gap: 1rem; }
+    .cd-av { width: 42px; height: 42px; font-size: .95rem; }
+    .cd-hero-title { font-size: 1.1rem; }
+    .cd-hero-sub { font-size: .78rem; }
+    .cd-status-pill { padding: .4rem .8rem; font-size: .74rem; }
+    .cd-info-header, .cd-chat-header { padding: .9rem 1.1rem; }
+    .cd-info-body { padding: 1rem 1.1rem; }
+    .cd-field { padding: .7rem .85rem; }
+    .cd-chat-messages { padding: 1rem 1.1rem; }
+    .cd-msg-bubble { max-width: 92%; font-size: .85rem; }
+    .cd-send-wrap { padding: .9rem 1.1rem; }
+    .cd-send-form { flex-wrap: wrap; }
+    .cd-send-textarea { min-width: 0; width: 100%; font-size: 16px; }
+    .cd-send-btn { width: 100%; justify-content: center; }
+    .cd-visio-icon { width: 44px; height: 44px; }
+    .cd-visio-banner { padding: 1.1rem 1.2rem; gap: .9rem; }
 }
 </style>
 {% endblock %}

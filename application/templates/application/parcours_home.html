@@ -274,16 +274,40 @@
     .pb-journal-grid, .pb-blogs-row { grid-template-columns: 1fr; }
     .pb-hero { flex-direction: column; padding: 2rem; }
     .pb-score-ring { margin-left: 0; margin-top: 2rem; }
+    .pb-nudge { flex-wrap: wrap; }
 }
 @media (max-width: 600px) {
     .pb-stats { grid-template-columns: 1fr 1fr; }
     .pb-spaces { grid-template-columns: 1fr 1fr; }
+    .pb-quote-card { padding: 2rem 1.5rem; }
+    .pb-quote-mark { font-size: 3.5rem; }
+    .pb-quote-text { font-size: 1.1rem; }
+    .pb-nudge {
+        flex-direction: column;
+        align-items: flex-start;
+        text-align: left;
+        gap: 1rem;
+        padding: 1.25rem 1.5rem;
+    }
+    .pb-nudge-btn {
+        margin-left: 0;
+        width: 100%;
+        text-align: center;
+        box-sizing: border-box;
+        padding: .85rem 1.4rem;
+    }
 }
 @media (max-width: 480px) {
     .pb-hero { padding: 1.5rem 1rem; border-radius: 18px; }
     .pb-stats { grid-template-columns: 1fr 1fr; gap: .7rem; }
     .pb-spaces { grid-template-columns: 1fr 1fr; gap: .7rem; }
     .pb-section-title { font-size: 1rem; }
+    .pb-stat-card { padding: 1.1rem .8rem; }
+    .pb-space-card { padding: 1.3rem 1rem; }
+    .pb-space-icon { width: 44px; height: 44px; font-size: 1.3rem; }
+    .pb-space-desc { font-size: .74rem; }
+    .pb-quote-card { padding: 1.5rem 1.1rem; }
+    .pb-quote-text { font-size: 1rem; }
 }
 .app-content { background: #1a1008 !important; }
 body { background: #1a1008 !important; }

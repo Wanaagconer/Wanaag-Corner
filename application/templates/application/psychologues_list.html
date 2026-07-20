@@ -19,7 +19,7 @@
                 radial-gradient(ellipse at 85% 20%, rgba(201,166,107,.10) 0%, transparent 55%);
     pointer-events: none;
 }
-.psy-hero-inner { position: relative; z-index: 1; display: flex; align-items: center; gap: 1.5rem; }
+.psy-hero-inner { position: relative; z-index: 1; display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap; }
 .psy-hero-img {
     width: 72px; height: 72px; border-radius: 18px; overflow: hidden; flex-shrink: 0;
     box-shadow: 0 0 0 2px rgba(201,166,107,.4), 0 8px 24px rgba(0,0,0,.4);
@@ -143,9 +143,23 @@
 }
 .psy-empty p { color: #b0a090; font-size: .95rem; }
 
-@media(max-width:700px) {
-    .psy-grid { grid-template-columns: 1fr; }
+@media(max-width:900px) {
+    .psy-grid { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+}
+@media(max-width:600px) {
+    .psy-grid { grid-template-columns: 1fr; gap: 1.2rem; }
     .psy-hero-count { display: none; }
+    .psy-hero { padding: 1.8rem 1.5rem; }
+    .psy-hero-text h1 { font-size: 1.5rem; }
+    .psy-hero-img { width: 56px; height: 56px; border-radius: 14px; }
+}
+@media(max-width:480px) {
+    .psy-hero { padding: 1.5rem 1.1rem; border-radius: 18px; }
+    .psy-hero-inner { gap: 1rem; }
+    .psy-hero-text h1 { font-size: 1.3rem; }
+    .psy-hero-text p { font-size: .82rem; }
+    .psy-card-body { padding: 2.6rem 1.2rem 1.4rem; }
+    .psy-cta { padding: .85rem; font-size: .9rem; }
 }
 </style>
 {% endblock %}

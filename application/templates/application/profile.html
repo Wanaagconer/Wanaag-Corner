@@ -215,10 +215,26 @@
 .no-posts h3 { color: var(--brown-dark); margin-bottom: .4rem; }
 .no-posts p { color: #b8a890; font-size: .88rem; }
 
-@media(max-width: 640px) {
-    .profile-hero-inner { flex-direction: column; align-items: center; text-align: center; }
+@media(max-width: 600px) {
+    .profile-hero-inner { flex-direction: column; align-items: center; text-align: center; padding:1.8rem 1.4rem 1.6rem; gap:1.2rem; }
+    .profile-av { width:80px; height:80px; font-size:2rem; }
+    .profile-name { font-size:1.5rem; }
     .edit-grid { grid-template-columns: 1fr; }
+    .edit-card { padding:1.4rem; }
     .profile-stats { justify-content: center; }
+    .profile-tabs { flex-wrap:wrap; gap:.4rem; padding:.6rem; }
+    .ptab { flex:1 1 45%; font-size:.8rem; padding:.6rem .5rem; }
+    .btn-follow { width:100%; justify-content:center; }
+    .edit-row input, .edit-row textarea { font-size:16px; }
+}
+@media(max-width: 480px) {
+    .profile-hero-inner { padding:1.4rem 1rem 1.3rem; }
+    .profile-av { width:70px; height:70px; font-size:1.7rem; }
+    .profile-name { font-size:1.3rem; }
+    .pstat { padding:.6rem 1rem; min-width:70px; }
+    .pstat .n { font-size:1.2rem; }
+    .post-thumb-img, .post-thumb-no-img { height:150px; }
+    .edit-card { padding:1.1rem; }
 }
 </style>
 {% endblock %}

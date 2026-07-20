@@ -190,11 +190,34 @@
 .crf-tip p { margin: 0; font-size: .82rem; color: #8b6030; line-height: 1.5; }
 .crf-tip strong { color: var(--brown-dark); }
 
+@media(max-width:900px) {
+    .crf-wrap { max-width: 100%; }
+}
+
 @media(max-width:640px) {
-    .crf-hero-inner { flex-wrap: wrap; }
+    .crf-hero-inner { flex-wrap: wrap; padding: 1.6rem 1.4rem; gap: 1.2rem; }
     .crf-hero-exp { margin-left: 0; }
-    .crf-actions { flex-direction: column; }
+    .crf-actions { flex-direction: column; padding: 1.2rem 1.3rem; }
     .crf-card-body { padding: 1.4rem 1.2rem; }
+    .crf-card-header { padding: 1.2rem 1.3rem 1rem; flex-wrap: wrap; }
+}
+
+@media(max-width:480px) {
+    .crf-hero-inner { padding: 1.3rem 1rem; gap: 1rem; }
+    .crf-av-wrap { width: 68px; height: 68px; }
+    .crf-av-initials { font-size: 1.4rem; }
+    .crf-hero-name { font-size: 1.25rem; }
+    .crf-hero-sub { font-size: .78rem; }
+    .crf-hero-exp { width: 100%; box-sizing: border-box; }
+    .crf-card-header { padding: 1rem; }
+    .crf-card-body { padding: 1.1rem .9rem; }
+    .crf-actions { padding: 1rem; }
+    .crf-input, .crf-textarea { font-size: 16px; }
+    .crf-btn-submit, .crf-btn-cancel { font-size: .85rem; padding: .85rem 1rem; width: 100%; box-sizing: border-box; }
+    /* Seance type buttons (inline-styled flex row) stack on very small screens */
+    .crf-card-body > .crf-field:first-child > div[style*="display:flex"] {
+        flex-direction: column !important;
+    }
 }
 </style>
 {% endblock %}

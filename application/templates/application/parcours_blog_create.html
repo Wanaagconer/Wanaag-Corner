@@ -162,14 +162,25 @@ body { background:#1a1008 !important; }
 }
 
 @media(max-width:900px) {
-    .studio-layout { grid-template-columns:1fr; }
+    .studio-layout { grid-template-columns:1fr; gap:2rem; }
     .studio-side-card { position:static; }
+}
+@media(max-width:600px) {
+    .studio-topbar { flex-wrap:wrap; gap:.75rem; }
+    .studio-meta-row { width:100%; justify-content:space-between; }
+    .studio-canvas { padding:1.5rem 0 3rem; }
+    .studio-input, select.studio-input { font-size:16px; }
+    .studio-content-input { min-height:280px; }
+    .studio-publish-btn { flex:1; justify-content:center; }
 }
 @media(max-width:480px) {
     .studio-topbar { flex-wrap:wrap; gap:.6rem; }
     .studio-canvas { padding:1.5rem 0 3rem; }
     .studio-word-count { font-size:.72rem; }
     .studio-publish-btn { padding:.55rem 1.1rem; font-size:.82rem; }
+    .studio-side-card { padding:1.1rem; }
+    .studio-stats { gap:.5rem; }
+    .studio-stat { padding:.55rem .6rem; }
 }
 </style>
 

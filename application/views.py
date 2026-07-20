@@ -324,7 +324,7 @@ def ressource_detail(request, slug):
         'commentaires': commentaires,
         'ressources_similaires': ressources_similaires,
     }
-    return render(request, 'application/ressource_detail.html', context)
+    return render(request, 'application/ressources_detail.html', context)
 
 
 @login_required
