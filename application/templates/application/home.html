@@ -1,415 +1,428 @@
 {% extends 'application/base.html' %}
+{% load static %}
 
-{% block content %}
+{% block title %}Wanaag Corner — Votre santé mentale compte{% endblock %}
+
+{% block extra_css %}
 <style>
-    /* Style pour le logo plus grand */
-    .logo-container {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
+    /* ===== HERO ===== */
+    .hero{
+        min-height:92vh;
+        display:flex;align-items:center;
+        position:relative;overflow:hidden;
+        background:linear-gradient(135deg,#2A1E12 0%,#3A2C1E 40%,#4A3828 100%);
+    }
+    .hero-blobs{position:absolute;inset:0;pointer-events:none;overflow:hidden;}
+    .blob{
+        position:absolute;border-radius:50%;filter:blur(80px);opacity:.55;
+        animation:blobFloat 12s ease-in-out infinite;
+    }
+    .blob-1{width:500px;height:500px;background:radial-gradient(circle,rgba(201,166,107,.35),transparent);top:-100px;right:-80px;animation-delay:0s;}
+    .blob-2{width:380px;height:380px;background:radial-gradient(circle,rgba(139,111,71,.3),transparent);bottom:-60px;left:-60px;animation-delay:-4s;}
+    .blob-3{width:280px;height:280px;background:radial-gradient(circle,rgba(226,201,154,.2),transparent);top:40%;left:35%;animation-delay:-8s;}
+    @keyframes blobFloat{
+        0%,100%{transform:translate(0,0) scale(1);}
+        33%{transform:translate(20px,-30px) scale(1.05);}
+        66%{transform:translate(-15px,20px) scale(.95);}
     }
 
-    .logo-container img,
-    .logo-container .logo-icon {
-        width: 80px !important;
-        height: 80px !important;
-        transition: transform 0.3s ease;
+    .hero-inner{
+        position:relative;z-index:1;
+        max-width:1200px;margin:0 auto;
+        padding:6rem 6% 5rem;
+        display:grid;grid-template-columns:1fr 1fr;
+        align-items:center;gap:5rem;
     }
-
-    .logo-container:hover img,
-    .logo-container:hover .logo-icon {
-        transform: scale(1.05);
+    .hero-text{}
+    .hero-eyebrow{
+        display:inline-flex;align-items:center;gap:.5rem;
+        background:rgba(201,166,107,.15);
+        border:1px solid rgba(201,166,107,.3);
+        color:var(--accent-light);
+        font-size:.78rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+        padding:.4rem .9rem;border-radius:50px;margin-bottom:1.5rem;
     }
-
-    .logo-text {
-        font-size: 2rem !important;
-        font-weight: 700;
+    .hero-title{
+        font-family:'Playfair Display',serif;
+        font-size:clamp(2.6rem,5vw,4rem);
+        font-weight:800;
+        color:white;
+        line-height:1.15;
+        margin-bottom:1.2rem;
     }
-
-    /* Style pour le bouton S'inscrire avec effet hover */
-    .btn-register {
-        background: transparent;
-        color: var(--brown-dark);
-        border: 2px solid var(--brown-dark);
-        padding: 0.8rem 2rem;
-        border-radius: 25px;
-        font-weight: 600;
-        transition: all 0.3s ease;
-        cursor: pointer;
-        text-decoration: none;
-        display: inline-block;
+    .hero-title span{color:var(--accent);}
+    .hero-subtitle{
+        font-size:1.05rem;line-height:1.8;
+        color:rgba(245,230,211,.75);
+        max-width:480px;margin-bottom:2.5rem;
     }
-
-    .btn-register:hover {
-        background: var(--brown-dark);
-        color: white;
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    .hero-actions{display:flex;gap:1rem;flex-wrap:wrap;}
+    .btn-hero-primary{
+        padding:.9rem 2.2rem;border-radius:50px;font-weight:700;font-size:.95rem;
+        background:linear-gradient(135deg,var(--accent),var(--accent-dark));
+        color:white;text-decoration:none;
+        box-shadow:0 6px 24px rgba(201,166,107,.4);
+        transition:all .25s;display:inline-flex;align-items:center;gap:.5rem;
     }
-
-    .hero {
-        background: linear-gradient(135deg, rgba(232, 212, 184, 0.9) 0%, rgba(245, 230, 211, 0.9) 100%);
-        border-radius: 30px;
-        padding: 4rem 3rem;
-        text-align: center;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-        margin-bottom: 4rem;
-        position: relative;
-        overflow: hidden;
+    .btn-hero-primary:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(201,166,107,.55);}
+    .btn-hero-secondary{
+        padding:.9rem 2.2rem;border-radius:50px;font-weight:600;font-size:.95rem;
+        background:rgba(255,255,255,.1);color:rgba(255,255,255,.9);
+        border:1px solid rgba(255,255,255,.2);text-decoration:none;
+        backdrop-filter:blur(10px);
+        transition:all .25s;display:inline-flex;align-items:center;gap:.5rem;
     }
+    .btn-hero-secondary:hover{background:rgba(255,255,255,.18);}
 
-    .hero::before {
-        content: '';
-        position: absolute;
-        top: -50%;
-        right: -50%;
-        width: 200%;
-        height: 200%;
-        background: radial-gradient(circle, rgba(201, 166, 107, 0.1) 0%, transparent 70%);
-        animation: pulse 8s ease-in-out infinite;
+    /* Hero stats inline */
+    .hero-stats{
+        display:flex;gap:2rem;margin-top:2.5rem;
+        padding-top:2rem;border-top:1px solid rgba(255,255,255,.1);
     }
+    .hstat{}
+    .hstat-num{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;color:var(--accent);}
+    .hstat-label{font-size:.78rem;color:rgba(255,255,255,.45);margin-top:.1rem;}
 
-    @keyframes pulse {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.1); }
+    /* Hero visual side */
+    .hero-visual{display:flex;flex-direction:column;gap:1rem;position:relative;}
+    .hero-card{
+        background:rgba(255,255,255,.07);
+        border:1px solid rgba(201,166,107,.15);
+        border-radius:18px;
+        overflow:hidden;
+        backdrop-filter:blur(12px);
+        transition:transform .3s;
     }
-
-    .hero-content {
-        position: relative;
-        z-index: 1;
+    .hero-card:hover{transform:translateY(-4px);}
+    .hero-card-img{
+        width:100%;height:110px;object-fit:cover;
+        display:block;
     }
-
-    .hero h1 {
-        font-size: 3.5rem;
-        color: var(--brown-dark);
-        margin-bottom: 1rem;
-        font-weight: 800;
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    .hero-card.featured .hero-card-img{height:130px;}
+    .hero-card-body{padding:1rem 1.2rem;}
+    .hero-card-title{font-size:.92rem;font-weight:700;color:rgba(255,255,255,.9);margin-bottom:.3rem;}
+    .hero-card-desc{font-size:.78rem;color:rgba(255,255,255,.5);line-height:1.5;}
+    .hero-card.featured{
+        border-color:rgba(201,166,107,.4);
     }
+    .hero-card-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
 
-    .hero .tagline {
-        font-size: 1.5rem;
-        color: var(--brown);
-        margin-bottom: 2rem;
-        font-weight: 300;
+    /* ===== FEATURES ===== */
+    .features-section{background:var(--beige-light);padding:6rem 6%;}
+    .section-header{text-align:center;margin-bottom:4rem;}
+    .section-label{
+        display:inline-block;
+        font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+        color:var(--accent-dark);
+        background:rgba(201,166,107,.12);
+        padding:.35rem .9rem;border-radius:50px;margin-bottom:1rem;
     }
-
-    .hero .subtitle {
-        font-size: 1.2rem;
-        color: var(--brown-light);
-        max-width: 800px;
-        margin: 0 auto 2rem;
-        line-height: 1.8;
+    .section-title{
+        font-family:'Playfair Display',serif;
+        font-size:clamp(1.9rem,4vw,2.8rem);font-weight:700;
+        color:var(--brown-dark);margin-bottom:.75rem;
     }
+    .section-subtitle{font-size:1rem;color:var(--brown-light);max-width:560px;margin:0 auto;line-height:1.7;}
 
-    .hero-buttons {
-        display: flex;
-        gap: 1.5rem;
-        justify-content: center;
-        flex-wrap: wrap;
-        margin-top: 2rem;
+    .features-grid{
+        display:grid;
+        grid-template-columns:repeat(auto-fit,minmax(270px,1fr));
+        gap:1.5rem;
+        max-width:1200px;margin:0 auto;
     }
-
-    .hero-buttons .btn {
-        padding: 1.2rem 3rem;
-        font-size: 1.1rem;
+    .feature-card{
+        background:white;
+        border-radius:22px;
+        overflow:hidden;
+        box-shadow:0 4px 20px rgba(74,60,47,.08);
+        transition:all .32s cubic-bezier(.4,0,.2,1);
+        border:1px solid rgba(201,166,107,.1);
     }
-
-    .about-section {
-        background: white;
-        border-radius: 30px;
-        padding: 3rem;
-        margin-bottom: 3rem;
-        box-shadow: 0 5px 30px rgba(0,0,0,0.08);
+    .feature-card:hover{transform:translateY(-8px);box-shadow:0 20px 50px rgba(74,60,47,.16);}
+    .feature-card-top{
+        height:160px;position:relative;overflow:hidden;
     }
-
-    .about-section h2 {
-        font-size: 2.5rem;
-        color: var(--brown-dark);
-        margin-bottom: 2rem;
-        text-align: center;
-        position: relative;
-        padding-bottom: 1rem;
+    .feature-card-top img{
+        width:100%;height:100%;object-fit:cover;
+        transition:transform .5s ease;
     }
-
-    .about-section h2::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 100px;
-        height: 4px;
-        background: var(--accent);
-        border-radius: 2px;
+    .feature-card:hover .feature-card-top img{transform:scale(1.07);}
+    .feature-card-top::after{
+        content:'';position:absolute;inset:0;
+        background:linear-gradient(180deg,transparent 40%,rgba(0,0,0,.35));
     }
-
-    .about-content {
-        max-width: 900px;
-        margin: 0 auto;
-        font-size: 1.1rem;
-        line-height: 2;
-        color: var(--brown);
+    .fc-amber{background:linear-gradient(135deg,#F5DEB3,#D4A853);}
+    .fc-brown{background:linear-gradient(135deg,#C4A882,#8B6F47);}
+    .fc-warm{background:linear-gradient(135deg,#F0C090,#C97D3C);}
+    .fc-sand{background:linear-gradient(135deg,#E8D4B8,#B8916A);}
+    .fc-earth{background:linear-gradient(135deg,#D4B896,#9A7B5A);}
+    .fc-gold{background:linear-gradient(135deg,#E2C99A,#C9A66B);}
+    .feature-card-body{padding:1.4rem 1.5rem;}
+    .feature-card-title{font-size:1.05rem;font-weight:700;color:var(--brown-dark);margin-bottom:.5rem;}
+    .feature-card-desc{font-size:.85rem;color:var(--brown-light);line-height:1.6;margin-bottom:1.2rem;}
+    .feature-card-link{
+        display:inline-flex;align-items:center;gap:.35rem;
+        font-size:.83rem;font-weight:700;color:var(--accent-dark);text-decoration:none;
+        padding:.38rem .9rem;background:rgba(201,166,107,.1);border-radius:50px;
+        transition:background .2s;
     }
+    .feature-card-link:hover{background:rgba(201,166,107,.22);}
 
-    .about-content p {
-        margin-bottom: 1.5rem;
+    /* ===== TESTIMONIALS / QUOTE ===== */
+    .quote-section{
+        background:linear-gradient(135deg,var(--brown-dark) 0%,#2A1E12 100%);
+        padding:6rem 6%;text-align:center;position:relative;overflow:hidden;
     }
-
-    .objectives-section {
-        margin-bottom: 3rem;
+    .quote-section::before{
+        content:'❝';
+        position:absolute;top:-1rem;left:50%;transform:translateX(-50%);
+        font-size:12rem;color:rgba(201,166,107,.07);font-family:Georgia,serif;
+        line-height:1;pointer-events:none;
     }
-
-    .objectives-section h2 {
-        font-size: 2.5rem;
-        color: var(--brown-dark);
-        margin-bottom: 3rem;
-        text-align: center;
+    .quote-inner{max-width:750px;margin:0 auto;position:relative;z-index:1;}
+    .quote-text{
+        font-family:'Playfair Display',serif;
+        font-size:clamp(1.4rem,3vw,2rem);
+        font-weight:400;font-style:italic;
+        color:rgba(245,230,211,.92);
+        line-height:1.7;margin-bottom:2rem;
     }
-
-    .objectives-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 2rem;
+    .quote-author{
+        display:inline-flex;align-items:center;gap:.75rem;
+        background:rgba(201,166,107,.12);
+        border:1px solid rgba(201,166,107,.2);
+        border-radius:50px;padding:.5rem 1.2rem;
     }
+    .quote-author-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);}
+    .quote-author-name{font-size:.85rem;font-weight:600;color:var(--accent-light);}
 
-    .objective-card {
-        background: white;
-        border-radius: 20px;
-        padding: 2.5rem 2rem;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-        transition: all 0.3s ease;
-        border-top: 5px solid var(--accent);
-        text-align: center;
+    /* ===== CTA ===== */
+    .cta-section{
+        padding:6rem 6%;
+        background:var(--beige-light);
+        text-align:center;
     }
-
-    .objective-card:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+    .cta-box{
+        max-width:680px;margin:0 auto;
+        background:white;
+        border-radius:28px;
+        padding:4rem 3rem;
+        box-shadow:0 8px 40px rgba(74,60,47,.1);
+        border:1px solid rgba(201,166,107,.15);
     }
-
-    .objective-icon {
-        width: 80px;
-        height: 80px;
-        background: linear-gradient(135deg, var(--beige) 0%, var(--accent) 100%);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 1.5rem;
-        font-size: 2.5rem;
+    .cta-icon{font-size:3rem;margin-bottom:1.2rem;}
+    .cta-title{font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;color:var(--brown-dark);margin-bottom:.75rem;}
+    .cta-desc{font-size:1rem;color:var(--brown-light);line-height:1.7;margin-bottom:2rem;}
+    .cta-actions{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;}
+    .btn-cta-main{
+        padding:1rem 2.5rem;border-radius:50px;font-weight:700;font-size:.97rem;
+        background:linear-gradient(135deg,var(--brown-dark),var(--brown));
+        color:white;text-decoration:none;
+        box-shadow:0 6px 20px rgba(74,60,47,.25);
+        transition:all .25s;
     }
-
-    .objective-card h3 {
-        font-size: 1.4rem;
-        color: var(--brown-dark);
-        margin-bottom: 1rem;
+    .btn-cta-main:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(74,60,47,.35);}
+    .btn-cta-sec{
+        padding:1rem 2.5rem;border-radius:50px;font-weight:600;font-size:.97rem;
+        background:transparent;color:var(--brown-dark);
+        border:2px solid rgba(74,60,47,.25);text-decoration:none;
+        transition:all .25s;
     }
+    .btn-cta-sec:hover{border-color:var(--brown-dark);background:rgba(74,60,47,.04);}
 
-    .objective-card p {
-        color: var(--brown-light);
-        line-height: 1.6;
+    @media(max-width:900px){
+        .hero-inner{grid-template-columns:1fr;gap:3rem;padding:4rem 6% 3rem;}
+        .hero-visual{display:none;}
+        .hero-stats{gap:1.5rem;}
     }
-
-    .cta-section {
-        background: linear-gradient(135deg, var(--brown) 0%, var(--brown-dark) 100%);
-        color: white;
-        border-radius: 30px;
-        padding: 4rem 3rem;
-        text-align: center;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-        margin-top: 4rem;
-    }
-
-    .cta-section h2 {
-        font-size: 2.5rem;
-        margin-bottom: 1.5rem;
-    }
-
-    .cta-section p {
-        font-size: 1.2rem;
-        margin-bottom: 2rem;
-        opacity: 0.9;
-        max-width: 700px;
-        margin-left: auto;
-        margin-right: auto;
-    }
-
-    .cta-section .btn {
-        background: white;
-        color: var(--brown-dark);
-        padding: 1.2rem 3rem;
-        font-size: 1.1rem;
-    }
-
-    .cta-section .btn:hover {
-        background: var(--beige);
-        transform: scale(1.05);
-    }
-
-    .stats-section {
-        display: flex;
-        justify-content: space-around;
-        flex-wrap: wrap;
-        gap: 2rem;
-        margin: 3rem 0;
-        padding: 2rem;
-        background: rgba(255, 255, 255, 0.6);
-        border-radius: 20px;
-    }
-
-    .stat-item {
-        text-align: center;
-    }
-
-    .stat-number {
-        font-size: 3rem;
-        font-weight: 800;
-        color: var(--accent);
-        display: block;
-    }
-
-    .stat-label {
-        font-size: 1.1rem;
-        color: var(--brown);
-        margin-top: 0.5rem;
-    }
-
-    @media (max-width: 768px) {
-        .logo-container img,
-        .logo-container .logo-icon {
-            width: 60px !important;
-            height: 60px !important;
-        }
-
-        .logo-text {
-            font-size: 1.5rem !important;
-        }
-
-        .hero h1 {
-            font-size: 2.2rem;
-        }
-
-        .hero .tagline {
-            font-size: 1.2rem;
-        }
-
-        .hero .subtitle {
-            font-size: 1rem;
-        }
-
-        .hero-buttons {
-            flex-direction: column;
-        }
-
-        .about-section h2,
-        .objectives-section h2,
-        .cta-section h2 {
-            font-size: 2rem;
-        }
-
-        .objectives-grid {
-            grid-template-columns: 1fr;
-        }
-
-        .stat-number {
-            font-size: 2rem;
-        }
+    @media(max-width:600px){
+        .hero-actions{flex-direction:column;}
+        .hero-stats{flex-wrap:wrap;gap:1.2rem;}
+        .cta-box{padding:2.5rem 1.5rem;}
+        .cta-actions{flex-direction:column;align-items:center;}
     }
 </style>
+{% endblock %}
 
-<div class="hero">
-    <div class="hero-content">
-        <h1>Wanaag Corner</h1>
-        <p class="tagline">Votre safe place pour la santé mentale</p>
-        <p class="subtitle">
-            Bienvenue dans un espace bienveillant dédié à votre bien-être mental à Djibouti. 
-            Parce que votre santé mentale compte autant que votre santé physique.
-        </p>
-        <div class="hero-buttons">
-            <a href="{% url 'register' %}" class="btn btn-primary">Rejoindre la communauté</a>
-            <a href="{% url 'about' %}" class="btn btn-secondary">En savoir plus</a>
-        </div>
-    </div>
-</div>
+{% block content %}
 
-<div class="stats-section">
-    <div class="stat-item">
-        <span class="stat-number">100%</span>
-        <span class="stat-label">Anonyme</span>
+<!-- HERO -->
+<section class="hero">
+    <div class="hero-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
     </div>
-    <div class="stat-item">
-        <span class="stat-number">0</span>
-        <span class="stat-label">Jugement</span>
-    </div>
-    <div class="stat-item">
-        <span class="stat-number">24/7</span>
-        <span class="stat-label">Disponible</span>
-    </div>
-</div>
-
-<div class="about-section" id="about">
-    <h2>À propos de Wanaag Corner</h2>
-    <div class="about-content">
-        <p>
-            <strong>Wanaag Corner</strong> est né d'une conviction profonde : la santé mentale est un sujet crucial 
-            qui mérite toute notre attention, mais qui reste trop souvent négligée et entourée de préjugés à Djibouti.
-        </p>
-        <p>
-            Cette plateforme est bien plus qu'un simple site web. C'est un <strong>espace sécurisé</strong> où chacun 
-            peut s'exprimer librement, sans crainte d'être jugé. Un lieu où les tabous se déconstruisent et où 
-            la bienveillance est notre valeur première.
-        </p>
-        <p>
-            Nous croyons fermement qu'en parlant ouvertement de santé mentale, nous pouvons créer un 
-            <strong>Djibouti plus inclusif, plus conscient et plus solidaire</strong>.
-        </p>
-    </div>
-</div>
-
-<div class="objectives-section">
-    <h2>Nos Objectifs</h2>
-    <div class="objectives-grid">
-        <div class="objective-card">
-            <div class="objective-icon">🔓</div>
-            <h3>Déconstruire les tabous</h3>
-            <p>
-                Briser les idées reçues et les préjugés autour de la santé mentale pour libérer la parole.
+    <div class="hero-inner">
+        <div class="hero-text">
+            <div class="hero-eyebrow">🌿 Safe place · Djibouti</div>
+            <h1 class="hero-title">
+                Votre <span>santé mentale</span><br>mérite une place
+            </h1>
+            <p class="hero-subtitle">
+                Wanaag Corner est un espace bienveillant et sécurisé où vous pouvez parler librement,
+                trouver du soutien et accéder à des ressources de qualité sur la santé mentale.
             </p>
+            <div class="hero-actions">
+                <a href="{% url 'register' %}" class="btn-hero-primary">✨ Rejoindre la communauté</a>
+                <a href="{% url 'about' %}" class="btn-hero-secondary">En savoir plus →</a>
+            </div>
+            <div class="hero-stats">
+                <div class="hstat">
+                    <div class="hstat-num">100%</div>
+                    <div class="hstat-label">Anonyme</div>
+                </div>
+                <div class="hstat">
+                    <div class="hstat-num">0</div>
+                    <div class="hstat-label">Jugement</div>
+                </div>
+                <div class="hstat">
+                    <div class="hstat-num">24/7</div>
+                    <div class="hstat-label">Disponible</div>
+                </div>
+            </div>
         </div>
-
-        <div class="objective-card">
-            <div class="objective-icon">💡</div>
-            <h3>Partager des ressources</h3>
-            <p>
-                Vous offrir des conseils pratiques et des outils pour prendre soin de votre bien-être au quotidien.
-            </p>
-        </div>
-
-        <div class="objective-card">
-            <div class="objective-icon">📚</div>
-            <h3>Éduquer et informer</h3>
-            <p>
-                Publier des contenus éducatifs de qualité pour approfondir vos connaissances sur la santé mentale.
-            </p>
-        </div>
-
-        <div class="objective-card">
-            <div class="objective-icon">🤝</div>
-            <h3>Créer du lien</h3>
-            <p>
-                Construire une communauté bienveillante où chacun peut partager son vécu et trouver du soutien.
-            </p>
+        <div class="hero-visual">
+            <div class="hero-card featured">
+                <img src="{% static 'images/espace-bien-etre.jpg' %}" alt="Espace bien-être" class="hero-card-img">
+                <div class="hero-card-body">
+                    <div class="hero-card-title">Espace de bien-être</div>
+                    <div class="hero-card-desc">Partagez, écoutez, progressez dans un cadre sécurisé et bienveillant.</div>
+                </div>
+            </div>
+            <div class="hero-card-grid">
+                <div class="hero-card">
+                    <img src="{% static 'images/forum.jpg' %}" alt="Forum" class="hero-card-img">
+                    <div class="hero-card-body">
+                        <div class="hero-card-title">Forum</div>
+                        <div class="hero-card-desc">Communauté bienveillante</div>
+                    </div>
+                </div>
+                <div class="hero-card">
+                    <img src="{% static 'images/psychologue.jpg' %}" alt="Psychologues" class="hero-card-img">
+                    <div class="hero-card-body">
+                        <div class="hero-card-title">Psychologues</div>
+                        <div class="hero-card-desc">Professionnels certifiés</div>
+                    </div>
+                </div>
+                <div class="hero-card">
+                    <img src="{% static 'images/ressources.jpg' %}" alt="Ressources" class="hero-card-img">
+                    <div class="hero-card-body">
+                        <div class="hero-card-title">Ressources</div>
+                        <div class="hero-card-desc">Articles & guides</div>
+                    </div>
+                </div>
+                <div class="hero-card">
+                    <img src="{% static 'images/posts.jpg' %}" alt="Posts" class="hero-card-img">
+                    <div class="hero-card-body">
+                        <div class="hero-card-title">Posts</div>
+                        <div class="hero-card-desc">Partagez vos moments</div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-</div>
+</section>
 
-<div class="cta-section">
-    <h2>Prêt à prendre soin de vous ?</h2>
-    <p>
-        Rejoignez Wanaag Corner dès aujourd'hui et faites partie d'une communauté qui prend 
-        la santé mentale au sérieux. Votre anonymat est garanti, votre voix est importante.
-    </p>
-    <a href="{% url 'register' %}" class="btn">Créer mon compte anonyme</a>
-</div>
+<!-- FEATURES -->
+<section class="features-section">
+    <div class="section-header">
+        <div class="section-label">Nos rubriques</div>
+        <h2 class="section-title">Tout ce dont vous avez besoin</h2>
+        <p class="section-subtitle">Des outils pensés pour accompagner votre bien-être mental au quotidien.</p>
+    </div>
+    <div class="features-grid">
+        <div class="feature-card">
+            <div class="feature-card-top">
+                <img src="{% static 'images/posts.jpg' %}" alt="Posts">
+            </div>
+            <div class="feature-card-body">
+                <div class="feature-card-title">Posts & Partages</div>
+                <div class="feature-card-desc">Partagez vos pensées, photos et moments. Une communauté qui vous écoute et vous soutient.</div>
+                <a href="{% url 'register' %}" class="feature-card-link">Commencer →</a>
+            </div>
+        </div>
+        <div class="feature-card">
+            <div class="feature-card-top">
+                <img src="{% static 'images/forum.jpg' %}" alt="Forum">
+            </div>
+            <div class="feature-card-body">
+                <div class="feature-card-title">Forum Communautaire</div>
+                <div class="feature-card-desc">Des groupes de discussion thématiques sur l'anxiété, la dépression, la méditation et plus.</div>
+                <a href="{% url 'register' %}" class="feature-card-link">Explorer →</a>
+            </div>
+        </div>
+        <div class="feature-card">
+            <div class="feature-card-top">
+                <img src="{% static 'images/consultation.jpg' %}" alt="Consultation">
+            </div>
+            <div class="feature-card-body">
+                <div class="feature-card-title">Consultation Psy</div>
+                <div class="feature-card-desc">Accédez à des psychologues professionnels et qualifiés pour un accompagnement personnalisé.</div>
+                <a href="{% url 'register' %}" class="feature-card-link">Consulter →</a>
+            </div>
+        </div>
+        <div class="feature-card">
+            <div class="feature-card-top">
+                <img src="{% static 'images/ressources.jpg' %}" alt="Ressources">
+            </div>
+            <div class="feature-card-body">
+                <div class="feature-card-title">Ressources Éducatives</div>
+                <div class="feature-card-desc">Articles, guides pratiques, vidéos et podcasts pour approfondir vos connaissances.</div>
+                <a href="{% url 'register' %}" class="feature-card-link">Découvrir →</a>
+            </div>
+        </div>
+        <div class="feature-card">
+            <div class="feature-card-top">
+                <img src="{% static 'images/psychologue.jpg' %}" alt="Psychologues">
+            </div>
+            <div class="feature-card-body">
+                <div class="feature-card-title">100% Anonyme</div>
+                <div class="feature-card-desc">Votre pseudonyme protège votre identité. Parlez librement, sans crainte du jugement.</div>
+                <a href="{% url 'register' %}" class="feature-card-link">Créer un compte →</a>
+            </div>
+        </div>
+        <div class="feature-card">
+            <div class="feature-card-top">
+                <img src="{% static 'images/espace-bien-etre.jpg' %}" alt="Bien-être">
+            </div>
+            <div class="feature-card-body">
+                <div class="feature-card-title">Parcours Bien-être</div>
+                <div class="feature-card-desc">Suivez votre progression, fixez vos objectifs et célébrez chaque victoire du quotidien.</div>
+                <a href="{% url 'register' %}" class="feature-card-link">Découvrir →</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- QUOTE -->
+<section class="quote-section">
+    <div class="quote-inner">
+        <p class="quote-text">
+            "Prendre soin de sa santé mentale n'est pas un luxe — c'est un acte de courage.
+            Chaque pas vers le mieux-être compte, peu importe sa taille."
+        </p>
+        <div class="quote-author">
+            <div class="quote-author-dot"></div>
+            <span class="quote-author-name">L'équipe Wanaag Corner</span>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+    <div class="cta-box">
+        <div class="cta-icon">🌿</div>
+        <h2 class="cta-title">Prêt·e à prendre soin de vous ?</h2>
+        <p class="cta-desc">
+            Rejoignez des centaines de personnes à Djibouti qui prennent leur santé mentale au sérieux.
+            Votre anonymat est garanti. Votre voix est importante.
+        </p>
+        <div class="cta-actions">
+            <a href="{% url 'register' %}" class="btn-cta-main">Créer mon compte</a>
+            <a href="{% url 'login' %}" class="btn-cta-sec">J'ai déjà un compte</a>
+        </div>
+    </div>
+</section>
+
 {% endblock %}

@@ -1,0 +1,814 @@
+{% extends 'application/base.html' %}
+{% load static %}
+
+{% block title %}Santé & Nutrition — Wanaag Corner{% endblock %}
+
+{% block content %}
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,800;1,400;1,700&display=swap');
+:root {
+  --gold:#c9a66b; --gold-light:#e8c98a; --gold-glow:rgba(201,166,107,.3);
+  --amber:#d97706; --red:#ef4444;
+  --text:#f5e6d3; --text-dim:rgba(245,230,211,.6); --text-muted:rgba(245,230,211,.3);
+  --card:rgba(201,166,107,.04); --border:rgba(201,166,107,.1);
+}
+.app-content { background:#1a1008 !important; }
+body { background:#1a1008 !important; }
+
+/* ══════════════════════════════════
+   HERO
+══════════════════════════════════ */
+.sn-hero {
+  position:relative; border-radius:28px; overflow:hidden;
+  padding:3rem 3rem 2.5rem; margin-bottom:2rem;
+  background:linear-gradient(135deg,#3a2c1e 0%,#2e1f10 45%,#1a1008 100%);
+  border:1px solid rgba(201,166,107,.22);
+}
+.sn-hero::before {
+  content:''; position:absolute; inset:0; pointer-events:none;
+  background-image:
+    linear-gradient(rgba(201,166,107,.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(201,166,107,.04) 1px,transparent 1px);
+  background-size:30px 30px;
+}
+.sn-hero::after {
+  content:''; position:absolute; top:0; left:0; right:0; height:3px;
+  background:linear-gradient(90deg,transparent 0%,var(--gold) 35%,var(--gold-light) 50%,var(--gold) 65%,transparent 100%);
+}
+.sn-orb {
+  position:absolute; border-radius:50%; pointer-events:none; filter:blur(50px);
+}
+.sn-orb-1 { width:320px; height:320px; top:-100px; right:-80px; background:rgba(201,166,107,.07); }
+.sn-orb-2 { width:200px; height:200px; bottom:-60px; left:15%; background:rgba(217,119,6,.05); }
+.sn-orb-3 { width:150px; height:150px; top:30%; left:-40px; background:rgba(201,166,107,.04); }
+
+.sn-hero-inner { position:relative; z-index:2; }
+.sn-hero-top { display:flex; align-items:flex-start; justify-content:space-between; gap:1rem; flex-wrap:wrap; margin-bottom:1.4rem; }
+
+.sn-day-badge {
+  display:inline-flex; align-items:center; gap:.5rem;
+  background:rgba(201,166,107,.1); border:1px solid rgba(201,166,107,.2);
+  border-radius:50px; padding:.32rem .95rem;
+  font-size:.68rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase;
+  color:var(--gold);
+}
+.sn-day-dot {
+  width:7px; height:7px; border-radius:50%; background:var(--gold-light);
+  animation:snPulse 2s ease-in-out infinite;
+}
+@keyframes snPulse { 0%,100%{opacity:1;transform:scale(1);} 50%{opacity:.4;transform:scale(.6);} }
+
+.sn-hero-eyebrow {
+  font-size:.62rem; letter-spacing:.22em; text-transform:uppercase;
+  color:rgba(201,166,107,.5); font-weight:700; margin-bottom:.5rem;
+}
+.sn-hero-title {
+  font-family:'Playfair Display',serif;
+  font-size:clamp(2rem,5vw,3.2rem); font-weight:800; font-style:italic;
+  color:var(--text); line-height:1.1; margin-bottom:.35rem;
+}
+.sn-hero-title span { color:var(--gold-light); }
+.sn-hero-sub { font-size:.88rem; color:rgba(245,230,211,.38); max-width:480px; }
+
+.sn-hero-chips { display:flex; gap:.9rem; flex-wrap:wrap; margin-top:1.6rem; }
+.sn-chip {
+  display:flex; align-items:center; gap:.65rem;
+  background:rgba(201,166,107,.07); border:1px solid rgba(201,166,107,.15);
+  border-radius:14px; padding:.55rem 1rem; transition:all .2s;
+}
+.sn-chip:hover { background:rgba(201,166,107,.12); border-color:rgba(201,166,107,.25); }
+.sn-chip-icon { font-size:1.15rem; line-height:1; }
+.sn-chip-label { font-size:.6rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:.08em; margin-bottom:.1rem; }
+.sn-chip-val { font-size:.95rem; font-weight:800; color:var(--gold-light); line-height:1; }
+
+/* ══════════════════════════════════
+   BIOMETRICS
+══════════════════════════════════ */
+.sn-bio { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-bottom:2.5rem; }
+.sn-bio-card {
+  background:rgba(201,166,107,.04); border:1px solid rgba(201,166,107,.1);
+  border-radius:22px; padding:1.8rem; position:relative; overflow:hidden;
+}
+.sn-bio-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:2px;
+  background:linear-gradient(90deg,transparent,rgba(201,166,107,.35),transparent);
+}
+.sn-bio-label {
+  font-size:.62rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase;
+  color:rgba(201,166,107,.5); margin-bottom:1rem;
+}
+
+/* IMC */
+.sn-imc-val {
+  font-family:'Playfair Display',serif;
+  font-size:3.2rem; font-weight:800; color:var(--gold-light); line-height:1;
+}
+.sn-imc-cat { font-size:.85rem; color:var(--text-dim); margin-top:.3rem; margin-bottom:1.1rem; }
+.sn-imc-bar { height:10px; border-radius:5px; position:relative;
+  background:linear-gradient(90deg,#3b82f6 0%,#22c55e 28%,var(--amber) 58%,var(--red) 100%);
+  margin-bottom:.5rem;
+}
+.sn-imc-marker {
+  position:absolute; top:-5px; width:4px; height:20px;
+  background:#fff; border-radius:2px; box-shadow:0 0 10px rgba(0,0,0,.7);
+  transform:translateX(-50%); transition:left .6s ease;
+}
+.sn-imc-scale { display:flex; justify-content:space-between; font-size:.58rem; color:var(--text-muted); }
+.sn-bio-stats { display:flex; gap:1.5rem; flex-wrap:wrap; margin-top:1.1rem; }
+.sn-bio-stat-lbl { font-size:.6rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:.07em; }
+.sn-bio-stat-val { font-size:.9rem; font-weight:700; color:var(--text-dim); margin-top:.1rem; }
+
+/* Calories */
+.sn-cal-num {
+  font-family:'Playfair Display',serif;
+  font-size:3rem; font-weight:800; color:var(--gold); line-height:1;
+}
+.sn-cal-unit { font-size:.7rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:.1em; margin-top:.2rem; }
+.sn-cal-rows { margin-top:1.2rem; display:flex; flex-direction:column; gap:.55rem; }
+.sn-cal-row { display:flex; justify-content:space-between; align-items:center; font-size:.8rem; }
+.sn-cal-row .lbl { color:var(--text-muted); }
+.sn-cal-row .val { color:var(--text-dim); font-weight:600; }
+.sn-cal-row .val.gold { color:var(--gold); }
+
+.sn-edit-btn {
+  position:absolute; top:.9rem; right:.9rem;
+  background:rgba(201,166,107,.08); border:1px solid rgba(201,166,107,.15);
+  color:rgba(201,166,107,.6); font-size:.7rem; padding:.25rem .7rem;
+  border-radius:8px; cursor:pointer; text-decoration:none; transition:all .2s;
+}
+.sn-edit-btn:hover { background:rgba(201,166,107,.15); color:var(--gold); }
+
+/* ══════════════════════════════════
+   SECTION HEADS
+══════════════════════════════════ */
+.sn-sec-head {
+  display:flex; align-items:center; gap:1rem; margin-bottom:1.6rem;
+}
+.sn-sec-head h2 {
+  font-family:'Playfair Display',serif; font-size:1.3rem; font-style:italic;
+  color:var(--text); white-space:nowrap;
+}
+.sn-sec-line { flex:1; height:1px; background:linear-gradient(to right,rgba(201,166,107,.2),transparent); }
+
+.sn-theme-pill {
+  display:inline-flex; align-items:center; gap:.4rem;
+  background:rgba(201,166,107,.1); border:1px solid rgba(201,166,107,.2);
+  color:var(--gold); font-size:.68rem; font-weight:700; letter-spacing:.06em;
+  padding:.22rem .8rem; border-radius:50px; margin-bottom:1.2rem;
+}
+
+/* ══════════════════════════════════
+   TODAY GRID
+══════════════════════════════════ */
+.sn-today-grid {
+  display:grid; grid-template-columns:1fr 1fr; gap:2.5rem; margin-bottom:3rem;
+}
+
+/* ══ MEAL TIMELINE ══ */
+.sn-timeline { position:relative; padding-left:2.6rem; }
+.sn-timeline::before {
+  content:''; position:absolute; top:14px; bottom:14px; left:11px; width:1px;
+  background:linear-gradient(to bottom,var(--gold) 0%,rgba(201,166,107,.15) 100%);
+}
+.sn-meal-row { position:relative; margin-bottom:1rem; }
+.sn-meal-node {
+  position:absolute; left:-2.6rem; top:.4rem;
+  width:22px; height:22px; border-radius:50%;
+  background:rgba(201,166,107,.1); border:1.5px solid rgba(201,166,107,.3);
+  display:flex; align-items:center; justify-content:center; font-size:.75rem;
+  box-shadow:0 0 12px rgba(201,166,107,.15);
+}
+.sn-meal-card {
+  background:rgba(201,166,107,.04); border:1px solid rgba(201,166,107,.08);
+  border-radius:14px; padding:1rem 1.2rem; transition:all .22s;
+}
+.sn-meal-card:hover { border-color:rgba(201,166,107,.22); transform:translateX(4px); box-shadow:0 4px 16px rgba(0,0,0,.3); }
+.sn-meal-hd { display:flex; align-items:center; gap:.6rem; margin-bottom:.55rem; flex-wrap:wrap; }
+.sn-meal-icon { font-size:1.15rem; }
+.sn-meal-name { font-size:.86rem; font-weight:700; color:var(--text); flex:1; }
+.sn-meal-kcal {
+  background:rgba(201,166,107,.1); color:var(--gold);
+  font-size:.65rem; font-weight:700; padding:.14rem .55rem; border-radius:20px;
+}
+.sn-meal-items { list-style:none; padding:0; margin:0 0 .5rem; }
+.sn-meal-items li {
+  font-size:.76rem; color:var(--text-muted); padding:.16rem 0 .16rem 1.1rem; position:relative;
+}
+.sn-meal-items li::before { content:'✦'; position:absolute; left:0; color:rgba(201,166,107,.3); font-size:.48rem; top:.35rem; }
+.sn-meal-conseil {
+  font-size:.7rem; color:rgba(201,166,107,.65); font-style:italic;
+  background:rgba(201,166,107,.06); border-radius:8px; padding:.28rem .65rem;
+  display:inline-block;
+}
+
+/* ══ WORKOUT (today + week) ══ */
+.sn-workout-head {
+  background:rgba(201,166,107,.05); border:1px solid rgba(201,166,107,.12);
+  border-radius:14px; padding:1.2rem 1.4rem; margin-bottom:1rem;
+  display:flex; align-items:center; gap:1rem;
+}
+.sn-wh-emoji { font-size:2.2rem; }
+.sn-wh-focus {
+  font-family:'Playfair Display',serif; font-size:1.05rem; color:var(--text);
+}
+.sn-wh-badges { display:flex; gap:.45rem; margin-top:.35rem; flex-wrap:wrap; }
+.sn-badge {
+  font-size:.63rem; padding:.18rem .6rem; border-radius:20px; font-weight:600;
+}
+.sn-badge-dur  { background:rgba(201,166,107,.1); color:var(--gold); }
+.sn-badge-mod  { background:rgba(201,166,107,.1); color:var(--gold-light); }
+.sn-badge-easy { background:rgba(16,185,129,.1); color:#6ee7b7; }
+.sn-badge-hard { background:rgba(239,68,68,.1); color:#fca5a5; }
+.sn-badge-rest { background:rgba(99,102,241,.1); color:#a5b4fc; }
+.sn-badge-today { background:rgba(201,166,107,.18); color:var(--gold-light); }
+
+.sn-ex-list { display:flex; flex-direction:column; gap:.75rem; }
+.sn-ex-card {
+  background:rgba(201,166,107,.03); border:1px solid rgba(201,166,107,.07);
+  border-radius:12px; padding:.95rem 1.1rem; transition:all .2s;
+}
+.sn-ex-card:hover { border-color:rgba(201,166,107,.2); transform:translateX(4px); box-shadow:0 4px 16px rgba(0,0,0,.25); }
+.sn-ex-top { display:flex; align-items:center; gap:.65rem; margin-bottom:.5rem; flex-wrap:wrap; }
+.sn-ex-emoji { font-size:1.25rem; }
+.sn-ex-name  { font-size:.86rem; font-weight:700; color:var(--text); flex:1; }
+.sn-ex-muscle {
+  font-size:.6rem; padding:.14rem .55rem; border-radius:20px; font-weight:600;
+  background:rgba(201,166,107,.08); color:rgba(201,166,107,.7);
+}
+.sn-ex-stats { display:flex; gap:.9rem; flex-wrap:wrap; margin-bottom:.35rem; }
+.sn-ex-stat { text-align:center; min-width:40px; }
+.sn-ex-stat-val { font-size:.9rem; font-weight:800; color:var(--gold-light); line-height:1; }
+.sn-ex-stat-lbl { font-size:.56rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:.06em; margin-top:.12rem; }
+.sn-ex-conseil {
+  font-size:.7rem; color:rgba(201,166,107,.65); font-style:italic;
+  background:rgba(201,166,107,.06); border-radius:8px; padding:.26rem .62rem;
+  display:inline-block; margin-top:.12rem;
+}
+.sn-repos-card {
+  text-align:center; padding:2.5rem 1.5rem;
+  background:rgba(201,166,107,.03); border:1px dashed rgba(201,166,107,.15);
+  border-radius:14px;
+}
+.sn-repos-icon { font-size:3rem; margin-bottom:.8rem; }
+.sn-repos-title { font-family:'Playfair Display',serif; font-size:1.15rem; color:rgba(245,230,211,.65); margin-bottom:.4rem; }
+.sn-repos-text  { font-size:.82rem; color:var(--text-muted); line-height:1.65; }
+
+/* ══════════════════════════════════
+   WEEK TABS
+══════════════════════════════════ */
+.sn-tabs {
+  display:flex; gap:.5rem; overflow-x:auto; padding-bottom:.5rem; margin-bottom:1.5rem;
+  scrollbar-width:none;
+}
+.sn-tabs::-webkit-scrollbar { display:none; }
+.sn-tab {
+  flex-shrink:0; padding:.42rem .9rem; border-radius:50px;
+  background:rgba(201,166,107,.04); border:1px solid rgba(201,166,107,.1);
+  color:rgba(245,230,211,.42); font-size:.74rem; font-weight:600; cursor:pointer;
+  transition:all .2s; white-space:nowrap; font-family:inherit;
+}
+.sn-tab:hover { background:rgba(201,166,107,.08); color:rgba(245,230,211,.65); }
+.sn-tab.active {
+  background:rgba(201,166,107,.14); border-color:rgba(201,166,107,.35);
+  color:var(--gold-light); box-shadow:0 0 14px rgba(201,166,107,.12);
+}
+.sn-tab.repos-tab.active { background:rgba(99,102,241,.1); border-color:rgba(99,102,241,.25); color:#a5b4fc; }
+
+.sn-prog-day { display:none; }
+.sn-prog-day.active { display:block; }
+
+/* ══════════════════════════════════
+   FORM
+══════════════════════════════════ */
+.sn-form-wrap {
+  background:rgba(201,166,107,.04); border:1px solid rgba(201,166,107,.1);
+  border-radius:26px; padding:2.5rem; max-width:700px; margin:0 auto;
+  position:relative; overflow:hidden;
+}
+.sn-form-wrap::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:2px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+}
+.sn-form-wrap h2 {
+  font-family:'Playfair Display',serif; font-size:1.5rem; font-style:italic;
+  color:var(--text); margin-bottom:1.6rem;
+}
+.sn-field { margin-bottom:1.2rem; }
+.sn-label {
+  display:block; font-size:.7rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
+  color:rgba(245,230,211,.4); margin-bottom:.4rem;
+}
+.sn-input {
+  width:100%; background:rgba(201,166,107,.04); border:1px solid rgba(201,166,107,.12);
+  color:var(--text); border-radius:12px; padding:.72rem 1rem;
+  font-family:inherit; font-size:.9rem; outline:none; transition:all .2s; box-sizing:border-box;
+}
+.sn-input:focus { border-color:rgba(201,166,107,.4); background:rgba(201,166,107,.07); }
+.sn-input option { background:#1a1008; color:var(--text); }
+.sn-row { display:grid; grid-template-columns:1fr 1fr 1fr; gap:1.2rem; }
+.sn-radio-group { display:flex; gap:.75rem; flex-wrap:wrap; }
+.sn-radio-label {
+  display:flex; align-items:center; gap:.5rem; cursor:pointer;
+  background:rgba(201,166,107,.04); border:1px solid rgba(201,166,107,.1);
+  border-radius:10px; padding:.5rem 1rem; transition:all .2s;
+  font-size:.85rem; color:rgba(245,230,211,.5);
+}
+.sn-radio-label:has(input:checked) {
+  background:rgba(201,166,107,.12); border-color:rgba(201,166,107,.3); color:var(--gold);
+}
+.sn-radio-label input { display:none; }
+.sn-submit {
+  width:100%; padding:.85rem; border-radius:50px; border:none; cursor:pointer;
+  background:linear-gradient(135deg,var(--gold),#8b6832);
+  color:#fff; font-weight:700; font-size:1rem; font-family:inherit;
+  transition:all .25s; margin-top:.5rem;
+  box-shadow:0 6px 20px rgba(201,166,107,.3);
+}
+.sn-submit:hover { transform:translateY(-2px); box-shadow:0 12px 28px rgba(201,166,107,.5); }
+
+/* ══════════════════════════════════
+   MODAL
+══════════════════════════════════ */
+.sn-modal-bd {
+  display:none; position:fixed; inset:0; z-index:1000;
+  background:rgba(0,0,0,.78); backdrop-filter:blur(10px);
+  align-items:center; justify-content:center;
+}
+.sn-modal-bd.open { display:flex; }
+.sn-modal {
+  background:linear-gradient(135deg,#3a2c1e,#2e1f10);
+  border:1px solid rgba(201,166,107,.2);
+  border-radius:24px; padding:2.5rem; width:100%; max-width:600px;
+  max-height:90vh; overflow-y:auto;
+  animation:snModalIn .3s ease;
+}
+@keyframes snModalIn { from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);} }
+
+@media(max-width:960px) { .sn-today-grid { grid-template-columns:1fr; } }
+@media(max-width:700px) {
+  .sn-bio { grid-template-columns:1fr; }
+  .sn-row { grid-template-columns:1fr 1fr; }
+  .sn-hero { padding:2rem 1.5rem; }
+  .sn-hero-title { font-size:1.8rem; }
+}
+@media(max-width:480px) {
+  .sn-hero { padding:1.5rem 1rem; }
+  .sn-hero-title { font-size:1.5rem; }
+  .sn-hero-chips { gap:.5rem; }
+  .sn-chip { padding:.4rem .7rem; font-size:.72rem; }
+  .sn-row { grid-template-columns:1fr; }
+  .sn-form-wrap { padding:1.5rem 1rem; border-radius:18px; }
+  .sn-modal { padding:1.5rem 1rem; border-radius:18px; margin:0 .75rem; }
+  .sn-bio-card { padding:1.2rem 1rem; }
+  .sn-section-title { font-size:1rem; }
+}
+</style>
+
+<!-- ════════════════════════════════════════
+  HERO
+════════════════════════════════════════ -->
+<div class="sn-hero">
+  <div class="sn-orb sn-orb-1"></div>
+  <div class="sn-orb sn-orb-2"></div>
+  <div class="sn-orb sn-orb-3"></div>
+  <div class="sn-hero-inner">
+    <div class="sn-hero-top">
+      {% if profil and meal_plan %}
+      <div class="sn-day-badge">
+        <span class="sn-day-dot"></span>
+        Jour {{ today_day_idx|add:1 }}/7 — {{ meal_plan.jour_nom }}
+      </div>
+      {% endif %}
+    </div>
+    <div class="sn-hero-eyebrow">Wanaag Corner · Bien-être</div>
+    <h1 class="sn-hero-title">Santé <span>&</span> Nutrition</h1>
+    <p class="sn-hero-sub">Programme personnalisé · Nutrition optimale · Performance au quotidien</p>
+
+    {% if profil and meal_plan %}
+    <div class="sn-hero-chips">
+      <div class="sn-chip">
+        <span class="sn-chip-icon">⚖️</span>
+        <div>
+          <div class="sn-chip-label">IMC</div>
+          <div class="sn-chip-val">{{ profil.imc }}</div>
+        </div>
+      </div>
+      <div class="sn-chip">
+        <span class="sn-chip-icon">🔥</span>
+        <div>
+          <div class="sn-chip-label">Calories / jour</div>
+          <div class="sn-chip-val">{{ total_cal }} kcal</div>
+        </div>
+      </div>
+      <div class="sn-chip">
+        <span class="sn-chip-icon">🌿</span>
+        <div>
+          <div class="sn-chip-label">Thème du jour</div>
+          <div class="sn-chip-val" style="font-size:.78rem;">{{ meal_plan.theme }}</div>
+        </div>
+      </div>
+      {% if today_workout %}
+      <div class="sn-chip">
+        <span class="sn-chip-icon">{{ today_workout.emoji }}</span>
+        <div>
+          <div class="sn-chip-label">Séance du jour</div>
+          <div class="sn-chip-val" style="font-size:.78rem;">{{ today_workout.duree }}</div>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+{% if not profil %}
+<!-- ════════════════════════════════════════
+  FORM — NOUVEAU PROFIL
+════════════════════════════════════════ -->
+<div class="sn-form-wrap">
+  <h2>Créez votre profil santé ✦</h2>
+  <form method="post">
+    {% csrf_token %}
+    <div class="sn-row">
+      <div class="sn-field">
+        <label class="sn-label">Âge</label>
+        <input type="number" name="age" min="10" max="100" placeholder="25" class="sn-input" required>
+      </div>
+      <div class="sn-field">
+        <label class="sn-label">Taille (cm)</label>
+        <input type="number" name="taille" min="100" max="250" placeholder="170" class="sn-input" required>
+      </div>
+      <div class="sn-field">
+        <label class="sn-label">Poids (kg)</label>
+        <input type="number" name="poids" min="30" max="300" step="0.1" placeholder="70" class="sn-input" required>
+      </div>
+    </div>
+    <div class="sn-field">
+      <label class="sn-label">Sexe</label>
+      <div class="sn-radio-group">
+        <label class="sn-radio-label"><input type="radio" name="sexe" value="homme" checked> 👨 Homme</label>
+        <label class="sn-radio-label"><input type="radio" name="sexe" value="femme"> 👩 Femme</label>
+      </div>
+    </div>
+    <div class="sn-field">
+      <label class="sn-label">Niveau d'activité</label>
+      <select name="niveau_activite" class="sn-input">
+        <option value="sedentaire">Sédentaire (bureau, peu de sport)</option>
+        <option value="leger">Légèrement actif (1–3 j/sem)</option>
+        <option value="modere" selected>Modérément actif (3–5 j/sem)</option>
+        <option value="actif">Très actif (6–7 j/sem)</option>
+        <option value="tres_actif">Extrêmement actif (sport intense)</option>
+      </select>
+    </div>
+    <div class="sn-field">
+      <label class="sn-label">Objectif</label>
+      <select name="objectif" class="sn-input">
+        <option value="perdre">Perdre du poids</option>
+        <option value="maintenir" selected>Maintenir le poids</option>
+        <option value="prendre">Prendre du poids / Musculation</option>
+      </select>
+    </div>
+    <button type="submit" class="sn-submit">Générer mon plan personnalisé ✦</button>
+  </form>
+</div>
+
+{% else %}
+<!-- ════════════════════════════════════════
+  BIOMETRICS
+════════════════════════════════════════ -->
+<div class="sn-bio">
+
+  <!-- IMC Card -->
+  <div class="sn-bio-card">
+    <a href="#" class="sn-edit-btn" onclick="openEdit(event)">✎ Modifier</a>
+    <div class="sn-bio-label">Indice de Masse Corporelle</div>
+    <div class="sn-imc-val">{{ profil.imc }}</div>
+    <div class="sn-imc-cat">{{ profil.imc_label }}</div>
+    <div class="sn-imc-bar"><div class="sn-imc-marker" id="imcMarker"></div></div>
+    <div class="sn-imc-scale">
+      <span>Insuf.</span><span>18.5</span><span>25 Normal</span><span>30 Surpoids</span><span>Obésité</span>
+    </div>
+    <div class="sn-bio-stats">
+      <div><div class="sn-bio-stat-lbl">Taille</div><div class="sn-bio-stat-val">{{ profil.taille }} cm</div></div>
+      <div><div class="sn-bio-stat-lbl">Poids</div><div class="sn-bio-stat-val">{{ profil.poids }} kg</div></div>
+      <div><div class="sn-bio-stat-lbl">Âge</div><div class="sn-bio-stat-val">{{ profil.age }} ans</div></div>
+    </div>
+  </div>
+
+  <!-- Calories Card -->
+  <div class="sn-bio-card">
+    <div class="sn-bio-label">Calories recommandées / jour</div>
+    <div class="sn-cal-num">{{ total_cal }}</div>
+    <div class="sn-cal-unit">kcal par jour</div>
+    <div class="sn-cal-rows">
+      <div class="sn-cal-row"><span class="lbl">Objectif</span><span class="val gold">{{ profil.get_objectif_display }}</span></div>
+      <div class="sn-cal-row"><span class="lbl">Activité</span><span class="val">{{ profil.get_niveau_activite_display }}</span></div>
+      <div class="sn-cal-row"><span class="lbl">Sexe</span><span class="val">{{ profil.get_sexe_display }}</span></div>
+      {% if meal_plan %}
+      <div class="sn-cal-row" style="border-top:1px solid rgba(201,166,107,.08);padding-top:.5rem;margin-top:.2rem;">
+        <span class="lbl">Petit-déjeuner</span><span class="val">≈ {{ meal_plan.petit_dejeuner.cal }} kcal</span>
+      </div>
+      <div class="sn-cal-row"><span class="lbl">Déjeuner</span><span class="val">≈ {{ meal_plan.dejeuner.cal }} kcal</span></div>
+      <div class="sn-cal-row"><span class="lbl">Dîner</span><span class="val">≈ {{ meal_plan.diner.cal }} kcal</span></div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% if meal_plan and today_workout %}
+<!-- ════════════════════════════════════════
+  TODAY: NUTRITION + WORKOUT
+════════════════════════════════════════ -->
+<div class="sn-today-grid">
+
+  <!-- ── NUTRITION DU JOUR ── -->
+  <div>
+    <div class="sn-sec-head">
+      <h2>🥗 Nutrition du Jour</h2>
+      <div class="sn-sec-line"></div>
+    </div>
+    <div class="sn-theme-pill">✦ {{ meal_plan.theme }}</div>
+
+    <div class="sn-timeline">
+
+      <!-- Petit-déjeuner -->
+      <div class="sn-meal-row">
+        <div class="sn-meal-node">☀️</div>
+        <div class="sn-meal-card">
+          <div class="sn-meal-hd">
+            <span class="sn-meal-icon">☀️</span>
+            <span class="sn-meal-name">Petit-déjeuner</span>
+            <span class="sn-meal-kcal">{{ meal_plan.petit_dejeuner.cal }} kcal</span>
+          </div>
+          <ul class="sn-meal-items">{% for item in meal_plan.petit_dejeuner.items %}<li>{{ item }}</li>{% endfor %}</ul>
+          {% if meal_plan.petit_dejeuner.conseil %}<span class="sn-meal-conseil">💡 {{ meal_plan.petit_dejeuner.conseil }}</span>{% endif %}
+        </div>
+      </div>
+
+      <!-- Collation matin -->
+      <div class="sn-meal-row">
+        <div class="sn-meal-node">🍎</div>
+        <div class="sn-meal-card">
+          <div class="sn-meal-hd">
+            <span class="sn-meal-icon">🍎</span>
+            <span class="sn-meal-name">Collation matinale</span>
+            <span class="sn-meal-kcal">{{ meal_plan.collation_matin.cal }} kcal</span>
+          </div>
+          <ul class="sn-meal-items">{% for item in meal_plan.collation_matin.items %}<li>{{ item }}</li>{% endfor %}</ul>
+        </div>
+      </div>
+
+      <!-- Déjeuner -->
+      <div class="sn-meal-row">
+        <div class="sn-meal-node">🌤️</div>
+        <div class="sn-meal-card">
+          <div class="sn-meal-hd">
+            <span class="sn-meal-icon">🌤️</span>
+            <span class="sn-meal-name">Déjeuner</span>
+            <span class="sn-meal-kcal">{{ meal_plan.dejeuner.cal }} kcal</span>
+          </div>
+          <ul class="sn-meal-items">{% for item in meal_plan.dejeuner.items %}<li>{{ item }}</li>{% endfor %}</ul>
+          {% if meal_plan.dejeuner.conseil %}<span class="sn-meal-conseil">💡 {{ meal_plan.dejeuner.conseil }}</span>{% endif %}
+        </div>
+      </div>
+
+      <!-- Collation après-midi -->
+      <div class="sn-meal-row">
+        <div class="sn-meal-node">🍊</div>
+        <div class="sn-meal-card">
+          <div class="sn-meal-hd">
+            <span class="sn-meal-icon">🍊</span>
+            <span class="sn-meal-name">Collation après-midi</span>
+            <span class="sn-meal-kcal">{{ meal_plan.collation_soir.cal }} kcal</span>
+          </div>
+          <ul class="sn-meal-items">{% for item in meal_plan.collation_soir.items %}<li>{{ item }}</li>{% endfor %}</ul>
+        </div>
+      </div>
+
+      <!-- Dîner -->
+      <div class="sn-meal-row">
+        <div class="sn-meal-node">🌙</div>
+        <div class="sn-meal-card">
+          <div class="sn-meal-hd">
+            <span class="sn-meal-icon">🌙</span>
+            <span class="sn-meal-name">Dîner</span>
+            <span class="sn-meal-kcal">{{ meal_plan.diner.cal }} kcal</span>
+          </div>
+          <ul class="sn-meal-items">{% for item in meal_plan.diner.items %}<li>{{ item }}</li>{% endfor %}</ul>
+          {% if meal_plan.diner.conseil %}<span class="sn-meal-conseil">💡 {{ meal_plan.diner.conseil }}</span>{% endif %}
+        </div>
+      </div>
+
+    </div><!-- /timeline -->
+  </div>
+
+  <!-- ── SÉANCE DU JOUR ── -->
+  <div>
+    <div class="sn-sec-head">
+      <h2>🏋️ Séance du Jour</h2>
+      <div class="sn-sec-line"></div>
+    </div>
+
+    <div class="sn-workout-head">
+      <div class="sn-wh-emoji">{{ today_workout.emoji }}</div>
+      <div>
+        <div class="sn-wh-focus">{{ today_workout.focus }}</div>
+        <div class="sn-wh-badges">
+          <span class="sn-badge sn-badge-dur">⏱ {{ today_workout.duree }}</span>
+          <span class="sn-badge {% if today_workout.repos_jour %}sn-badge-rest{% elif today_workout.difficulte == 'Doux' or today_workout.difficulte == 'Débutant' %}sn-badge-easy{% elif today_workout.difficulte == 'Intense' or today_workout.difficulte == 'Avancé' %}sn-badge-hard{% else %}sn-badge-mod{% endif %}">{{ today_workout.difficulte }}</span>
+          <span class="sn-badge sn-badge-today">✦ Aujourd'hui</span>
+        </div>
+      </div>
+    </div>
+
+    {% if today_workout.repos_jour %}
+    <div class="sn-repos-card">
+      <div class="sn-repos-icon">{{ today_workout.emoji }}</div>
+      <div class="sn-repos-title">{{ today_workout.focus }}</div>
+      <div class="sn-repos-text">Votre corps se reconstruit pendant le repos.<br>Hydratation, sommeil de qualité et alimentation équilibrée sont vos meilleurs alliés.</div>
+    </div>
+    {% else %}
+    <div class="sn-ex-list">
+      {% for ex in today_workout.exercices %}
+      <div class="sn-ex-card">
+        <div class="sn-ex-top">
+          <span class="sn-ex-emoji">{{ ex.emoji }}</span>
+          <span class="sn-ex-name">{{ ex.nom }}</span>
+          <span class="sn-ex-muscle">{{ ex.muscle }}</span>
+        </div>
+        <div class="sn-ex-stats">
+          <div class="sn-ex-stat"><div class="sn-ex-stat-val">{{ ex.series }}</div><div class="sn-ex-stat-lbl">Séries</div></div>
+          <div class="sn-ex-stat"><div class="sn-ex-stat-val">{{ ex.reps }}</div><div class="sn-ex-stat-lbl">Reps</div></div>
+          <div class="sn-ex-stat"><div class="sn-ex-stat-val">{{ ex.repos }}</div><div class="sn-ex-stat-lbl">Repos</div></div>
+        </div>
+        {% if ex.conseil %}<div class="sn-ex-conseil">💡 {{ ex.conseil }}</div>{% endif %}
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+
+</div><!-- /today-grid -->
+{% endif %}
+
+<!-- ════════════════════════════════════════
+  PROGRAMME 7 JOURS
+════════════════════════════════════════ -->
+{% if programme_7_jours %}
+<div style="margin-bottom:3rem;">
+  <div class="sn-sec-head">
+    <h2>📅 Programme 7 Jours</h2>
+    <div class="sn-sec-line"></div>
+  </div>
+
+  <!-- Day tabs -->
+  <div class="sn-tabs">
+    {% for jour in programme_7_jours %}
+    <button class="sn-tab {% if jour.repos_jour %}repos-tab{% endif %}"
+            id="snTab{{ forloop.counter0 }}"
+            onclick="showDay({{ forloop.counter0 }}, this)">
+      {{ jour.emoji }} {{ jour.jour }}{% if forloop.counter0 == today_day_idx %} <span style="opacity:.65;font-size:.62rem;">· auj.</span>{% endif %}
+    </button>
+    {% endfor %}
+  </div>
+
+  <!-- Day panels -->
+  {% for jour in programme_7_jours %}
+  <div class="sn-prog-day" id="snDay{{ forloop.counter0 }}">
+
+    <div class="sn-workout-head">
+      <div class="sn-wh-emoji">{{ jour.emoji }}</div>
+      <div style="flex:1;">
+        <div class="sn-wh-focus">{{ jour.focus }}</div>
+        <div class="sn-wh-badges">
+          <span class="sn-badge sn-badge-dur">⏱ {{ jour.duree }}</span>
+          <span class="sn-badge {% if jour.repos_jour %}sn-badge-rest{% elif jour.difficulte == 'Doux' or jour.difficulte == 'Débutant' %}sn-badge-easy{% elif jour.difficulte == 'Intense' or jour.difficulte == 'Avancé' %}sn-badge-hard{% else %}sn-badge-mod{% endif %}">{{ jour.difficulte }}</span>
+          {% if forloop.counter0 == today_day_idx %}<span class="sn-badge sn-badge-today">✦ Aujourd'hui</span>{% endif %}
+        </div>
+      </div>
+    </div>
+
+    {% if jour.repos_jour %}
+    <div class="sn-repos-card">
+      <div class="sn-repos-icon">{{ jour.emoji }}</div>
+      <div class="sn-repos-title">{{ jour.focus }}</div>
+      <div class="sn-repos-text">Récupération active : hydratation, étirements légers, sommeil de qualité.</div>
+    </div>
+    {% else %}
+    <div class="sn-ex-list">
+      {% for ex in jour.exercices %}
+      <div class="sn-ex-card">
+        <div class="sn-ex-top">
+          <span class="sn-ex-emoji">{{ ex.emoji }}</span>
+          <span class="sn-ex-name">{{ ex.nom }}</span>
+          <span class="sn-ex-muscle">{{ ex.muscle }}</span>
+        </div>
+        <div class="sn-ex-stats">
+          <div class="sn-ex-stat"><div class="sn-ex-stat-val">{{ ex.series }}</div><div class="sn-ex-stat-lbl">Séries</div></div>
+          <div class="sn-ex-stat"><div class="sn-ex-stat-val">{{ ex.reps }}</div><div class="sn-ex-stat-lbl">Reps</div></div>
+          <div class="sn-ex-stat"><div class="sn-ex-stat-val">{{ ex.repos }}</div><div class="sn-ex-stat-lbl">Repos</div></div>
+        </div>
+        {% if ex.conseil %}<div class="sn-ex-conseil">💡 {{ ex.conseil }}</div>{% endif %}
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<!-- ════════════════════════════════════════
+  EDIT MODAL
+════════════════════════════════════════ -->
+<div class="sn-modal-bd" id="snEditModal" onclick="closeOnBd(event)">
+  <div class="sn-modal">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
+      <h3 style="font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--text);margin:0;">Modifier le profil</h3>
+      <button onclick="closeEdit()" style="background:none;border:none;color:rgba(245,230,211,.35);font-size:1.2rem;cursor:pointer;">✕</button>
+    </div>
+    <form method="post">
+      {% csrf_token %}
+      <div class="sn-row">
+        <div class="sn-field">
+          <label class="sn-label">Âge</label>
+          <input type="number" name="age" value="{{ profil.age }}" min="10" max="100" class="sn-input" required>
+        </div>
+        <div class="sn-field">
+          <label class="sn-label">Taille (cm)</label>
+          <input type="number" name="taille" value="{{ profil.taille }}" min="100" max="250" class="sn-input" required>
+        </div>
+        <div class="sn-field">
+          <label class="sn-label">Poids (kg)</label>
+          <input type="number" name="poids" value="{{ profil.poids }}" min="30" max="300" step="0.1" class="sn-input" required>
+        </div>
+      </div>
+      <div class="sn-field">
+        <label class="sn-label">Sexe</label>
+        <div class="sn-radio-group">
+          <label class="sn-radio-label"><input type="radio" name="sexe" value="homme" {% if profil.sexe == 'homme' %}checked{% endif %}> 👨 Homme</label>
+          <label class="sn-radio-label"><input type="radio" name="sexe" value="femme" {% if profil.sexe == 'femme' %}checked{% endif %}> 👩 Femme</label>
+        </div>
+      </div>
+      <div class="sn-field">
+        <label class="sn-label">Niveau d'activité</label>
+        <select name="niveau_activite" class="sn-input">
+          <option value="sedentaire" {% if profil.niveau_activite == 'sedentaire' %}selected{% endif %}>Sédentaire</option>
+          <option value="leger" {% if profil.niveau_activite == 'leger' %}selected{% endif %}>Légèrement actif</option>
+          <option value="modere" {% if profil.niveau_activite == 'modere' %}selected{% endif %}>Modérément actif</option>
+          <option value="actif" {% if profil.niveau_activite == 'actif' %}selected{% endif %}>Très actif</option>
+          <option value="tres_actif" {% if profil.niveau_activite == 'tres_actif' %}selected{% endif %}>Extrêmement actif</option>
+        </select>
+      </div>
+      <div class="sn-field">
+        <label class="sn-label">Objectif</label>
+        <select name="objectif" class="sn-input">
+          <option value="perdre" {% if profil.objectif == 'perdre' %}selected{% endif %}>Perdre du poids</option>
+          <option value="maintenir" {% if profil.objectif == 'maintenir' %}selected{% endif %}>Maintenir le poids</option>
+          <option value="prendre" {% if profil.objectif == 'prendre' %}selected{% endif %}>Prendre du poids / Musculation</option>
+        </select>
+      </div>
+      <button type="submit" class="sn-submit">Mettre à jour ✦</button>
+    </form>
+  </div>
+</div>
+
+{% endif %}
+
+<script>
+// IMC marker position
+(function(){
+  const imc = parseFloat('{{ profil.imc|default:"22" }}') || 22;
+  const pct = Math.max(0, Math.min(100, (imc - 15) / 25 * 100));
+  const m = document.getElementById('imcMarker');
+  if (m) m.style.left = pct + '%';
+})();
+
+// Week tabs — initialize today's tab
+(function(){
+  const todayIdx = parseInt('{{ today_day_idx|default:"0" }}') || 0;
+  const tab = document.getElementById('snTab' + todayIdx);
+  const day = document.getElementById('snDay' + todayIdx);
+  if (tab)  tab.classList.add('active');
+  if (day)  day.classList.add('active');
+  if (!tab && !day) {
+    const t0 = document.querySelector('.sn-tab');
+    const d0 = document.querySelector('.sn-prog-day');
+    if (t0) t0.classList.add('active');
+    if (d0) d0.classList.add('active');
+  }
+})();
+
+function showDay(idx, btn) {
+  document.querySelectorAll('.sn-prog-day').forEach(d => d.classList.remove('active'));
+  document.querySelectorAll('.sn-tab').forEach(t => t.classList.remove('active'));
+  const d = document.getElementById('snDay' + idx);
+  if (d) d.classList.add('active');
+  btn.classList.add('active');
+}
+
+function openEdit(e)    { e.preventDefault(); document.getElementById('snEditModal').classList.add('open'); }
+function closeEdit()    { document.getElementById('snEditModal').classList.remove('open'); }
+function closeOnBd(e)   { if (e.target === document.getElementById('snEditModal')) closeEdit(); }
+</script>
+{% endblock %}

@@ -1,0 +1,674 @@
+{% extends 'application/base.html' %}
+{% load static %}
+
+{% block title %}Journal Intime — Wanaag Corner{% endblock %}
+
+{% block content %}
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;0,800;1,400;1,700&display=swap');
+
+:root {
+    --gold:#c9a66b; --gold-light:#e8c98a; --gold-dim:rgba(201,166,107,.12);
+    --paper:#f5e6d3; --paper2:#ede0cc; --paper3:#e4d3b8;
+    --ink:#2c1a0a; --ink2:rgba(44,26,10,.6); --ink3:rgba(44,26,10,.35);
+    --brown-dark:#1a1008; --brown-mid:#2e1f10; --brown-cover:#3a2c1e;
+    --mood5:#10b981; --mood4:#14b8a6; --mood3:#f59e0b; --mood2:#f97316; --mood1:#ef4444;
+}
+.app-content { background:#1a1008 !important; }
+body { background:#1a1008 !important; }
+
+/* ══════════════════════════════════════════
+   HERO
+══════════════════════════════════════════ */
+.jnl-hero {
+    position:relative; border-radius:28px; overflow:hidden;
+    padding:3.5rem 3rem; margin-bottom:3rem;
+    background:linear-gradient(135deg,#2e1f10 0%,#1a1008 50%,#2a1a08 100%);
+    border:1px solid rgba(201,166,107,.2);
+    display:flex; align-items:center; justify-content:space-between; gap:2rem;
+}
+/* Grid texture */
+.jnl-hero::before {
+    content:''; position:absolute; inset:0;
+    background-image:
+        linear-gradient(rgba(201,166,107,.04) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(201,166,107,.04) 1px,transparent 1px);
+    background-size:32px 32px;
+}
+/* Top gold line */
+.jnl-hero::after {
+    content:''; position:absolute; top:0; left:0; right:0; height:3px;
+    background:linear-gradient(90deg,transparent 0%,var(--gold) 40%,var(--gold-light) 50%,var(--gold) 60%,transparent 100%);
+}
+.jnl-hero-left { position:relative; z-index:2; }
+.jnl-hero-eyebrow {
+    font-size:.65rem; letter-spacing:.22em; text-transform:uppercase;
+    color:rgba(201,166,107,.5); font-weight:700; margin-bottom:.6rem;
+}
+.jnl-hero-title {
+    font-family:'Playfair Display',serif;
+    font-size:clamp(2rem,5vw,3rem); font-weight:800; font-style:italic;
+    color:#f5e6d3; line-height:1.1; margin-bottom:.8rem;
+}
+.jnl-hero-title span { color:var(--gold-light); }
+.jnl-hero-sub { font-size:.9rem; color:rgba(245,230,211,.4); max-width:380px; line-height:1.6; }
+
+/* Open book decoration */
+.jnl-book-deco {
+    position:relative; z-index:2; flex-shrink:0;
+    width:140px; height:100px;
+}
+.jnl-book-svg { filter:drop-shadow(0 10px 30px rgba(201,166,107,.3)); animation:bookFloat 4s ease-in-out infinite; }
+@keyframes bookFloat { 0%,100%{transform:translateY(0) rotate(-2deg);} 50%{transform:translateY(-8px) rotate(2deg);} }
+
+/* Write button */
+.jnl-write-btn {
+    position:relative; z-index:2; flex-shrink:0;
+    display:inline-flex; align-items:center; gap:.6rem;
+    background:linear-gradient(135deg,var(--gold),#8b6832);
+    color:#fff; font-weight:700; font-size:.9rem; border:none; cursor:pointer;
+    padding:.8rem 1.8rem; border-radius:50px; font-family:inherit;
+    transition:all .3s; box-shadow:0 8px 24px rgba(201,166,107,.35);
+    letter-spacing:.03em;
+}
+.jnl-write-btn:hover { transform:translateY(-3px); box-shadow:0 14px 35px rgba(201,166,107,.55); }
+.jnl-write-btn-icon { font-size:1.1rem; transition:transform .3s; }
+.jnl-write-btn:hover .jnl-write-btn-icon { transform:rotate(-10deg) scale(1.2); }
+
+/* ══════════════════════════════════════════
+   STATS STRIP
+══════════════════════════════════════════ */
+.jnl-stats-strip {
+    display:flex; gap:1rem; margin-bottom:2.5rem; flex-wrap:wrap;
+    opacity:1!important;
+}
+.jnl-stat-pill {
+    display:flex; align-items:center; gap:.6rem;
+    background:rgba(201,166,107,.05); border:1px solid rgba(201,166,107,.12);
+    border-radius:50px; padding:.55rem 1.1rem;
+    font-size:.8rem; color:rgba(245,230,211,.6);
+}
+.jnl-stat-pill strong { color:var(--gold-light); font-size:1rem; font-family:'Playfair Display',serif; }
+
+/* ══════════════════════════════════════════
+   PAGES GRID — book pages aesthetic
+══════════════════════════════════════════ */
+.jnl-pages-label {
+    font-family:'Playfair Display',serif; font-style:italic;
+    font-size:1.2rem; color:rgba(245,230,211,.55);
+    margin-bottom:1.5rem; display:flex; align-items:center; gap:1rem;
+}
+.jnl-pages-label::after { content:''; flex:1; height:1px; background:linear-gradient(to right,rgba(201,166,107,.2),transparent); }
+
+.jnl-pages-grid {
+    display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+    gap:1.8rem; margin-bottom:3rem;
+}
+
+/* Each entry = a page card */
+.jnl-page-card {
+    position:relative; border-radius:4px 16px 16px 4px;
+    overflow:hidden; cursor:pointer;
+    background:var(--paper);
+    box-shadow:
+        0 2px 4px rgba(44,26,10,.15),
+        0 8px 24px rgba(44,26,10,.2),
+        4px 0 8px rgba(44,26,10,.1);
+    transition:all .35s cubic-bezier(.4,0,.2,1);
+    opacity:1!important; transform:none!important;
+    min-height:260px; display:flex; flex-direction:column;
+}
+.jnl-page-card:hover {
+    transform:translateY(-10px) rotate(0.5deg) !important;
+    box-shadow:
+        0 6px 12px rgba(44,26,10,.2),
+        0 24px 50px rgba(44,26,10,.35),
+        8px 0 16px rgba(44,26,10,.15);
+}
+/* Spine (left colored strip by mood) */
+.jnl-page-card::before {
+    content:''; position:absolute; left:0; top:0; bottom:0; width:6px;
+}
+.jnl-page-m5::before { background:linear-gradient(180deg,var(--mood5),rgba(16,185,129,.3)); }
+.jnl-page-m4::before { background:linear-gradient(180deg,var(--mood4),rgba(20,184,166,.3)); }
+.jnl-page-m3::before { background:linear-gradient(180deg,var(--mood3),rgba(245,158,11,.3)); }
+.jnl-page-m2::before { background:linear-gradient(180deg,var(--mood2),rgba(249,115,22,.3)); }
+.jnl-page-m1::before { background:linear-gradient(180deg,var(--mood1),rgba(239,68,68,.3)); }
+
+/* Page texture: horizontal lines */
+.jnl-page-card::after {
+    content:''; position:absolute; inset:0;
+    background:repeating-linear-gradient(
+        transparent, transparent 27px,
+        rgba(139,100,55,.12) 27px, rgba(139,100,55,.12) 28px
+    );
+    pointer-events:none;
+}
+
+/* Dog-ear fold */
+.jnl-page-fold {
+    position:absolute; top:0; right:0;
+    width:0; height:0;
+    border-style:solid;
+    border-width:0 28px 28px 0;
+    border-color:transparent var(--paper2) transparent transparent;
+    z-index:3;
+    filter:drop-shadow(-2px 2px 2px rgba(44,26,10,.12));
+}
+
+/* Page number */
+.jnl-page-num {
+    position:absolute; top:.55rem; right:.6rem;
+    font-family:'Playfair Display',serif; font-style:italic;
+    font-size:.65rem; color:rgba(44,26,10,.3);
+    z-index:4;
+}
+
+/* Card content */
+.jnl-page-inner {
+    padding:1.4rem 1.4rem 1.2rem 1.6rem;
+    position:relative; z-index:2; flex:1; display:flex; flex-direction:column;
+}
+.jnl-page-date {
+    font-family:'Playfair Display',serif; font-style:italic;
+    font-size:.72rem; color:var(--ink3); margin-bottom:.8rem;
+    letter-spacing:.03em;
+}
+.jnl-page-mood-row { display:flex; align-items:center; gap:.5rem; margin-bottom:.9rem; }
+.jnl-page-mood-emoji { font-size:1.4rem; }
+.jnl-page-mood-label {
+    font-size:.65rem; font-weight:700; padding:.15rem .5rem;
+    border-radius:20px; letter-spacing:.04em;
+}
+.jnl-ml-5 { background:rgba(16,185,129,.12); color:var(--mood5); }
+.jnl-ml-4 { background:rgba(20,184,166,.12); color:var(--mood4); }
+.jnl-ml-3 { background:rgba(245,158,11,.12); color:var(--mood3); }
+.jnl-ml-2 { background:rgba(249,115,22,.12); color:var(--mood2); }
+.jnl-ml-1 { background:rgba(239,68,68,.12);  color:var(--mood1); }
+
+.jnl-page-title {
+    font-family:'Playfair Display',serif; font-weight:700;
+    font-size:1rem; color:var(--ink); line-height:1.3; margin-bottom:.6rem;
+}
+.jnl-page-text {
+    font-family:'Caveat',cursive; font-size:1.05rem;
+    color:var(--ink2); line-height:1.6; flex:1;
+    display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden;
+}
+.jnl-page-footer {
+    margin-top:auto; padding-top:.8rem;
+    border-top:1px solid rgba(139,100,55,.15);
+    display:flex; justify-content:flex-end;
+}
+.jnl-page-delete {
+    background:none; border:none; color:rgba(44,26,10,.2);
+    cursor:pointer; font-size:.8rem; padding:.3rem .5rem;
+    border-radius:6px; transition:all .2s; font-family:inherit;
+}
+.jnl-page-delete:hover { background:rgba(239,68,68,.1); color:var(--mood1); }
+
+/* Empty state */
+.jnl-empty {
+    grid-column:1/-1; text-align:center; padding:5rem 2rem;
+    background:rgba(201,166,107,.03); border:1px dashed rgba(201,166,107,.15);
+    border-radius:24px; opacity:1!important;
+}
+.jnl-empty-icon { font-size:5rem; margin-bottom:1rem; filter:grayscale(.3); }
+.jnl-empty h3 { font-family:'Playfair Display',serif; font-style:italic; font-size:1.6rem; color:rgba(245,230,211,.5); margin-bottom:.5rem; }
+.jnl-empty p { font-size:.88rem; color:rgba(245,230,211,.3); }
+
+/* FAB */
+.jnl-fab {
+    position:fixed; bottom:2.5rem; right:2rem; z-index:100;
+    width:60px; height:60px; border-radius:50%;
+    background:linear-gradient(135deg,var(--gold),#8b6832);
+    border:none; cursor:pointer; font-size:1.6rem; color:#fff;
+    box-shadow:0 8px 30px rgba(201,166,107,.45);
+    display:flex; align-items:center; justify-content:center; transition:all .3s;
+}
+.jnl-fab:hover { transform:scale(1.12) rotate(45deg); box-shadow:0 14px 40px rgba(201,166,107,.6); }
+
+/* Toast */
+.jnl-toast {
+    position:fixed; bottom:5.5rem; right:2rem; z-index:9999;
+    background:linear-gradient(135deg,var(--gold),#8b6832); color:#fff;
+    padding:.7rem 1.4rem; border-radius:50px; font-weight:600; font-size:.85rem;
+    box-shadow:0 8px 24px rgba(201,166,107,.45); display:none;
+    animation:toastIn .35s ease;
+}
+@keyframes toastIn { from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);} }
+
+/* ══════════════════════════════════════════════════════════════
+   FULL-SCREEN JOURNAL WRITER — The Page Experience
+══════════════════════════════════════════════════════════════ */
+.journal-writer {
+    display:none; position:fixed; inset:0; z-index:2000;
+    flex-direction:column;
+    background:var(--paper);
+    animation:writerOpen .45s cubic-bezier(.16,1,.3,1);
+}
+.journal-writer.open { display:flex; }
+@keyframes writerOpen {
+    from { opacity:0; transform:scale(.97); }
+    to   { opacity:1; transform:scale(1); }
+}
+
+/* Subtle dot grid (futuristic paper texture) */
+.journal-writer::before {
+    content:''; position:absolute; inset:0; pointer-events:none; z-index:0;
+    background-image: radial-gradient(rgba(139,100,55,.18) 1px, transparent 1px);
+    background-size:24px 24px;
+}
+
+/* Top bar */
+.writer-topbar {
+    position:relative; z-index:10;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:.7rem 2rem;
+    background:rgba(42,26,8,.97); backdrop-filter:blur(20px);
+    border-bottom:1px solid rgba(201,166,107,.2);
+    flex-shrink:0;
+}
+/* Gold top line */
+.writer-topbar::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:2px;
+    background:linear-gradient(90deg,transparent,var(--gold),var(--gold-light),var(--gold),transparent);
+}
+.writer-topbar-brand {
+    font-family:'Playfair Display',serif; font-style:italic;
+    font-size:.88rem; color:rgba(201,166,107,.55); letter-spacing:.05em;
+}
+.writer-topbar-center {
+    display:flex; align-items:center; gap:1rem;
+}
+.writer-status {
+    font-size:.72rem; color:rgba(201,166,107,.4);
+    display:flex; align-items:center; gap:.4rem;
+}
+.writer-status-dot {
+    width:6px; height:6px; border-radius:50%;
+    background:rgba(201,166,107,.3);
+    transition:background .3s, box-shadow .3s;
+}
+.writer-status-dot.saving { background:var(--gold); box-shadow:0 0 6px var(--gold); animation:statusPulse 1s infinite; }
+@keyframes statusPulse { 0%,100%{opacity:1;}50%{opacity:.4;} }
+.writer-word-stat { font-size:.75rem; color:rgba(201,166,107,.5); font-family:'Playfair Display',serif; font-style:italic; }
+
+.writer-close-btn {
+    background:rgba(201,166,107,.1); border:1px solid rgba(201,166,107,.2);
+    color:rgba(201,166,107,.7); font-size:.8rem; padding:.4rem .9rem;
+    border-radius:20px; cursor:pointer; transition:all .2s; font-family:inherit;
+}
+.writer-close-btn:hover { background:rgba(201,166,107,.2); color:var(--gold); }
+
+/* Page scroll area */
+.writer-scroll {
+    flex:1; overflow-y:auto; position:relative; z-index:1;
+    scroll-behavior:smooth;
+}
+.writer-scroll::-webkit-scrollbar { width:5px; }
+.writer-scroll::-webkit-scrollbar-track { background:rgba(139,100,55,.05); }
+.writer-scroll::-webkit-scrollbar-thumb { background:rgba(139,100,55,.2); border-radius:3px; }
+
+/* Page container */
+.writer-page {
+    max-width:680px; margin:0 auto; padding:3rem 2rem 5rem;
+    position:relative;
+}
+
+/* Left margin line */
+.writer-page::before {
+    content:''; position:absolute; left:calc(50% - 340px + 56px); top:0; bottom:0; width:1.5px;
+    background:rgba(180,80,60,.18); pointer-events:none;
+}
+
+/* Date heading */
+.writer-date-heading {
+    font-family:'Playfair Display',serif; font-style:italic;
+    font-size:1rem; color:var(--ink3);
+    margin-bottom:.5rem; padding-left:52px; letter-spacing:.04em;
+}
+
+/* Page number top right */
+.writer-page-num {
+    position:absolute; top:2.5rem; right:2rem;
+    font-family:'Playfair Display',serif; font-style:italic;
+    font-size:.75rem; color:var(--ink3);
+}
+
+/* Title input */
+.writer-title-input {
+    width:100%; background:transparent; border:none; outline:none;
+    font-family:'Playfair Display',serif; font-weight:700;
+    font-size:clamp(1.6rem,3vw,2.2rem); color:var(--ink);
+    padding:0 0 .6rem 52px; box-sizing:border-box;
+    border-bottom:1.5px solid rgba(139,100,55,.2);
+    caret-color:#8b5e26; margin-bottom:1.5rem;
+    transition:border-color .2s;
+}
+.writer-title-input::placeholder { color:var(--ink3); font-style:italic; }
+.writer-title-input:focus { border-color:rgba(139,100,55,.45); }
+
+/* Content textarea — the real heart of the writer */
+.writer-textarea {
+    width:100%; background:transparent; border:none; outline:none; resize:none;
+    font-family:'Caveat',cursive; font-size:1.42rem;
+    color:var(--ink); line-height:2;
+    padding:0 0 2rem 52px; box-sizing:border-box;
+    caret-color:#8b5e26; min-height:500px;
+    letter-spacing:.01em;
+}
+.writer-textarea::placeholder { color:var(--ink3); font-style:italic; line-height:2; }
+
+/* Horizontal rules between paragraphs — visual enhancement */
+.writer-textarea:focus { color:#2c1a0a; }
+
+/* ── Bottom action bar ── */
+.writer-bottom {
+    position:fixed; bottom:0; left:0; right:0; z-index:10;
+    background:rgba(42,26,8,.95); backdrop-filter:blur(20px);
+    border-top:1px solid rgba(201,166,107,.15);
+    padding:.85rem 2rem;
+    display:flex; align-items:center; justify-content:space-between; gap:1rem;
+    flex-wrap:wrap;
+}
+/* Mood selector */
+.writer-moods { display:flex; gap:.5rem; align-items:center; }
+.writer-mood-label { font-size:.72rem; color:rgba(201,166,107,.4); margin-right:.3rem; font-style:italic; }
+.writer-mood-btn {
+    width:36px; height:36px; border-radius:50%;
+    border:2px solid rgba(201,166,107,.15);
+    background:rgba(201,166,107,.05);
+    cursor:pointer; font-size:1.1rem;
+    display:flex; align-items:center; justify-content:center;
+    transition:all .22s;
+}
+.writer-mood-btn:hover, .writer-mood-btn.active {
+    border-color:rgba(201,166,107,.55);
+    background:rgba(201,166,107,.15);
+    transform:scale(1.18);
+    box-shadow:0 0 12px rgba(201,166,107,.25);
+}
+/* Center stats */
+.writer-bottom-stats {
+    font-family:'Playfair Display',serif; font-style:italic;
+    font-size:.78rem; color:rgba(201,166,107,.45);
+    display:flex; gap:1.2rem;
+}
+.writer-bottom-stat strong { color:rgba(201,166,107,.75); }
+/* Save button */
+.writer-save-btn {
+    background:linear-gradient(135deg,var(--gold),#8b6832);
+    color:#fff; font-weight:700; font-size:.85rem; border:none;
+    padding:.6rem 1.5rem; border-radius:50px; cursor:pointer;
+    font-family:'Playfair Display',serif; font-style:italic;
+    transition:all .25s; box-shadow:0 4px 14px rgba(201,166,107,.3);
+    letter-spacing:.03em;
+}
+.writer-save-btn:hover { transform:translateY(-2px); box-shadow:0 8px 22px rgba(201,166,107,.5); }
+
+@media(max-width:700px){
+    .jnl-hero { flex-direction:column; padding:2rem 1.5rem; gap:1.2rem; }
+    .jnl-hero-left { text-align:center; }
+    .jnl-hero-sub { max-width:100%; margin:0 auto; }
+    .jnl-book-deco { display:none; }
+    .jnl-write-btn { width:100%; justify-content:center; }
+    .jnl-stats-strip { gap:.6rem; }
+    .jnl-stat-pill { font-size:.72rem; padding:.45rem .85rem; }
+    .journal-writer { width:100% !important; border-radius:0; }
+}
+</style>
+
+<!-- ═══ HERO ═══ -->
+<div class="jnl-hero">
+    <div class="jnl-hero-left">
+        <div class="jnl-hero-eyebrow">Wanaag Corner · Espace privé</div>
+        <h1 class="jnl-hero-title"><span>Journal</span><br>Intime</h1>
+        <p class="jnl-hero-sub">Chaque page écrite est un pas de plus vers vous-même. Vos mots, votre vérité.</p>
+    </div>
+    <svg class="jnl-book-svg" width="140" height="100" viewBox="0 0 140 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Open book -->
+        <path d="M70 85 Q40 80 10 90 L10 15 Q40 5 70 10" fill="rgba(245,230,211,.12)" stroke="rgba(201,166,107,.4)" stroke-width="1.5"/>
+        <path d="M70 85 Q100 80 130 90 L130 15 Q100 5 70 10" fill="rgba(245,230,211,.08)" stroke="rgba(201,166,107,.3)" stroke-width="1.5"/>
+        <!-- Spine -->
+        <line x1="70" y1="10" x2="70" y2="85" stroke="rgba(201,166,107,.6)" stroke-width="2"/>
+        <!-- Lines on left page -->
+        <line x1="18" y1="28" x2="62" y2="26" stroke="rgba(201,166,107,.2)" stroke-width="1"/>
+        <line x1="18" y1="36" x2="62" y2="34" stroke="rgba(201,166,107,.2)" stroke-width="1"/>
+        <line x1="18" y1="44" x2="62" y2="42" stroke="rgba(201,166,107,.2)" stroke-width="1"/>
+        <line x1="18" y1="52" x2="55" y2="50" stroke="rgba(201,166,107,.15)" stroke-width="1"/>
+        <!-- Lines on right page -->
+        <line x1="78" y1="28" x2="122" y2="26" stroke="rgba(201,166,107,.2)" stroke-width="1"/>
+        <line x1="78" y1="36" x2="122" y2="34" stroke="rgba(201,166,107,.2)" stroke-width="1"/>
+        <line x1="78" y1="44" x2="122" y2="42" stroke="rgba(201,166,107,.2)" stroke-width="1"/>
+        <line x1="78" y1="52" x2="110" y2="50" stroke="rgba(201,166,107,.15)" stroke-width="1"/>
+        <!-- Quill -->
+        <path d="M95 60 Q100 45 115 38 Q110 50 105 55 L108 70 L95 60Z" fill="rgba(201,166,107,.35)"/>
+        <line x1="108" y1="70" x2="100" y2="82" stroke="rgba(201,166,107,.4)" stroke-width="1.2"/>
+        <!-- Glow dot -->
+        <circle cx="70" cy="48" r="3" fill="rgba(201,166,107,.5)"/>
+    </svg>
+    <button class="jnl-write-btn" onclick="openWriter()">
+        <span class="jnl-write-btn-icon">✍️</span> Nouvelle page
+    </button>
+</div>
+
+<!-- ═══ STATS STRIP ═══ -->
+<div class="jnl-stats-strip">
+    <div class="jnl-stat-pill">📔 <strong>{{ entries|length }}</strong> page{% if entries|length > 1 %}s{% endif %} écrite{% if entries|length > 1 %}s{% endif %}</div>
+    {% if mood_stats %}
+    {% for humeur, count in mood_stats.items %}
+    {% if forloop.first %}
+    <div class="jnl-stat-pill">
+        ✨ Humeur dominante :&nbsp;
+        <strong>{% if humeur == '5' %}😊 Super{% elif humeur == '4' %}🙂 Bien{% elif humeur == '3' %}😐 Moyen{% elif humeur == '2' %}😔 Difficile{% else %}😢 Mal{% endif %}</strong>
+    </div>
+    {% endif %}
+    {% endfor %}
+    {% endif %}
+    <div class="jnl-stat-pill">⌨️ <strong id="totalWords">—</strong> mots écrits</div>
+</div>
+
+<!-- ═══ PAGES GRID ═══ -->
+{% if entries %}
+<div class="jnl-pages-label">Vos pages</div>
+<div class="jnl-pages-grid">
+    {% for entry in entries %}
+    <div class="jnl-page-card jnl-page-m{{ entry.humeur }}">
+        <div class="jnl-page-fold"></div>
+        <div class="jnl-page-num">p. {{ forloop.counter }}</div>
+        <div class="jnl-page-inner">
+            <div class="jnl-page-date">{{ entry.date_creation|date:"l d M Y · H\hi" }}</div>
+            <div class="jnl-page-mood-row">
+                <span class="jnl-page-mood-emoji">
+                    {% if entry.humeur == '5' %}😊{% elif entry.humeur == '4' %}🙂{% elif entry.humeur == '3' %}😐{% elif entry.humeur == '2' %}😔{% else %}😢{% endif %}
+                </span>
+                <span class="jnl-page-mood-label jnl-ml-{{ entry.humeur }}">{{ entry.get_humeur_display }}</span>
+            </div>
+            <div class="jnl-page-title">{{ entry.titre|default:"Sans titre" }}</div>
+            <div class="jnl-page-text">{{ entry.contenu }}</div>
+            <div class="jnl-page-footer">
+                <button class="jnl-page-delete" onclick="deleteEntry({{ entry.id }}, this)" title="Supprimer cette page">🗑</button>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="jnl-pages-grid">
+    <div class="jnl-empty">
+        <div class="jnl-empty-icon">📖</div>
+        <h3>Votre journal est vierge</h3>
+        <p>La première page n'attend que vous. Cliquez sur "Nouvelle page" pour commencer.</p>
+    </div>
+</div>
+{% endif %}
+
+<button class="jnl-fab" onclick="openWriter()" title="Nouvelle page">+</button>
+<div class="jnl-toast" id="jnlToast">✓ Page enregistrée</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     FULL-SCREEN JOURNAL WRITER
+═══════════════════════════════════════════════════════════════ -->
+<div class="journal-writer" id="journalWriter">
+
+    <!-- Top bar -->
+    <div class="writer-topbar">
+        <div class="writer-topbar-brand">Journal Intime · Wanaag Corner</div>
+        <div class="writer-topbar-center">
+            <div class="writer-status">
+                <div class="writer-status-dot" id="statusDot"></div>
+                <span id="statusText">Prêt</span>
+            </div>
+            <div class="writer-word-stat" id="topWordStat">0 mot</div>
+        </div>
+        <button class="writer-close-btn" onclick="closeWriter()">← Fermer</button>
+    </div>
+
+    <!-- Scrollable page area -->
+    <div class="writer-scroll">
+        <div class="writer-page">
+            <div class="writer-page-num" id="writerPageNum">p. {{ entries|length|add:1 }}</div>
+            <div class="writer-date-heading" id="writerDateHeading"></div>
+            <input
+                type="text" id="writerTitle" class="writer-title-input"
+                placeholder="Titre de cette page…"
+            >
+            <textarea
+                id="writerContent" class="writer-textarea"
+                placeholder="Laissez vos pensées couler librement…
+
+Qu'est-ce qui a traversé votre esprit aujourd'hui ?
+Qu'est-ce qui vous a touché, surpris, ému ?
+
+Cette page n'appartient qu'à vous."
+                oninput="onWriterInput()"
+            ></textarea>
+        </div>
+    </div>
+
+    <!-- Bottom action bar -->
+    <div class="writer-bottom">
+        <div class="writer-moods">
+            <span class="writer-mood-label">Humeur</span>
+            <button type="button" class="writer-mood-btn" data-val="5" onclick="setMood(this)">😊</button>
+            <button type="button" class="writer-mood-btn" data-val="4" onclick="setMood(this)">🙂</button>
+            <button type="button" class="writer-mood-btn active" data-val="3" onclick="setMood(this)">😐</button>
+            <button type="button" class="writer-mood-btn" data-val="2" onclick="setMood(this)">😔</button>
+            <button type="button" class="writer-mood-btn" data-val="1" onclick="setMood(this)">😢</button>
+        </div>
+        <div class="writer-bottom-stats">
+            <span><strong id="bwc">0</strong> mots</span>
+            <span><strong id="brt">0 min</strong> de lecture</span>
+            <span><strong id="bch">0</strong> caractères</span>
+        </div>
+        <button class="writer-save-btn" onclick="saveEntry()">Sceller cette page ✦</button>
+    </div>
+
+    <input type="hidden" id="humeurInput" value="3">
+</div>
+
+<script>
+// ── Date heading ──
+const now = new Date();
+const JOURS = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+const MOIS  = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+const dateStr = JOURS[now.getDay()] + ' ' + now.getDate() + ' ' + MOIS[now.getMonth()] + ' ' + now.getFullYear();
+document.getElementById('writerDateHeading').textContent = dateStr;
+
+// ── Open / Close writer ──
+function openWriter() {
+    document.getElementById('journalWriter').classList.add('open');
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => document.getElementById('writerTitle').focus(), 350);
+}
+function closeWriter() {
+    document.getElementById('journalWriter').classList.remove('open');
+    document.body.style.overflow = '';
+}
+// ESC to close
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeWriter();
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') saveEntry();
+});
+
+// ── Mood ──
+function setMood(btn) {
+    document.querySelectorAll('.writer-mood-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('humeurInput').value = btn.dataset.val;
+}
+
+// ── Live stats ──
+let saveTimer = null;
+function onWriterInput() {
+    const text  = document.getElementById('writerContent').value;
+    const title = document.getElementById('writerTitle').value;
+    const words = (text + ' ' + title).trim().split(/\s+/).filter(w => w).length;
+    const mins  = Math.max(1, Math.round(words / 200));
+    const chars = text.length;
+
+    document.getElementById('topWordStat').textContent = words + (words > 1 ? ' mots' : ' mot');
+    document.getElementById('bwc').textContent = words;
+    document.getElementById('brt').textContent = mins + ' min';
+    document.getElementById('bch').textContent = chars;
+
+    // Auto-save indicator
+    const dot  = document.getElementById('statusDot');
+    const stat = document.getElementById('statusText');
+    dot.classList.add('saving'); stat.textContent = 'Modification…';
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(() => {
+        dot.classList.remove('saving'); stat.textContent = 'Prêt';
+    }, 800);
+}
+
+// ── Total words count on page load ──
+(function() {
+    const allText = Array.from(document.querySelectorAll('.jnl-page-text'))
+        .map(el => el.textContent).join(' ');
+    const words = allText.trim().split(/\s+/).filter(w => w).length;
+    document.getElementById('totalWords').textContent = words.toLocaleString('fr-FR');
+})();
+
+// ── Save ──
+function saveEntry() {
+    const contenu = document.getElementById('writerContent').value.trim();
+    if (!contenu) { document.getElementById('writerContent').focus(); return; }
+    const dot  = document.getElementById('statusDot');
+    const stat = document.getElementById('statusText');
+    dot.classList.add('saving'); stat.textContent = 'Enregistrement…';
+
+    const data = new FormData();
+    data.append('action', 'create');
+    data.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+    data.append('humeur', document.getElementById('humeurInput').value);
+    data.append('titre', document.getElementById('writerTitle').value);
+    data.append('contenu', contenu);
+
+    fetch('{% url "parcours_journal" %}', { method:'POST', body:data })
+        .then(r => r.json())
+        .then(d => {
+            if (d.success) {
+                dot.classList.remove('saving'); stat.textContent = '✓ Enregistré';
+                closeWriter();
+                const toast = document.getElementById('jnlToast');
+                toast.style.display = 'block';
+                setTimeout(() => { toast.style.display = 'none'; location.reload(); }, 1800);
+            }
+        });
+}
+
+// ── Delete ──
+function deleteEntry(id, btn) {
+    if (!confirm('Supprimer cette page définitivement ?')) return;
+    const data = new FormData();
+    data.append('action', 'delete');
+    data.append('entry_id', id);
+    data.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+    fetch('{% url "parcours_journal" %}', { method:'POST', body:data })
+        .then(r => r.json())
+        .then(d => { if (d.success) btn.closest('.jnl-page-card').remove(); });
+}
+</script>
+{% endblock %}

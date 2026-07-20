@@ -2,385 +2,378 @@
 {% load static %}
 
 {% block title %}Forum Communautaire - Wanaag Corner{% endblock %}
+{% block page_title %}Forum Communautaire{% endblock %}
 
-{% block content %}
+{% block extra_css %}
 <style>
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
+    /* ===== HERO FORUM ===== */
+    .forum-hero {
+        border-radius: 22px;
+        overflow: hidden;
+        margin-bottom: 2rem;
+        position: relative;
+        height: 200px;
+        box-shadow: 0 8px 32px rgba(74,60,47,.15);
     }
-
-    body {
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        background: linear-gradient(135deg, #fef3c7 0%, #fed7aa 50%, #fecaca 100%);
-        min-height: 100vh;
+    .forum-hero img {
+        width: 100%; height: 100%; object-fit: cover; display: block;
     }
-
-    .header {
-        background: white;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        padding: 1.5rem 2rem;
-        position: sticky;
-        top: 0;
-        z-index: 100;
+    .forum-hero-overlay {
+        position: absolute; inset: 0;
+        background: linear-gradient(135deg, rgba(30,10,0,.72) 0%, rgba(74,60,47,.45) 100%);
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 0 2.5rem;
     }
-
-    .header-content {
-        max-width: 1200px;
-        margin: 0 auto;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+    .forum-hero-left { display: flex; align-items: center; gap: 1.2rem; }
+    .forum-hero-avatar {
+        width: 62px; height: 62px; border-radius: 16px; overflow: hidden;
+        border: 2px solid rgba(201,166,107,.5);
+        flex-shrink: 0;
     }
-
-    .header-title {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
+    .forum-hero-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .forum-hero-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.9rem; font-weight: 800; color: white; line-height: 1.2;
     }
-
-    .icon-circle {
-        width: 50px;
-        height: 50px;
-        background: linear-gradient(135deg, #fbbf24, #f97316);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.5rem;
+    .forum-hero-sub { font-size: .88rem; color: rgba(245,230,211,.7); margin-top: .3rem; }
+    .btn-create {
+        background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+        color: white; border: none;
+        padding: .75rem 1.6rem; border-radius: 50px;
+        font-weight: 700; font-size: .9rem; cursor: pointer;
+        transition: all .22s; white-space: nowrap;
+        box-shadow: 0 4px 16px rgba(201,166,107,.4);
+        display: inline-flex; align-items: center; gap: .4rem;
     }
+    .btn-create:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(201,166,107,.55); }
 
-    h1 {
-        font-size: 2rem;
-        color: #1f2937;
+    /* ===== SEARCH ===== */
+    .forum-search {
+        position: relative; margin-bottom: 1.5rem;
     }
-
-    .btn {
-        background: linear-gradient(135deg, #fbbf24, #f97316);
-        color: white;
-        border: none;
-        padding: 0.75rem 1.5rem;
-        border-radius: 10px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: transform 0.2s;
-        text-decoration: none;
-        display: inline-block;
-    }
-
-    .btn:hover {
-        transform: translateY(-2px);
-    }
-
-    .search-bar {
-        max-width: 1200px;
-        margin: 2rem auto;
-        padding: 0 2rem;
-    }
-
-    .search-input {
+    .forum-search input {
         width: 100%;
-        padding: 1rem;
-        border: 2px solid #fcd34d;
-        border-radius: 10px;
-        font-size: 1rem;
+        padding: .9rem 1.2rem .9rem 3rem;
+        border: 2px solid var(--beige-dark);
+        border-radius: 14px;
+        font-size: .95rem; font-family: inherit;
+        background: white; color: var(--brown-dark);
+        outline: none; transition: border-color .2s, box-shadow .2s;
+    }
+    .forum-search input:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(201,166,107,.12);
+    }
+    .forum-search-icon {
+        position: absolute; left: 1rem; top: 50%; transform: translateY(-50%);
+        font-size: 1rem; pointer-events: none;
     }
 
-    .categories {
-        max-width: 1200px;
-        margin: 2rem auto;
-        padding: 0 2rem;
-        display: flex;
-        gap: 0.5rem;
-        overflow-x: auto;
+    /* ===== CATEGORIES ===== */
+    .categories-wrap {
+        display: flex; gap: .55rem; overflow-x: auto;
+        margin-bottom: 2rem; padding-bottom: .3rem;
+        scrollbar-width: none;
+    }
+    .categories-wrap::-webkit-scrollbar { display: none; }
+    .cat-btn {
+        background: white;
+        border: 1.5px solid var(--beige-dark);
+        color: var(--brown);
+        padding: .45rem 1rem; border-radius: 50px;
+        font-size: .8rem; font-weight: 600; white-space: nowrap;
+        cursor: pointer; transition: all .2s; font-family: inherit;
+    }
+    .cat-btn:hover { border-color: var(--accent); color: var(--accent-dark); }
+    .cat-btn.active {
+        background: linear-gradient(135deg, var(--brown-dark), var(--brown));
+        border-color: transparent; color: white;
     }
 
-    .category-btn {
-        background: #fef3c7;
-        border: none;
-        padding: 0.5rem 1rem;
-        border-radius: 10px;
-        cursor: pointer;
-        white-space: nowrap;
-        transition: all 0.2s;
+    /* ===== SECTION TITLE ===== */
+    .sec-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.1rem; font-weight: 700; color: var(--brown-dark);
+        margin-bottom: 1.2rem;
+        display: flex; align-items: center; gap: .5rem;
     }
+    .sec-title::after { content: ''; flex: 1; height: 1px; background: rgba(74,60,47,.08); margin-left: .5rem; }
 
-    .category-btn.active {
-        background: linear-gradient(135deg, #fbbf24, #f97316);
-        color: white;
-    }
-
-    .groups-container {
-        max-width: 1200px;
-        margin: 2rem auto;
-        padding: 0 2rem;
-    }
-
-    .section-title {
-        font-size: 1.5rem;
-        margin-bottom: 1rem;
-        color: #1f2937;
-    }
-
+    /* ===== GROUPS GRID ===== */
     .groups-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: 1.5rem;
-        margin-bottom: 3rem;
+        grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+        gap: 1.3rem;
+        margin-bottom: 2.5rem;
     }
 
     .group-card {
         background: white;
-        border-radius: 15px;
+        border-radius: 18px;
         overflow: hidden;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        transition: transform 0.2s, box-shadow 0.2s;
+        box-shadow: 0 2px 14px rgba(74,60,47,.08);
+        transition: all .28s cubic-bezier(.4,0,.2,1);
         cursor: pointer;
+        border: 1px solid rgba(201,166,107,.1);
     }
-
     .group-card:hover {
         transform: translateY(-5px);
-        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        box-shadow: 0 12px 36px rgba(74,60,47,.15);
     }
-
-    .group-header {
-        height: 5px;
-        background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    .group-card-bar {
+        height: 4px;
     }
+    .bar-blue   { background: linear-gradient(90deg, #3b82f6, #1d4ed8); }
+    .bar-purple { background: linear-gradient(90deg, #a855f7, #7c3aed); }
+    .bar-pink   { background: linear-gradient(90deg, #ec4899, #db2777); }
+    .bar-green  { background: linear-gradient(90deg, #10b981, #059669); }
+    .bar-indigo { background: linear-gradient(90deg, #6366f1, #4f46e5); }
+    .bar-teal   { background: linear-gradient(90deg, #06b6d4, #0891b2); }
+    .bar-amber  { background: linear-gradient(90deg, var(--accent), var(--accent-dark)); }
+    .bar-rose   { background: linear-gradient(90deg, #f43f5e, #be123c); }
 
-    .group-header.purple { background: linear-gradient(135deg, #a855f7, #7c3aed); }
-    .group-header.pink { background: linear-gradient(135deg, #ec4899, #db2777); }
-    .group-header.indigo { background: linear-gradient(135deg, #6366f1, #4f46e5); }
-    .group-header.green { background: linear-gradient(135deg, #10b981, #059669); }
-    .group-header.cyan { background: linear-gradient(135deg, #06b6d4, #0891b2); }
-
-    .group-body {
-        padding: 1.5rem;
+    .group-card-body { padding: 1.3rem 1.4rem; }
+    .group-card-head {
+        display: flex; justify-content: space-between; align-items: flex-start;
+        margin-bottom: .5rem;
     }
-
-    .group-title {
-        font-size: 1.25rem;
-        font-weight: bold;
-        margin-bottom: 0.5rem;
-        color: #1f2937;
+    .group-card-name {
+        font-size: 1rem; font-weight: 700; color: var(--brown-dark);
+        line-height: 1.3;
     }
-
-    .group-desc {
-        color: #6b7280;
-        font-size: 0.9rem;
-        margin-bottom: 1rem;
-        line-height: 1.5;
+    .unread-badge {
+        background: #e74c3c; color: white;
+        font-size: .68rem; font-weight: 700;
+        padding: .18rem .5rem; border-radius: 50px;
+        flex-shrink: 0; margin-left: .5rem;
     }
-
-    .group-stats {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        color: #9ca3af;
-        font-size: 0.9rem;
-        margin-top: 1rem;
-        padding-top: 1rem;
-        border-top: 1px solid #f3f4f6;
+    .group-card-cat {
+        font-size: .7rem; font-weight: 600; color: var(--accent-dark);
+        background: rgba(201,166,107,.12); border-radius: 50px;
+        padding: .15rem .55rem; display: inline-block; margin-bottom: .6rem;
     }
-
-    .badge {
-        background: linear-gradient(135deg, #ef4444, #dc2626);
-        color: white;
-        padding: 0.25rem 0.5rem;
-        border-radius: 50%;
-        font-size: 0.75rem;
-        font-weight: bold;
+    .group-card-desc {
+        font-size: .82rem; color: var(--brown-light); line-height: 1.55;
+        margin-bottom: .9rem;
     }
-
-    .join-btn {
-        width: 100%;
-        background: linear-gradient(135deg, #fbbf24, #f97316);
-        color: white;
-        border: none;
-        padding: 0.75rem;
-        border-radius: 8px;
-        font-weight: 600;
-        cursor: pointer;
-        margin-top: 1rem;
+    .group-card-stats {
+        display: flex; align-items: center; gap: .4rem;
+        font-size: .78rem; color: #aaa;
+        padding-top: .8rem; border-top: 1px solid var(--beige-light);
     }
-
-    .last-message {
-        background: #fef3c7;
-        padding: 0.75rem;
-        border-radius: 8px;
-        margin-top: 1rem;
-        font-size: 0.85rem;
+    .last-msg-preview {
+        background: var(--beige-light);
+        border-radius: 10px; padding: .6rem .85rem;
+        font-size: .78rem; color: var(--brown); margin-top: .8rem;
+        border-left: 3px solid var(--accent);
     }
+    .last-msg-preview strong { color: var(--brown-dark); }
+    .last-msg-time { font-size: .7rem; color: #bbb; margin-top: .2rem; }
 
-    .modal {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0,0,0,0.5);
-        z-index: 1000;
-        align-items: center;
-        justify-content: center;
+    .btn-join {
+        width: 100%; margin-top: .9rem;
+        background: linear-gradient(135deg, var(--brown-dark), var(--brown));
+        color: white; border: none;
+        padding: .65rem; border-radius: 10px;
+        font-weight: 700; font-size: .85rem;
+        cursor: pointer; transition: all .2s; font-family: inherit;
     }
+    .btn-join:hover { background: linear-gradient(135deg, var(--brown), var(--accent-dark)); }
 
-    .modal.show {
-        display: flex;
+    /* ===== EMPTY STATE ===== */
+    .empty-state {
+        text-align: center; padding: 3rem 1.5rem;
+        color: var(--brown-light);
     }
+    .empty-state .empty-icon { font-size: 3rem; margin-bottom: .75rem; }
+    .empty-state h3 { font-size: 1rem; font-weight: 700; color: var(--brown-dark); margin-bottom: .4rem; }
+    .empty-state p { font-size: .85rem; }
 
-    .modal-content {
-        background: white;
-        padding: 2rem;
-        border-radius: 20px;
-        max-width: 500px;
-        width: 90%;
+    /* ===== MODAL ===== */
+    .modal-overlay {
+        display: none; position: fixed; inset: 0;
+        background: rgba(0,0,0,.5); z-index: 2000;
+        align-items: center; justify-content: center;
     }
-
-    .form-group {
-        margin-bottom: 1.5rem;
+    .modal-overlay.show { display: flex; }
+    .modal-box {
+        background: white; border-radius: 22px;
+        padding: 2rem; width: 90%; max-width: 520px;
+        animation: fadeUp .25s ease;
     }
-
+    @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+    .modal-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.3rem; font-weight: 700; color: var(--brown-dark);
+        margin-bottom: 1.5rem; padding-bottom: 1rem;
+        border-bottom: 1px solid var(--beige);
+    }
+    .form-group { margin-bottom: 1.2rem; }
     .form-group label {
-        display: block;
-        margin-bottom: 0.5rem;
-        font-weight: 600;
-        color: #1f2937;
+        display: block; font-size: .85rem; font-weight: 600;
+        color: var(--brown-dark); margin-bottom: .4rem;
     }
-
     .form-group input,
     .form-group textarea,
     .form-group select {
-        width: 100%;
-        padding: 0.75rem;
-        border: 2px solid #fcd34d;
-        border-radius: 8px;
-        font-size: 1rem;
+        width: 100%; padding: .75rem 1rem;
+        border: 2px solid var(--beige-dark); border-radius: 10px;
+        font-size: .9rem; font-family: inherit; color: var(--brown-dark);
+        outline: none; transition: border-color .2s;
+        background: white;
     }
-
-    .form-actions {
-        display: flex;
-        gap: 1rem;
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(201,166,107,.1);
     }
-
-    .btn-secondary {
-        background: #e5e7eb;
-        color: #1f2937;
+    .modal-actions { display: flex; gap: .75rem; justify-content: flex-end; margin-top: 1.5rem; }
+    .btn-modal-cancel {
+        padding: .65rem 1.4rem; border-radius: 50px;
+        background: var(--beige); color: var(--brown-dark);
+        border: none; cursor: pointer; font-weight: 600; font-family: inherit;
     }
-
-    .empty-state {
-        text-align: center;
-        padding: 3rem;
-        color: #6b7280;
+    .btn-modal-submit {
+        padding: .65rem 1.8rem; border-radius: 50px;
+        background: linear-gradient(135deg, var(--brown-dark), var(--brown));
+        color: white; border: none; cursor: pointer;
+        font-weight: 700; font-family: inherit;
+        transition: all .2s;
     }
+    .btn-modal-submit:hover { transform: translateY(-1px); }
 
-    .empty-state-icon {
-        font-size: 4rem;
-        margin-bottom: 1rem;
+    @media(max-width:700px){
+        .forum-hero { height:auto; }
+        .forum-hero-overlay { flex-direction:column; align-items:flex-start; gap:1rem; padding:1.5rem; }
+        .forum-hero-title { font-size:1.4rem; }
+        .btn-create { width:100%; justify-content:center; }
+        .forum-hero-left { gap:.8rem; }
+        .forum-hero-avatar { width:46px; height:46px; }
+    }
+    @media(max-width:500px){
+        .groups-grid { grid-template-columns: 1fr; }
     }
 </style>
+{% endblock %}
 
-<!-- Header -->
-<div class="header">
-    <div class="header-content">
-        <div class="header-title">
-            <div class="icon-circle">💬</div>
+{% block content %}
+
+<!-- HERO -->
+<div class="forum-hero">
+    <img src="{% static 'images/forum.jpg' %}" alt="Forum Communautaire">
+    <div class="forum-hero-overlay">
+        <div class="forum-hero-left">
+            <div class="forum-hero-avatar">
+                <img src="{% static 'images/forum.jpg' %}" alt="">
+            </div>
             <div>
-                <h1>Forum Communautaire</h1>
-                <p style="color: #6b7280;">Échangez avec bienveillance</p>
+                <div class="forum-hero-title">Forum Communautaire</div>
+                <div class="forum-hero-sub">Échangez avec bienveillance · {{ my_groups|length }} groupe{{ my_groups|length|pluralize }} rejoint{{ my_groups|length|pluralize }}</div>
             </div>
         </div>
-        <button class="btn" onclick="showCreateModal()">➕ Créer un groupe</button>
+        <button class="btn-create" onclick="showCreateModal()">＋ Créer un groupe</button>
     </div>
 </div>
 
-<!-- Barre de recherche -->
-<div class="search-bar">
-    <input type="text" class="search-input" placeholder="🔍 Rechercher un groupe..." id="searchInput" oninput="filterGroups()">
+<!-- SEARCH -->
+<div class="forum-search">
+    <span class="forum-search-icon">🔍</span>
+    <input type="text" id="searchInput" placeholder="Rechercher un groupe..." oninput="filterGroups()">
 </div>
 
-<!-- Catégories -->
-<div class="categories">
-    <button class="category-btn active" onclick="filterCategory('all')">🌍 Tous</button>
-    <button class="category-btn" onclick="filterCategory('anxiete')">💭 Anxiété</button>
-    <button class="category-btn" onclick="filterCategory('depression')">💙 Dépression</button>
-    <button class="category-btn" onclick="filterCategory('meditation')">🧘 Méditation</button>
-    <button class="category-btn" onclick="filterCategory('famille')">👨‍👩‍👧‍👦 Famille</button>
-    <button class="category-btn" onclick="filterCategory('developpement')">🌱 Développement</button>
+<!-- CATEGORIES -->
+<div class="categories-wrap">
+    <button class="cat-btn active" onclick="filterCategory('all', this)">🌍 Tous</button>
+    <button class="cat-btn" onclick="filterCategory('anxiete', this)">💭 Anxiété</button>
+    <button class="cat-btn" onclick="filterCategory('depression', this)">💙 Dépression</button>
+    <button class="cat-btn" onclick="filterCategory('stress', this)">⚡ Stress & Burn-out</button>
+    <button class="cat-btn" onclick="filterCategory('meditation', this)">🧘 Méditation</button>
+    <button class="cat-btn" onclick="filterCategory('trauma', this)">🛡️ Trauma</button>
+    <button class="cat-btn" onclick="filterCategory('sommeil', this)">🌙 Sommeil</button>
+    <button class="cat-btn" onclick="filterCategory('relations', this)">💞 Relations</button>
+    <button class="cat-btn" onclick="filterCategory('famille', this)">👨‍👩‍👧‍👦 Famille</button>
+    <button class="cat-btn" onclick="filterCategory('deuil', this)">🕊️ Deuil</button>
+    <button class="cat-btn" onclick="filterCategory('confiance', this)">⭐ Confiance en soi</button>
+    <button class="cat-btn" onclick="filterCategory('addiction', this)">🔗 Addictions</button>
+    <button class="cat-btn" onclick="filterCategory('colere', this)">🔥 Colère</button>
+    <button class="cat-btn" onclick="filterCategory('solitude', this)">🫂 Solitude</button>
+    <button class="cat-btn" onclick="filterCategory('identite', this)">🌍 Identité</button>
+    <button class="cat-btn" onclick="filterCategory('jeunes', this)">🎓 Jeunes</button>
+    <button class="cat-btn" onclick="filterCategory('spiritualite', this)">✨ Spiritualité</button>
+    <button class="cat-btn" onclick="filterCategory('alimentation', this)">🥗 Alimentation</button>
+    <button class="cat-btn" onclick="filterCategory('developpement', this)">🌱 Développement</button>
 </div>
 
-<!-- Mes groupes -->
-<div class="groups-container">
-    <h2 class="section-title">👥 Mes groupes ({{ my_groups|length }})</h2>
-    
-    {% if my_groups %}
-        <div class="groups-grid" id="myGroups">
-            {% for item in my_groups %}
-            <div class="group-card" data-category="{{ item.group.category }}" onclick="window.location.href='{% url 'group_chat' item.group.id %}'">
-                <div class="group-header {% cycle 'blue' 'purple' 'pink' 'indigo' 'green' 'cyan' %}"></div>
-                <div class="group-body">
-                    <div style="display: flex; justify-content: space-between;">
-                        <h3 class="group-title">{{ item.group.name }}</h3>
-                        {% if item.unread > 0 %}
-                        <span class="badge">{{ item.unread }}</span>
-                        {% endif %}
-                    </div>
-                    <p class="group-desc">{{ item.group.description|truncatewords:20 }}</p>
-                    <div class="group-stats">
-                        👥 {{ item.group.member_count }} membre{{ item.group.member_count|pluralize }}
-                    </div>
-                    {% if item.last_message %}
-                    <div class="last-message">
-                        <strong>{{ item.last_message.sender.pseudonyme }}:</strong> {{ item.last_message.content|truncatewords:10 }}
-                        <div style="color: #9ca3af; font-size: 0.75rem; margin-top: 0.25rem;">
-                            {{ item.last_message.created_at|date:"H:i" }}
-                        </div>
-                    </div>
-                    {% endif %}
-                </div>
+<!-- MES GROUPES -->
+<div class="sec-title">👥 Mes groupes ({{ my_groups|length }})</div>
+
+{% if my_groups %}
+<div class="groups-grid" id="myGroups">
+    {% for item in my_groups %}
+    {% with bars="bar-blue bar-purple bar-pink bar-green bar-indigo bar-teal bar-amber bar-rose" %}
+    <div class="group-card" data-category="{{ item.group.category }}" onclick="window.location.href='{% url 'group_chat' item.group.id %}'">
+        <div class="group-card-bar {% cycle 'bar-blue' 'bar-purple' 'bar-pink' 'bar-green' 'bar-indigo' 'bar-teal' 'bar-amber' 'bar-rose' %}"></div>
+        <div class="group-card-body">
+            <div class="group-card-head">
+                <span class="group-card-name">{{ item.group.name }}</span>
+                {% if item.unread > 0 %}<span class="unread-badge">{{ item.unread }}</span>{% endif %}
             </div>
-            {% endfor %}
-        </div>
-    {% else %}
-        <div class="empty-state">
-            <div class="empty-state-icon">📭</div>
-            <h3>Vous n'avez rejoint aucun groupe</h3>
-            <p>Explorez les groupes ci-dessous et rejoignez une communauté !</p>
-        </div>
-    {% endif %}
-
-    <h2 class="section-title">🔍 Découvrir des groupes</h2>
-    
-    {% if discover_groups %}
-        <div class="groups-grid" id="discoverGroups">
-            {% for group in discover_groups %}
-            <div class="group-card" data-category="{{ group.category }}">
-                <div class="group-header {% cycle 'pink' 'green' 'purple' 'cyan' 'indigo' %}"></div>
-                <div class="group-body">
-                    <h3 class="group-title">{{ group.name }}</h3>
-                    <p class="group-desc">{{ group.description|truncatewords:20 }}</p>
-                    <div class="group-stats">
-                        👥 {{ group.member_count }} membre{{ group.member_count|pluralize }}
-                    </div>
-                    <button class="join-btn" onclick="joinGroup(event, {{ group.id }})">Rejoindre</button>
-                </div>
+            <span class="group-card-cat">{{ item.group.get_category_display }}</span>
+            <div class="group-card-desc">{{ item.group.description|truncatewords:18 }}</div>
+            <div class="group-card-stats">👥 {{ item.group.member_count }} membre{{ item.group.member_count|pluralize }}</div>
+            {% if item.last_message %}
+            <div class="last-msg-preview">
+                <strong>{{ item.last_message.sender.pseudonyme }}</strong> : {{ item.last_message.content|truncatewords:10 }}
+                <div class="last-msg-time">{{ item.last_message.created_at|date:"H:i" }}</div>
             </div>
-            {% endfor %}
+            {% endif %}
         </div>
-    {% else %}
-        <div class="empty-state">
-            <div class="empty-state-icon">🎉</div>
-            <h3>Vous avez rejoint tous les groupes disponibles !</h3>
-            <p>Créez un nouveau groupe pour démarrer une nouvelle communauté.</p>
-        </div>
-    {% endif %}
+    </div>
+    {% endwith %}
+    {% endfor %}
 </div>
+{% else %}
+<div class="empty-state" style="background:white;border-radius:18px;box-shadow:0 2px 14px rgba(74,60,47,.07);margin-bottom:2rem;">
+    <div class="empty-icon">📭</div>
+    <h3>Vous n'avez rejoint aucun groupe</h3>
+    <p>Explorez les groupes ci-dessous et rejoignez une communauté !</p>
+</div>
+{% endif %}
 
-<!-- Modal Créer un groupe -->
-<div class="modal" id="createModal">
-    <div class="modal-content">
-        <h2 style="margin-bottom: 1.5rem;">Créer un groupe</h2>
+<!-- DÉCOUVRIR -->
+<div class="sec-title">🔍 Découvrir des groupes</div>
+
+{% if discover_groups %}
+<div class="groups-grid" id="discoverGroups">
+    {% for group in discover_groups %}
+    <div class="group-card" data-category="{{ group.category }}">
+        <div class="group-card-bar {% cycle 'bar-rose' 'bar-green' 'bar-purple' 'bar-teal' 'bar-indigo' 'bar-amber' %}"></div>
+        <div class="group-card-body">
+            <div class="group-card-name" style="margin-bottom:.4rem;">{{ group.name }}</div>
+            <span class="group-card-cat">{{ group.get_category_display }}</span>
+            <div class="group-card-desc">{{ group.description|truncatewords:18 }}</div>
+            <div class="group-card-stats">👥 {{ group.member_count }} membre{{ group.member_count|pluralize }}</div>
+            <button class="btn-join" onclick="joinGroup(event, {{ group.id }})">Rejoindre le groupe</button>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state" style="background:white;border-radius:18px;box-shadow:0 2px 14px rgba(74,60,47,.07);">
+    <div class="empty-icon">🎉</div>
+    <h3>Vous avez rejoint tous les groupes !</h3>
+    <p>Créez un nouveau groupe pour démarrer une nouvelle communauté.</p>
+</div>
+{% endif %}
+
+<!-- MODAL CRÉER UN GROUPE -->
+<div class="modal-overlay" id="createModal">
+    <div class="modal-box">
+        <div class="modal-title">✨ Créer un groupe</div>
         <form id="createGroupForm">
             {% csrf_token %}
             <div class="form-group">
@@ -389,130 +382,107 @@
             </div>
             <div class="form-group">
                 <label>Description</label>
-                <textarea rows="4" name="description" id="groupDesc" placeholder="Décrivez l'objectif et l'ambiance de votre groupe..."></textarea>
+                <textarea rows="3" name="description" id="groupDesc" placeholder="Décrivez l'objectif et l'ambiance de votre groupe..."></textarea>
             </div>
             <div class="form-group">
-                <label>Catégorie</label>
+                <label>Thème de santé mentale</label>
                 <select name="category" id="groupCategory">
                     <option value="anxiete">💭 Anxiété</option>
                     <option value="depression">💙 Dépression</option>
-                    <option value="meditation">🧘 Méditation</option>
+                    <option value="stress">⚡ Stress & Burn-out</option>
+                    <option value="meditation">🧘 Méditation & Pleine conscience</option>
+                    <option value="trauma">🛡️ Trauma & PTSD</option>
+                    <option value="sommeil">🌙 Troubles du sommeil</option>
+                    <option value="relations">💞 Relations & Amour</option>
                     <option value="famille">👨‍👩‍👧‍👦 Famille</option>
-                    <option value="developpement">🌱 Développement</option>
+                    <option value="deuil">🕊️ Deuil & Perte</option>
+                    <option value="confiance">⭐ Confiance en soi</option>
+                    <option value="addiction">🔗 Addictions</option>
+                    <option value="colere">🔥 Gestion de la colère</option>
+                    <option value="solitude">🫂 Solitude & Isolement</option>
+                    <option value="identite">🌍 Identité & Culture</option>
+                    <option value="jeunes">🎓 Santé mentale des jeunes</option>
+                    <option value="spiritualite">✨ Spiritualité & Foi</option>
+                    <option value="alimentation">🥗 Alimentation & Image du corps</option>
+                    <option value="developpement">🌱 Développement personnel</option>
                 </select>
             </div>
-            <div class="form-actions">
-                <button type="button" class="btn btn-secondary" onclick="hideCreateModal()">Annuler</button>
-                <button type="submit" class="btn">Créer</button>
+            <div class="modal-actions">
+                <button type="button" class="btn-modal-cancel" onclick="hideCreateModal()">Annuler</button>
+                <button type="submit" class="btn-modal-submit">Créer le groupe</button>
             </div>
         </form>
     </div>
 </div>
 
+{% endblock %}
+
+{% block extra_js %}
 <script>
     let currentCategory = 'all';
 
     function showCreateModal() {
         document.getElementById('createModal').classList.add('show');
     }
-
     function hideCreateModal() {
         document.getElementById('createModal').classList.remove('show');
         document.getElementById('createGroupForm').reset();
     }
-
-    // Créer un groupe
-    document.getElementById('createGroupForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        const formData = new FormData(e.target);
-        
-        try {
-            const response = await fetch('{% url "create_group" %}', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRFToken': '{{ csrf_token }}'
-                }
-            });
-            
-            const data = await response.json();
-            
-            if (data.success) {
-                alert('✅ Groupe créé avec succès!');
-                window.location.href = `/forum/group/${data.group_id}/`;
-            } else {
-                alert('❌ Erreur: ' + data.message);
-            }
-        } catch (error) {
-            alert('❌ Erreur lors de la création du groupe');
-            console.error(error);
-        }
+    document.getElementById('createModal').addEventListener('click', function(e) {
+        if (e.target === this) hideCreateModal();
     });
 
-    // Rejoindre un groupe
+    document.getElementById('createGroupForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        try {
+            const res = await fetch('{% url "create_group" %}', {
+                method: 'POST', body: formData,
+                headers: { 'X-CSRFToken': '{{ csrf_token }}' }
+            });
+            const data = await res.json();
+            if (data.success) {
+                window.location.href = `/forum/group/${data.group_id}/`;
+            } else {
+                alert('Erreur : ' + data.message);
+            }
+        } catch(err) { alert('Erreur lors de la création'); }
+    });
+
     async function joinGroup(event, groupId) {
         event.stopPropagation();
         const btn = event.target;
-        
         try {
-            const response = await fetch(`/forum/join-group/${groupId}/`, {
+            const res = await fetch(`/forum/join-group/${groupId}/`, {
                 method: 'POST',
-                headers: {
-                    'X-CSRFToken': '{{ csrf_token }}'
-                }
+                headers: { 'X-CSRFToken': '{{ csrf_token }}' }
             });
-            
-            const data = await response.json();
-            
+            const data = await res.json();
             if (data.success) {
-                btn.textContent = '✓ Membre';
-                btn.style.background = '#10b981';
+                btn.textContent = '✓ Rejoint !';
+                btn.style.background = 'linear-gradient(135deg,#27ae60,#1e8449)';
                 btn.disabled = true;
-                setTimeout(() => {
-                    window.location.reload();
-                }, 1000);
-            } else {
-                alert(data.message);
-            }
-        } catch (error) {
-            alert('Erreur lors de l\'adhésion au groupe');
-            console.error(error);
-        }
+                setTimeout(() => window.location.reload(), 900);
+            } else { alert(data.message); }
+        } catch(err) { alert('Erreur'); }
     }
 
-    function filterCategory(category) {
-        currentCategory = category;
-        
-        document.querySelectorAll('.category-btn').forEach(btn => {
-            btn.classList.remove('active');
-        });
-        event.target.classList.add('active');
-        
+    function filterCategory(cat, el) {
+        currentCategory = cat;
+        document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+        if (el) el.classList.add('active');
         filterGroups();
     }
 
     function filterGroups() {
-        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-        const allCards = document.querySelectorAll('.group-card');
-        
-        allCards.forEach(card => {
-            const category = card.dataset.category;
-            const title = card.querySelector('.group-title').textContent.toLowerCase();
-            const desc = card.querySelector('.group-desc').textContent.toLowerCase();
-            
-            const matchesCategory = currentCategory === 'all' || category === currentCategory;
-            const matchesSearch = title.includes(searchTerm) || desc.includes(searchTerm);
-            
-            card.style.display = (matchesCategory && matchesSearch) ? 'block' : 'none';
+        const q = document.getElementById('searchInput').value.toLowerCase();
+        document.querySelectorAll('.group-card').forEach(card => {
+            const cat = card.dataset.category;
+            const text = card.textContent.toLowerCase();
+            const matchCat = currentCategory === 'all' || cat === currentCategory;
+            const matchSearch = text.includes(q);
+            card.style.display = (matchCat && matchSearch) ? '' : 'none';
         });
     }
-
-    // Fermer le modal en cliquant à l'extérieur
-    document.getElementById('createModal').addEventListener('click', function(e) {
-        if (e.target === this) {
-            hideCreateModal();
-        }
-    });
 </script>
 {% endblock %}

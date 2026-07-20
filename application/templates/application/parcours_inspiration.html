@@ -1,0 +1,171 @@
+{% extends 'application/base.html' %}
+{% load static %}
+
+{% block title %}Inspiration — Wanaag Corner{% endblock %}
+
+{% block content %}
+<style>
+:root { --gold:#c9a66b; --gold-light:#e8c98a; }
+
+/* HERO */
+.ins-hero {
+    background: linear-gradient(135deg, #0f1a2e 0%, #111827 50%, #1a1a0a 100%);
+    border-radius:24px; padding:3rem; margin-bottom:2.5rem;
+    position:relative; overflow:hidden;
+    border:1px solid rgba(201,166,107,.1);
+}
+.ins-hero::before {
+    content:''; position:absolute; inset:0;
+    background: radial-gradient(ellipse 70% 80% at 50% 50%, rgba(201,166,107,.06), transparent);
+}
+.ins-hero-inner { position:relative; z-index:2; text-align:center; }
+.ins-hero-star { font-size:3rem; margin-bottom:1rem; }
+.ins-hero h1 {
+    font-family:'Playfair Display',serif; font-size:clamp(1.8rem,3.5vw,2.8rem);
+    color:#fff; margin-bottom:1.5rem;
+}
+.ins-hero h1 em { color:var(--gold-light); font-style:normal; }
+
+/* Daily quote hero card */
+.ins-daily-quote {
+    background:rgba(0,0,0,.3); border:1px solid rgba(201,166,107,.2);
+    border-radius:18px; padding:2rem 2.5rem; max-width:680px; margin:0 auto;
+    position:relative;
+}
+.ins-daily-quote::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:2px;
+    background:linear-gradient(90deg,transparent,var(--gold),transparent);
+}
+.ins-quote-mark-big { font-size:4rem; color:rgba(201,166,107,.2); line-height:.5; font-family:Georgia,serif; }
+.ins-daily-text {
+    font-family:'Playfair Display',serif; font-size:1.25rem;
+    color:rgba(255,255,255,.92); font-style:italic; line-height:1.6;
+    margin:0 0 1rem;
+}
+.ins-daily-author { color:var(--gold); font-size:.88rem; font-weight:600; }
+.ins-daily-label {
+    position:absolute; top:-10px; left:1.5rem;
+    background:linear-gradient(135deg,var(--gold),#a8854a);
+    color:#fff; font-size:.65rem; font-weight:700; letter-spacing:.08em;
+    text-transform:uppercase; padding:.25rem .75rem; border-radius:20px;
+}
+
+/* Category pills */
+.ins-filters {
+    display:flex; gap:.6rem; flex-wrap:wrap; margin-bottom:2rem; align-items:center;
+}
+.ins-filters-label { font-size:.78rem; color:rgba(255,255,255,.35); font-weight:600; margin-right:.3rem; }
+.ins-pill {
+    padding:.35rem .9rem; border-radius:20px; border:1px solid rgba(255,255,255,.1);
+    background:rgba(255,255,255,.03); color:rgba(255,255,255,.55);
+    font-size:.78rem; font-weight:500; text-decoration:none; transition:all .2s;
+}
+.ins-pill:hover, .ins-pill.active {
+    background:rgba(201,166,107,.15); border-color:rgba(201,166,107,.3);
+    color:var(--gold-light);
+}
+
+/* Quotes Grid */
+.ins-grid {
+    display:grid; grid-template-columns:repeat(auto-fill, minmax(280px,1fr)); gap:1.25rem;
+}
+.ins-card {
+    background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.06);
+    border-radius:18px; padding:1.8rem; transition:all .28s;
+    display:flex; flex-direction:column; gap:.8rem; position:relative; overflow:hidden;
+}
+.ins-card::before {
+    content:''; position:absolute; bottom:0; left:0; right:0; height:2px;
+    background:linear-gradient(90deg, transparent, rgba(201,166,107,.3), transparent);
+    opacity:0; transition:opacity .25s;
+}
+.ins-card:hover { transform:translateY(-5px); border-color:rgba(201,166,107,.18); box-shadow:0 15px 35px rgba(0,0,0,.3); }
+.ins-card:hover::before { opacity:1; }
+.ins-card-quote { font-size:.85rem; color:rgba(255,255,255,.75); line-height:1.65; font-style:italic; flex:1; }
+.ins-card-quote::before { content:'"'; color:var(--gold); font-size:1.4rem; font-family:Georgia,serif; margin-right:.1rem; }
+.ins-card-quote::after  { content:'"'; color:var(--gold); font-size:1.4rem; font-family:Georgia,serif; margin-left:.1rem; }
+.ins-card-footer { display:flex; align-items:center; justify-content:space-between; margin-top:auto; }
+.ins-card-author { font-size:.76rem; font-weight:600; color:var(--gold); }
+.ins-card-cat {
+    font-size:.65rem; padding:.15rem .55rem; border-radius:12px;
+    background:rgba(201,166,107,.1); color:rgba(201,166,107,.7); font-weight:600;
+}
+.ins-copy-btn {
+    background:none; border:none; color:rgba(255,255,255,.25); cursor:pointer;
+    font-size:.85rem; padding:.3rem; border-radius:6px; transition:all .2s;
+}
+.ins-copy-btn:hover { color:var(--gold); background:rgba(201,166,107,.1); }
+
+.ins-empty {
+    text-align:center; padding:4rem; grid-column:1/-1;
+    background:rgba(255,255,255,.02); border:1px dashed rgba(255,255,255,.06);
+    border-radius:18px; color:rgba(255,255,255,.35);
+}
+.app-content { background: #1a1008 !important; }
+body { background: #1a1008 !important; }
+.ins-card, .ins-filters, .ins-grid { opacity: 1 !important; transform: none !important; }
+
+@media(max-width:700px){
+    .ins-hero { padding:2rem 1.5rem; border-radius:18px; }
+    .ins-daily-quote { padding:1.5rem; }
+    .ins-daily-text { font-size:1.05rem; }
+    .ins-grid { grid-template-columns:1fr; }
+}
+</style>
+
+<!-- Hero with Daily Quote -->
+<div class="ins-hero wow">
+    <div class="ins-hero-inner">
+        <div class="ins-hero-star">✨</div>
+        <h1>Citations <em>Inspirantes</em></h1>
+        {% if quote_du_jour %}
+        <div class="ins-daily-quote">
+            <span class="ins-daily-label">Citation du jour</span>
+            <div class="ins-quote-mark-big">"</div>
+            <p class="ins-daily-text">{{ quote_du_jour.texte }}</p>
+            <div class="ins-daily-author">— {{ quote_du_jour.auteur }}</div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Filters -->
+<div class="ins-filters wow">
+    <span class="ins-filters-label">Filtrer par :</span>
+    <a href="{% url 'parcours_inspiration' %}" class="ins-pill {% if not cat_filter %}active{% endif %}">Toutes</a>
+    {% for cat in categories %}
+    {% if cat %}
+    <a href="{% url 'parcours_inspiration' %}?cat={{ cat }}" class="ins-pill {% if cat_filter == cat %}active{% endif %}">{{ cat }}</a>
+    {% endif %}
+    {% endfor %}
+</div>
+
+<!-- Quotes Grid -->
+<div class="ins-grid">
+    {% for quote in quotes %}
+    <div class="ins-card wow">
+        <div class="ins-card-quote">{{ quote.texte }}</div>
+        <div class="ins-card-footer">
+            <span class="ins-card-author">{{ quote.auteur }}</span>
+            {% if quote.categorie %}<span class="ins-card-cat">{{ quote.categorie }}</span>{% endif %}
+            <button class="ins-copy-btn" onclick="copyQuote(this, '{{ quote.texte|escapejs }}')" title="Copier">📋</button>
+        </div>
+    </div>
+    {% empty %}
+    <div class="ins-empty">
+        <div style="font-size:3rem;margin-bottom:1rem;">🌟</div>
+        <p>Aucune citation pour ce filtre.</p>
+    </div>
+    {% endfor %}
+</div>
+
+<script>
+function copyQuote(btn, text) {
+    navigator.clipboard.writeText('"' + text + '"').then(() => {
+        btn.textContent = '✓';
+        btn.style.color = '#10b981';
+        setTimeout(() => { btn.textContent = '📋'; btn.style.color = ''; }, 1500);
+    });
+}
+</script>
+{% endblock %}

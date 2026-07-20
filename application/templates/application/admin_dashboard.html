@@ -1,0 +1,1207 @@
+{% extends 'application/base.html' %}
+{% load static %}
+
+{% block title %}Administration — Wanaag Corner{% endblock %}
+{% block page_title %}Administration{% endblock %}
+
+{% block extra_css %}
+<style>
+/* ===== ADMIN VARS ===== */
+:root {
+    --adm-bg: #f5f0eb;
+    --adm-card: #ffffff;
+    --adm-border: rgba(139,105,70,.13);
+    --adm-radius: 16px;
+    --adm-shadow: 0 4px 24px rgba(74,60,47,.10);
+    --green: #27ae60; --red: #e74c3c; --blue: #2980b9; --orange: #e67e22;
+    --green-bg: rgba(39,174,96,.1); --red-bg: rgba(231,76,60,.08);
+    --blue-bg: rgba(41,128,185,.08); --orange-bg: rgba(230,126,34,.1);
+}
+
+/* ===== ADMIN WRAPPER ===== */
+.adm-wrap { display: flex; flex-direction: column; gap: 0; }
+
+/* ===== TAB BAR ===== */
+.adm-tabs {
+    display: flex; flex-wrap: wrap; gap: .5rem;
+    background: white; border-radius: 18px; padding: 1rem 1.2rem;
+    margin-bottom: 1.8rem;
+    box-shadow: var(--adm-shadow);
+    border: 1px solid var(--adm-border);
+}
+.adm-tab {
+    padding: .5rem 1.1rem; border-radius: 50px; font-size: .82rem; font-weight: 600;
+    cursor: pointer; border: none; background: transparent; color: var(--brown-light);
+    transition: all .18s; display: flex; align-items: center; gap: .4rem;
+}
+.adm-tab:hover { background: var(--beige-light); color: var(--brown-dark); }
+.adm-tab.active { background: linear-gradient(135deg, var(--accent), var(--accent-dark)); color: white; box-shadow: 0 4px 14px rgba(201,166,107,.4); }
+.adm-tab .tab-badge { background: rgba(255,255,255,.3); border-radius: 20px; padding: .1rem .45rem; font-size: .72rem; }
+.adm-tab.active .tab-badge { background: rgba(255,255,255,.25); }
+
+/* ===== SECTIONS ===== */
+.adm-section { display: none; }
+.adm-section.visible { display: block; }
+
+/* ===== STAT CARDS ===== */
+.stat-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    gap: 1.2rem; margin-bottom: 2rem;
+}
+.stat-card {
+    background: white; border-radius: var(--adm-radius); padding: 1.4rem 1.6rem;
+    box-shadow: var(--adm-shadow); border: 1px solid var(--adm-border);
+    display: flex; flex-direction: column; gap: .4rem; position: relative; overflow: hidden;
+    transition: transform .2s;
+}
+.stat-card:hover { transform: translateY(-3px); }
+.stat-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-dark));
+}
+.stat-card.green::before { background: linear-gradient(90deg, #27ae60, #1e8449); }
+.stat-card.blue::before { background: linear-gradient(90deg, #2980b9, #1a6fa8); }
+.stat-card.orange::before { background: linear-gradient(90deg, #e67e22, #ca6f1e); }
+.stat-card.red::before { background: linear-gradient(90deg, #e74c3c, #c0392b); }
+.stat-value { font-size: 2.2rem; font-weight: 800; color: var(--brown-dark); line-height: 1; }
+.stat-label { font-size: .78rem; color: var(--brown-light); font-weight: 500; text-transform: uppercase; letter-spacing: .5px; }
+.stat-icon { position: absolute; right: 1.2rem; top: 1.2rem; font-size: 1.6rem; opacity: .18; }
+
+/* ===== DATA TABLE ===== */
+.adm-table-wrap {
+    background: white; border-radius: var(--adm-radius);
+    box-shadow: var(--adm-shadow); border: 1px solid var(--adm-border);
+    overflow: hidden; margin-bottom: 2rem;
+}
+.adm-table-head {
+    padding: 1.2rem 1.5rem; display: flex; align-items: center;
+    justify-content: space-between; border-bottom: 1px solid var(--adm-border);
+    background: linear-gradient(to right, var(--beige-light), white);
+}
+.adm-table-head h3 { font-size: 1rem; font-weight: 700; color: var(--brown-dark); margin: 0; }
+.adm-table-head .count-badge {
+    background: var(--beige); color: var(--brown); border-radius: 20px;
+    padding: .2rem .7rem; font-size: .78rem; font-weight: 600; margin-left: .5rem;
+}
+.adm-table { width: 100%; border-collapse: collapse; font-size: .84rem; }
+.adm-table thead th {
+    background: var(--beige-light); color: var(--brown); font-weight: 700;
+    padding: .75rem 1rem; text-align: left; font-size: .75rem; text-transform: uppercase;
+    letter-spacing: .4px; border-bottom: 1px solid var(--adm-border);
+}
+.adm-table tbody tr { border-bottom: 1px solid rgba(139,105,70,.07); transition: background .15s; }
+.adm-table tbody tr:last-child { border-bottom: none; }
+.adm-table tbody tr:hover { background: var(--beige-light); }
+.adm-table td { padding: .75rem 1rem; color: var(--brown-dark); vertical-align: middle; }
+.adm-table td.muted { color: var(--brown-light); font-size: .8rem; }
+
+/* ===== ACTION BUTTONS ===== */
+.btn-adm {
+    padding: .35rem .85rem; border-radius: 8px; font-size: .78rem; font-weight: 600;
+    cursor: pointer; border: none; transition: all .15s; display: inline-flex;
+    align-items: center; gap: .3rem; text-decoration: none;
+}
+.btn-adm-primary { background: linear-gradient(135deg, var(--accent), var(--accent-dark)); color: white; }
+.btn-adm-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(201,166,107,.4); }
+.btn-adm-green { background: var(--green-bg); color: var(--green); border: 1px solid rgba(39,174,96,.2); }
+.btn-adm-green:hover { background: var(--green); color: white; }
+.btn-adm-red { background: var(--red-bg); color: var(--red); border: 1px solid rgba(231,76,60,.2); }
+.btn-adm-red:hover { background: var(--red); color: white; }
+.btn-adm-blue { background: var(--blue-bg); color: var(--blue); border: 1px solid rgba(41,128,185,.2); }
+.btn-adm-blue:hover { background: var(--blue); color: white; }
+.btn-adm-orange { background: var(--orange-bg); color: var(--orange); border: 1px solid rgba(230,126,34,.2); }
+.btn-adm-orange:hover { background: var(--orange); color: white; }
+.btn-adm-outline { background: transparent; color: var(--brown-dark); border: 1px solid var(--adm-border); }
+.btn-adm-outline:hover { background: var(--beige-light); }
+
+/* ===== STATUS BADGES ===== */
+.status-badge {
+    display: inline-block; padding: .2rem .7rem; border-radius: 20px;
+    font-size: .73rem; font-weight: 700; text-transform: uppercase;
+}
+.status-publie { background: var(--green-bg); color: var(--green); }
+.status-brouillon { background: var(--orange-bg); color: var(--orange); }
+.status-active { background: var(--green-bg); color: var(--green); }
+.status-inactive { background: var(--red-bg); color: var(--red); }
+.status-admin { background: var(--blue-bg); color: var(--blue); }
+.status-psy { background: rgba(155,89,182,.1); color: #8e44ad; }
+.status-attente { background: var(--orange-bg); color: var(--orange); }
+.status-confirmee { background: var(--green-bg); color: var(--green); }
+.status-rejetee { background: var(--red-bg); color: var(--red); }
+.status-completee { background: var(--blue-bg); color: var(--blue); }
+.status-annulee { background: rgba(149,165,166,.15); color: #7f8c8d; }
+
+/* ===== MODALS ===== */
+.adm-modal-overlay {
+    position: fixed; inset: 0; background: rgba(30,15,5,.55);
+    z-index: 1000; display: none; align-items: center; justify-content: center;
+    backdrop-filter: blur(4px);
+}
+.adm-modal-overlay.open { display: flex; }
+.adm-modal {
+    background: white; border-radius: 22px; width: 95%; max-width: 640px;
+    max-height: 90vh; overflow-y: auto;
+    box-shadow: 0 25px 80px rgba(0,0,0,.25);
+    animation: modalIn .25s ease;
+}
+@keyframes modalIn { from { opacity:0; transform: scale(.95) translateY(10px); } to { opacity:1; transform: scale(1) translateY(0); } }
+.adm-modal-header {
+    padding: 1.4rem 1.8rem; display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid var(--adm-border);
+    background: linear-gradient(to right, var(--beige-light), white);
+    border-radius: 22px 22px 0 0;
+}
+.adm-modal-header h4 { font-size: 1.1rem; font-weight: 700; color: var(--brown-dark); margin: 0; }
+.adm-modal-close {
+    width: 32px; height: 32px; border-radius: 50%; background: var(--beige);
+    border: none; cursor: pointer; font-size: 1.1rem; color: var(--brown);
+    display: flex; align-items: center; justify-content: center; transition: all .15s;
+}
+.adm-modal-close:hover { background: var(--red-bg); color: var(--red); }
+.adm-modal-body { padding: 1.8rem; }
+.adm-modal-footer {
+    padding: 1.2rem 1.8rem; border-top: 1px solid var(--adm-border);
+    display: flex; justify-content: flex-end; gap: .7rem;
+    border-radius: 0 0 22px 22px; background: var(--beige-light);
+}
+
+/* ===== FORM FIELDS ===== */
+.adm-form-row { margin-bottom: 1.2rem; }
+.adm-form-row label {
+    display: block; font-size: .8rem; font-weight: 700; color: var(--brown);
+    margin-bottom: .4rem; text-transform: uppercase; letter-spacing: .3px;
+}
+.adm-form-row input,
+.adm-form-row select,
+.adm-form-row textarea {
+    width: 100%; padding: .7rem .9rem; border: 1.5px solid var(--adm-border);
+    border-radius: 10px; font-size: .88rem; color: var(--brown-dark);
+    background: white; transition: border-color .15s; font-family: inherit;
+    box-sizing: border-box;
+}
+.adm-form-row input:focus,
+.adm-form-row select:focus,
+.adm-form-row textarea:focus {
+    outline: none; border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(201,166,107,.15);
+}
+.adm-form-row textarea { resize: vertical; min-height: 80px; }
+.adm-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.adm-form-row.full { grid-column: 1 / -1; }
+
+/* ===== TOAST ===== */
+.adm-toast {
+    position: fixed; bottom: 2rem; right: 2rem; z-index: 9999;
+    background: var(--brown-dark); color: white; border-radius: 12px;
+    padding: .9rem 1.4rem; font-size: .87rem; font-weight: 600;
+    box-shadow: 0 8px 30px rgba(0,0,0,.25); display: none;
+    align-items: center; gap: .6rem;
+    animation: toastIn .3s ease;
+}
+.adm-toast.show { display: flex; }
+.adm-toast.success { background: var(--green); }
+.adm-toast.error { background: var(--red); }
+@keyframes toastIn { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+
+/* ===== SEARCH BAR ===== */
+.adm-search {
+    padding: .6rem .9rem; border: 1.5px solid var(--adm-border); border-radius: 10px;
+    font-size: .84rem; width: 220px; transition: all .15s;
+}
+.adm-search:focus { outline: none; border-color: var(--accent); width: 280px; }
+
+/* ===== RECENT ACTIVITY ===== */
+.activity-list { display: flex; flex-direction: column; gap: .8rem; }
+.activity-item {
+    display: flex; align-items: center; gap: 1rem; padding: .8rem 1rem;
+    background: var(--beige-light); border-radius: 12px;
+    border-left: 3px solid var(--accent);
+}
+.activity-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+.activity-text { font-size: .85rem; color: var(--brown-dark); flex: 1; }
+.activity-time { font-size: .75rem; color: var(--brown-light); }
+
+/* ===== OVERVIEW GRID ===== */
+.overview-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; }
+@media(max-width:900px) { .overview-grid { grid-template-columns: 1fr; } }
+.adm-mini-table { width: 100%; border-collapse: collapse; font-size: .82rem; }
+.adm-mini-table td { padding: .55rem .8rem; border-bottom: 1px solid var(--adm-border); color: var(--brown-dark); }
+.adm-mini-table tr:last-child td { border-bottom: none; }
+.adm-mini-table td:first-child { font-weight: 600; }
+.adm-mini-table td:last-child { text-align: right; color: var(--brown-light); font-size: .78rem; }
+.panel-card {
+    background: white; border-radius: var(--adm-radius);
+    box-shadow: var(--adm-shadow); border: 1px solid var(--adm-border); overflow: hidden;
+}
+.panel-card-title {
+    padding: 1rem 1.3rem; font-size: .88rem; font-weight: 700; color: var(--brown-dark);
+    border-bottom: 1px solid var(--adm-border);
+    background: linear-gradient(to right, var(--beige-light), white);
+}
+.panel-card-body { padding: 0; }
+
+/* ===== CONFIRM DIALOG ===== */
+.adm-confirm { text-align: center; padding: 1rem; }
+.adm-confirm p { color: var(--brown); margin-bottom: 1.5rem; }
+.adm-confirm strong { color: var(--red); }
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:700px) {
+    .adm-form-grid { grid-template-columns: 1fr; }
+    .stat-grid { grid-template-columns: repeat(2, 1fr); }
+    .adm-tabs { gap: .3rem; }
+    .adm-tab { font-size: .75rem; padding: .4rem .8rem; }
+    .adm-search { width: 150px; }
+    .adm-search:focus { width: 150px; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="adm-wrap">
+
+  <!-- ===== TAB BAR ===== -->
+  <div class="adm-tabs" id="admTabs">
+    <button class="adm-tab active" onclick="admTab('overview',this)">Vue d'ensemble</button>
+    <button class="adm-tab" onclick="admTab('ressources',this)">Ressources <span class="tab-badge">{{ stats.total_ressources }}</span></button>
+    <button class="adm-tab" onclick="admTab('categories',this)">Catégories <span class="tab-badge">{{ stats.total_categories }}</span></button>
+    <button class="adm-tab" onclick="admTab('users',this)">Utilisateurs <span class="tab-badge">{{ stats.total_users }}</span></button>
+    <button class="adm-tab" onclick="admTab('psychologues',this)">Psychologues <span class="tab-badge">{{ stats.total_psychologues }}</span></button>
+    <button class="adm-tab" onclick="admTab('consultations',this)">Consultations {% if stats.consultations_en_attente %}<span class="tab-badge">{{ stats.consultations_en_attente }}</span>{% endif %}</button>
+    <button class="adm-tab" onclick="admTab('posts',this)">Posts <span class="tab-badge">{{ stats.total_posts }}</span></button>
+    <button class="adm-tab" onclick="admTab('forum',this)">Forum <span class="tab-badge">{{ stats.total_groups }}</span></button>
+  </div>
+
+  <!-- ===== SECTION: VUE D'ENSEMBLE ===== -->
+  <div class="adm-section visible" id="sec-overview">
+    <!-- Stats grid -->
+    <div class="stat-grid">
+      <div class="stat-card">
+        <span class="stat-icon">👥</span>
+        <div class="stat-value">{{ stats.total_users }}</div>
+        <div class="stat-label">Utilisateurs</div>
+      </div>
+      <div class="stat-card green">
+        <span class="stat-icon">📝</span>
+        <div class="stat-value">{{ stats.total_posts }}</div>
+        <div class="stat-label">Posts publiés</div>
+      </div>
+      <div class="stat-card blue">
+        <span class="stat-icon">💬</span>
+        <div class="stat-value">{{ stats.total_groups }}</div>
+        <div class="stat-label">Groupes forum</div>
+      </div>
+      <div class="stat-card orange">
+        <span class="stat-icon">📚</span>
+        <div class="stat-value">{{ stats.total_ressources }}</div>
+        <div class="stat-label">Ressources</div>
+      </div>
+      <div class="stat-card">
+        <span class="stat-icon">🩺</span>
+        <div class="stat-value">{{ stats.total_psychologues }}</div>
+        <div class="stat-label">Psychologues</div>
+      </div>
+      <div class="stat-card red">
+        <span class="stat-icon">⏳</span>
+        <div class="stat-value">{{ stats.consultations_en_attente }}</div>
+        <div class="stat-label">Consultations en attente</div>
+      </div>
+      <div class="stat-card green">
+        <span class="stat-icon">👁️</span>
+        <div class="stat-value">{{ stats.total_vues }}</div>
+        <div class="stat-label">Vues ressources</div>
+      </div>
+      <div class="stat-card blue">
+        <span class="stat-icon">✉️</span>
+        <div class="stat-value">{{ stats.total_messages }}</div>
+        <div class="stat-label">Messages forum</div>
+      </div>
+    </div>
+
+    <!-- Overview panels -->
+    <div class="overview-grid">
+      <!-- Recent users -->
+      <div class="panel-card">
+        <div class="panel-card-title">Derniers utilisateurs inscrits</div>
+        <div class="panel-card-body">
+          <table class="adm-mini-table">
+            {% for u in users|slice:":8" %}
+            <tr>
+              <td>
+                <strong>{{ u.pseudonyme }}</strong>
+                {% if u.is_superuser %}<span class="status-badge status-admin">Admin</span>
+                {% elif u.is_staff %}<span class="status-badge status-admin">Staff</span>
+                {% elif u.psychologue_profile %}<span class="status-badge status-psy">Psy</span>{% endif %}
+              </td>
+              <td>{{ u.email }}</td>
+              <td>{{ u.date_joined|date:"d/m/Y" }}</td>
+            </tr>
+            {% empty %}<tr><td colspan="3" style="color:var(--brown-light);padding:1rem;">Aucun utilisateur</td></tr>
+            {% endfor %}
+          </table>
+        </div>
+      </div>
+      <!-- Consultations en attente -->
+      <div class="panel-card">
+        <div class="panel-card-title">Consultations en attente</div>
+        <div class="panel-card-body">
+          <table class="adm-mini-table">
+            {% for c in consultations %}{% if c.statut == 'en_attente' %}
+            <tr>
+              <td><strong>{{ c.utilisateur.pseudonyme }}</strong></td>
+              <td>→ {{ c.psychologue.user.pseudonyme }}</td>
+              <td>{{ c.date_demande|date:"d/m" }}</td>
+            </tr>
+            {% endif %}{% empty %}{% endfor %}
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SECTION: RESSOURCES ===== -->
+  <div class="adm-section" id="sec-ressources">
+    <div class="adm-table-wrap">
+      <div class="adm-table-head">
+        <div style="display:flex;align-items:center;gap:.6rem;">
+          <h3>Ressources éducatives</h3>
+          <span class="count-badge">{{ ressources|length }}</span>
+        </div>
+        <div style="display:flex;gap:.7rem;align-items:center;">
+          <input class="adm-search" placeholder="Rechercher..." oninput="filterTable('res-table',this.value)">
+          <button class="btn-adm btn-adm-primary" onclick="openModal('modal-add-ressource')">+ Ajouter</button>
+        </div>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="adm-table" id="res-table">
+          <thead>
+            <tr>
+              <th>Titre</th><th>Type</th><th>Catégorie</th><th>Accès</th>
+              <th>Vues</th><th>Statut</th><th>Date</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for r in ressources %}
+            <tr id="res-row-{{ r.id }}">
+              <td><strong>{{ r.titre|truncatechars:40 }}</strong></td>
+              <td>
+                <span style="display:inline-flex;align-items:center;gap:.5rem;padding:.3rem .8rem .3rem .3rem;border-radius:20px;background:rgba(245,240,235,.8);border:1px solid rgba(201,166,107,.2);font-size:.82rem;font-weight:600;color:var(--brown);">
+                  {% with img=r.type_ressource|type_img %}{% if img %}<img src="{% static 'images/' %}{{ img }}" alt="" style="width:38px;height:38px;border-radius:10px;object-fit:cover;border:1.5px solid rgba(201,166,107,.3);">{% endif %}{% endwith %}
+                  {{ r.get_type_ressource_display }}
+                </span>
+              </td>
+              <td class="muted">{{ r.categorie|default:"—" }}</td>
+              <td>
+                {% if r.acces == 'premium' %}
+                  <span style="display:inline-flex;align-items:center;gap:.35rem;padding:.25rem .7rem;border-radius:20px;background:linear-gradient(135deg,#c9a66b,#8b6030);color:white;font-size:.78rem;font-weight:700;">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    Premium
+                  </span>
+                {% else %}
+                  <span style="display:inline-flex;align-items:center;gap:.35rem;padding:.25rem .7rem;border-radius:20px;background:linear-gradient(135deg,#27ae60,#1e8449);color:white;font-size:.78rem;font-weight:700;">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    Gratuit
+                  </span>
+                {% endif %}
+              </td>
+              <td class="muted">{{ r.vues }}</td>
+              <td>
+                {% if r.est_publie %}<span class="status-badge status-publie">Publié</span>
+                {% else %}<span class="status-badge status-brouillon">Brouillon</span>{% endif %}
+              </td>
+              <td class="muted">{{ r.date_creation|date:"d/m/Y" }}</td>
+              <td>
+                <button class="btn-adm btn-adm-blue" onclick="editRessource({{ r.id }})">Modifier</button>
+                <button class="btn-adm btn-adm-red" onclick="confirmDelete('Supprimer cette ressource ?','{% url 'admin_delete_ressource' r.id %}','res-row-{{ r.id }}')">Supprimer</button>
+              </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--brown-light);">Aucune ressource</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SECTION: CATÉGORIES ===== -->
+  <div class="adm-section" id="sec-categories">
+    <div class="adm-table-wrap">
+      <div class="adm-table-head">
+        <div style="display:flex;align-items:center;gap:.6rem;">
+          <h3>Catégories de ressources</h3>
+          <span class="count-badge">{{ categories|length }}</span>
+        </div>
+        <button class="btn-adm btn-adm-primary" onclick="openModal('modal-add-cat')">+ Ajouter</button>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="adm-table" id="cat-table">
+          <thead>
+            <tr><th>Icône</th><th>Nom</th><th>Slug</th><th>Description</th><th>Ordre</th><th>Ressources</th><th>Actions</th></tr>
+          </thead>
+          <tbody>
+            {% for cat in categories %}
+            <tr id="cat-row-{{ cat.id }}">
+              <td style="font-size:1.4rem;">{{ cat.icone }}</td>
+              <td><strong>{{ cat.nom }}</strong></td>
+              <td class="muted">{{ cat.slug }}</td>
+              <td class="muted">{{ cat.description|truncatechars:40|default:"—" }}</td>
+              <td class="muted">{{ cat.ordre }}</td>
+              <td class="muted">{{ cat.ressources.count }}</td>
+              <td>
+                <button class="btn-adm btn-adm-blue" onclick="editCategorie({{ cat.id }})">Modifier</button>
+                <button class="btn-adm btn-adm-red" onclick="confirmDelete('Supprimer cette catégorie ?','{% url 'admin_delete_categorie' cat.id %}','cat-row-{{ cat.id }}')">Supprimer</button>
+              </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--brown-light);">Aucune catégorie</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SECTION: UTILISATEURS ===== -->
+  <div class="adm-section" id="sec-users">
+    <div class="adm-table-wrap">
+      <div class="adm-table-head">
+        <div style="display:flex;align-items:center;gap:.6rem;">
+          <h3>Utilisateurs</h3>
+          <span class="count-badge">{{ users|length }}</span>
+        </div>
+        <input class="adm-search" placeholder="Rechercher..." oninput="filterTable('users-table',this.value)">
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="adm-table" id="users-table">
+          <thead>
+            <tr><th>Pseudo</th><th>Email</th><th>Rôle</th><th>Statut</th><th>Inscrit le</th><th>Actions</th></tr>
+          </thead>
+          <tbody>
+            {% for u in users %}
+            <tr id="user-row-{{ u.id }}">
+              <td><strong>{{ u.pseudonyme }}</strong></td>
+              <td class="muted">{{ u.email }}</td>
+              <td>
+                {% if u.is_superuser %}<span class="status-badge status-admin">Super Admin</span>
+                {% elif u.is_staff %}<span class="status-badge status-admin">Admin</span>
+                {% elif u.psychologue_profile %}<span class="status-badge status-psy">Psychologue</span>
+                {% else %}<span class="status-badge status-active">Membre</span>{% endif %}
+              </td>
+              <td>
+                <span class="status-badge {% if u.is_active %}status-active{% else %}status-inactive{% endif %}" id="active-badge-{{ u.id }}">
+                  {% if u.is_active %}Actif{% else %}Inactif{% endif %}
+                </span>
+              </td>
+              <td class="muted">{{ u.date_joined|date:"d/m/Y" }}</td>
+              <td style="display:flex;gap:.4rem;flex-wrap:wrap;">
+                <button class="btn-adm btn-adm-outline" onclick="toggleUserActive({{ u.id }})" {% if u == request.user %}disabled style="opacity:.4"{% endif %}>
+                  Activer/Désactiver
+                </button>
+                <button class="btn-adm btn-adm-blue" onclick="toggleUserStaff({{ u.id }})" {% if u == request.user %}disabled style="opacity:.4"{% endif %}>
+                  Admin
+                </button>
+                <button class="btn-adm btn-adm-red" onclick="confirmDelete('Supprimer {{ u.pseudonyme }} ?','{% url 'admin_delete_user' u.id %}','user-row-{{ u.id }}')" {% if u == request.user %}disabled style="opacity:.4"{% endif %}>
+                  Supprimer
+                </button>
+              </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--brown-light);">Aucun utilisateur</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SECTION: PSYCHOLOGUES ===== -->
+  <div class="adm-section" id="sec-psychologues">
+    <div class="adm-table-wrap">
+      <div class="adm-table-head">
+        <div style="display:flex;align-items:center;gap:.6rem;">
+          <h3>Psychologues</h3>
+          <span class="count-badge">{{ psychologues|length }}</span>
+        </div>
+        <button class="btn-adm btn-adm-primary" onclick="openModal('modal-add-psy')">+ Ajouter un psychologue</button>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="adm-table" id="psy-table">
+          <thead>
+            <tr><th>Nom</th><th>Email</th><th>Spécialités</th><th>Expérience</th><th>Statut</th><th>Actions</th></tr>
+          </thead>
+          <tbody>
+            {% for psy in psychologues %}
+            <tr id="psy-row-{{ psy.id }}">
+              <td><strong>Dr. {{ psy.user.pseudonyme }}</strong></td>
+              <td class="muted">{{ psy.user.email }}</td>
+              <td class="muted">{{ psy.specialites|truncatechars:40 }}</td>
+              <td class="muted">{{ psy.experience_ans }} ans</td>
+              <td>
+                <span class="status-badge {% if psy.est_actif %}status-active{% else %}status-inactive{% endif %}">
+                  {% if psy.est_actif %}Actif{% else %}Inactif{% endif %}
+                </span>
+              </td>
+              <td>
+                <button class="btn-adm btn-adm-blue" onclick="editPsychologue({{ psy.id }})">Modifier</button>
+                <button class="btn-adm btn-adm-red" onclick="confirmDelete('Retirer Dr. {{ psy.user.pseudonyme }} comme psychologue ?','{% url 'admin_delete_psychologue' psy.id %}','psy-row-{{ psy.id }}')">Supprimer</button>
+              </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--brown-light);">Aucun psychologue</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SECTION: CONSULTATIONS ===== -->
+  <div class="adm-section" id="sec-consultations">
+    <div class="adm-table-wrap">
+      <div class="adm-table-head">
+        <div style="display:flex;align-items:center;gap:.6rem;">
+          <h3>Consultations</h3>
+          <span class="count-badge">{{ consultations|length }}</span>
+        </div>
+        <input class="adm-search" placeholder="Rechercher..." oninput="filterTable('cons-table',this.value)">
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="adm-table" id="cons-table">
+          <thead>
+            <tr><th>Utilisateur</th><th>Psychologue</th><th>Sujet</th><th>Statut</th><th>Date</th><th>Actions</th></tr>
+          </thead>
+          <tbody>
+            {% for c in consultations %}
+            <tr id="cons-row-{{ c.id }}">
+              <td><strong>{{ c.utilisateur.pseudonyme }}</strong></td>
+              <td class="muted">Dr. {{ c.psychologue.user.pseudonyme }}</td>
+              <td class="muted">{{ c.sujet|truncatechars:35 }}</td>
+              <td>
+                <span class="status-badge status-{{ c.statut }}" id="cons-status-{{ c.id }}">{{ c.get_statut_display }}</span>
+              </td>
+              <td class="muted">{{ c.date_demande|date:"d/m/Y" }}</td>
+              <td>
+                <select class="btn-adm btn-adm-outline" style="padding:.3rem .6rem;font-size:.75rem;" onchange="updateConsultation({{ c.id }}, this.value)">
+                  <option value="">Changer statut</option>
+                  <option value="en_attente">En attente</option>
+                  <option value="confirmee">Confirmée</option>
+                  <option value="rejetee">Rejetée</option>
+                  <option value="completee">Complétée</option>
+                  <option value="annulee">Annulée</option>
+                </select>
+              </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--brown-light);">Aucune consultation</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SECTION: POSTS ===== -->
+  <div class="adm-section" id="sec-posts">
+    <div class="adm-table-wrap">
+      <div class="adm-table-head">
+        <div style="display:flex;align-items:center;gap:.6rem;">
+          <h3>Posts</h3>
+          <span class="count-badge">{{ posts|length }}</span>
+        </div>
+        <input class="adm-search" placeholder="Rechercher..." oninput="filterTable('posts-table',this.value)">
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="adm-table" id="posts-table">
+          <thead>
+            <tr><th>Auteur</th><th>Contenu</th><th>Image</th><th>Likes</th><th>Commentaires</th><th>Date</th><th>Actions</th></tr>
+          </thead>
+          <tbody>
+            {% for p in posts %}
+            <tr id="post-row-{{ p.id }}">
+              <td><strong>{{ p.auteur.pseudonyme }}</strong></td>
+              <td class="muted">{{ p.contenu|truncatechars:50|default:"(image uniquement)" }}</td>
+              <td>{% if p.image %}<span class="status-badge status-active">Oui</span>{% else %}—{% endif %}</td>
+              <td class="muted">{{ p.nb_likes_count }}</td>
+              <td class="muted">{{ p.nb_com }}</td>
+              <td class="muted">{{ p.date_creation|date:"d/m/Y" }}</td>
+              <td>
+                <button class="btn-adm btn-adm-red" onclick="confirmDelete('Supprimer ce post ?','{% url 'admin_delete_post_action' p.id %}','post-row-{{ p.id }}')">Supprimer</button>
+              </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--brown-light);">Aucun post</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SECTION: FORUM ===== -->
+  <div class="adm-section" id="sec-forum">
+    <div class="adm-table-wrap">
+      <div class="adm-table-head">
+        <div style="display:flex;align-items:center;gap:.6rem;">
+          <h3>Groupes Forum</h3>
+          <span class="count-badge">{{ groups|length }}</span>
+        </div>
+        <input class="adm-search" placeholder="Rechercher..." oninput="filterTable('groups-table',this.value)">
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="adm-table" id="groups-table">
+          <thead>
+            <tr><th>Nom</th><th>Catégorie</th><th>Créateur</th><th>Membres</th><th>Messages</th><th>Privé</th><th>Date</th><th>Actions</th></tr>
+          </thead>
+          <tbody>
+            {% for g in groups %}
+            <tr id="group-row-{{ g.id }}">
+              <td><strong>{{ g.name|truncatechars:35 }}</strong></td>
+              <td class="muted">{{ g.get_category_display }}</td>
+              <td class="muted">{{ g.creator.pseudonyme }}</td>
+              <td class="muted">{{ g.member_count_ann }}</td>
+              <td class="muted">{{ g.msg_count }}</td>
+              <td>{% if g.is_private %}<span class="status-badge status-brouillon">Privé</span>{% else %}—{% endif %}</td>
+              <td class="muted">{{ g.created_at|date:"d/m/Y" }}</td>
+              <td>
+                <button class="btn-adm btn-adm-red" onclick="confirmDelete('Supprimer ce groupe et tous ses messages ?','{% url 'admin_delete_group_action' g.id %}','group-row-{{ g.id }}')">Supprimer</button>
+              </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--brown-light);">Aucun groupe</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end adm-wrap -->
+
+
+<!-- ========== MODALS ========== -->
+
+<!-- ADD RESSOURCE -->
+<div class="adm-modal-overlay" id="modal-add-ressource">
+  <div class="adm-modal">
+    <div class="adm-modal-header">
+      <h4 id="res-modal-title">Ajouter une ressource</h4>
+      <button class="adm-modal-close" onclick="closeModal('modal-add-ressource')">✕</button>
+    </div>
+    <form id="res-form" enctype="multipart/form-data">
+      {% csrf_token %}
+      <input type="hidden" id="res-edit-id" value="">
+      <div class="adm-modal-body">
+        <div class="adm-form-grid">
+
+          <!-- Titre -->
+          <div class="adm-form-row full">
+            <label>Titre *</label>
+            <input type="text" name="titre" id="res-titre" placeholder="Titre de la ressource" required>
+          </div>
+
+          <!-- Type + Accès -->
+          <div class="adm-form-row">
+            <label>Type</label>
+            <select name="type_ressource" id="res-type" onchange="resTypeChanged(this.value)">
+              {% for val, label in type_choices %}
+              <option value="{{ val }}">{{ label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="adm-form-row">
+            <label>Accès</label>
+            <select name="acces" id="res-acces">
+              <option value="gratuit">Gratuit</option>
+              <option value="premium">Premium</option>
+            </select>
+          </div>
+
+          <!-- Description -->
+          <div class="adm-form-row full">
+            <label>Description courte (max 300 chars)</label>
+            <textarea name="description" id="res-desc" rows="2" maxlength="300" placeholder="Résumé visible sur la carte..."></textarea>
+          </div>
+
+          <!-- === SECTION VIDÉO === -->
+          <div class="res-section res-section-video" style="display:none;grid-column:1/-1;">
+            <div class="adm-form-grid" style="margin:0;">
+              <div class="adm-form-row full">
+                <label>📁 Uploader votre propre vidéo (MP4, MOV…)</label>
+                <input type="file" name="video_fichier" id="res-video-fichier" accept="video/*">
+                <small style="color:var(--brown-light);margin-top:.3rem;display:block;">Formats acceptés : MP4, MOV, AVI, MKV</small>
+              </div>
+              <div class="adm-form-row full" style="display:flex;align-items:center;gap:1rem;">
+                <div style="flex:1;height:1px;background:rgba(201,166,107,.2);"></div>
+                <span style="font-size:.8rem;color:var(--brown-light);font-weight:600;white-space:nowrap;">OU lien YouTube / Vimeo</span>
+                <div style="flex:1;height:1px;background:rgba(201,166,107,.2);"></div>
+              </div>
+              <div class="adm-form-row full">
+                <label>🔗 Lien YouTube / Vimeo</label>
+                <input type="url" name="lien_externe" id="res-lien-video" placeholder="https://www.youtube.com/watch?v=...">
+              </div>
+            </div>
+          </div>
+
+          <!-- === SECTION PODCAST === -->
+          <div class="res-section res-section-podcast" style="display:none;grid-column:1/-1;display:none;">
+            <div class="adm-form-grid" style="margin:0;">
+              <div class="adm-form-row full">
+                <label>🎧 Lien Spotify / SoundCloud</label>
+                <input type="url" name="lien_externe" id="res-lien-podcast" placeholder="https://open.spotify.com/...">
+              </div>
+              <div class="adm-form-row full">
+                <label>Ou uploader un fichier audio (MP3)</label>
+                <input type="file" name="fichier_audio" id="res-audio" accept="audio/*">
+              </div>
+            </div>
+          </div>
+
+          <!-- === SECTION ARTICLE / GUIDE === -->
+          <div class="adm-form-row full res-section res-section-contenu" style="display:none;">
+            <label>📝 Contenu complet</label>
+            <textarea name="contenu" id="res-contenu" rows="6" placeholder="Écrivez le contenu de l'article ou du guide..."></textarea>
+          </div>
+
+          <!-- === SECTION ÉVÉNEMENT (formation / atelier / conférence) === -->
+          <div class="res-section res-section-event" style="display:none;grid-column:1/-1;">
+            <div class="adm-form-grid" style="margin:0;">
+              <div class="adm-form-row">
+                <label>📅 Date et heure de début</label>
+                <input type="datetime-local" name="date_debut" id="res-date-debut">
+              </div>
+              <div class="adm-form-row">
+                <label>🕐 Date et heure de fin (optionnel)</label>
+                <input type="datetime-local" name="date_fin" id="res-date-fin">
+              </div>
+              <div class="adm-form-row">
+                <label>📍 Lieu</label>
+                <input type="text" name="lieu" id="res-lieu" placeholder="Ex : En ligne, Paris 75001...">
+              </div>
+              <div class="adm-form-row">
+                <label>👤 Intervenant / Formateur</label>
+                <input type="text" name="intervenant" id="res-intervenant" placeholder="Nom de l'intervenant">
+              </div>
+              <div class="adm-form-row">
+                <label>🎟️ Nombre de places (laisser vide = illimité)</label>
+                <input type="number" name="places_disponibles" id="res-places" min="1" placeholder="Ex : 30">
+              </div>
+              <div class="adm-form-row">
+                <label>🔗 Lien de la session (Zoom, Meet…)</label>
+                <input type="url" name="lien_externe" id="res-lien-event" placeholder="https://zoom.us/...">
+              </div>
+            </div>
+          </div>
+
+          <!-- Tags + Image -->
+          <div class="adm-form-row">
+            <label>Tags (séparés par virgule)</label>
+            <input type="text" name="tags" id="res-tags" placeholder="anxiété, méditation...">
+          </div>
+          <div class="adm-form-row">
+            <label>Image de couverture</label>
+            <input type="file" name="image_couverture" id="res-img" accept="image/*">
+          </div>
+
+          <!-- Publier -->
+          <div class="adm-form-row full">
+            <label style="display:flex;align-items:center;gap:.6rem;cursor:pointer;">
+              <input type="checkbox" name="est_publie" id="res-publie" checked style="width:auto;accent-color:var(--accent);">
+              Publier immédiatement
+            </label>
+          </div>
+
+        </div>
+      </div>
+      <div class="adm-modal-footer">
+        <button type="button" class="btn-adm btn-adm-outline" onclick="closeModal('modal-add-ressource')">Annuler</button>
+        <button type="submit" class="btn-adm btn-adm-primary" id="res-submit-btn">Créer la ressource</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ADD CATEGORY -->
+<div class="adm-modal-overlay" id="modal-add-cat">
+  <div class="adm-modal">
+    <div class="adm-modal-header">
+      <h4 id="cat-modal-title">Ajouter une catégorie</h4>
+      <button class="adm-modal-close" onclick="closeModal('modal-add-cat')">✕</button>
+    </div>
+    <form id="cat-form">
+      {% csrf_token %}
+      <input type="hidden" id="cat-edit-id" value="">
+      <div class="adm-modal-body">
+        <div class="adm-form-grid">
+          <div class="adm-form-row">
+            <label>Nom *</label>
+            <input type="text" name="nom" id="cat-nom" placeholder="Nom de la catégorie" required>
+          </div>
+          <div class="adm-form-row">
+            <label>Icône (emoji)</label>
+            <input type="text" name="icone" id="cat-icone" value="📚" placeholder="📚">
+          </div>
+          <div class="adm-form-row full">
+            <label>Description</label>
+            <textarea name="description" id="cat-desc" rows="2"></textarea>
+          </div>
+          <div class="adm-form-row">
+            <label>Ordre d'affichage</label>
+            <input type="number" name="ordre" id="cat-ordre" value="0" min="0">
+          </div>
+        </div>
+      </div>
+      <div class="adm-modal-footer">
+        <button type="button" class="btn-adm btn-adm-outline" onclick="closeModal('modal-add-cat')">Annuler</button>
+        <button type="submit" class="btn-adm btn-adm-primary" id="cat-submit-btn">Créer</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ADD PSYCHOLOGUE -->
+<div class="adm-modal-overlay" id="modal-add-psy">
+  <div class="adm-modal">
+    <div class="adm-modal-header">
+      <h4 id="psy-modal-title">Ajouter un psychologue</h4>
+      <button class="adm-modal-close" onclick="closeModal('modal-add-psy')">✕</button>
+    </div>
+    <form id="psy-form">
+      {% csrf_token %}
+      <input type="hidden" id="psy-edit-id" value="">
+      <div class="adm-modal-body">
+        <div class="adm-form-grid">
+          <div class="adm-form-row full" id="psy-user-row">
+            <label>Utilisateur *</label>
+            <select name="user_id" id="psy-user" required>
+              <option value="">Sélectionner un utilisateur</option>
+              {% for u in users %}
+              {% if not u.psychologue_profile and not u.is_staff %}
+              <option value="{{ u.id }}">{{ u.pseudonyme }} ({{ u.email }})</option>
+              {% endif %}
+              {% endfor %}
+            </select>
+          </div>
+          <div class="adm-form-row full">
+            <label>Spécialités</label>
+            <input type="text" name="specialites" id="psy-spec" placeholder="Anxiété, Dépression, Stress...">
+          </div>
+          <div class="adm-form-row full">
+            <label>Biographie</label>
+            <textarea name="biographie" id="psy-bio" rows="3"></textarea>
+          </div>
+          <div class="adm-form-row">
+            <label>Années d'expérience</label>
+            <input type="number" name="experience_ans" id="psy-exp" value="0" min="0">
+          </div>
+          <div class="adm-form-row" id="psy-actif-row" style="display:none;">
+            <label>Statut</label>
+            <select name="est_actif" id="psy-actif">
+              <option value="true">Actif</option>
+              <option value="false">Inactif</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="adm-modal-footer">
+        <button type="button" class="btn-adm btn-adm-outline" onclick="closeModal('modal-add-psy')">Annuler</button>
+        <button type="submit" class="btn-adm btn-adm-primary" id="psy-submit-btn">Créer</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- CONFIRM DELETE MODAL -->
+<div class="adm-modal-overlay" id="modal-confirm">
+  <div class="adm-modal" style="max-width:420px;">
+    <div class="adm-modal-header">
+      <h4>Confirmer la suppression</h4>
+      <button class="adm-modal-close" onclick="closeModal('modal-confirm')">✕</button>
+    </div>
+    <div class="adm-modal-body adm-confirm">
+      <p id="confirm-msg">Êtes-vous sûr ?</p>
+      <p style="font-size:.82rem;color:var(--brown-light);">Cette action est <strong>irréversible</strong>.</p>
+    </div>
+    <div class="adm-modal-footer">
+      <button class="btn-adm btn-adm-outline" onclick="closeModal('modal-confirm')">Annuler</button>
+      <button class="btn-adm btn-adm-red" id="confirm-btn">Confirmer la suppression</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="adm-toast" id="adm-toast"></div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const CSRF = '{{ csrf_token }}';
+
+/* ===== TAB NAVIGATION ===== */
+function admTab(section, btn) {
+    document.querySelectorAll('.adm-section').forEach(s => s.classList.remove('visible'));
+    document.querySelectorAll('.adm-tab').forEach(b => b.classList.remove('active'));
+    document.getElementById('sec-' + section).classList.add('visible');
+    btn.classList.add('active');
+}
+
+/* ===== MODAL HELPERS ===== */
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.adm-modal-overlay').forEach(o => {
+    o.addEventListener('click', e => { if (e.target === o) closeModal(o.id); });
+});
+
+/* ===== TOAST ===== */
+function showToast(msg, type='success') {
+    const t = document.getElementById('adm-toast');
+    t.textContent = type === 'success' ? '✓ ' + msg : '✕ ' + msg;
+    t.className = 'adm-toast show ' + type;
+    setTimeout(() => t.classList.remove('show'), 3200);
+}
+
+/* ===== TABLE FILTER ===== */
+function filterTable(tableId, query) {
+    const q = query.toLowerCase();
+    document.querySelectorAll('#' + tableId + ' tbody tr').forEach(row => {
+        row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+    });
+}
+
+/* ===== CONFIRM DELETE ===== */
+let pendingDelete = null;
+function confirmDelete(msg, url, rowId) {
+    document.getElementById('confirm-msg').textContent = msg;
+    pendingDelete = { url, rowId };
+    openModal('modal-confirm');
+}
+document.getElementById('confirm-btn').addEventListener('click', () => {
+    if (!pendingDelete) return;
+    fetch(pendingDelete.url, {
+        method: 'POST',
+        headers: { 'X-CSRFToken': CSRF, 'Content-Type': 'application/x-www-form-urlencoded' },
+    }).then(r => r.json()).then(data => {
+        if (data.success) {
+            const row = document.getElementById(pendingDelete.rowId);
+            if (row) row.remove();
+            showToast('Supprimé avec succès');
+        } else { showToast(data.message || 'Erreur', 'error'); }
+        closeModal('modal-confirm');
+        pendingDelete = null;
+    });
+});
+
+/* ===== RESSOURCES — affichage dynamique selon type ===== */
+function resTypeChanged(type) {
+    // Cacher toutes les sections
+    document.querySelectorAll('.res-section').forEach(el => el.style.display = 'none');
+    // Afficher selon le type
+    if (type === 'video') {
+        document.querySelector('.res-section-video').style.display = '';
+    } else if (type === 'podcast') {
+        document.querySelector('.res-section-podcast').style.display = '';
+    } else if (type === 'article' || type === 'guide') {
+        document.querySelector('.res-section-contenu').style.display = '';
+    } else if (['formation','atelier','conference'].includes(type)) {
+        document.querySelector('.res-section-event').style.display = '';
+    }
+}
+// Init au chargement
+resTypeChanged(document.getElementById('res-type').value);
+
+/* ===== RESSOURCES CRUD ===== */
+const resForm = document.getElementById('res-form');
+resForm.addEventListener('submit', async e => {
+    e.preventDefault();
+    const editId = document.getElementById('res-edit-id').value;
+    const fd = new FormData(resForm);
+    fd.set('est_publie', document.getElementById('res-publie').checked ? 'true' : 'false');
+    const url = editId
+        ? '/admin-panel/ressources/' + editId + '/update/'
+        : '/admin-panel/ressources/create/';
+    const r = await fetch(url, { method: 'POST', headers: { 'X-CSRFToken': CSRF }, body: fd });
+    const data = await r.json();
+    if (data.success) {
+        showToast(editId ? 'Ressource modifiée' : 'Ressource créée');
+        closeModal('modal-add-ressource');
+        setTimeout(() => location.reload(), 800);
+    } else { showToast(data.message || 'Erreur', 'error'); }
+});
+
+function editRessource(id) {
+    fetch('/admin-panel/ressources/' + id + '/')
+        .then(r => r.json()).then(d => {
+            if (!d.success) return;
+            document.getElementById('res-edit-id').value = d.id;
+            document.getElementById('res-modal-title').textContent = 'Modifier la ressource';
+            document.getElementById('res-submit-btn').textContent = 'Enregistrer';
+            document.getElementById('res-titre').value = d.titre;
+            document.getElementById('res-desc').value = d.description;
+            document.getElementById('res-type').value = d.type_ressource;
+            document.getElementById('res-acces').value = d.acces;
+            document.getElementById('res-tags').value = d.tags;
+            document.getElementById('res-publie').checked = d.est_publie;
+            // Contenu selon type
+            resTypeChanged(d.type_ressource);
+            if (d.type_ressource === 'video') {
+                document.getElementById('res-lien-video').value = d.lien_externe || '';
+            } else if (d.type_ressource === 'podcast') {
+                document.getElementById('res-lien-podcast').value = d.lien_externe || '';
+            } else if (d.type_ressource === 'article' || d.type_ressource === 'guide') {
+                document.getElementById('res-contenu').value = d.contenu || '';
+            } else if (['formation','atelier','conference'].includes(d.type_ressource)) {
+                document.getElementById('res-lien-event').value = d.lien_externe || '';
+                document.getElementById('res-lieu').value = d.lieu || '';
+                document.getElementById('res-intervenant').value = d.intervenant || '';
+                document.getElementById('res-places').value = d.places_disponibles || '';
+                if (d.date_debut) document.getElementById('res-date-debut').value = d.date_debut.slice(0,16);
+                if (d.date_fin) document.getElementById('res-date-fin').value = d.date_fin.slice(0,16);
+            }
+            openModal('modal-add-ressource');
+        });
+}
+
+/* ===== CATEGORIES CRUD ===== */
+const catForm = document.getElementById('cat-form');
+catForm.addEventListener('submit', async e => {
+    e.preventDefault();
+    const editId = document.getElementById('cat-edit-id').value;
+    const fd = new FormData(catForm);
+    const url = editId
+        ? '/admin-panel/categories/' + editId + '/'
+        : '/admin-panel/categories/create/';
+    const r = await fetch(url, { method: 'POST', headers: { 'X-CSRFToken': CSRF }, body: fd });
+    const data = await r.json();
+    if (data.success) {
+        showToast(editId ? 'Catégorie modifiée' : 'Catégorie créée');
+        closeModal('modal-add-cat');
+        setTimeout(() => location.reload(), 800);
+    } else { showToast(data.message || 'Erreur', 'error'); }
+});
+
+function editCategorie(id) {
+    fetch('/admin-panel/categories/' + id + '/')
+        .then(r => r.json()).then(d => {
+            if (!d.success) return;
+            document.getElementById('cat-edit-id').value = d.id;
+            document.getElementById('cat-modal-title').textContent = 'Modifier la catégorie';
+            document.getElementById('cat-submit-btn').textContent = 'Enregistrer';
+            document.getElementById('cat-nom').value = d.nom;
+            document.getElementById('cat-icone').value = d.icone;
+            document.getElementById('cat-desc').value = d.description;
+            document.getElementById('cat-ordre').value = d.ordre;
+            openModal('modal-add-cat');
+        });
+}
+
+/* ===== USERS MANAGEMENT ===== */
+function toggleUserActive(id) {
+    fetch('/admin-panel/users/' + id + '/update/', {
+        method: 'POST',
+        headers: { 'X-CSRFToken': CSRF, 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: 'action=toggle_active'
+    }).then(r => r.json()).then(d => {
+        if (d.success) {
+            const badge = document.getElementById('active-badge-' + id);
+            if (badge) {
+                badge.textContent = d.is_active ? 'Actif' : 'Inactif';
+                badge.className = 'status-badge ' + (d.is_active ? 'status-active' : 'status-inactive');
+            }
+            showToast(d.is_active ? 'Utilisateur activé' : 'Utilisateur désactivé');
+        } else { showToast(d.message || 'Erreur', 'error'); }
+    });
+}
+
+function toggleUserStaff(id) {
+    fetch('/admin-panel/users/' + id + '/update/', {
+        method: 'POST',
+        headers: { 'X-CSRFToken': CSRF, 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: 'action=toggle_staff'
+    }).then(r => r.json()).then(d => {
+        if (d.success) {
+            showToast(d.is_staff ? 'Droits admin accordés' : 'Droits admin retirés');
+        } else { showToast(d.message || 'Erreur', 'error'); }
+    });
+}
+
+/* ===== PSYCHOLOGUES CRUD ===== */
+const psyForm = document.getElementById('psy-form');
+psyForm.addEventListener('submit', async e => {
+    e.preventDefault();
+    const editId = document.getElementById('psy-edit-id').value;
+    const fd = new FormData(psyForm);
+    const url = editId
+        ? '/admin-panel/psychologues/' + editId + '/'
+        : '/admin-panel/psychologues/create/';
+    const r = await fetch(url, { method: 'POST', headers: { 'X-CSRFToken': CSRF }, body: fd });
+    const data = await r.json();
+    if (data.success) {
+        showToast(editId ? 'Psychologue modifié' : 'Psychologue créé');
+        closeModal('modal-add-psy');
+        setTimeout(() => location.reload(), 800);
+    } else { showToast(data.message || 'Erreur', 'error'); }
+});
+
+function editPsychologue(id) {
+    fetch('/admin-panel/psychologues/' + id + '/')
+        .then(r => r.json()).then(d => {
+            if (!d.success) return;
+            document.getElementById('psy-edit-id').value = d.id;
+            document.getElementById('psy-modal-title').textContent = 'Modifier Dr. ' + d.nom;
+            document.getElementById('psy-submit-btn').textContent = 'Enregistrer';
+            document.getElementById('psy-spec').value = d.specialites;
+            document.getElementById('psy-bio').value = d.biographie;
+            document.getElementById('psy-exp').value = d.experience_ans;
+            document.getElementById('psy-actif').value = d.est_actif ? 'true' : 'false';
+            document.getElementById('psy-user-row').style.display = 'none';
+            document.getElementById('psy-actif-row').style.display = 'block';
+            openModal('modal-add-psy');
+        });
+}
+
+/* ===== CONSULTATIONS STATUS ===== */
+function updateConsultation(id, statut) {
+    if (!statut) return;
+    fetch('/admin-panel/consultations/' + id + '/update/', {
+        method: 'POST',
+        headers: { 'X-CSRFToken': CSRF, 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: 'statut=' + statut
+    }).then(r => r.json()).then(d => {
+        if (d.success) {
+            const badge = document.getElementById('cons-status-' + id);
+            if (badge) { badge.textContent = d.statut; badge.className = 'status-badge status-' + statut; }
+            showToast('Statut mis à jour');
+        } else { showToast('Erreur', 'error'); }
+    });
+}
+
+/* ===== RESET MODALS ON CLOSE ===== */
+document.getElementById('modal-add-ressource').addEventListener('click', e => {
+    if (e.target === e.currentTarget) {
+        document.getElementById('res-edit-id').value = '';
+        document.getElementById('res-modal-title').textContent = 'Ajouter une ressource';
+        document.getElementById('res-submit-btn').textContent = 'Créer la ressource';
+        resForm.reset();
+    }
+});
+document.getElementById('modal-add-cat').addEventListener('click', e => {
+    if (e.target === e.currentTarget) {
+        document.getElementById('cat-edit-id').value = '';
+        document.getElementById('cat-modal-title').textContent = 'Ajouter une catégorie';
+        document.getElementById('cat-submit-btn').textContent = 'Créer';
+        catForm.reset();
+    }
+});
+document.getElementById('modal-add-psy').addEventListener('click', e => {
+    if (e.target === e.currentTarget) {
+        document.getElementById('psy-edit-id').value = '';
+        document.getElementById('psy-modal-title').textContent = 'Ajouter un psychologue';
+        document.getElementById('psy-submit-btn').textContent = 'Créer';
+        document.getElementById('psy-user-row').style.display = 'block';
+        document.getElementById('psy-actif-row').style.display = 'none';
+        psyForm.reset();
+    }
+});
+</script>
+{% endblock %}

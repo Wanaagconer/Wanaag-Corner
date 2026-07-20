@@ -10,18 +10,22 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+import os
 from pathlib import Path
+from dotenv import load_dotenv
 from django.contrib.messages import constants as messages
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+load_dotenv(BASE_DIR / '.env')
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-(1qj$16)x!!t7kktr=gqa(f-veijlws(=cb6t_325=za)3a)zw'
+SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -66,6 +70,9 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+            ],
+            'builtins': [
+                'application.templatetags.custom_filters',
             ],
         },
     },
@@ -142,8 +149,6 @@ MESSAGE_TAGS = {
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-import os
-
 STATIC_URL = 'static/'
 
 # Dossier où Django va chercher les fichiers statiques pendant le développement
@@ -153,3 +158,13 @@ STATICFILES_DIRS = [
 
 # Dossier où Django collectera les fichiers statiques pour la mise en production
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# Fichiers media (images uploadées par les utilisateurs)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# ═══════════════════════════════════════════════════════════
+#  CHATBOT IA — Wanaag (Anthropic Claude)
+# ═══════════════════════════════════════════════════════════
+ANTHROPIC_API_KEY = os.environ.get('ANTHROPIC_API_KEY', '')
+CHATBOT_MAX_HISTORY = 20

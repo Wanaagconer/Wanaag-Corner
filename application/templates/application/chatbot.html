@@ -1,0 +1,592 @@
+{% extends 'application/base.html' %}
+{% load static %}
+
+{% block title %}Wana — Écoute & Soutien{% endblock %}
+{% block page_title %}Wana{% endblock %}
+
+{% block extra_css %}
+<style>
+:root {
+    --gold:#c9a66b; --gold-light:#e8c98a; --dark:#1a1008;
+    --dark2:#2e1f10; --dark3:#3a2c1e;
+    --text:#f5e6d3; --text-muted:rgba(245,230,211,.45);
+    --crisis:#ef4444;
+}
+.app-content { padding:0 !important; background:var(--dark) !important; }
+body { background:var(--dark) !important; }
+
+/* ══ WRAPPER ══ */
+.cb-wrap {
+    display:flex;
+    height:calc(100vh - var(--topbar-height));
+    overflow:hidden;
+}
+
+/* ══ SIDEBAR ══ */
+.cb-sidebar {
+    width:260px; flex-shrink:0;
+    background:linear-gradient(175deg,#2e1f10 0%,#1e1409 100%);
+    border-right:1px solid rgba(201,166,107,.12);
+    display:flex; flex-direction:column;
+    overflow:hidden;
+}
+.cb-bot-identity {
+    padding:1.8rem 1.4rem 1.2rem;
+    border-bottom:1px solid rgba(201,166,107,.1);
+    text-align:center;
+}
+.cb-bot-avatar {
+    width:64px; height:64px; border-radius:50%; margin:0 auto 1rem;
+    background:linear-gradient(135deg,var(--gold),#7a4e1c);
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.8rem;
+    box-shadow:0 0 0 3px rgba(201,166,107,.25), 0 0 0 6px rgba(201,166,107,.08);
+    position:relative;
+}
+.cb-bot-online {
+    position:absolute; bottom:3px; right:3px;
+    width:14px; height:14px; border-radius:50%;
+    background:#10b981; border:2px solid #1e1409;
+    animation:pulse-green 2s infinite;
+}
+@keyframes pulse-green {
+    0%,100%{box-shadow:0 0 0 0 rgba(16,185,129,.4);}
+    50%{box-shadow:0 0 0 6px rgba(16,185,129,0);}
+}
+.cb-bot-name {
+    font-family:'Playfair Display',serif; font-size:1.3rem; font-weight:800;
+    color:var(--text); margin-bottom:.2rem;
+}
+.cb-bot-tag {
+    font-size:.65rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase;
+    color:rgba(201,166,107,.6); background:rgba(201,166,107,.08);
+    border:1px solid rgba(201,166,107,.15); border-radius:20px;
+    padding:.2rem .7rem; display:inline-block;
+}
+.cb-bot-desc {
+    font-size:.75rem; color:var(--text-muted); line-height:1.55; margin-top:.7rem;
+}
+
+/* Session info */
+.cb-session-info {
+    padding:1rem 1.4rem;
+    border-bottom:1px solid rgba(201,166,107,.08);
+}
+.cb-session-label {
+    font-size:.6rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase;
+    color:rgba(201,166,107,.4); margin-bottom:.6rem;
+}
+.cb-session-stat {
+    display:flex; align-items:center; justify-content:space-between;
+    font-size:.75rem; color:var(--text-muted); padding:.2rem 0;
+}
+.cb-session-stat strong { color:var(--gold-light); }
+.cb-mood-badge {
+    font-size:.65rem; font-weight:700; padding:.18rem .55rem; border-radius:20px;
+    border:1px solid;
+}
+.mood-unknown  { background:rgba(255,255,255,.04); color:rgba(255,255,255,.35); border-color:rgba(255,255,255,.1); }
+.mood-positif  { background:rgba(16,185,129,.1); color:#10b981; border-color:rgba(16,185,129,.2); }
+.mood-neutre   { background:rgba(245,158,11,.08); color:#f59e0b; border-color:rgba(245,158,11,.15); }
+.mood-anxieux  { background:rgba(249,115,22,.1); color:#f97316; border-color:rgba(249,115,22,.2); }
+.mood-triste   { background:rgba(99,102,241,.1); color:#818cf8; border-color:rgba(99,102,241,.2); }
+.mood-crisis   { background:rgba(239,68,68,.12); color:#ef4444; border-color:rgba(239,68,68,.25); }
+
+/* Crisis box */
+.cb-crisis-box {
+    margin:0 1rem .8rem;
+    background:rgba(239,68,68,.08); border:1px solid rgba(239,68,68,.2);
+    border-radius:12px; padding:.85rem 1rem;
+    font-size:.73rem; color:rgba(239,68,68,.85); line-height:1.55;
+}
+.cb-crisis-box strong { color:#ef4444; display:block; margin-bottom:.3rem; }
+.cb-crisis-box a { color:#ef4444; text-decoration:underline; }
+
+/* New session btn */
+.cb-sidebar-actions { padding:1rem 1.2rem; margin-top:auto; }
+.cb-new-session-btn {
+    width:100%; padding:.65rem; border-radius:10px;
+    background:rgba(201,166,107,.07); border:1px solid rgba(201,166,107,.15);
+    color:rgba(201,166,107,.75); font-size:.8rem; font-weight:600;
+    cursor:pointer; font-family:inherit; transition:all .2s;
+    display:flex; align-items:center; justify-content:center; gap:.4rem;
+}
+.cb-new-session-btn:hover { background:rgba(201,166,107,.14); color:var(--gold); }
+
+/* Past sessions */
+.cb-past-title {
+    font-size:.6rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase;
+    color:rgba(201,166,107,.35); padding:.8rem 1.4rem .4rem;
+}
+.cb-past-list { flex:1; overflow-y:auto; padding:0 .8rem; scrollbar-width:none; }
+.cb-past-list::-webkit-scrollbar { display:none; }
+.cb-past-item {
+    padding:.5rem .8rem; border-radius:8px; cursor:pointer;
+    font-size:.72rem; color:rgba(245,230,211,.35);
+    transition:all .15s; margin-bottom:.15rem;
+    display:flex; align-items:center; gap:.5rem;
+}
+.cb-past-item:hover { background:rgba(255,255,255,.04); color:rgba(245,230,211,.6); }
+
+/* ══ MAIN CHAT ══ */
+.cb-main {
+    flex:1; display:flex; flex-direction:column; overflow:hidden;
+    background:linear-gradient(180deg,#1a1008 0%,#120a02 100%);
+}
+
+/* Animated grid background */
+.cb-main::before {
+    content:''; position:absolute; inset:0; pointer-events:none;
+    background-image:
+        linear-gradient(rgba(201,166,107,.025) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(201,166,107,.025) 1px,transparent 1px);
+    background-size:48px 48px;
+    z-index:0;
+}
+
+/* Messages area */
+.cb-messages {
+    flex:1; overflow-y:auto; padding:2rem 2.5rem;
+    display:flex; flex-direction:column; gap:1.2rem;
+    position:relative; z-index:1;
+    scrollbar-width:thin; scrollbar-color:rgba(201,166,107,.2) transparent;
+}
+.cb-messages::-webkit-scrollbar { width:4px; }
+.cb-messages::-webkit-scrollbar-thumb { background:rgba(201,166,107,.2); border-radius:4px; }
+
+/* Welcome screen (empty state) */
+.cb-welcome {
+    text-align:center; margin:auto; padding:2rem 1rem;
+    animation:fadeUp .6s ease;
+}
+@keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+.cb-welcome-avatar {
+    width:80px; height:80px; border-radius:50%; margin:0 auto 1.5rem;
+    background:linear-gradient(135deg,var(--gold),#7a4e1c);
+    display:flex; align-items:center; justify-content:center;
+    font-size:2.2rem;
+    box-shadow:0 0 0 4px rgba(201,166,107,.2), 0 0 40px rgba(201,166,107,.15);
+}
+.cb-welcome h2 {
+    font-family:'Playfair Display',serif; font-size:1.6rem; font-weight:800;
+    color:var(--text); margin-bottom:.5rem;
+}
+.cb-welcome p { font-size:.9rem; color:var(--text-muted); max-width:380px; margin:0 auto 1.8rem; line-height:1.7; }
+.cb-starter-chips {
+    display:flex; gap:.6rem; flex-wrap:wrap; justify-content:center;
+}
+.cb-starter-chip {
+    background:rgba(201,166,107,.07); border:1px solid rgba(201,166,107,.15);
+    border-radius:50px; padding:.5rem 1rem; font-size:.8rem;
+    color:rgba(245,230,211,.6); cursor:pointer; transition:all .2s;
+}
+.cb-starter-chip:hover { background:rgba(201,166,107,.15); color:var(--gold); border-color:rgba(201,166,107,.3); }
+
+/* Date separator */
+.cb-date-sep {
+    text-align:center; font-size:.65rem; color:rgba(245,230,211,.2);
+    display:flex; align-items:center; gap:.8rem;
+}
+.cb-date-sep::before, .cb-date-sep::after {
+    content:''; flex:1; height:1px;
+    background:linear-gradient(to right,transparent,rgba(201,166,107,.1),transparent);
+}
+
+/* Message bubbles */
+.cb-msg { display:flex; gap:.75rem; max-width:78%; animation:msgIn .3s ease; }
+@keyframes msgIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+.cb-msg.user { align-self:flex-end; flex-direction:row-reverse; }
+.cb-msg.assistant { align-self:flex-start; }
+
+.cb-msg-av {
+    width:34px; height:34px; border-radius:50%; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    font-size:.85rem; font-weight:700; margin-top:.2rem;
+}
+.cb-msg.user .cb-msg-av {
+    background:linear-gradient(135deg,#4a3c2f,#2e1f10);
+    color:rgba(245,230,211,.7);
+}
+.cb-msg.assistant .cb-msg-av {
+    background:linear-gradient(135deg,var(--gold),#7a4e1c);
+    color:white; font-size:1rem;
+    box-shadow:0 0 0 2px rgba(201,166,107,.2);
+}
+
+.cb-bubble {
+    padding:.85rem 1.15rem; border-radius:18px; font-size:.9rem; line-height:1.7;
+    max-width:100%; word-break:break-word;
+}
+.cb-msg.user .cb-bubble {
+    background:linear-gradient(135deg,rgba(201,166,107,.18),rgba(201,166,107,.08));
+    border:1px solid rgba(201,166,107,.2);
+    color:rgba(245,230,211,.9);
+    border-radius:18px 18px 4px 18px;
+}
+.cb-msg.assistant .cb-bubble {
+    background:rgba(255,255,255,.07);
+    border:1px solid rgba(255,255,255,.08);
+    border-left:2px solid rgba(201,166,107,.4);
+    color:rgba(245,230,211,.88);
+    border-radius:18px 18px 18px 4px;
+}
+/* Crisis message highlight */
+.cb-msg.assistant .cb-bubble.crisis-reply {
+    background:rgba(239,68,68,.08);
+    border-color:rgba(239,68,68,.2);
+    border-left-color:rgba(239,68,68,.5);
+}
+
+.cb-msg-time {
+    font-size:.62rem; color:rgba(245,230,211,.2); margin-top:.3rem;
+    text-align:right;
+}
+.cb-msg.user .cb-msg-time { text-align:left; }
+
+/* Typing indicator */
+.cb-typing {
+    display:none; align-self:flex-start;
+    background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.07);
+    border-left:2px solid rgba(201,166,107,.3);
+    border-radius:18px 18px 18px 4px; padding:.7rem 1rem;
+    gap:5px; align-items:center;
+}
+.cb-typing.active { display:flex; animation:msgIn .3s ease; }
+.cb-typing span {
+    width:7px; height:7px; border-radius:50%; background:var(--gold);
+    animation:typingDot 1.4s infinite;
+}
+.cb-typing span:nth-child(2) { animation-delay:.2s; }
+.cb-typing span:nth-child(3) { animation-delay:.4s; }
+@keyframes typingDot {
+    0%,100%{transform:translateY(0);opacity:.3}
+    50%{transform:translateY(-6px);opacity:1}
+}
+
+/* ══ INPUT BAR ══ */
+.cb-input-bar {
+    padding:1rem 1.5rem 1.2rem;
+    border-top:1px solid rgba(201,166,107,.1);
+    background:rgba(26,16,8,.9);
+    backdrop-filter:blur(20px);
+    position:relative; z-index:10;
+}
+.cb-input-wrap {
+    display:flex; align-items:flex-end; gap:.75rem;
+    background:rgba(201,166,107,.06); border:1px solid rgba(201,166,107,.15);
+    border-radius:18px; padding:.6rem .6rem .6rem 1.2rem;
+    transition:border-color .2s;
+}
+.cb-input-wrap:focus-within { border-color:rgba(201,166,107,.35); background:rgba(201,166,107,.08); }
+.cb-textarea {
+    flex:1; background:transparent; border:none; outline:none; resize:none;
+    font-family:inherit; font-size:.9rem; color:rgba(245,230,211,.85);
+    caret-color:var(--gold); min-height:24px; max-height:140px; line-height:1.55;
+}
+.cb-textarea::placeholder { color:rgba(245,230,211,.22); }
+.cb-send-btn {
+    width:40px; height:40px; border-radius:12px; flex-shrink:0;
+    background:linear-gradient(135deg,var(--gold),#7a4e1c);
+    border:none; cursor:pointer; color:white; font-size:1.1rem;
+    display:flex; align-items:center; justify-content:center;
+    transition:all .2s; box-shadow:0 4px 14px rgba(201,166,107,.3);
+}
+.cb-send-btn:hover { transform:scale(1.07) translateY(-1px); box-shadow:0 6px 20px rgba(201,166,107,.5); }
+.cb-send-btn:disabled { opacity:.4; cursor:not-allowed; transform:none; }
+.cb-input-hint {
+    font-size:.65rem; color:rgba(245,230,211,.2); margin-top:.5rem; text-align:center;
+}
+
+/* ══ RESPONSIVE ══ */
+@media(max-width:900px) {
+    .cb-sidebar { display:none; }
+}
+@media(max-width:600px) {
+    .cb-messages { padding:1.2rem 1rem; }
+    .cb-msg { max-width:90%; }
+    .cb-input-bar { padding:.75rem 1rem; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="cb-wrap">
+
+    <!-- ══ SIDEBAR ══ -->
+    <aside class="cb-sidebar">
+        <!-- Bot identity -->
+        <div class="cb-bot-identity">
+            <div class="cb-bot-avatar">
+                🤖
+                <span class="cb-bot-online"></span>
+            </div>
+            <div class="cb-bot-name">Wana</div>
+            <span class="cb-bot-tag">IA d'écoute</span>
+            <p class="cb-bot-desc">Je suis ici pour vous écouter sans jugement, 24h/24 et 7j/7.</p>
+        </div>
+
+        <!-- Session info -->
+        <div class="cb-session-info">
+            <div class="cb-session-label">Session en cours</div>
+            <div class="cb-session-stat">
+                <span>Messages</span>
+                <strong id="msgCount">{{ messages_history.count }}</strong>
+            </div>
+            <div class="cb-session-stat">
+                <span>Commencée</span>
+                <strong>{{ chat_session.started_at|date:"H:i" }}</strong>
+            </div>
+            <div class="cb-session-stat">
+                <span>Humeur détectée</span>
+                <span class="cb-mood-badge mood-{{ chat_session.mood_detected }}">
+                    {{ chat_session.get_mood_detected_display }}
+                </span>
+            </div>
+        </div>
+
+        {% if chat_session.crisis_flag %}
+        <div class="cb-crisis-box">
+            <strong>⚠️ Ressources d'urgence</strong>
+            SAMU : <strong>15</strong> · Urgences : <strong>17</strong><br>
+            <a href="{% url 'psychologues_list' %}">Consulter un psychologue →</a>
+        </div>
+        {% endif %}
+
+        <!-- Past sessions -->
+        {% if past_sessions %}
+        <div class="cb-past-title">Conversations précédentes</div>
+        <div class="cb-past-list">
+            {% for ps in past_sessions %}
+            <div class="cb-past-item">
+                📁 {{ ps.started_at|date:"d/m H:i" }} ({{ ps.messages.count }} msgs)
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Actions -->
+        <div class="cb-sidebar-actions">
+            <button class="cb-new-session-btn" onclick="newSession()">
+                ✦ Nouvelle conversation
+            </button>
+        </div>
+    </aside>
+
+    <!-- ══ MAIN CHAT ══ -->
+    <div class="cb-main" style="position:relative;">
+
+        <!-- Messages -->
+        <div class="cb-messages" id="cbMessages">
+
+            {% if not messages_history %}
+            <!-- Welcome -->
+            <div class="cb-welcome" id="cbWelcome">
+                <div class="cb-welcome-avatar">🤖</div>
+                <h2>Bonjour, {{ request.user.pseudonyme }} 👋</h2>
+                <p>Je suis Wanaag, votre assistant d'écoute. Je suis là pour vous accompagner — partagez ce que vous ressentez, posez vos questions ou parlez-moi de votre journée.</p>
+                <div class="cb-starter-chips">
+                    <div class="cb-starter-chip" onclick="sendStarter(this)">😔 Je me sens triste</div>
+                    <div class="cb-starter-chip" onclick="sendStarter(this)">😰 Je suis anxieux·se</div>
+                    <div class="cb-starter-chip" onclick="sendStarter(this)">💬 J'ai besoin de parler</div>
+                    <div class="cb-starter-chip" onclick="sendStarter(this)">🌿 Exercice de respiration</div>
+                    <div class="cb-starter-chip" onclick="sendStarter(this)">🩺 Trouver un psychologue</div>
+                </div>
+            </div>
+            {% else %}
+            <!-- Existing messages -->
+            <div class="cb-date-sep">{{ chat_session.started_at|date:"d F Y" }}</div>
+            {% for msg in messages_history %}
+            <div class="cb-msg {{ msg.role }}">
+                <div class="cb-msg-av">
+                    {% if msg.role == 'assistant' %}🤖{% else %}{{ request.user.pseudonyme|first|upper }}{% endif %}
+                </div>
+                <div>
+                    <div class="cb-bubble {% if msg.crisis_flag and msg.role == 'assistant' %}crisis-reply{% endif %}">
+                        {{ msg.content|linebreaksbr }}
+                    </div>
+                    <div class="cb-msg-time">{{ msg.sent_at|date:"H:i" }}</div>
+                </div>
+            </div>
+            {% endfor %}
+            {% endif %}
+
+            <!-- Typing indicator -->
+            <div class="cb-typing" id="cbTyping">
+                <span></span><span></span><span></span>
+            </div>
+
+        </div><!-- end cb-messages -->
+
+        <!-- Input bar -->
+        <div class="cb-input-bar">
+            <div class="cb-input-wrap">
+                <textarea
+                    id="cbInput"
+                    class="cb-textarea"
+                    placeholder="Écrivez ce que vous ressentez…"
+                    rows="1"
+                    oninput="autoResize(this)"
+                ></textarea>
+                <button class="cb-send-btn" id="cbSendBtn" onclick="sendMessage()">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="22" y1="2" x2="11" y2="13"/>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="cb-input-hint">Entrée pour envoyer · Maj+Entrée pour saut de ligne · Vos conversations sont confidentielles</div>
+        </div>
+
+    </div><!-- end cb-main -->
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const SEND_URL   = "{% url 'chatbot_send' %}";
+const NEW_URL    = "{% url 'chatbot_new_session' %}";
+const CSRF_TOKEN = '{{ csrf_token }}';
+
+const inputEl  = document.getElementById('cbInput');
+const sendBtn  = document.getElementById('cbSendBtn');
+const msgArea  = document.getElementById('cbMessages');
+const typingEl = document.getElementById('cbTyping');
+
+// Auto-resize textarea
+function autoResize(el) {
+    el.style.height = 'auto';
+    el.style.height = Math.min(el.scrollHeight, 140) + 'px';
+}
+
+// Scroll to bottom
+function scrollBottom() {
+    msgArea.scrollTop = msgArea.scrollHeight;
+}
+scrollBottom();
+
+// Starter chips
+function sendStarter(el) {
+    inputEl.value = el.textContent.trim().replace(/^[^\s]+\s/, '');
+    document.getElementById('cbWelcome')?.remove();
+    sendMessage();
+}
+
+// Format time HH:MM
+function timeNow() {
+    const d = new Date();
+    return d.getHours().toString().padStart(2,'0') + ':' + d.getMinutes().toString().padStart(2,'0');
+}
+
+// Append message bubble
+function appendBubble(role, text, isCrisis=false) {
+    const wrap = document.createElement('div');
+    wrap.className = `cb-msg ${role}`;
+
+    const av = document.createElement('div');
+    av.className = 'cb-msg-av';
+    av.textContent = role === 'assistant' ? '🤖' : '{{ request.user.pseudonyme|first|upper }}';
+
+    const inner = document.createElement('div');
+
+    const bubble = document.createElement('div');
+    bubble.className = 'cb-bubble' + (isCrisis && role==='assistant' ? ' crisis-reply' : '');
+    bubble.innerHTML = text.replace(/\n/g, '<br>');
+
+    const time = document.createElement('div');
+    time.className = 'cb-msg-time';
+    time.textContent = timeNow();
+
+    inner.appendChild(bubble);
+    inner.appendChild(time);
+    wrap.appendChild(av);
+    wrap.appendChild(inner);
+
+    // Insert before typing indicator
+    msgArea.insertBefore(wrap, typingEl);
+    scrollBottom();
+}
+
+// Main send function
+async function sendMessage() {
+    const text = inputEl.value.trim();
+    if (!text || sendBtn.disabled) return;
+
+    document.getElementById('cbWelcome')?.remove();
+
+    inputEl.value = '';
+    inputEl.style.height = 'auto';
+    sendBtn.disabled = true;
+
+    appendBubble('user', text);
+
+    typingEl.classList.add('active');
+    scrollBottom();
+
+    try {
+        const resp = await fetch(SEND_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': CSRF_TOKEN,
+            },
+            body: JSON.stringify({ message: text }),
+        });
+        const data = await resp.json();
+
+        typingEl.classList.remove('active');
+
+        if (data.reply) {
+            appendBubble('assistant', data.reply, data.crisis);
+            // Update message count
+            const countEl = document.getElementById('msgCount');
+            if (countEl && data.msg_count) countEl.textContent = data.msg_count;
+            // Show crisis box if needed
+            if (data.crisis) showCrisisAlert();
+        } else {
+            appendBubble('assistant', data.error || 'Une erreur est survenue. Réessayez.', false);
+        }
+    } catch(e) {
+        typingEl.classList.remove('active');
+        appendBubble('assistant', '🌐 Connexion perdue. Vérifiez votre connexion et réessayez.', false);
+    }
+
+    sendBtn.disabled = false;
+    inputEl.focus();
+}
+
+// Crisis alert banner
+function showCrisisAlert() {
+    if (document.getElementById('cbCrisisAlert')) return;
+    const alert = document.createElement('div');
+    alert.id = 'cbCrisisAlert';
+    alert.style.cssText = `
+        position:fixed;top:72px;left:50%;transform:translateX(-50%);
+        background:rgba(239,68,68,.95);color:white;padding:.8rem 1.5rem;
+        border-radius:12px;font-size:.85rem;font-weight:600;z-index:9999;
+        box-shadow:0 8px 32px rgba(239,68,68,.4);max-width:500px;text-align:center;
+        animation:slideDown .3s ease;
+    `;
+    alert.innerHTML = '⚠️ Si vous êtes en danger, appelez le <strong>15</strong> (SAMU) immédiatement. <a href="/psychologues/" style="color:white;text-decoration:underline">Voir nos psychologues →</a>';
+    document.body.appendChild(alert);
+    setTimeout(() => alert.remove(), 8000);
+}
+
+// New session
+async function newSession() {
+    if (!confirm('Démarrer une nouvelle conversation ? La conversation actuelle sera archivée.')) return;
+    await fetch(NEW_URL, {
+        method: 'POST',
+        headers: { 'X-CSRFToken': CSRF_TOKEN }
+    });
+    location.reload();
+}
+
+// Enter to send, Shift+Enter for newline
+inputEl.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+    }
+});
+</script>
+{% endblock %}

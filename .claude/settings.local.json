@@ -3,7 +3,13 @@
     "allow": [
       "Bash(gh auth:*)",
       "Bash(git --version)",
-      "Bash(git config:*)"
+      "Bash(git config:*)",
+      "Bash(python manage.py makemigrations)",
+      "Bash(python manage.py migrate)",
+      "Bash(python manage.py check)",
+      "Bash(python manage.py migrate application 0006)",
+      "Bash(python manage.py makemigrations --name=\"add_forum_categories\")",
+      "Bash(python manage.py makemigrations --name=\"add_video_to_post\")"
     ]
   }
 }

@@ -1,178 +1,225 @@
-<!-- TEMPLATE 1: psychologues_list.html - MARRON/BEIGE UNIQUEMENT -->
 {% extends 'application/base.html' %}
+{% load static %}
 
-{% block title %}Nos Psychologues - Wanaag Corner{% endblock %}
+{% block title %}Nos Psychologues — Wanaag Corner{% endblock %}
+{% block page_title %}Psychologues{% endblock %}
+
+{% block extra_css %}
+<style>
+/* ===== HERO ===== */
+.psy-hero {
+    background: linear-gradient(135deg, var(--brown-dark) 0%, #2d1f0e 60%, #1a0f05 100%);
+    border-radius: 22px; padding: 2.4rem 2.5rem; margin-bottom: 2rem;
+    position: relative; overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0,0,0,.3);
+}
+.psy-hero::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 15% 50%, rgba(201,166,107,.18) 0%, transparent 60%),
+                radial-gradient(ellipse at 85% 20%, rgba(201,166,107,.10) 0%, transparent 55%);
+    pointer-events: none;
+}
+.psy-hero-inner { position: relative; z-index: 1; display: flex; align-items: center; gap: 1.5rem; }
+.psy-hero-img {
+    width: 72px; height: 72px; border-radius: 18px; overflow: hidden; flex-shrink: 0;
+    box-shadow: 0 0 0 2px rgba(201,166,107,.4), 0 8px 24px rgba(0,0,0,.4);
+}
+.psy-hero-img img { width: 100%; height: 100%; object-fit: cover; }
+.psy-hero-text h1 {
+    font-size: 2rem; font-weight: 800; color: white; margin: 0 0 .4rem;
+    font-family: 'Playfair Display', serif;
+}
+.psy-hero-text p { font-size: .92rem; color: rgba(245,230,211,.65); margin: 0; }
+.psy-hero-count {
+    margin-left: auto; background: rgba(201,166,107,.15); border: 1px solid rgba(201,166,107,.3);
+    border-radius: 50px; padding: .5rem 1.2rem; color: rgba(245,230,211,.8);
+    font-size: .82rem; font-weight: 700; white-space: nowrap;
+}
+
+/* ===== GRID ===== */
+.psy-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+    gap: 1.6rem;
+}
+
+/* ===== CARD ===== */
+.psy-card {
+    background: white; border-radius: 22px; overflow: hidden;
+    box-shadow: 0 4px 24px rgba(74,60,47,.10);
+    border: 1px solid rgba(201,166,107,.12);
+    transition: box-shadow .25s, transform .25s;
+    position: relative;
+    animation: cardIn .35s ease both;
+}
+.psy-card:hover { transform: translateY(-5px); box-shadow: 0 14px 44px rgba(74,60,47,.18); }
+@keyframes cardIn { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
+
+/* Card top banner */
+.psy-card-banner {
+    height: 90px; position: relative; overflow: hidden;
+    background: linear-gradient(135deg, var(--brown-dark), #2d1f0e);
+}
+.psy-card-banner::after {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 30% 60%, rgba(201,166,107,.25) 0%, transparent 65%);
+}
+
+/* Avatar ring */
+.psy-avatar-wrap {
+    position: absolute; bottom: -36px; left: 50%; transform: translateX(-50%);
+    z-index: 2;
+}
+.psy-av-ring {
+    position: absolute; inset: -3px; border-radius: 50%;
+    background: conic-gradient(#c9a66b 0%, #e8c98a 45%, transparent 55%, #c9a66b 100%);
+    animation: spinRing 6s linear infinite;
+}
+@keyframes spinRing { to { transform: rotate(360deg); } }
+.psy-av {
+    width: 76px; height: 76px; border-radius: 50%; overflow: hidden; position: relative; z-index: 1;
+    background: linear-gradient(135deg, #c9a66b, var(--brown-dark));
+    border: 3px solid white;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,.2);
+}
+.psy-av img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.psy-av-initials { font-size: 1.6rem; font-weight: 800; color: white; font-family: inherit; }
+
+/* Card body */
+.psy-card-body { padding: 2.8rem 1.6rem 1.6rem; text-align: center; }
+.psy-name {
+    font-size: 1.2rem; font-weight: 800; color: var(--brown-dark);
+    font-family: 'Playfair Display', serif; margin-bottom: .2rem;
+}
+.psy-role {
+    display: inline-block; font-size: .72rem; font-weight: 700; padding: .18rem .65rem;
+    border-radius: 20px; background: linear-gradient(135deg, rgba(201,166,107,.15), rgba(139,94,40,.1));
+    color: #8b6030; border: 1px solid rgba(201,166,107,.3); margin-bottom: 1rem;
+    letter-spacing: .3px;
+}
+
+/* Specialties tags */
+.psy-tags { display: flex; flex-wrap: wrap; gap: .4rem; justify-content: center; margin-bottom: 1rem; }
+.psy-tag {
+    background: rgba(245,240,235,.9); color: var(--brown); font-size: .73rem; font-weight: 600;
+    padding: .22rem .65rem; border-radius: 20px; border: 1px solid rgba(139,105,70,.15);
+}
+
+/* Experience */
+.psy-exp {
+    display: flex; align-items: center; justify-content: center; gap: .5rem;
+    font-size: .82rem; color: var(--brown-light); margin-bottom: 1rem;
+}
+.psy-exp-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: linear-gradient(135deg, #c9a66b, #8b6030);
+}
+.psy-exp strong { color: var(--brown-dark); font-size: .95rem; }
+
+/* Bio */
+.psy-bio {
+    font-size: .84rem; color: #9a8a78; line-height: 1.6; margin-bottom: 1.3rem;
+    display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+}
+
+/* CTA */
+.psy-cta {
+    display: block; width: 100%; padding: .75rem;
+    background: linear-gradient(135deg, #c9a66b, #8b6030);
+    color: white; border: none; border-radius: 12px; font-weight: 700;
+    font-size: .88rem; cursor: pointer; text-decoration: none; text-align: center;
+    transition: all .2s; box-shadow: 0 4px 14px rgba(201,166,107,.35);
+    letter-spacing: .3px;
+}
+.psy-cta:hover { transform: translateY(-2px); box-shadow: 0 7px 22px rgba(201,166,107,.5); }
+
+/* Empty */
+.psy-empty {
+    text-align: center; padding: 4rem 2rem; background: white;
+    border-radius: 22px; box-shadow: 0 4px 24px rgba(74,60,47,.08);
+    border: 1px solid rgba(201,166,107,.12);
+    grid-column: 1 / -1;
+}
+.psy-empty p { color: #b0a090; font-size: .95rem; }
+
+@media(max-width:700px) {
+    .psy-grid { grid-template-columns: 1fr; }
+    .psy-hero-count { display: none; }
+}
+</style>
+{% endblock %}
 
 {% block content %}
-<style>
-    .psychologues-header {
-        background: linear-gradient(135deg, #E8D4B8 0%, #F5E6D3 100%);
-        border-radius: 30px;
-        padding: 3rem;
-        margin-bottom: 3rem;
-        text-align: center;
-    }
 
-    .psychologues-header h1 {
-        font-size: 2.5rem;
-        color: var(--brown-dark);
-        margin-bottom: 1rem;
-    }
-
-    .psychologues-header p {
-        font-size: 1.1rem;
-        color: var(--brown);
-    }
-
-    .psychologues-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-        gap: 2rem;
-        margin-bottom: 3rem;
-    }
-
-    .psychologue-card {
-        background: white;
-        border-radius: 20px;
-        padding: 2rem;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-        transition: all 0.3s ease;
-        border-top: 5px solid #C9A66B;
-    }
-
-    .psychologue-card:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 15px 40px rgba(0,0,0,0.15);
-    }
-
-    .psychologue-avatar {
-        width: 80px;
-        height: 80px;
-        background: linear-gradient(135deg, #E8D4B8 0%, #C9A66B 100%);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 2.5rem;
-        margin: 0 auto 1rem;
-    }
-
-    .psychologue-card h3 {
-        font-size: 1.5rem;
-        color: var(--brown-dark);
-        text-align: center;
-        margin-bottom: 0.5rem;
-    }
-
-    .psychologue-title {
-        text-align: center;
-        color: #C9A66B;
-        font-size: 0.9rem;
-        margin-bottom: 1rem;
-        font-weight: 600;
-    }
-
-    .specialites {
-        background: #F5E6D3;
-        border-radius: 10px;
-        padding: 0.8rem;
-        margin: 1rem 0;
-        font-size: 0.9rem;
-        color: var(--brown);
-    }
-
-    .experience {
-        text-align: center;
-        padding: 0.8rem;
-        background: #FFFAF5;
-        border-radius: 10px;
-        margin: 1rem 0;
-        font-size: 0.9rem;
-        color: var(--brown-light);
-    }
-
-    .biographie {
-        font-size: 0.95rem;
-        color: var(--brown-light);
-        line-height: 1.6;
-        margin: 1rem 0;
-    }
-
-    .consult-btn {
-        display: block;
-        width: 100%;
-        padding: 0.8rem;
-        background: var(--brown);
-        color: white;
-        text-align: center;
-        border: none;
-        border-radius: 10px;
-        cursor: pointer;
-        font-weight: 600;
-        transition: all 0.3s;
-        text-decoration: none;
-        margin-top: 1rem;
-    }
-
-    .consult-btn:hover {
-        background: var(--brown-dark);
-        transform: translateX(5px);
-    }
-
-    .empty-state {
-        text-align: center;
-        padding: 3rem;
-        background: white;
-        border-radius: 20px;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-    }
-
-    @media (max-width: 768px) {
-        .psychologues-grid {
-            grid-template-columns: 1fr;
-        }
-    }
-</style>
-
-<div class="psychologues-header">
-    <h1>👨‍⚕️ Nos Psychologues</h1>
-    <p>Choisissez un psychologue pour débuter votre consultation</p>
+<!-- HERO -->
+<div class="psy-hero">
+    <div class="psy-hero-inner">
+        <div class="psy-hero-img">
+            <img src="{% static 'images/psychologue.jpg' %}" alt="Psychologues">
+        </div>
+        <div class="psy-hero-text">
+            <h1>Nos Psychologues</h1>
+            <p>Choisissez un professionnel de confiance pour débuter votre consultation</p>
+        </div>
+        {% if psychologues %}
+        <div class="psy-hero-count">{{ psychologues|length }} disponible{{ psychologues|length|pluralize }}</div>
+        {% endif %}
+    </div>
 </div>
 
-{% if psychologues %}
-    <div class="psychologues-grid">
-        {% for psychologue in psychologues %}
-            <div class="psychologue-card">
-                <div class="psychologue-avatar">👨‍⚕️</div>
-                <h3>Dr. {{ psychologue.user.pseudonyme }}</h3>
-                <div class="psychologue-title">Psychologue</div>
-
-                {% if psychologue.specialites %}
-                    <div class="specialites">
-                        <strong>Spécialités:</strong><br>
-                        {{ psychologue.specialites }}
+<!-- GRID -->
+<div class="psy-grid">
+    {% if psychologues %}
+        {% for psy in psychologues %}
+        <div class="psy-card" style="animation-delay:{{ forloop.counter0 }}00ms">
+            <!-- Banner -->
+            <div class="psy-card-banner">
+                <div class="psy-avatar-wrap">
+                    <div class="psy-av-ring"></div>
+                    <div class="psy-av">
+                        {% if psy.photo %}
+                            <img src="{{ psy.photo.url }}" alt="Dr. {{ psy.user.pseudonyme }}">
+                        {% else %}
+                            <span class="psy-av-initials">{{ psy.user.pseudonyme|first|upper }}</span>
+                        {% endif %}
                     </div>
+                </div>
+            </div>
+
+            <!-- Body -->
+            <div class="psy-card-body">
+                <div class="psy-name">Dr. {{ psy.user.pseudonyme }}</div>
+                <div class="psy-role">Psychologue certifié</div>
+
+                {% if psy.specialites %}
+                <div class="psy-tags">
+                    {% for spec in psy.specialites|split:',' %}
+                    <span class="psy-tag">{{ spec|trim }}</span>
+                    {% endfor %}
+                </div>
                 {% endif %}
 
-                <div class="experience">
-                    <strong>{{ psychologue.experience_ans }}</strong> ans d'expérience
+                <div class="psy-exp">
+                    <div class="psy-exp-dot"></div>
+                    <span><strong>{{ psy.experience_ans }}</strong> ans d'expérience</span>
                 </div>
 
-                {% if psychologue.biographie %}
-                    <div class="biographie">
-                        {{ psychologue.biographie }}
-                    </div>
+                {% if psy.biographie %}
+                <div class="psy-bio">{{ psy.biographie }}</div>
                 {% endif %}
 
-                <a href="{% url 'consultation_request_form' psychologue.id %}" class="consult-btn">
-                    Consulter
+                <a href="{% url 'consultation_request_form' psy.id %}" class="psy-cta">
+                    Prendre rendez-vous →
                 </a>
             </div>
+        </div>
         {% endfor %}
-    </div>
-{% else %}
-    <div class="empty-state">
-        <p>Aucun psychologue disponible pour le moment.</p>
-    </div>
-{% endif %}
+    {% else %}
+        <div class="psy-empty">
+            <p>Aucun psychologue disponible pour le moment.<br>Revenez bientôt !</p>
+        </div>
+    {% endif %}
+</div>
+
 {% endblock %}

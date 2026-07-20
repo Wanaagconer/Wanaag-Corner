@@ -1,210 +1,414 @@
-<!-- TEMPLATE 2: consultation_request_form.html - MARRON/BEIGE UNIQUEMENT -->
 {% extends 'application/base.html' %}
+{% load static %}
 
-{% block title %}Demander une consultation - {{ psychologue.user.pseudonyme }}{% endblock %}
+{% block title %}Consultation — Dr. {{ psychologue.user.pseudonyme }}{% endblock %}
+{% block page_title %}Consultation{% endblock %}
+
+{% block extra_css %}
+<style>
+/* ===== LAYOUT ===== */
+.crf-wrap {
+    max-width: 780px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* ===== HERO BANNER ===== */
+.crf-hero {
+    background: linear-gradient(135deg, var(--brown-dark) 0%, #2d1f0e 55%, #1a0f05 100%);
+    border-radius: 22px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 10px 40px rgba(0,0,0,.35);
+}
+.crf-hero-bg {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 10% 50%, rgba(201,166,107,.18) 0%, transparent 55%),
+                radial-gradient(ellipse at 90% 10%, rgba(201,166,107,.10) 0%, transparent 55%);
+    pointer-events: none;
+}
+.crf-hero-inner {
+    position: relative; z-index: 1;
+    padding: 2rem 2.2rem;
+    display: flex; align-items: center; gap: 2rem;
+}
+
+/* PSY avatar in hero */
+.crf-av-wrap { position: relative; flex-shrink: 0; width: 90px; height: 90px; }
+.crf-av-ring {
+    position: absolute; inset: -3px; border-radius: 50%;
+    background: conic-gradient(#c9a66b 0%, #e8c98a 45%, transparent 55%, #c9a66b 100%);
+    animation: spinRing 6s linear infinite;
+}
+@keyframes spinRing { to { transform: rotate(360deg); } }
+.crf-av {
+    position: absolute; inset: 3px; border-radius: 50%; overflow: hidden;
+    background: linear-gradient(135deg, #c9a66b, var(--brown-dark));
+    border: 3px solid #1a0f05;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,.4);
+}
+.crf-av img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.crf-av-initials { font-size: 2rem; font-weight: 800; color: white; }
+
+/* Hero text */
+.crf-hero-text { flex: 1; }
+.crf-hero-badge {
+    display: inline-block; font-size: .7rem; font-weight: 700; letter-spacing: .5px;
+    padding: .2rem .7rem; border-radius: 20px;
+    background: rgba(201,166,107,.15); border: 1px solid rgba(201,166,107,.35);
+    color: #c9a66b; margin-bottom: .6rem; text-transform: uppercase;
+}
+.crf-hero-name {
+    font-size: 1.65rem; font-weight: 800; color: white; margin: 0 0 .3rem;
+    font-family: 'Playfair Display', serif;
+}
+.crf-hero-sub { font-size: .85rem; color: rgba(245,230,211,.55); margin: 0; }
+
+/* Specs pills */
+.crf-specs { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .8rem; }
+.crf-spec-pill {
+    background: rgba(201,166,107,.12); border: 1px solid rgba(201,166,107,.25);
+    color: rgba(245,230,211,.75); font-size: .72rem; font-weight: 600;
+    padding: .2rem .65rem; border-radius: 20px;
+}
+
+/* exp badge in hero */
+.crf-hero-exp {
+    margin-left: auto; flex-shrink: 0;
+    background: rgba(201,166,107,.12); border: 1px solid rgba(201,166,107,.25);
+    border-radius: 16px; padding: .7rem 1.2rem; text-align: center;
+}
+.crf-hero-exp strong {
+    display: block; font-size: 1.6rem; font-weight: 800;
+    background: linear-gradient(135deg, #c9a66b, #e8c98a);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text; line-height: 1;
+}
+.crf-hero-exp span { font-size: .72rem; color: rgba(245,230,211,.5); font-weight: 600; }
+
+/* ===== FORM CARD ===== */
+.crf-card {
+    background: white;
+    border-radius: 22px;
+    overflow: hidden;
+    box-shadow: 0 4px 30px rgba(74,60,47,.10);
+    border: 1px solid rgba(201,166,107,.12);
+}
+.crf-card-header {
+    padding: 1.4rem 2rem 1.2rem;
+    border-bottom: 1px solid rgba(201,166,107,.12);
+    display: flex; align-items: center; gap: .8rem;
+}
+.crf-card-icon {
+    width: 38px; height: 38px; border-radius: 12px;
+    background: linear-gradient(135deg, rgba(201,166,107,.15), rgba(139,94,40,.1));
+    border: 1px solid rgba(201,166,107,.25);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.crf-card-icon svg { width: 18px; height: 18px; }
+.crf-card-title { font-size: 1rem; font-weight: 800; color: var(--brown-dark); margin: 0; }
+.crf-card-sub { font-size: .78rem; color: #b0a090; margin: 0; }
+
+.crf-card-body { padding: 1.8rem 2rem; }
+
+/* ===== FORM FIELDS ===== */
+.crf-field { margin-bottom: 1.6rem; }
+.crf-label {
+    display: flex; align-items: center; gap: .5rem;
+    font-size: .82rem; font-weight: 700; color: var(--brown-dark);
+    margin-bottom: .55rem; letter-spacing: .2px;
+}
+.crf-label svg { width: 14px; height: 14px; opacity: .7; }
+.crf-required {
+    display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+    background: linear-gradient(135deg, #c9a66b, #8b6030); margin-left: auto;
+}
+
+.crf-input, .crf-textarea {
+    width: 100%; box-sizing: border-box;
+    padding: .85rem 1rem;
+    border: 1.5px solid rgba(201,166,107,.25);
+    border-radius: 12px;
+    font-family: inherit; font-size: .92rem; color: var(--brown-dark);
+    background: rgba(245,240,235,.35);
+    transition: border-color .2s, box-shadow .2s, background .2s;
+    outline: none;
+}
+.crf-input::placeholder, .crf-textarea::placeholder { color: #c0b0a0; font-size: .88rem; }
+.crf-input:focus, .crf-textarea:focus {
+    border-color: #c9a66b;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(201,166,107,.12);
+}
+.crf-textarea { resize: vertical; min-height: 180px; line-height: 1.65; }
+
+.crf-count {
+    display: flex; justify-content: flex-end;
+    font-size: .75rem; color: #c0b0a0; margin-top: .35rem;
+}
+.crf-count span { font-weight: 700; color: #8b6030; }
+
+/* ===== ACTIONS ===== */
+.crf-actions {
+    display: flex; gap: 1rem; padding: 1.4rem 2rem;
+    border-top: 1px solid rgba(201,166,107,.10);
+    background: rgba(245,240,235,.3);
+}
+.crf-btn-submit {
+    flex: 1; padding: .9rem 1.5rem;
+    background: linear-gradient(135deg, #c9a66b, #8b6030);
+    color: white; border: none; border-radius: 12px;
+    font-weight: 700; font-size: .92rem; cursor: pointer; letter-spacing: .3px;
+    box-shadow: 0 4px 16px rgba(201,166,107,.35);
+    transition: all .2s; display: flex; align-items: center; justify-content: center; gap: .5rem;
+}
+.crf-btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(201,166,107,.5); }
+.crf-btn-submit svg { width: 17px; height: 17px; }
+
+.crf-btn-cancel {
+    padding: .9rem 1.6rem;
+    background: transparent; color: #8b6030;
+    border: 1.5px solid rgba(201,166,107,.4); border-radius: 12px;
+    font-weight: 700; font-size: .88rem; cursor: pointer; letter-spacing: .3px;
+    text-decoration: none; display: flex; align-items: center; justify-content: center; gap: .4rem;
+    transition: all .2s;
+}
+.crf-btn-cancel:hover { background: rgba(201,166,107,.08); border-color: #c9a66b; }
+.crf-btn-cancel svg { width: 15px; height: 15px; }
+
+/* ===== SUCCESS TOAST ===== */
+.crf-tip {
+    display: flex; align-items: flex-start; gap: .8rem;
+    background: rgba(201,166,107,.08); border: 1px solid rgba(201,166,107,.2);
+    border-radius: 14px; padding: 1rem 1.3rem;
+}
+.crf-tip-icon { flex-shrink: 0; margin-top: .05rem; }
+.crf-tip-icon svg { width: 18px; height: 18px; }
+.crf-tip p { margin: 0; font-size: .82rem; color: #8b6030; line-height: 1.5; }
+.crf-tip strong { color: var(--brown-dark); }
+
+@media(max-width:640px) {
+    .crf-hero-inner { flex-wrap: wrap; }
+    .crf-hero-exp { margin-left: 0; }
+    .crf-actions { flex-direction: column; }
+    .crf-card-body { padding: 1.4rem 1.2rem; }
+}
+</style>
+{% endblock %}
 
 {% block content %}
-<style>
-    .form-container {
-        max-width: 700px;
-        margin: 0 auto;
-    }
+<div class="crf-wrap">
 
-    .form-header {
-        background: linear-gradient(135deg, #E8D4B8 0%, #F5E6D3 100%);
-        border-radius: 20px;
-        padding: 2rem;
-        margin-bottom: 2rem;
-        text-align: center;
-    }
+    <!-- HERO: Psychologue profile -->
+    <div class="crf-hero">
+        <div class="crf-hero-bg"></div>
+        <div class="crf-hero-inner">
+            <!-- Avatar -->
+            <div class="crf-av-wrap">
+                <div class="crf-av-ring"></div>
+                <div class="crf-av">
+                    {% if psychologue.photo %}
+                        <img src="{{ psychologue.photo.url }}" alt="Dr. {{ psychologue.user.pseudonyme }}">
+                    {% else %}
+                        <span class="crf-av-initials">{{ psychologue.user.pseudonyme|first|upper }}</span>
+                    {% endif %}
+                </div>
+            </div>
 
-    .form-header h1 {
-        font-size: 2rem;
-        color: var(--brown-dark);
-        margin-bottom: 1rem;
-    }
+            <!-- Text -->
+            <div class="crf-hero-text">
+                <div class="crf-hero-badge">Psychologue certifié</div>
+                <div class="crf-hero-name">Dr. {{ psychologue.user.pseudonyme }}</div>
+                <div class="crf-hero-sub">Professionnel de santé mentale</div>
+                {% if psychologue.specialites %}
+                <div class="crf-specs">
+                    {% for spec in psychologue.specialites|split:',' %}
+                    <span class="crf-spec-pill">{{ spec|trim }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
 
-    .psycho-info {
-        background: white;
-        border-radius: 20px;
-        padding: 2rem;
-        margin-bottom: 2rem;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-        text-align: center;
-        border-left: 5px solid #C9A66B;
-    }
-
-    .psycho-info h3 {
-        font-size: 1.5rem;
-        color: var(--brown-dark);
-        margin-bottom: 0.5rem;
-    }
-
-    .form-card {
-        background: white;
-        border-radius: 20px;
-        padding: 2rem;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-        margin-bottom: 2rem;
-    }
-
-    .form-group {
-        margin-bottom: 1.5rem;
-    }
-
-    .form-group label {
-        display: block;
-        font-weight: 600;
-        color: var(--brown-dark);
-        margin-bottom: 0.5rem;
-    }
-
-    .form-group input,
-    .form-group textarea {
-        width: 100%;
-        padding: 0.8rem;
-        border: 2px solid #E8D4B8;
-        border-radius: 10px;
-        font-family: inherit;
-        font-size: 1rem;
-        transition: all 0.3s;
-        box-sizing: border-box;
-    }
-
-    .form-group textarea {
-        resize: vertical;
-        min-height: 200px;
-        line-height: 1.6;
-    }
-
-    .form-group input:focus,
-    .form-group textarea:focus {
-        outline: none;
-        border-color: #C9A66B;
-        box-shadow: 0 0 0 3px rgba(201, 166, 107, 0.1);
-    }
-
-    .char-count {
-        font-size: 0.85rem;
-        color: var(--brown-light);
-        margin-top: 0.3rem;
-    }
-
-    .form-buttons {
-        display: flex;
-        gap: 1rem;
-        justify-content: center;
-        margin-top: 2rem;
-    }
-
-    .btn-submit {
-        padding: 1rem 3rem;
-        background: var(--brown);
-        color: white;
-        border: none;
-        border-radius: 10px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s;
-        font-size: 1rem;
-    }
-
-    .btn-submit:hover {
-        background: var(--brown-dark);
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-    }
-
-    .btn-cancel {
-        padding: 1rem 3rem;
-        background: transparent;
-        color: var(--brown);
-        border: 2px solid var(--brown);
-        border-radius: 10px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s;
-        font-size: 1rem;
-        text-decoration: none;
-    }
-
-    .btn-cancel:hover {
-        background: var(--brown);
-        color: white;
-    }
-
-    @media (max-width: 768px) {
-        .form-buttons {
-            flex-direction: column;
-        }
-
-        .btn-submit, .btn-cancel {
-            width: 100%;
-        }
-    }
-</style>
-
-<div class="form-container">
-    <div class="form-header">
-        <h1>Demander une consultation</h1>
-        <p>Écrivez votre message au psychologue</p>
+            <!-- Exp -->
+            <div class="crf-hero-exp">
+                <strong>{{ psychologue.experience_ans }}</strong>
+                <span>ans d'exp.</span>
+            </div>
+        </div>
     </div>
 
-    <div class="psycho-info">
-        <h3>Dr. {{ psychologue.user.pseudonyme }}</h3>
-        {% if psychologue.specialites %}
-            <p style="color: #C9A66B; margin: 0.5rem 0;">Spécialités: {{ psychologue.specialites }}</p>
-        {% endif %}
-        <p style="color: var(--brown-light);">{{ psychologue.experience_ans }} ans d'expérience</p>
+    <!-- TIP -->
+    <div class="crf-tip">
+        <div class="crf-tip-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#c9a66b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+        </div>
+        <p><strong>Confidentialité garantie.</strong> Votre message est strictement confidentiel et ne sera visible que par Dr. {{ psychologue.user.pseudonyme }}. Décrivez votre situation librement.</p>
     </div>
 
-    <form method="post" class="form-card">
+    <!-- FORM -->
+    <form method="post" class="crf-card">
         {% csrf_token %}
-        
-        <div class="form-group">
-            <label for="sujet">Sujet de la consultation *</label>
-            <input 
-                type="text" 
-                id="sujet" 
-                name="sujet" 
-                placeholder="Ex: Gestion de l'anxiété, Dépression..." 
-                required
-                maxlength="200"
-            >
-            <div class="char-count"><span id="sujet-count">0</span>/200</div>
+
+        <div class="crf-card-header">
+            <div class="crf-card-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#c9a66b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+                </svg>
+            </div>
+            <div>
+                <div class="crf-card-title">Votre demande de consultation</div>
+                <div class="crf-card-sub">Remplissez le formulaire ci-dessous</div>
+            </div>
         </div>
 
-        <div class="form-group">
-            <label for="message">Votre message *</label>
-            <textarea 
-                id="message" 
-                name="message" 
-                placeholder="Décrivez votre situation et ce qui vous amène à consulter..."
-                required
-                maxlength="2000"
-            ></textarea>
-            <div class="char-count"><span id="message-count">0</span>/2000</div>
+        <div class="crf-card-body">
+
+            <!-- Type de séance -->
+            <div class="crf-field">
+                <label class="crf-label">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                    Type de séance
+                    <span class="crf-required"></span>
+                </label>
+                <input type="hidden" name="type_seance" id="typeSeanceInput" value="presentiel">
+                <div style="display:flex;gap:1rem;">
+                    <!-- Présentiel -->
+                    <button type="button" id="btn-presentiel" onclick="selectSeance('presentiel')"
+                        style="flex:1;padding:1.2rem 1rem;border-radius:16px;cursor:pointer;
+                               border:2px solid #c9a66b;background:linear-gradient(135deg,rgba(201,166,107,.18),rgba(201,166,107,.08));
+                               display:flex;flex-direction:column;align-items:center;gap:.6rem;transition:all .2s;">
+                        <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="#c9a66b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+                        </svg>
+                        <div style="font-weight:800;font-size:.95rem;color:var(--brown-dark);">Présentiel</div>
+                        <div style="font-size:.75rem;color:#9a7a5a;text-align:center;">Rencontre physique au cabinet</div>
+                    </button>
+                    <!-- Visioconférence -->
+                    <button type="button" id="btn-visio" onclick="selectSeance('visio')"
+                        style="flex:1;padding:1.2rem 1rem;border-radius:16px;cursor:pointer;
+                               border:2px solid rgba(201,166,107,.25);background:rgba(245,240,235,.4);
+                               display:flex;flex-direction:column;align-items:center;gap:.6rem;transition:all .2s;">
+                        <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="#9a7a5a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+                        </svg>
+                        <div style="font-weight:800;font-size:.95rem;color:var(--brown-dark);">Visioconférence</div>
+                        <div style="font-size:.75rem;color:#9a7a5a;text-align:center;">Appel vidéo sécurisé en ligne</div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Date et heure souhaitées -->
+            <div class="crf-field">
+                <label class="crf-label" for="date_souhaitee">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+                    </svg>
+                    Date et heure souhaitées
+                    <span class="crf-required"></span>
+                </label>
+                <input
+                    class="crf-input" type="datetime-local" id="date_souhaitee" name="date_souhaitee"
+                    required
+                    style="cursor:pointer;"
+                >
+                <div style="font-size:.75rem;color:#b0a090;margin-top:.35rem;">
+                    Choisissez la date et l'heure de votre séance
+                </div>
+            </div>
+
+            <!-- Sujet -->
+            <div class="crf-field">
+                <label class="crf-label" for="sujet">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/>
+                        <line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
+                    </svg>
+                    Sujet de la consultation
+                    <span class="crf-required"></span>
+                </label>
+                <input
+                    class="crf-input" type="text" id="sujet" name="sujet"
+                    placeholder="Ex: Gestion de l'anxiété, Troubles du sommeil, Dépression…"
+                    required maxlength="200"
+                >
+                <div class="crf-count"><span id="sujet-count">0</span>/200</div>
+            </div>
+
+            <!-- Message -->
+            <div class="crf-field" style="margin-bottom:0">
+                <label class="crf-label" for="message">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+                    </svg>
+                    Votre message
+                    <span class="crf-required"></span>
+                </label>
+                <textarea
+                    class="crf-textarea" id="message" name="message"
+                    placeholder="Décrivez votre situation, ce qui vous préoccupe et ce que vous attendez de cette consultation…"
+                    required maxlength="2000"
+                ></textarea>
+                <div class="crf-count"><span id="msg-count">0</span>/2000</div>
+            </div>
+
         </div>
 
-        <div class="form-buttons">
-            <button type="submit" class="btn-submit">Envoyer la demande</button>
-            <a href="{% url 'psychologues_list' %}" class="btn-cancel">Annuler</a>
+        <div class="crf-actions">
+            <button type="submit" class="crf-btn-submit">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                </svg>
+                Envoyer la demande
+            </button>
+            <a href="{% url 'psychologues_list' %}" class="crf-btn-cancel">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
+                </svg>
+                Retour
+            </a>
         </div>
     </form>
+
 </div>
 
 <script>
-    const sujetInput = document.getElementById('sujet');
-    const messageInput = document.getElementById('message');
-    const sujetCount = document.getElementById('sujet-count');
-    const messageCount = document.getElementById('message-count');
+(function(){
+    // Date minimum = maintenant + 1h
+    const dtInput = document.getElementById('date_souhaitee');
+    const minDate = new Date(Date.now() + 60 * 60 * 1000);
+    const pad = n => String(n).padStart(2, '0');
+    dtInput.min = `${minDate.getFullYear()}-${pad(minDate.getMonth()+1)}-${pad(minDate.getDate())}T${pad(minDate.getHours())}:${pad(minDate.getMinutes())}`;
 
-    sujetInput.addEventListener('input', function() {
-        sujetCount.textContent = this.value.length;
-    });
+    const sujet = document.getElementById('sujet');
+    const msg   = document.getElementById('message');
+    sujet.addEventListener('input', () => document.getElementById('sujet-count').textContent = sujet.value.length);
+    msg.addEventListener('input',   () => document.getElementById('msg-count').textContent   = msg.value.length);
+})();
 
-    messageInput.addEventListener('input', function() {
-        messageCount.textContent = this.value.length;
-    });
+function selectSeance(type) {
+    document.getElementById('typeSeanceInput').value = type;
+    const btnP = document.getElementById('btn-presentiel');
+    const btnV = document.getElementById('btn-visio');
+    if (type === 'presentiel') {
+        btnP.style.border = '2px solid #c9a66b';
+        btnP.style.background = 'linear-gradient(135deg,rgba(201,166,107,.18),rgba(201,166,107,.08))';
+        btnP.querySelector('svg').setAttribute('stroke','#c9a66b');
+        btnV.style.border = '2px solid rgba(201,166,107,.25)';
+        btnV.style.background = 'rgba(245,240,235,.4)';
+        btnV.querySelector('svg').setAttribute('stroke','#9a7a5a');
+    } else {
+        btnV.style.border = '2px solid #c9a66b';
+        btnV.style.background = 'linear-gradient(135deg,rgba(201,166,107,.18),rgba(201,166,107,.08))';
+        btnV.querySelector('svg').setAttribute('stroke','#c9a66b');
+        btnP.style.border = '2px solid rgba(201,166,107,.25)';
+        btnP.style.background = 'rgba(245,240,235,.4)';
+        btnP.querySelector('svg').setAttribute('stroke','#9a7a5a');
+    }
+}
 </script>
 {% endblock %}

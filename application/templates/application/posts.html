@@ -1,0 +1,868 @@
+{% extends 'application/base.html' %}
+{% load static %}
+
+{% block title %}Posts — Wanaag Corner{% endblock %}
+{% block page_title %}Posts{% endblock %}
+
+{% block extra_css %}
+<style>
+:root {
+    --gold: #c9a66b; --gold-light: #e8c98a; --gold-glow: rgba(201,166,107,.4);
+    --card-bg: #ffffff; --card-border: rgba(201,166,107,.13);
+    --shadow-soft: 0 2px 24px rgba(74,60,47,.07);
+    --shadow-hover: 0 20px 60px rgba(74,60,47,.15);
+    --radius-lg: 26px; --radius-md: 18px;
+}
+
+/* ===== LAYOUT ===== */
+.feed-wrap { display: grid; grid-template-columns: 1fr 300px; gap: 2rem; max-width: 980px; margin: 0 auto; }
+@media(max-width:820px){ .feed-wrap { grid-template-columns: 1fr; } .sidebar-col { display: none; } }
+
+/* ===== CREATE BAR ===== */
+.posts-hero {
+    background: linear-gradient(135deg, #0e0702 0%, #1e1005 50%, #160c04 100%);
+    border-radius: var(--radius-lg); margin-bottom: 1.5rem;
+    position: relative; overflow: hidden;
+    box-shadow: 0 16px 56px rgba(0,0,0,.4), inset 0 1px 0 rgba(201,166,107,.12);
+    border: 1px solid rgba(201,166,107,.1);
+}
+.posts-hero::before {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(rgba(201,166,107,.035) 1px,transparent 1px),
+                linear-gradient(90deg,rgba(201,166,107,.035) 1px,transparent 1px);
+    background-size: 36px 36px;
+}
+.posts-hero::after {
+    content: ''; position: absolute; top: -80px; right: -80px;
+    width: 280px; height: 280px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(201,166,107,.14) 0%, transparent 65%);
+}
+.hero-inner { position: relative; z-index: 1; display: flex; align-items: center; gap: 1.1rem; padding: 1.4rem 1.6rem 1rem; }
+.hero-av {
+    width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0;
+    background: linear-gradient(135deg, var(--gold), #6b3e0f);
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-weight: 800; font-size: 1rem; position: relative; z-index: 1;
+}
+.hero-av::before {
+    content: ''; position: absolute; inset: -3px; border-radius: 50%;
+    background: conic-gradient(var(--gold), transparent 60%, var(--gold)); z-index: -1;
+    animation: spinRing 4s linear infinite;
+}
+@keyframes spinRing { to { transform: rotate(360deg); } }
+.hero-input {
+    flex: 1; background: rgba(255,255,255,.05); border: 1.5px solid rgba(201,166,107,.18);
+    border-radius: 50px; padding: .8rem 1.4rem; font-size: .9rem;
+    color: rgba(245,230,211,.55); cursor: pointer; outline: none; font-family: inherit;
+    transition: all .22s; text-align: left;
+}
+.hero-input:hover { background: rgba(255,255,255,.09); border-color: rgba(201,166,107,.45); color: rgba(245,230,211,.85); box-shadow: 0 0 0 4px rgba(201,166,107,.06); }
+.hero-actions { display: flex; border-top: 1px solid rgba(201,166,107,.08); }
+.hero-action-btn {
+    flex: 1; display: flex; align-items: center; justify-content: center; gap: .45rem;
+    background: transparent; border: none; border-right: 1px solid rgba(201,166,107,.08);
+    cursor: pointer; padding: .9rem 1rem; font-size: .8rem; font-weight: 700;
+    transition: all .15s; color: rgba(245,230,211,.55); position: relative; overflow: hidden;
+}
+.hero-action-btn:last-child { border-right: none; }
+.hero-action-btn:hover { color: white; background: rgba(201,166,107,.07); }
+.hero-action-btn svg { width: 16px; height: 16px; fill: currentColor; flex-shrink: 0; }
+.hero-action-btn:nth-child(1) { color: #5dade2; }
+.hero-action-btn:nth-child(2) { color: #a569bd; }
+.hero-action-btn:nth-child(3) { color: var(--gold); }
+
+/* ===== AVATAR ===== */
+.av { border-radius: 50%; background: linear-gradient(135deg,var(--gold),var(--brown-dark)); display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; flex-shrink: 0; }
+.av-lg { width: 54px; height: 54px; font-size: 1.1rem; }
+.av-md { width: 44px; height: 44px; font-size: .92rem; }
+.av-sm { width: 32px; height: 32px; font-size: .74rem; }
+.av-psy { background: linear-gradient(135deg,#2e86c1,#1a5276); }
+
+/* ===== POST CARD ===== */
+.post-card {
+    background: var(--card-bg); border-radius: var(--radius-lg);
+    margin-bottom: 1.4rem; box-shadow: var(--shadow-soft);
+    border: 1px solid var(--card-border); overflow: visible;
+    transition: box-shadow .3s, transform .3s;
+    position: relative; animation: cardIn .38s cubic-bezier(.25,.46,.45,.94) both;
+}
+@keyframes cardIn { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+.post-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg,transparent,var(--gold),var(--gold-light),transparent);
+    opacity: .35; transition: opacity .3s; border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+.post-card:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
+.post-card:hover::before { opacity: .9; }
+
+/* Header */
+.post-header { display: flex; align-items: center; justify-content: space-between; padding: 1.1rem 1.3rem .7rem; }
+.post-author { display: flex; align-items: center; gap: .9rem; }
+.post-av-wrap { position: relative; }
+.post-av-ring {
+    position: absolute; inset: -2px; border-radius: 50%;
+    background: conic-gradient(var(--gold) 0%,var(--gold-light) 50%,transparent 65%);
+    z-index: 0; animation: spinRing 7s linear infinite;
+}
+.post-av-wrap .av, .post-av-wrap img { position: relative; z-index: 1; }
+.author-name { font-weight: 800; font-size: .95rem; color: var(--brown-dark); }
+.author-role {
+    font-size: .67rem; font-weight: 700; padding: .12rem .52rem;
+    border-radius: 20px; display: inline-block; margin-left: .35rem; letter-spacing: .2px;
+}
+.role-membre { background: rgba(139,105,70,.1); color: #7a5c3a; }
+.role-psy { background: linear-gradient(135deg,rgba(41,128,185,.12),rgba(26,82,118,.08)); color: #1a6fa8; border: 1px solid rgba(41,128,185,.2); }
+.post-date { font-size: .71rem; color: #c0aaa0; margin-top: .1rem; }
+.post-edited-badge { font-size: .67rem; color: #c9a66b; margin-left: .3rem; font-style: italic; }
+
+/* Follow */
+.follow-post-btn { display: inline-flex; align-items: center; gap: .32rem; padding: .32rem .85rem; border-radius: 50px; font-size: .74rem; font-weight: 800; cursor: pointer; transition: all .18s; }
+
+/* 3-dots menu */
+.post-menu-wrap { position: relative; }
+.post-more-btn { background: none; border: none; cursor: pointer; padding: .35rem .5rem; border-radius: 10px; color: #ccc0b5; transition: all .15s; display: flex; }
+.post-more-btn:hover { background: rgba(139,105,70,.08); color: var(--brown-dark); }
+.post-more-btn svg { width: 20px; height: 20px; fill: currentColor; }
+.post-dropdown {
+    position: absolute; right: 0; top: calc(100% + 8px); z-index: 300;
+    background: white; border-radius: 18px; min-width: 185px; padding: .4rem 0;
+    box-shadow: 0 20px 60px rgba(0,0,0,.18); border: 1px solid rgba(139,105,70,.1);
+    display: none;
+}
+.post-dropdown.open { display: block; animation: dropIn .15s ease; }
+@keyframes dropIn { from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)} }
+.dropdown-item {
+    display: flex; align-items: center; gap: .65rem; padding: .7rem 1.1rem;
+    font-size: .84rem; color: var(--brown-dark); cursor: pointer;
+    transition: background .1s; border: none; background: none; width: 100%; text-align: left;
+}
+.dropdown-item:hover { background: #f8f3ee; }
+.dropdown-item.danger { color: #e74c3c; }
+.dropdown-item.danger:hover { background: #fdf0ef; }
+.dropdown-item svg { width: 15px; height: 15px; fill: currentColor; flex-shrink: 0; }
+
+/* Media */
+.post-img-wrap { overflow: hidden; }
+.post-img-wrap img { width: 100%; max-height: 540px; object-fit: cover; display: block; transition: transform .6s ease; }
+.post-card:hover .post-img-wrap img { transform: scale(1.02); }
+.post-video-wrap { background: #050301; }
+.post-video-wrap video { width: 100%; max-height: 540px; display: block; outline: none; }
+
+/* Body */
+.post-body { padding: .85rem 1.3rem .3rem; font-size: .94rem; color: var(--brown-dark); line-height: 1.72; white-space: pre-wrap; }
+
+/* ===== REACTIONS BAR ===== */
+.post-reactions-bar {
+    display: flex; align-items: center; padding: .15rem .8rem;
+    border-top: 1px solid rgba(139,105,70,.06);
+    gap: .1rem;
+}
+.react-btn {
+    display: flex; align-items: center; gap: .42rem;
+    background: none; border: none; cursor: pointer;
+    padding: .6rem .75rem; border-radius: 12px; transition: all .15s;
+    color: #c0afa0; font-size: .82rem; font-weight: 700; position: relative;
+}
+.react-btn:hover { background: rgba(139,105,70,.07); color: var(--brown-dark); }
+.react-btn svg { width: 21px; height: 21px; transition: transform .2s; }
+.react-btn .heart-icon { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.react-btn.liked .heart-icon { fill: #e74c3c; stroke: #e74c3c; }
+.react-btn.liked { color: #e74c3c; }
+.react-btn .comment-icon { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+@keyframes heartPop { 0%{transform:scale(1)} 30%{transform:scale(1.55)} 60%{transform:scale(.9)} 100%{transform:scale(1)} }
+.heart-anim { animation: heartPop .32s ease; }
+
+/* Emoji reactions floating */
+.emoji-reactions {
+    display: flex; gap: .3rem; padding: .5rem .7rem;
+    background: white; border-radius: 50px; box-shadow: 0 8px 32px rgba(0,0,0,.14);
+    border: 1px solid rgba(139,105,70,.1);
+    position: absolute; bottom: calc(100% + 8px); left: 0; z-index: 200;
+    display: none; animation: popUp .18s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes popUp { from{opacity:0;transform:scale(.7)translateY(8px)} to{opacity:1;transform:scale(1)translateY(0)} }
+.emoji-btn { background: none; border: none; cursor: pointer; font-size: 1.4rem; padding: .15rem .22rem; border-radius: 50%; transition: transform .15s; }
+.emoji-btn:hover { transform: scale(1.35); }
+
+/* Reactions summary */
+.post-likes { padding: .08rem 1.3rem .1rem; font-size: .82rem; font-weight: 700; color: var(--brown-dark); display: flex; align-items: center; gap: .4rem; }
+.likes-emojis { font-size: .88rem; }
+
+/* ===== COMMENTS ===== */
+.comments-section { padding: 0 1.3rem .9rem; display: none; }
+.comments-section.open { display: block; animation: fadeUp .2s ease; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+.comment-item { display: flex; gap: .65rem; margin-bottom: .75rem; align-items: flex-start; }
+.comment-bubble {
+    background: linear-gradient(135deg, #faf6f0, #f5ede3);
+    border-radius: 0 18px 18px 18px; padding: .6rem 1rem; flex: 1;
+    border: 1px solid rgba(201,166,107,.08);
+}
+.comment-author { font-weight: 800; font-size: .8rem; color: var(--brown-dark); }
+.comment-text { font-size: .85rem; color: var(--brown); line-height: 1.55; margin-top: .1rem; }
+.comment-time { font-size: .69rem; color: #c8b8a8; margin-top: .15rem; }
+.comment-form {
+    display: flex; gap: .6rem; align-items: center;
+    margin-top: .8rem; padding-top: .7rem; border-top: 1px solid rgba(139,105,70,.07);
+}
+.comment-input {
+    flex: 1; background: #faf6f0; border: 1.5px solid rgba(201,166,107,.15);
+    border-radius: 50px; padding: .58rem 1.1rem; font-size: .84rem;
+    outline: none; font-family: inherit; color: var(--brown-dark); transition: all .18s;
+}
+.comment-input:focus { background: white; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,166,107,.1); }
+.comment-send-btn {
+    width: 38px; height: 38px; border-radius: 50%; border: none; cursor: pointer;
+    background: linear-gradient(135deg,var(--gold),#7a5020); color: white;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    transition: all .18s; box-shadow: 0 3px 14px var(--gold-glow);
+}
+.comment-send-btn:hover { transform: scale(1.12); box-shadow: 0 6px 22px var(--gold-glow); }
+.comment-send-btn svg { width: 15px; height: 15px; fill: white; }
+.see-comments-btn {
+    background: none; border: none; cursor: pointer; font-size: .79rem;
+    color: #b8a890; font-weight: 700; padding: .05rem 1.3rem .75rem; display: block; transition: color .15s;
+}
+.see-comments-btn:hover { color: var(--brown-dark); }
+
+/* ===== EMPTY STATE ===== */
+.empty-feed { text-align: center; padding: 5rem 2rem; background: var(--card-bg); border-radius: var(--radius-lg); box-shadow: var(--shadow-soft); border: 1px solid var(--card-border); }
+.empty-feed-icon { width: 80px; height: 80px; border-radius: 24px; background: linear-gradient(135deg,rgba(201,166,107,.1),rgba(201,166,107,.05)); border: 1.5px solid rgba(201,166,107,.2); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.2rem; }
+.empty-feed-icon svg { width: 38px; height: 38px; fill: rgba(201,166,107,.5); }
+.empty-feed h3 { color: var(--brown-dark); margin-bottom: .5rem; font-size: 1.15rem; }
+.empty-feed p { color: #b8a890; font-size: .9rem; }
+
+/* ===== SIDEBAR ===== */
+.sidebar-col { display: flex; flex-direction: column; gap: 1.3rem; }
+.side-card { background: var(--card-bg); border-radius: var(--radius-lg); padding: 1.5rem; box-shadow: var(--shadow-soft); border: 1px solid var(--card-border); position: relative; overflow: hidden; }
+.side-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg,transparent,var(--gold),transparent); opacity: .45; }
+.profile-card-top { display: flex; gap: 1rem; align-items: center; margin-bottom: 1.4rem; }
+.profile-av-wrap { position: relative; }
+.profile-av-ring { position: absolute; inset: -3px; border-radius: 50%; background: conic-gradient(var(--gold),var(--gold-light),transparent 55%,var(--gold)); animation: spinRing 5s linear infinite; }
+.profile-av-inner { position: relative; z-index: 1; }
+.profile-name { font-weight: 800; font-size: .98rem; color: var(--brown-dark); }
+.profile-role-tag { display: inline-block; font-size: .7rem; font-weight: 700; padding: .18rem .58rem; border-radius: 20px; margin-top: .32rem; }
+.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; margin-top: .5rem; }
+.stats-item { background: linear-gradient(135deg,rgba(201,166,107,.06),rgba(201,166,107,.02)); border: 1px solid rgba(201,166,107,.15); border-radius: 14px; text-align: center; padding: 1rem .5rem; }
+.stats-item .n { font-size: 1.6rem; font-weight: 800; color: var(--brown-dark); line-height: 1; }
+.stats-item .l { font-size: .68rem; color: #b0a090; text-transform: uppercase; letter-spacing: .5px; margin-top: .3rem; }
+.side-section-title { font-size: .72rem; font-weight: 800; color: var(--brown-light); text-transform: uppercase; letter-spacing: .8px; margin-bottom: .9rem; }
+.side-nav-link { display: flex; align-items: center; gap: .85rem; padding: .65rem .8rem; border-radius: 14px; text-decoration: none; color: var(--brown-dark); font-weight: 600; font-size: .86rem; transition: all .18s; margin-bottom: .2rem; }
+.side-nav-link:hover { background: rgba(201,166,107,.08); transform: translateX(4px); box-shadow: inset 3px 0 0 var(--gold); }
+.nav-img-icon { width: 34px; height: 34px; border-radius: 10px; overflow: hidden; flex-shrink: 0; box-shadow: 0 2px 10px rgba(0,0,0,.12); }
+.nav-img-icon img { width: 100%; height: 100%; object-fit: cover; }
+
+/* ===== MODAL BASE ===== */
+.modal-overlay { position: fixed; inset: 0; background: rgba(8,4,0,.75); z-index: 2000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(12px); }
+.modal-overlay.active { display: flex; }
+@keyframes modalIn { from{opacity:0;transform:translateY(30px)scale(.92)} to{opacity:1;transform:translateY(0)scale(1)} }
+
+/* ===== CREATE / EDIT MODAL ===== */
+.modal-box {
+    background: white; border-radius: 28px; width: 95%; max-width: 540px;
+    overflow: hidden; box-shadow: 0 48px 120px rgba(0,0,0,.35), 0 0 0 1px rgba(201,166,107,.12);
+    animation: modalIn .28s cubic-bezier(.34,1.56,.64,1);
+}
+.modal-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.2rem 1.5rem; border-bottom: 1px solid rgba(139,105,70,.1);
+    background: linear-gradient(135deg,#faf6f0,white);
+}
+.modal-head h4 { font-size: 1.05rem; font-weight: 800; color: var(--brown-dark); margin: 0; font-family: 'Playfair Display',serif; }
+.modal-close-btn { width: 32px; height: 32px; border-radius: 50%; background: #f2ece4; border: none; cursor: pointer; font-size: 1rem; color: var(--brown); display: flex; align-items: center; justify-content: center; transition: all .15s; }
+.modal-close-btn:hover { background: #fde8e8; color: #e74c3c; transform: rotate(90deg); }
+.modal-author-row { display: flex; align-items: center; gap: .9rem; padding: 1.1rem 1.5rem .5rem; }
+.modal-author-row .m-name { font-weight: 700; font-size: .9rem; color: var(--brown-dark); }
+.modal-author-row .m-sub { font-size: .72rem; color: #b8a89a; }
+.modal-textarea {
+    width: 100%; min-height: 130px; border: none; resize: none;
+    padding: .4rem 1.5rem 1rem; font-size: 1rem; color: var(--brown-dark);
+    outline: none; font-family: inherit; box-sizing: border-box; line-height: 1.7;
+}
+.modal-textarea::placeholder { color: #ccc0b2; }
+.char-count { text-align: right; font-size: .75rem; color: #c0afa0; padding: 0 1.5rem .4rem; }
+.char-count.warn { color: #e67e22; }
+.char-count.over { color: #e74c3c; }
+
+/* Media preview */
+.media-preview-wrap { position: relative; margin: 0 1.4rem .9rem; display: none; border-radius: 18px; overflow: hidden; }
+.media-preview-wrap img { width: 100%; max-height: 260px; object-fit: cover; display: block; }
+.media-preview-wrap video { width: 100%; max-height: 260px; display: block; background: #000; }
+.media-remove-btn { position: absolute; top: 8px; right: 8px; width: 30px; height: 30px; background: rgba(0,0,0,.6); color: white; border: none; border-radius: 50%; cursor: pointer; font-size: .9rem; display: flex; align-items: center; justify-content: center; transition: background .15s; }
+.media-remove-btn:hover { background: rgba(231,76,60,.85); }
+
+.modal-footer {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: .9rem 1.5rem; border-top: 1px solid rgba(139,105,70,.08);
+    background: rgba(250,246,240,.65);
+}
+.upload-label {
+    display: flex; align-items: center; gap: .45rem; cursor: pointer; padding: .48rem .85rem;
+    border-radius: 50px; font-size: .8rem; font-weight: 700;
+    transition: all .15s;
+}
+.upload-label.photo { color: #2980b9; background: rgba(41,128,185,.08); border: 1px solid rgba(41,128,185,.18); }
+.upload-label.video { color: #8e44ad; background: rgba(142,68,173,.08); border: 1px solid rgba(142,68,173,.18); }
+.upload-label:hover { opacity: .85; transform: translateY(-1px); }
+.upload-label svg { width: 15px; height: 15px; fill: currentColor; }
+.btn-publish {
+    background: linear-gradient(135deg,#c9a66b,#7a4e1c); color: white; border: none;
+    padding: .7rem 2.2rem; border-radius: 50px; font-weight: 800; font-size: .9rem;
+    cursor: pointer; transition: all .22s;
+    box-shadow: 0 4px 18px var(--gold-glow), inset 0 1px 0 rgba(255,255,255,.2);
+}
+.btn-publish:hover { transform: translateY(-2px); box-shadow: 0 10px 32px var(--gold-glow); }
+.btn-publish:disabled { background: #e0d8d0; color: #b8b0a8; cursor: not-allowed; transform: none; box-shadow: none; }
+
+/* ===== DELETE MODAL ===== */
+.delete-box { background: white; border-radius: 24px; width: 90%; max-width: 360px; overflow: hidden; box-shadow: 0 24px 70px rgba(0,0,0,.22); animation: modalIn .22s cubic-bezier(.34,1.56,.64,1); }
+.delete-box-body { padding: 2.2rem 1.8rem 1rem; text-align: center; }
+.del-icon-wrap { width: 58px; height: 58px; border-radius: 50%; background: #fde8e8; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.1rem; }
+.del-icon-wrap svg { width: 26px; height: 26px; fill: #e74c3c; }
+.delete-box-body h4 { color: var(--brown-dark); font-size: 1.05rem; margin-bottom: .4rem; }
+.delete-box-body p { color: #b0a090; font-size: .84rem; }
+.delete-box-footer { display: flex; gap: .8rem; padding: 1rem 1.8rem 1.6rem; justify-content: center; }
+.btn-cancel-del { background: #f5f0ea; color: var(--brown-dark); border: none; padding: .68rem 1.6rem; border-radius: 50px; font-weight: 700; cursor: pointer; font-size: .86rem; transition: background .15s; }
+.btn-cancel-del:hover { background: #ece5db; }
+.btn-confirm-del { background: linear-gradient(135deg,#e74c3c,#b03a2e); color: white; border: none; padding: .68rem 1.6rem; border-radius: 50px; font-weight: 700; cursor: pointer; font-size: .86rem; box-shadow: 0 4px 14px rgba(231,76,60,.3); transition: all .15s; }
+.btn-confirm-del:hover { transform: translateY(-1px); box-shadow: 0 8px 22px rgba(231,76,60,.4); }
+
+/* ===== TOAST NOTIFICATION ===== */
+.toast {
+    position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(80px);
+    background: linear-gradient(135deg,#1a0f05,#2d1f0e); color: #e8c98a;
+    padding: .75rem 1.6rem; border-radius: 50px; font-size: .87rem; font-weight: 700;
+    box-shadow: 0 8px 32px rgba(0,0,0,.35); z-index: 9999;
+    transition: transform .35s cubic-bezier(.34,1.56,.64,1), opacity .35s;
+    opacity: 0; border: 1px solid rgba(201,166,107,.25);
+}
+.toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="feed-wrap">
+
+  <!-- ====== MAIN FEED ====== -->
+  <div class="main-col">
+
+    <!-- CREATE BAR -->
+    <div class="posts-hero">
+      <div class="hero-inner">
+        <div class="hero-av">{{ user.pseudonyme|first|upper }}</div>
+        <button class="hero-input" onclick="openCreateModal()">Quoi de neuf, {{ user.pseudonyme }} ?</button>
+      </div>
+      <div class="hero-actions">
+        <button class="hero-action-btn" onclick="openCreateModal(); setTimeout(()=>document.getElementById('postImageInput').click(),300)">
+          <svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
+          Photo
+        </button>
+        <button class="hero-action-btn" onclick="openCreateModal(); setTimeout(()=>document.getElementById('postVideoInput').click(),300)">
+          <svg viewBox="0 0 24 24"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/></svg>
+          Vidéo
+        </button>
+        <button class="hero-action-btn" onclick="openCreateModal()">
+          <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+          Texte
+        </button>
+      </div>
+    </div>
+
+    <!-- POSTS FEED -->
+    {% if posts %}
+    {% for post in posts %}
+    <div class="post-card" id="post-{{ post.id }}" style="animation-delay:{{ forloop.counter0 }}00ms">
+
+      <!-- Header -->
+      <div class="post-header">
+        <div class="post-author">
+          <a href="{% url 'user_profile' post.auteur.id %}" style="text-decoration:none;">
+            <div class="post-av-wrap">
+              <div class="post-av-ring"></div>
+              {% if post.auteur.photo %}
+              <img src="{{ post.auteur.photo.url }}" class="av av-md" style="object-fit:cover;" alt="">
+              {% else %}
+              <div class="av av-md {% if post.auteur.psychologue_profile %}av-psy{% endif %}">{{ post.auteur.pseudonyme|first|upper }}</div>
+              {% endif %}
+            </div>
+          </a>
+          <div>
+            <div>
+              <a href="{% url 'user_profile' post.auteur.id %}" class="author-name" style="text-decoration:none;color:inherit;">{{ post.auteur.pseudonyme }}</a>
+              {% if post.auteur.psychologue_profile %}<span class="author-role role-psy">Psychologue</span>
+              {% else %}<span class="author-role role-membre">Membre</span>{% endif %}
+            </div>
+            <div class="post-date">
+              {{ post.date_creation|date:"d M Y à H:i" }}
+              {% if post.date_modification and post.date_modification != post.date_creation %}<span class="post-edited-badge">· modifié</span>{% endif %}
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:.5rem;">
+          {% if post.auteur != user %}
+          <button class="follow-post-btn {% if post.auteur.id in following_ids %}following{% endif %}"
+                  id="fpost-{{ post.auteur.id }}"
+                  onclick="followFromPost({{ post.auteur.id }}, this)"
+                  style="border:1.5px solid rgba(201,166,107,.3);background:{% if post.auteur.id in following_ids %}rgba(201,166,107,.1){% else %}transparent{% endif %};color:{% if post.auteur.id in following_ids %}#8b6030{% else %}var(--brown-light){% endif %};">
+            {% if post.auteur.id in following_ids %}✓ Abonné{% else %}+ Suivre{% endif %}
+          </button>
+          {% endif %}
+          {% if post.auteur == user %}
+          <div class="post-menu-wrap">
+            <button class="post-more-btn" onclick="toggleDropdown({{ post.id }})">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/></svg>
+            </button>
+            <div class="post-dropdown" id="dropdown-{{ post.id }}">
+              <button class="dropdown-item" onclick="openEditModal({{ post.id }}, `{{ post.contenu|escapejs }}`)">
+                <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+                Modifier le post
+              </button>
+              <button class="dropdown-item danger" onclick="confirmDelete({{ post.id }})">
+                <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+                Supprimer le post
+              </button>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Media -->
+      {% if post.image %}
+      <div class="post-img-wrap"><img src="{{ post.image.url }}" alt=""></div>
+      {% endif %}
+      {% if post.video %}
+      <div class="post-video-wrap">
+        <video controls preload="metadata" playsinline><source src="{{ post.video.url }}">Votre navigateur ne supporte pas la vidéo.</video>
+      </div>
+      {% endif %}
+
+      <!-- Likes count -->
+      <div class="post-likes" id="like-count-{{ post.id }}" {% if not post.nb_likes %}style="display:none"{% endif %}>
+        {% if post.nb_likes %}<span class="likes-emojis">❤️</span> {{ post.nb_likes }} j'aime{% endif %}
+      </div>
+
+      <!-- Text -->
+      {% if post.contenu %}
+      <div class="post-body" id="post-body-{{ post.id }}"><strong>{{ post.auteur.pseudonyme }}</strong> {{ post.contenu }}</div>
+      {% endif %}
+
+      <!-- Reactions bar -->
+      <div class="post-reactions-bar">
+        <button class="react-btn {% if post.id in liked_ids %}liked{% endif %}" id="like-btn-{{ post.id }}" onclick="toggleLike({{ post.id }})">
+          <svg class="heart-icon" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          J'aime
+        </button>
+        <button class="react-btn" onclick="toggleComments({{ post.id }})">
+          <svg class="comment-icon" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Commenter
+        </button>
+        <button class="react-btn" onclick="sharePost({{ post.id }})">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          Partager
+        </button>
+      </div>
+
+      <!-- See comments -->
+      {% if post.nb_commentaires > 0 %}
+      <button class="see-comments-btn" onclick="toggleComments({{ post.id }})">
+        Voir les {{ post.nb_commentaires }} commentaire{{ post.nb_commentaires|pluralize }}
+      </button>
+      {% endif %}
+
+      <!-- Comments section -->
+      <div class="comments-section" id="comments-{{ post.id }}">
+        {% for com in post.commentaires_post.all %}
+        <div class="comment-item">
+          <div class="av av-sm {% if com.auteur.psychologue_profile %}av-psy{% endif %}">{{ com.auteur.pseudonyme|first|upper }}</div>
+          <div class="comment-bubble">
+            <span class="comment-author">{{ com.auteur.pseudonyme }}</span>
+            <div class="comment-text">{{ com.contenu }}</div>
+            <div class="comment-time">{{ com.date_creation|date:"d/m/Y H:i" }}</div>
+          </div>
+        </div>
+        {% endfor %}
+        <div class="comment-form">
+          <div class="av av-sm {% if user.psychologue_profile %}av-psy{% endif %}">{{ user.pseudonyme|first|upper }}</div>
+          <input class="comment-input" id="comment-input-{{ post.id }}"
+                 placeholder="Ajouter un commentaire..."
+                 onkeydown="if(event.key==='Enter'){event.preventDefault();submitComment({{ post.id }})}">
+          <button class="comment-send-btn" onclick="submitComment({{ post.id }})">
+            <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+          </button>
+        </div>
+      </div>
+
+    </div>
+    {% endfor %}
+
+    {% else %}
+    <div class="empty-feed">
+      <div class="empty-feed-icon"><svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg></div>
+      <h3>Aucun post pour l'instant</h3>
+      <p>Soyez le premier à partager quelque chose avec la communauté !</p>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- ====== SIDEBAR ====== -->
+  <div class="sidebar-col">
+    <div class="side-card">
+      <div class="profile-card-top">
+        <div class="profile-av-wrap">
+          <div class="profile-av-ring"></div>
+          <div class="profile-av-inner">
+            {% if user.photo %}<img src="{{ user.photo.url }}" class="av av-lg" style="object-fit:cover;" alt="">
+            {% else %}<img src="{% static 'images/photo-de-profil.jpg' %}" class="av av-lg" style="object-fit:cover;" alt="">{% endif %}
+          </div>
+        </div>
+        <div>
+          <div class="profile-name">{{ user.pseudonyme }}</div>
+          {% if user.psychologue_profile %}<span class="profile-role-tag role-psy">Psychologue</span>
+          {% else %}<span class="profile-role-tag role-membre">Membre</span>{% endif %}
+        </div>
+      </div>
+      <div class="stats-grid">
+        <div class="stats-item"><div class="n">{{ user.posts.count }}</div><div class="l">Posts</div></div>
+        <div class="stats-item"><div class="n">{{ user.nb_abonnes }}</div><div class="l">Abonnés</div></div>
+        <div class="stats-item"><div class="n">{{ user.nb_abonnements }}</div><div class="l">Abonnements</div></div>
+        <div class="stats-item"><div class="n">{{ user.posts_aimes.count }}</div><div class="l">J'aime</div></div>
+      </div>
+      <a href="{% url 'profile' %}" style="display:block;margin-top:1rem;text-align:center;padding:.6rem;background:rgba(201,166,107,.1);border:1px solid rgba(201,166,107,.2);border-radius:12px;color:var(--brown-dark);font-size:.82rem;font-weight:700;text-decoration:none;transition:all .18s;" onmouseover="this.style.background='rgba(201,166,107,.18)'" onmouseout="this.style.background='rgba(201,166,107,.1)'">Voir mon profil →</a>
+    </div>
+    <div class="side-card">
+      <div class="side-section-title">Navigation</div>
+      <div style="display:flex;flex-direction:column;gap:.25rem;">
+        <a href="{% url 'dashboard' %}" class="side-nav-link"><div class="nav-img-icon"><img src="{% static 'images/espace-bien-etre.jpg' %}" alt=""></div>Tableau de bord</a>
+        <a href="{% url 'forum_home' %}" class="side-nav-link"><div class="nav-img-icon"><img src="{% static 'images/forum.jpg' %}" alt=""></div>Forum communautaire</a>
+        <a href="{% url 'ressources_home' %}" class="side-nav-link"><div class="nav-img-icon"><img src="{% static 'images/ressources.jpg' %}" alt=""></div>Ressources</a>
+        {% if user.psychologue_profile %}
+        <a href="{% url 'psychologue_dashboard' %}" class="side-nav-link"><div class="nav-img-icon"><img src="{% static 'images/psychologue.jpg' %}" alt=""></div>Dashboard Psy</a>
+        {% else %}
+        <a href="{% url 'psychologues_list' %}" class="side-nav-link"><div class="nav-img-icon"><img src="{% static 'images/psychologue.jpg' %}" alt=""></div>Psychologues</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== MODAL CRÉER POST ====== -->
+<div class="modal-overlay" id="createPostModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h4>✨ Créer un post</h4>
+      <button class="modal-close-btn" onclick="closeCreateModal()">✕</button>
+    </div>
+    <div class="modal-author-row">
+      <div class="av av-md {% if user.psychologue_profile %}av-psy{% endif %}">{{ user.pseudonyme|first|upper }}</div>
+      <div>
+        <div class="m-name">{{ user.pseudonyme }}</div>
+        <div class="m-sub">{% if user.psychologue_profile %}Psychologue{% else %}Membre{% endif %} · Public</div>
+      </div>
+    </div>
+    <textarea class="modal-textarea" id="postContent"
+              placeholder="Partagez vos pensées, conseils, expériences..."
+              oninput="updatePublishBtn(); updateCharCount(this, 'createCharCount', 1000)"></textarea>
+    <div class="char-count" id="createCharCount">0 / 1000</div>
+    <div class="media-preview-wrap" id="mediaPreviewWrap">
+      <img id="imgPreview" src="" alt="" style="display:none;">
+      <video id="videoPreview" controls style="display:none;"></video>
+      <button class="media-remove-btn" onclick="removeMedia()">✕</button>
+    </div>
+    <div class="modal-footer">
+      <div style="display:flex;gap:.5rem;">
+        <label class="upload-label photo" for="postImageInput">
+          <svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
+          Photo
+          <input type="file" id="postImageInput" accept="image/*" style="display:none;" onchange="selectMedia('image',event)">
+        </label>
+        <label class="upload-label video" for="postVideoInput">
+          <svg viewBox="0 0 24 24"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/></svg>
+          Vidéo
+          <input type="file" id="postVideoInput" accept="video/mp4,video/webm,video/quicktime" style="display:none;" onchange="selectMedia('video',event)">
+        </label>
+      </div>
+      <button class="btn-publish" id="publishBtn" onclick="submitPost()" disabled>Publier</button>
+    </div>
+  </div>
+</div>
+
+<!-- ====== MODAL MODIFIER POST ====== -->
+<div class="modal-overlay" id="editPostModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h4>✏️ Modifier le post</h4>
+      <button class="modal-close-btn" onclick="closeEditModal()">✕</button>
+    </div>
+    <div class="modal-author-row">
+      <div class="av av-md {% if user.psychologue_profile %}av-psy{% endif %}">{{ user.pseudonyme|first|upper }}</div>
+      <div>
+        <div class="m-name">{{ user.pseudonyme }}</div>
+        <div class="m-sub">Modification en cours</div>
+      </div>
+    </div>
+    <textarea class="modal-textarea" id="editContent"
+              placeholder="Modifiez votre texte..."
+              oninput="updateCharCount(this, 'editCharCount', 1000); updateEditBtn()"></textarea>
+    <div class="char-count" id="editCharCount">0 / 1000</div>
+    <div class="modal-footer" style="justify-content:flex-end;gap:.8rem;">
+      <button class="btn-cancel-del" onclick="closeEditModal()">Annuler</button>
+      <button class="btn-publish" id="editBtn" onclick="submitEdit()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ====== DELETE MODAL ====== -->
+<div class="modal-overlay" id="deleteModal">
+  <div class="delete-box">
+    <div class="delete-box-body">
+      <div class="del-icon-wrap"><svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></div>
+      <h4>Supprimer ce post ?</h4>
+      <p>Cette action est irréversible.</p>
+    </div>
+    <div class="delete-box-footer">
+      <button class="btn-cancel-del" onclick="closeDeleteModal()">Annuler</button>
+      <button class="btn-confirm-del" id="confirmDeleteBtn">Supprimer</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const CSRF = '{{ csrf_token }}';
+
+/* ===== TOAST ===== */
+function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+/* ===== CHAR COUNT ===== */
+function updateCharCount(el, countId, max) {
+    const n = el.value.length;
+    const c = document.getElementById(countId);
+    c.textContent = `${n} / ${max}`;
+    c.className = 'char-count' + (n > max ? ' over' : n > max * .85 ? ' warn' : '');
+}
+
+/* ===== CREATE MODAL ===== */
+function openCreateModal() {
+    document.getElementById('createPostModal').classList.add('active');
+    setTimeout(() => document.getElementById('postContent').focus(), 120);
+}
+function closeCreateModal() {
+    document.getElementById('createPostModal').classList.remove('active');
+    document.getElementById('postContent').value = '';
+    document.getElementById('createCharCount').textContent = '0 / 1000';
+    removeMedia(); updatePublishBtn();
+}
+document.getElementById('createPostModal').addEventListener('click', e => { if (e.target === e.currentTarget) closeCreateModal(); });
+
+/* ===== EDIT MODAL ===== */
+let editingPostId = null;
+function openEditModal(id, content) {
+    document.querySelectorAll('.post-dropdown').forEach(d => d.classList.remove('open'));
+    editingPostId = id;
+    const ta = document.getElementById('editContent');
+    ta.value = content;
+    updateCharCount(ta, 'editCharCount', 1000);
+    document.getElementById('editPostModal').classList.add('active');
+    setTimeout(() => ta.focus(), 120);
+}
+function closeEditModal() {
+    document.getElementById('editPostModal').classList.remove('active');
+    editingPostId = null;
+}
+document.getElementById('editPostModal').addEventListener('click', e => { if (e.target === e.currentTarget) closeEditModal(); });
+function updateEditBtn() {
+    document.getElementById('editBtn').disabled = document.getElementById('editContent').value.trim().length === 0;
+}
+function submitEdit() {
+    if (!editingPostId) return;
+    const content = document.getElementById('editContent').value.trim();
+    const btn = document.getElementById('editBtn');
+    btn.disabled = true; btn.textContent = 'Enregistrement...';
+    fetch(`/posts/${editingPostId}/edit/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': CSRF },
+        body: JSON.stringify({ contenu: content })
+    }).then(r => r.json()).then(d => {
+        if (d.success) {
+            const bodyEl = document.getElementById(`post-body-${editingPostId}`);
+            if (bodyEl) {
+                const authorEl = bodyEl.querySelector('strong');
+                const authorName = authorEl ? authorEl.textContent : '';
+                bodyEl.innerHTML = `<strong>${authorName}</strong> ${d.contenu}`;
+            }
+            closeEditModal();
+            showToast('✓ Post modifié avec succès');
+        }
+        btn.disabled = false; btn.textContent = 'Enregistrer';
+    });
+}
+
+/* ===== MEDIA ===== */
+let currentMediaType = null;
+function selectMedia(type, e) {
+    const f = e.target.files[0]; if (!f) return;
+    if (type === 'image') document.getElementById('postVideoInput').value = '';
+    else document.getElementById('postImageInput').value = '';
+    currentMediaType = type;
+    const wrap = document.getElementById('mediaPreviewWrap');
+    const imgEl = document.getElementById('imgPreview');
+    const vidEl = document.getElementById('videoPreview');
+    wrap.style.display = 'block';
+    if (type === 'image') {
+        vidEl.style.display = 'none'; vidEl.src = '';
+        const r = new FileReader();
+        r.onload = ev => { imgEl.src = ev.target.result; imgEl.style.display = 'block'; };
+        r.readAsDataURL(f);
+    } else {
+        imgEl.style.display = 'none'; imgEl.src = '';
+        vidEl.src = URL.createObjectURL(f); vidEl.style.display = 'block';
+    }
+    updatePublishBtn();
+}
+function removeMedia() {
+    document.getElementById('postImageInput').value = '';
+    document.getElementById('postVideoInput').value = '';
+    document.getElementById('imgPreview').src = ''; document.getElementById('imgPreview').style.display = 'none';
+    const v = document.getElementById('videoPreview'); v.src = ''; v.style.display = 'none';
+    document.getElementById('mediaPreviewWrap').style.display = 'none';
+    currentMediaType = null; updatePublishBtn();
+}
+function updatePublishBtn() {
+    const hasText = document.getElementById('postContent').value.trim().length > 0;
+    const hasImg = document.getElementById('postImageInput').files.length > 0;
+    const hasVid = document.getElementById('postVideoInput').files.length > 0;
+    document.getElementById('publishBtn').disabled = !(hasText || hasImg || hasVid);
+}
+
+/* ===== SUBMIT POST ===== */
+function submitPost() {
+    const btn = document.getElementById('publishBtn');
+    btn.disabled = true; btn.textContent = 'Publication...';
+    const fd = new FormData();
+    fd.append('contenu', document.getElementById('postContent').value.trim());
+    fd.append('csrfmiddlewaretoken', CSRF);
+    const img = document.getElementById('postImageInput');
+    const vid = document.getElementById('postVideoInput');
+    if (img.files[0]) fd.append('image', img.files[0]);
+    if (vid.files[0]) fd.append('video', vid.files[0]);
+    fetch('{% url "create_post" %}', { method: 'POST', body: fd })
+        .then(r => r.json()).then(d => {
+            if (d.success) { closeCreateModal(); location.reload(); }
+            else { showToast('Erreur : ' + d.message); btn.disabled = false; btn.textContent = 'Publier'; }
+        });
+}
+
+/* ===== LIKE ===== */
+function toggleLike(id) {
+    fetch(`/posts/${id}/like/`, { method: 'POST', headers: { 'X-CSRFToken': CSRF } })
+        .then(r => r.json()).then(d => {
+            if (!d.success) return;
+            const btn = document.getElementById(`like-btn-${id}`);
+            const svg = btn.querySelector('svg');
+            const countEl = document.getElementById(`like-count-${id}`);
+            if (d.liked) {
+                btn.classList.add('liked'); svg.classList.add('heart-anim');
+                setTimeout(() => svg.classList.remove('heart-anim'), 320);
+            } else { btn.classList.remove('liked'); }
+            if (d.nb_likes > 0) {
+                countEl.style.display = ''; countEl.innerHTML = `<span class="likes-emojis">❤️</span> ${d.nb_likes} j'aime`;
+            } else { countEl.style.display = 'none'; }
+        });
+}
+
+/* ===== COMMENTS ===== */
+function toggleComments(id) {
+    const sec = document.getElementById(`comments-${id}`);
+    sec.classList.toggle('open');
+    if (sec.classList.contains('open')) document.getElementById(`comment-input-${id}`).focus();
+}
+function submitComment(id) {
+    const input = document.getElementById(`comment-input-${id}`);
+    const text = input.value.trim(); if (!text) return;
+    const fd = new FormData();
+    fd.append('contenu', text); fd.append('csrfmiddlewaretoken', CSRF);
+    fetch(`/posts/${id}/commenter/`, { method: 'POST', body: fd })
+        .then(r => r.json()).then(d => {
+            if (!d.success) return;
+            input.value = '';
+            const form = input.closest('.comment-form');
+            const el = document.createElement('div'); el.className = 'comment-item';
+            el.innerHTML = `<div class="av av-sm">${d.auteur[0].toUpperCase()}</div>
+              <div class="comment-bubble">
+                <span class="comment-author">${d.auteur}</span>
+                <div class="comment-text">${d.contenu}</div>
+                <div class="comment-time">${d.date}</div>
+              </div>`;
+            form.parentNode.insertBefore(el, form);
+        });
+}
+
+/* ===== SHARE ===== */
+function sharePost(id) {
+    const url = window.location.origin + '/posts/#post-' + id;
+    if (navigator.share) {
+        navigator.share({ title: 'Wanaag Corner', url });
+    } else {
+        navigator.clipboard.writeText(url).then(() => showToast('🔗 Lien copié dans le presse-papiers'));
+    }
+}
+
+/* ===== FOLLOW ===== */
+function followFromPost(userId, btn) {
+    fetch(`/follow/${userId}/`, { method: 'POST', headers: { 'X-CSRFToken': CSRF } })
+        .then(r => r.json()).then(d => {
+            if (!d.success) return;
+            document.querySelectorAll(`[id="fpost-${userId}"]`).forEach(b => {
+                if (d.following) {
+                    b.style.background = 'rgba(201,166,107,.1)'; b.style.color = '#8b6030';
+                    b.style.borderColor = 'rgba(201,166,107,.3)'; b.textContent = '✓ Abonné';
+                } else {
+                    b.style.background = 'transparent'; b.style.color = 'var(--brown-light)';
+                    b.style.borderColor = 'rgba(201,166,107,.3)'; b.textContent = '+ Suivre';
+                }
+            });
+        });
+}
+
+/* ===== DROPDOWN ===== */
+function toggleDropdown(id) {
+    document.querySelectorAll('.post-dropdown').forEach(d => { if (d.id !== `dropdown-${id}`) d.classList.remove('open'); });
+    document.getElementById(`dropdown-${id}`).classList.toggle('open');
+}
+document.addEventListener('click', e => { if (!e.target.closest('.post-menu-wrap')) document.querySelectorAll('.post-dropdown').forEach(d => d.classList.remove('open')); });
+
+/* ===== DELETE ===== */
+let postToDelete = null;
+function confirmDelete(id) {
+    postToDelete = id;
+    document.querySelectorAll('.post-dropdown').forEach(d => d.classList.remove('open'));
+    document.getElementById('deleteModal').classList.add('active');
+}
+function closeDeleteModal() {
+    postToDelete = null; document.getElementById('deleteModal').classList.remove('active');
+}
+document.getElementById('deleteModal').addEventListener('click', e => { if (e.target === e.currentTarget) closeDeleteModal(); });
+document.getElementById('confirmDeleteBtn').addEventListener('click', () => {
+    if (!postToDelete) return;
+    fetch(`/posts/${postToDelete}/delete/`, { method: 'POST', headers: { 'X-CSRFToken': CSRF } })
+        .then(r => r.json()).then(d => {
+            if (d.success) {
+                const card = document.getElementById(`post-${postToDelete}`);
+                card.style.transition = 'all .3s'; card.style.opacity = '0'; card.style.transform = 'scale(.95) translateY(-10px)';
+                setTimeout(() => card.remove(), 310);
+                closeDeleteModal(); showToast('Post supprimé');
+            }
+        });
+});
+</script>
+{% endblock %}

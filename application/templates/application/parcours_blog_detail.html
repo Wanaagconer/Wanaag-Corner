@@ -1,0 +1,272 @@
+{% extends 'application/base.html' %}
+{% load static %}
+
+{% block title %}{{ blog.titre }} — Wanaag Corner{% endblock %}
+
+{% block content %}
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,800;1,400&display=swap');
+:root { --gold:#c9a66b; --gold-light:#e8c98a; --red:#ef4444; }
+.app-content { background:#1a1008 !important; }
+body { background:#1a1008 !important; }
+
+/* ══ READING PROGRESS ══ */
+.read-progress {
+    position:fixed; top:0; left:0; height:3px; z-index:9999;
+    background:linear-gradient(90deg,var(--gold),var(--gold-light));
+    width:0%; transition:width .1s linear;
+}
+
+/* ══ WRAP ══ */
+.art-wrap { max-width:780px; margin:0 auto; padding-bottom:4rem; }
+.art-back {
+    display:inline-flex; align-items:center; gap:.4rem;
+    color:rgba(245,230,211,.35); font-size:.82rem; text-decoration:none;
+    margin-bottom:2rem; transition:color .2s;
+}
+.art-back:hover { color:var(--gold); }
+
+/* ══ HERO ══ */
+.art-hero {
+    border-radius:24px; overflow:hidden; margin-bottom:2.5rem;
+    background:linear-gradient(135deg,#2e1f10,#1a1008);
+    border:1px solid rgba(201,166,107,.15); position:relative;
+}
+.art-hero::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:3px; z-index:2;
+    background:linear-gradient(90deg,transparent,var(--gold),transparent);
+}
+.art-cover {
+    height:360px; overflow:hidden; position:relative;
+    background:linear-gradient(135deg,#2e1f10,#1a1008);
+    display:flex; align-items:center; justify-content:center;
+    font-size:6rem; color:rgba(201,166,107,.08);
+}
+.art-cover img { width:100%; height:100%; object-fit:cover; }
+.art-cover-fade {
+    position:absolute; bottom:0; left:0; right:0; height:80px;
+    background:linear-gradient(to top,rgba(26,16,8,1),transparent);
+}
+.art-hero-body { padding:2rem 2.5rem 2.5rem; }
+.art-tags { display:flex; gap:.4rem; flex-wrap:wrap; margin-bottom:.9rem; }
+.art-tag {
+    font-size:.62rem; padding:.18rem .6rem; border-radius:12px; font-weight:700;
+    background:rgba(201,166,107,.1); color:rgba(201,166,107,.75);
+}
+.art-title {
+    font-family:'Playfair Display',serif;
+    font-size:clamp(1.8rem,4vw,2.5rem); font-weight:800;
+    color:#f5e6d3; line-height:1.2; margin-bottom:1.4rem;
+}
+.art-byline { display:flex; align-items:center; gap:1rem; flex-wrap:wrap; }
+.art-avatar {
+    width:42px; height:42px; border-radius:50%;
+    background:linear-gradient(135deg,var(--gold),#8b6832);
+    display:flex; align-items:center; justify-content:center;
+    font-size:1rem; font-weight:700; color:#fff; flex-shrink:0;
+    box-shadow:0 0 0 2px rgba(201,166,107,.25);
+}
+.art-author { font-size:.92rem; font-weight:600; color:rgba(245,230,211,.8); }
+.art-date   { font-size:.75rem; color:rgba(245,230,211,.35); margin-top:.1rem; }
+.art-stats  { margin-left:auto; display:flex; align-items:center; gap:1.2rem; flex-wrap:wrap; }
+.art-stat   { display:flex; align-items:center; gap:.35rem; font-size:.78rem; color:rgba(245,230,211,.35); }
+.art-stat strong { color:var(--gold); }
+
+/* ══ CONTENT ══ */
+.art-content {
+    font-family:'Georgia',serif; font-size:1.08rem;
+    color:rgba(245,230,211,.78); line-height:1.95;
+    margin-bottom:2.5rem; white-space:pre-wrap; word-break:break-word;
+}
+.art-content::first-letter {
+    float:left; font-family:'Playfair Display',serif;
+    font-size:4.2rem; font-weight:800; line-height:.75;
+    color:var(--gold); margin-right:.12em; margin-top:.08em;
+}
+
+/* ══ ACTIONS ══ */
+.art-actions {
+    display:flex; align-items:center; gap:1rem;
+    padding:1.5rem 0;
+    border-top:1px solid rgba(201,166,107,.1);
+    border-bottom:1px solid rgba(201,166,107,.1);
+    margin-bottom:2.5rem; flex-wrap:wrap;
+}
+.art-like-btn {
+    display:flex; align-items:center; gap:.55rem;
+    background:{% if is_liked %}rgba(239,68,68,.12){% else %}rgba(201,166,107,.06){% endif %};
+    border:1px solid {% if is_liked %}rgba(239,68,68,.3){% else %}rgba(201,166,107,.15){% endif %};
+    color:{% if is_liked %}#ef4444{% else %}rgba(245,230,211,.5){% endif %};
+    padding:.65rem 1.4rem; border-radius:50px; cursor:pointer;
+    font-size:.88rem; font-family:inherit; font-weight:600; transition:all .25s;
+}
+.art-like-btn:hover { background:rgba(239,68,68,.15); border-color:rgba(239,68,68,.35); color:var(--red); transform:scale(1.04); }
+.art-like-heart { font-size:1rem; transition:transform .3s; display:inline-block; }
+.art-likes-count {
+    background:rgba(201,166,107,.1); color:var(--gold);
+    font-size:.72rem; padding:.12rem .5rem; border-radius:20px; font-weight:700;
+}
+.art-share-btn {
+    background:rgba(201,166,107,.06); border:1px solid rgba(201,166,107,.15);
+    color:rgba(245,230,211,.5); padding:.6rem 1.2rem; border-radius:50px;
+    cursor:pointer; font-size:.82rem; font-family:inherit; transition:all .2s;
+}
+.art-share-btn:hover { background:rgba(201,166,107,.12); color:var(--gold); border-color:rgba(201,166,107,.3); }
+.art-delete-btn {
+    margin-left:auto;
+    background:rgba(239,68,68,.07); border:1px solid rgba(239,68,68,.15);
+    color:rgba(239,68,68,.5); padding:.55rem 1.1rem; border-radius:50px;
+    cursor:pointer; font-size:.8rem; font-family:inherit; transition:all .2s;
+}
+.art-delete-btn:hover { background:rgba(239,68,68,.15); color:var(--red); border-color:rgba(239,68,68,.3); }
+
+/* ══ RELATED ══ */
+.art-related-head {
+    font-family:'Playfair Display',serif; font-size:1.3rem; color:#f5e6d3;
+    margin-bottom:1.25rem; display:flex; align-items:center; gap:1rem;
+}
+.art-related-head::after { content:''; flex:1; height:1px; background:linear-gradient(to right,rgba(201,166,107,.2),transparent); }
+.art-related-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; }
+.art-related-card {
+    background:rgba(201,166,107,.04); border:1px solid rgba(201,166,107,.1);
+    border-radius:14px; overflow:hidden; text-decoration:none; display:block; transition:all .25s;
+}
+.art-related-card:hover { border-color:rgba(201,166,107,.3); transform:translateY(-3px); box-shadow:0 14px 30px rgba(0,0,0,.4); }
+.art-related-thumb {
+    height:90px; background:linear-gradient(135deg,#2e1f10,#1a1008);
+    display:flex; align-items:center; justify-content:center;
+    font-size:2.2rem; color:rgba(201,166,107,.08); overflow:hidden;
+}
+.art-related-thumb img { width:100%; height:100%; object-fit:cover; }
+.art-related-body { padding:.85rem; }
+.art-related-name   { font-size:.82rem; font-weight:600; color:rgba(245,230,211,.75); line-height:1.35; }
+.art-related-author { font-size:.68rem; color:rgba(245,230,211,.3); margin-top:.3rem; }
+
+@media(max-width:700px) {
+    .art-related-grid { grid-template-columns:1fr; }
+    .art-hero-body { padding:1.5rem; }
+    .art-cover { height:220px; }
+}
+</style>
+
+<div class="read-progress" id="readProgress"></div>
+
+<div class="art-wrap">
+    <a href="{% url 'parcours_blog' %}" class="art-back">← Retour au blog</a>
+
+    <!-- Hero -->
+    <div class="art-hero">
+        <div class="art-cover">
+            {% if blog.image %}<img src="{{ blog.image.url }}" alt="{{ blog.titre }}"><div class="art-cover-fade"></div>{% else %}✍️{% endif %}
+        </div>
+        <div class="art-hero-body">
+            {% if blog.tags %}
+            <div class="art-tags">{% for tag in blog.tags.split %}<span class="art-tag">{{ tag }}</span>{% endfor %}</div>
+            {% endif %}
+            <h1 class="art-title">{{ blog.titre }}</h1>
+            <div class="art-byline">
+                <div class="art-avatar">{{ blog.utilisateur.pseudonyme|first|upper }}</div>
+                <div>
+                    <div class="art-author">{{ blog.utilisateur.pseudonyme }}</div>
+                    <div class="art-date">{{ blog.date_creation|date:"d M Y" }}</div>
+                </div>
+                <div class="art-stats">
+                    <div class="art-stat">❤️ <strong id="nbLikes">{{ blog.nb_likes }}</strong> j'aime</div>
+                    <div class="art-stat" id="readTimeDisplay">⏱ <strong>…</strong></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="art-content" id="artContent">{{ blog.contenu }}</div>
+
+    <!-- Actions -->
+    <div class="art-actions">
+        <form id="likeForm" onsubmit="toggleLike(event)">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="like">
+            <button type="submit" class="art-like-btn" id="likeBtn">
+                <span class="art-like-heart" id="likeIcon">{% if is_liked %}❤️{% else %}🤍{% endif %}</span>
+                <span id="likeTxt">{% if is_liked %}Aimé{% else %}J'aime{% endif %}</span>
+                <span class="art-likes-count" id="likesBadge">{{ blog.nb_likes }}</span>
+            </button>
+        </form>
+        <button class="art-share-btn" id="shareBtn" onclick="shareArticle()">🔗 Partager</button>
+        {% if blog.utilisateur == request.user %}
+        <form method="post" onsubmit="return confirm('Supprimer cet article ?');" style="margin-left:auto;">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="delete">
+            <button type="submit" class="art-delete-btn">🗑 Supprimer</button>
+        </form>
+        {% endif %}
+    </div>
+
+    <!-- Related -->
+    {% if related %}
+    <div>
+        <div class="art-related-head">Articles similaires</div>
+        <div class="art-related-grid">
+            {% for r in related %}
+            <a href="{% url 'parcours_blog_detail' r.id %}" class="art-related-card">
+                <div class="art-related-thumb">
+                    {% if r.image %}<img src="{{ r.image.url }}" alt="">{% else %}✍{% endif %}
+                </div>
+                <div class="art-related-body">
+                    <div class="art-related-name">{{ r.titre|truncatechars:55 }}</div>
+                    <div class="art-related-author">{{ r.utilisateur.pseudonyme }}</div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+// Reading progress
+window.addEventListener('scroll', () => {
+    const total = document.body.scrollHeight - window.innerHeight;
+    const pct   = total > 0 ? (window.scrollY / total) * 100 : 0;
+    document.getElementById('readProgress').style.width = Math.min(100, pct) + '%';
+});
+// Read time
+(function() {
+    const words = (document.getElementById('artContent').textContent || '').trim().split(/\s+/).filter(w=>w).length;
+    const mins  = Math.max(1, Math.round(words / 200));
+    document.getElementById('readTimeDisplay').innerHTML = '⏱ <strong>' + mins + ' min</strong> de lecture';
+})();
+// Like toggle
+function toggleLike(e) {
+    e.preventDefault();
+    fetch(window.location.pathname, { method:'POST', body:new FormData(document.getElementById('likeForm')) })
+        .then(r => r.json()).then(d => {
+            if (!d.success) return;
+            document.getElementById('likeIcon').textContent   = d.is_liked ? '❤️' : '🤍';
+            document.getElementById('likeTxt').textContent    = d.is_liked ? 'Aimé' : "J'aime";
+            document.getElementById('nbLikes').textContent    = d.nb_likes;
+            document.getElementById('likesBadge').textContent = d.nb_likes;
+            const btn = document.getElementById('likeBtn');
+            btn.style.background  = d.is_liked ? 'rgba(239,68,68,.12)' : 'rgba(201,166,107,.06)';
+            btn.style.borderColor = d.is_liked ? 'rgba(239,68,68,.3)'  : 'rgba(201,166,107,.15)';
+            btn.style.color       = d.is_liked ? '#ef4444' : 'rgba(245,230,211,.5)';
+            const h = document.getElementById('likeIcon');
+            h.style.transform = 'scale(1.5)';
+            setTimeout(() => h.style.transform = 'scale(1)', 300);
+        });
+}
+// Share
+function shareArticle() {
+    const btn = document.getElementById('shareBtn');
+    if (navigator.share) {
+        navigator.share({ title:'{{ blog.titre|escapejs }}', url:window.location.href });
+    } else {
+        navigator.clipboard.writeText(window.location.href).then(() => {
+            const orig = btn.textContent;
+            btn.textContent = '✓ Lien copié !'; btn.style.color = '#10b981';
+            setTimeout(() => { btn.textContent = orig; btn.style.color = ''; }, 2000);
+        });
+    }
+}
+</script>
+{% endblock %}

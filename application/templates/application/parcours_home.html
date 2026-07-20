@@ -1,0 +1,466 @@
+{% extends 'application/base.html' %}
+{% load static %}
+
+{% block title %}Parcours Bien-être — Wanaag Corner{% endblock %}
+
+{% block content %}
+<style>
+:root {
+    --gold: #c9a66b;
+    --gold-light: #e8c98a;
+    --gold-dim: rgba(201,166,107,.15);
+    --gold-warm: #d4aa72;
+    --amber: #b8894a;
+    --dark: #0d1117;
+    --dark2: #111827;
+    --dark3: #1a1f2e;
+}
+
+/* ── HERO ── */
+.pb-hero {
+    position: relative;
+    min-height: 420px;
+    background: linear-gradient(135deg, #2e1f10 0%, #1e1409 50%, #2a1a08 100%);
+    border-radius: 24px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    padding: 3rem;
+    margin-bottom: 2.5rem;
+    box-shadow: 0 20px 60px rgba(0,0,0,.5);
+}
+
+/* grid overlay */
+.pb-hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image:
+        linear-gradient(rgba(201,166,107,.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(201,166,107,.06) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+}
+
+/* glow orbs */
+.pb-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+    animation: pbOrb 8s ease-in-out infinite alternate;
+}
+.pb-orb-1 { width: 300px; height: 300px; background: rgba(201,166,107,.13); top: -80px; right: 10%; }
+.pb-orb-2 { width: 200px; height: 200px; background: rgba(180,137,74,.07); bottom: -60px; left: 5%; animation-delay: -3s; }
+.pb-orb-3 { width: 180px; height: 180px; background: rgba(212,170,114,.06); top: 30%; right: 30%; animation-delay: -5s; }
+
+@keyframes pbOrb {
+    from { transform: scale(1) translate(0, 0); }
+    to   { transform: scale(1.15) translate(20px, -20px); }
+}
+
+.pb-hero-content { position: relative; z-index: 2; flex: 1; }
+.pb-hero-eyebrow {
+    font-size: .72rem; font-weight: 700; letter-spacing: .15em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: .6rem;
+}
+.pb-hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.15;
+    margin-bottom: 1rem;
+}
+.pb-hero-title span { color: var(--gold-light); }
+.pb-hero-sub { font-size: 1rem; color: rgba(255,255,255,.55); max-width: 480px; line-height: 1.6; }
+
+/* Score Ring */
+.pb-score-ring {
+    position: relative; z-index: 2;
+    display: flex; flex-direction: column; align-items: center; gap: .5rem;
+    flex-shrink: 0; margin-left: 3rem;
+}
+.pb-score-svg { transform: rotate(-90deg); filter: drop-shadow(0 0 18px rgba(201,166,107,.4)); }
+.pb-score-val {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+    text-align: center;
+}
+.pb-score-num {
+    font-size: 2.2rem; font-weight: 800; color: var(--gold-light);
+    font-family: 'Playfair Display', serif; line-height: 1;
+}
+.pb-score-lbl { font-size: .62rem; color: rgba(255,255,255,.4); letter-spacing: .08em; text-transform: uppercase; }
+.pb-score-title { font-size: .78rem; color: rgba(255,255,255,.5); text-align: center; }
+
+/* ── STATS ROW ── */
+.pb-stats {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem;
+    margin-bottom: 2.5rem;
+}
+.pb-stat-card {
+    background: rgba(201,166,107,.04);
+    border: 1px solid rgba(201,166,107,.1);
+    border-radius: 16px;
+    padding: 1.4rem 1.2rem;
+    text-align: center;
+    transition: all .25s;
+    position: relative; overflow: hidden;
+}
+.pb-stat-card::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, var(--card-color, rgba(201,166,107,.05)), transparent);
+    opacity: 0; transition: opacity .25s;
+}
+.pb-stat-card:hover { transform: translateY(-4px); border-color: rgba(201,166,107,.2); }
+.pb-stat-card:hover::before { opacity: 1; }
+.pb-stat-icon { font-size: 1.8rem; margin-bottom: .5rem; }
+.pb-stat-num { font-size: 2rem; font-weight: 800; color: var(--gold-light); font-family: 'Playfair Display', serif; }
+.pb-stat-label { font-size: .75rem; color: rgba(255,255,255,.45); margin-top: .2rem; }
+
+/* ── SPACES GRID ── */
+.pb-section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem; font-weight: 700; color: #fff;
+    margin-bottom: 1.25rem;
+}
+.pb-section-title span { color: var(--gold); }
+.pb-spaces { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem; margin-bottom: 2.5rem; }
+.pb-space-card {
+    border-radius: 20px; padding: 1.8rem 1.5rem;
+    text-decoration: none;
+    display: flex; flex-direction: column; align-items: flex-start; gap: .8rem;
+    transition: all .3s cubic-bezier(.4,0,.2,1);
+    position: relative; overflow: hidden;
+    border: 1px solid rgba(255,255,255,.06);
+}
+.pb-space-card:hover { transform: translateY(-6px); box-shadow: 0 20px 40px rgba(0,0,0,.4); }
+.pb-space-card::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,.05), transparent);
+    opacity: 0; transition: opacity .25s;
+}
+.pb-space-card:hover::after { opacity: 1; }
+/* All space cards: unified warm gold-brown palette */
+.pb-space-card {
+    background: linear-gradient(160deg, #1c1408 0%, #110d05 100%);
+    border: 1px solid rgba(201,166,107,.1);
+}
+.pb-space-card:hover {
+    border-color: rgba(201,166,107,.4);
+    box-shadow: 0 20px 40px rgba(0,0,0,.45), inset 0 1px 0 rgba(201,166,107,.08);
+}
+.pb-space-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(201,166,107,.6), transparent);
+    opacity: 0; transition: opacity .3s;
+}
+.pb-space-card:hover::before { opacity: 1; }
+/* Subtle differentiation by warmth */
+.pb-space-1 { background: linear-gradient(160deg, #1e1508 0%, #120e04 100%); }
+.pb-space-2 { background: linear-gradient(160deg, #171208 0%, #0f0d05 100%); }
+.pb-space-3 { background: linear-gradient(160deg, #1a1308 0%, #110e05 100%); }
+.pb-space-4 { background: linear-gradient(160deg, #1c1509 0%, #130f06 100%); }
+.pb-space-icon {
+    width: 52px; height: 52px; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem;
+    background: rgba(201,166,107,.08);
+    border: 1px solid rgba(201,166,107,.18);
+}
+.pb-space-name { font-size: 1rem; font-weight: 700; color: rgba(255,255,255,.92); }
+.pb-space-desc { font-size: .78rem; color: rgba(255,255,255,.42); line-height: 1.45; }
+.pb-space-arrow {
+    margin-top: auto; font-size: .8rem; font-weight: 600; color: var(--gold);
+    display: flex; align-items: center; gap: .3rem;
+    opacity: .65; transition: opacity .2s, gap .2s;
+}
+.pb-space-card:hover .pb-space-arrow { gap: .6rem; opacity: 1; }
+
+/* ── QUOTE CARD ── */
+.pb-quote-card {
+    background: linear-gradient(135deg, #2a1c0a 0%, #1a1208 100%);
+    border: 1px solid rgba(201,166,107,.2);
+    border-radius: 20px;
+    padding: 2.5rem 3rem;
+    text-align: center;
+    position: relative; overflow: hidden;
+    margin-bottom: 2.5rem;
+    box-shadow: 0 0 40px rgba(201,166,107,.05);
+}
+.pb-quote-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+.pb-quote-mark { font-size: 5rem; color: rgba(201,166,107,.12); line-height: .6; font-family: Georgia, serif; margin-bottom: .5rem; }
+.pb-quote-text {
+    font-size: 1.35rem; color: rgba(255,255,255,.9); font-style: italic;
+    line-height: 1.6; max-width: 700px; margin: 0 auto .8rem;
+    font-family: 'Playfair Display', serif;
+}
+.pb-quote-author { font-size: .85rem; color: var(--gold); font-weight: 600; letter-spacing: .05em; }
+.pb-quote-cat {
+    display: inline-block; margin-top: .5rem;
+    background: var(--gold-dim); color: var(--gold);
+    padding: .2rem .7rem; border-radius: 20px; font-size: .7rem; font-weight: 600;
+}
+
+/* ── JOURNAL RECENT ── */
+.pb-journal-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; margin-bottom: 2.5rem; }
+.pb-journal-card {
+    background: rgba(201,166,107,.04);
+    border: 1px solid rgba(201,166,107,.1);
+    border-radius: 16px; padding: 1.4rem;
+    transition: all .25s;
+}
+.pb-journal-card:hover { border-color: rgba(201,166,107,.2); transform: translateY(-3px); }
+.pb-journal-mood { font-size: 1.8rem; margin-bottom: .5rem; }
+.pb-journal-titre { font-size: .9rem; font-weight: 600; color: rgba(255,255,255,.85); margin-bottom: .3rem; }
+.pb-journal-date { font-size: .72rem; color: rgba(255,255,255,.3); margin-bottom: .6rem; }
+.pb-journal-excerpt { font-size: .8rem; color: rgba(255,255,255,.45); line-height: 1.5; }
+.pb-mood-5 { border-left: 3px solid rgba(201,166,107,.8); }
+.pb-mood-4 { border-left: 3px solid rgba(201,166,107,.6); }
+.pb-mood-3 { border-left: 3px solid rgba(180,137,74,.6); }
+.pb-mood-2 { border-left: 3px solid rgba(150,100,50,.6); }
+.pb-mood-1 { border-left: 3px solid rgba(120,70,30,.6); }
+
+/* ── PROFILE NUDGE ── */
+.pb-nudge {
+    background: linear-gradient(135deg, rgba(201,166,107,.08), rgba(201,166,107,.03));
+    border: 1px solid rgba(201,166,107,.2);
+    border-radius: 16px; padding: 1.5rem 2rem;
+    display: flex; align-items: center; gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+.pb-nudge-icon { font-size: 2.5rem; }
+.pb-nudge-text h4 { font-size: 1rem; font-weight: 700; color: var(--gold-light); margin-bottom: .3rem; }
+.pb-nudge-text p { font-size: .82rem; color: rgba(255,255,255,.5); }
+.pb-nudge-btn {
+    margin-left: auto; flex-shrink: 0;
+    background: linear-gradient(135deg, var(--gold), #a8854a);
+    color: #fff; font-weight: 700; font-size: .85rem;
+    padding: .6rem 1.4rem; border-radius: 50px; text-decoration: none;
+    transition: all .2s; white-space: nowrap;
+}
+.pb-nudge-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(201,166,107,.4); color: #fff; }
+
+/* ── BLOGS RECENT ── */
+.pb-blogs-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; margin-bottom: 2.5rem; }
+.pb-blog-mini {
+    background: rgba(201,166,107,.04);
+    border: 1px solid rgba(201,166,107,.1);
+    border-radius: 16px; overflow: hidden;
+    text-decoration: none; display: block; transition: all .25s;
+}
+.pb-blog-mini:hover { border-color: rgba(201,166,107,.2); transform: translateY(-3px); }
+.pb-blog-thumb {
+    height: 120px;
+    background: linear-gradient(135deg, #1c1408, #110d05);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2.5rem; color: rgba(201,166,107,.15);
+    overflow: hidden;
+}
+.pb-blog-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.pb-blog-body { padding: 1rem; }
+.pb-blog-title { font-size: .88rem; font-weight: 600; color: rgba(255,255,255,.85); margin-bottom: .4rem; line-height: 1.3; }
+.pb-blog-meta { font-size: .72rem; color: rgba(255,255,255,.3); display: flex; gap: .5rem; align-items: center; }
+
+@media (max-width: 900px) {
+    .pb-stats { grid-template-columns: repeat(2, 1fr); }
+    .pb-spaces { grid-template-columns: repeat(2, 1fr); }
+    .pb-journal-grid, .pb-blogs-row { grid-template-columns: 1fr; }
+    .pb-hero { flex-direction: column; padding: 2rem; }
+    .pb-score-ring { margin-left: 0; margin-top: 2rem; }
+}
+@media (max-width: 600px) {
+    .pb-stats { grid-template-columns: 1fr 1fr; }
+    .pb-spaces { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 480px) {
+    .pb-hero { padding: 1.5rem 1rem; border-radius: 18px; }
+    .pb-stats { grid-template-columns: 1fr 1fr; gap: .7rem; }
+    .pb-spaces { grid-template-columns: 1fr 1fr; gap: .7rem; }
+    .pb-section-title { font-size: 1rem; }
+}
+.app-content { background: #1a1008 !important; }
+body { background: #1a1008 !important; }
+.pb-stat-card, .pb-quote-card, .pb-space-card, .pb-nudge,
+.pb-journal-card, .pb-blog-mini, .pb-spaces-grid, .pb-stats-row { opacity: 1 !important; transform: none !important; }
+</style>
+
+<!-- HERO -->
+<div class="pb-hero wow">
+    <div class="pb-orb pb-orb-1"></div>
+    <div class="pb-orb pb-orb-2"></div>
+    <div class="pb-orb pb-orb-3"></div>
+    <div class="pb-hero-content">
+        <div class="pb-hero-eyebrow">Votre espace personnel</div>
+        <h1 class="pb-hero-title">Parcours<br><span>Bien-être</span></h1>
+        <p class="pb-hero-sub">Journalisez vos émotions, suivez votre santé, trouvez l'inspiration et partagez votre voyage vers le bien-être.</p>
+    </div>
+    <!-- Wellness Score Ring -->
+    <div class="pb-score-ring">
+        <div style="position:relative;width:160px;height:160px;">
+            <svg class="pb-score-svg" width="160" height="160" viewBox="0 0 160 160">
+                <!-- Background track -->
+                <circle cx="80" cy="80" r="68" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="10"/>
+                <!-- Progress arc -->
+                <circle cx="80" cy="80" r="68" fill="none"
+                    stroke="url(#scoreGrad)" stroke-width="10"
+                    stroke-linecap="round"
+                    stroke-dasharray="427"
+                    stroke-dashoffset="{{ wellness_score_dashoffset|default:'427' }}"
+                    id="scoreCircle"
+                    style="stroke-dashoffset: calc(427 - (427 * {{ wellness_score }} / 100)); transition: stroke-dashoffset 1.5s cubic-bezier(.4,0,.2,1);"
+                />
+                <defs>
+                    <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stop-color="#c9a66b"/>
+                        <stop offset="100%" stop-color="#e8c98a"/>
+                    </linearGradient>
+                </defs>
+            </svg>
+            <div class="pb-score-val">
+                <div class="pb-score-num" id="scoreNum">0</div>
+                <div class="pb-score-lbl">/ 100</div>
+            </div>
+        </div>
+        <div class="pb-score-title">Score Bien-être</div>
+    </div>
+</div>
+
+<!-- STATS ROW -->
+<div class="pb-stats">
+    <div class="pb-stat-card wow" style="--card-color:rgba(201,166,107,.07);">
+        <div class="pb-stat-icon">📔</div>
+        <div class="pb-stat-num">{{ stats.journal_count }}</div>
+        <div class="pb-stat-label">Entrées de journal</div>
+    </div>
+    <div class="pb-stat-card wow" style="--card-color:rgba(180,137,74,.06);">
+        <div class="pb-stat-icon">✍️</div>
+        <div class="pb-stat-num">{{ stats.blog_count }}</div>
+        <div class="pb-stat-label">Articles de blog</div>
+    </div>
+    <div class="pb-stat-card wow" style="--card-color:rgba(212,170,114,.05);">
+        <div class="pb-stat-icon">📚</div>
+        <div class="pb-stat-num">{{ stats.ressources_count }}</div>
+        <div class="pb-stat-label">Ressources complétées</div>
+    </div>
+    <div class="pb-stat-card wow" style="--card-color:rgba(201,166,107,.06);">
+        <div class="pb-stat-icon">🩺</div>
+        <div class="pb-stat-num">{{ stats.consultations_count }}</div>
+        <div class="pb-stat-label">Consultations</div>
+    </div>
+</div>
+
+<!-- CITATION DU JOUR -->
+{% if quote_du_jour %}
+<div class="pb-quote-card wow">
+    <div class="pb-quote-mark">"</div>
+    <p class="pb-quote-text">{{ quote_du_jour.texte }}</p>
+    <div class="pb-quote-author">— {{ quote_du_jour.auteur }}</div>
+    {% if quote_du_jour.categorie %}<span class="pb-quote-cat">{{ quote_du_jour.categorie }}</span>{% endif %}
+</div>
+{% endif %}
+
+<!-- ESPACES -->
+<h2 class="pb-section-title">Vos <span>espaces</span></h2>
+<div class="pb-spaces">
+    <a href="{% url 'parcours_journal' %}" class="pb-space-card pb-space-1 wow">
+        <div class="pb-space-icon">📔</div>
+        <div class="pb-space-name">Journal Intime</div>
+        <div class="pb-space-desc">Exprimez vos émotions et suivez votre humeur au quotidien.</div>
+        <div class="pb-space-arrow">Explorer →</div>
+    </a>
+    <a href="{% url 'parcours_inspiration' %}" class="pb-space-card pb-space-2 wow">
+        <div class="pb-space-icon">✨</div>
+        <div class="pb-space-name">Inspiration</div>
+        <div class="pb-space-desc">Citations inspirantes pour nourrir votre âme chaque jour.</div>
+        <div class="pb-space-arrow">Explorer →</div>
+    </a>
+    <a href="{% url 'parcours_sante' %}" class="pb-space-card pb-space-3 wow">
+        <div class="pb-space-icon">🥗</div>
+        <div class="pb-space-name">Santé & Nutrition</div>
+        <div class="pb-space-desc">Plan repas personnalisé, calcul IMC et programme d'activités.</div>
+        <div class="pb-space-arrow">Explorer →</div>
+    </a>
+    <a href="{% url 'parcours_blog' %}" class="pb-space-card pb-space-4 wow">
+        <div class="pb-space-icon">✍️</div>
+        <div class="pb-space-name">Blog Bien-être</div>
+        <div class="pb-space-desc">Partagez vos expériences et lisez celles de la communauté.</div>
+        <div class="pb-space-arrow">Explorer →</div>
+    </a>
+</div>
+
+<!-- PROFIL SANTÉ NUDGE -->
+{% if not profil_sante %}
+<div class="pb-nudge wow">
+    <div class="pb-nudge-icon">💪</div>
+    <div class="pb-nudge-text">
+        <h4>Complétez votre profil santé</h4>
+        <p>Obtenez un plan repas personnalisé et calculez votre IMC en quelques secondes.</p>
+    </div>
+    <a href="{% url 'parcours_sante' %}" class="pb-nudge-btn">Créer mon profil</a>
+</div>
+{% endif %}
+
+<!-- JOURNAL RECENT -->
+{% if journal_recent %}
+<h2 class="pb-section-title">Vos dernières <span>entrées</span></h2>
+<div class="pb-journal-grid">
+    {% for entry in journal_recent %}
+    <div class="pb-journal-card pb-mood-{{ entry.humeur }} wow">
+        <div class="pb-journal-mood">
+            {% if entry.humeur == '5' %}😊{% elif entry.humeur == '4' %}🙂{% elif entry.humeur == '3' %}😐{% elif entry.humeur == '2' %}😔{% else %}😢{% endif %}
+        </div>
+        <div class="pb-journal-titre">{{ entry.titre|default:"Sans titre" }}</div>
+        <div class="pb-journal-date">{{ entry.date_creation|date:"d M Y" }}</div>
+        <div class="pb-journal-excerpt">{{ entry.contenu|truncatechars:100 }}</div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<!-- BLOGS RECENT -->
+{% if blogs_recent %}
+<h2 class="pb-section-title">Articles <span>récents</span></h2>
+<div class="pb-blogs-row">
+    {% for blog in blogs_recent %}
+    <a href="{% url 'parcours_blog_detail' blog.id %}" class="pb-blog-mini wow">
+        <div class="pb-blog-thumb">
+            {% if blog.image %}<img src="{{ blog.image.url }}" alt="{{ blog.titre }}">{% else %}✍️{% endif %}
+        </div>
+        <div class="pb-blog-body">
+            <div class="pb-blog-title">{{ blog.titre|truncatechars:60 }}</div>
+            <div class="pb-blog-meta">
+                <span>{{ blog.utilisateur.pseudonyme }}</span>
+                <span>•</span>
+                <span>{{ blog.date_creation|date:"d M" }}</span>
+                <span>•</span>
+                <span>❤️ {{ blog.nb_likes }}</span>
+            </div>
+        </div>
+    </a>
+    {% endfor %}
+</div>
+{% endif %}
+
+<script>
+// Animate score counter
+(function() {
+    const target = {{ wellness_score }};
+    const el = document.getElementById('scoreNum');
+    if (!el) return;
+    let current = 0;
+    const step = target / 60;
+    const timer = setInterval(() => {
+        current += step;
+        if (current >= target) { current = target; clearInterval(timer); }
+        el.textContent = Math.floor(current);
+    }, 25);
+})();
+</script>
+{% endblock %}

@@ -1,0 +1,14 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Environment / secrets
+.env
+
+# Django
+staticfiles/
+
+# Editors
+.vscode/
+.idea/

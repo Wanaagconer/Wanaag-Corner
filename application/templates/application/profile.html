@@ -1,0 +1,517 @@
+{% extends 'application/base.html' %}
+{% load static %}
+
+{% block title %}{{ profile_user.pseudonyme }} — Wanaag Corner{% endblock %}
+{% block page_title %}Profil{% endblock %}
+
+{% block extra_css %}
+<style>
+:root {
+    --gold: #c9a66b; --gold-light: #e8c98a; --gold-glow: rgba(201,166,107,.35);
+    --dark: #120a02; --card: #ffffff; --radius: 22px;
+    --shadow: 0 4px 24px rgba(74,60,47,.10);
+}
+
+/* ===== LAYOUT ===== */
+.profile-wrap { max-width: 860px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.6rem; }
+
+/* ===== HERO CARD ===== */
+.profile-hero {
+    background: linear-gradient(135deg, #120a02 0%, #241508 55%, #1a0f05 100%);
+    border-radius: var(--radius); overflow: hidden; position: relative;
+    box-shadow: 0 12px 48px rgba(0,0,0,.35); border: 1px solid rgba(201,166,107,.12);
+}
+.profile-hero::before {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(rgba(201,166,107,.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(201,166,107,.04) 1px, transparent 1px);
+    background-size: 36px 36px; pointer-events: none;
+}
+.profile-hero-glow {
+    position: absolute; top: -80px; right: -80px;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(201,166,107,.16) 0%, transparent 65%);
+    border-radius: 50%; pointer-events: none;
+}
+.profile-hero-inner {
+    position: relative; z-index: 1;
+    padding: 2.5rem 2.5rem 2rem; display: flex; align-items: flex-start; gap: 2rem;
+}
+
+/* Avatar */
+.profile-av-wrap { position: relative; flex-shrink: 0; }
+.profile-av-ring {
+    position: absolute; inset: -4px; border-radius: 50%;
+    background: conic-gradient(var(--gold), var(--gold-light), transparent 60%, var(--gold));
+    animation: spinRing 5s linear infinite;
+}
+@keyframes spinRing { to { transform: rotate(360deg); } }
+.profile-av {
+    position: relative; z-index: 1;
+    width: 100px; height: 100px; border-radius: 50%; overflow: hidden;
+    background: linear-gradient(135deg, var(--gold), #6b3e0f);
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 2.5rem; font-weight: 800;
+    border: 3px solid rgba(201,166,107,.3);
+}
+.profile-av img { width: 100%; height: 100%; object-fit: cover; }
+.profile-av-edit {
+    position: absolute; bottom: 4px; right: 4px; z-index: 2;
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--gold); border: 2px solid white;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: transform .2s;
+}
+.profile-av-edit:hover { transform: scale(1.15); }
+.profile-av-edit svg { width: 12px; height: 12px; fill: white; }
+
+/* Info */
+.profile-info { flex: 1; }
+.profile-badge {
+    display: inline-flex; align-items: center; gap: .4rem;
+    font-size: .7rem; font-weight: 700; letter-spacing: .5px; text-transform: uppercase;
+    padding: .2rem .7rem; border-radius: 20px; margin-bottom: .6rem;
+    background: rgba(201,166,107,.15); border: 1px solid rgba(201,166,107,.3); color: var(--gold);
+}
+.profile-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem; font-weight: 800; color: white; margin: 0 0 .3rem;
+}
+.profile-email { font-size: .85rem; color: rgba(245,230,211,.45); margin-bottom: .7rem; }
+.profile-bio { font-size: .9rem; color: rgba(245,230,211,.65); line-height: 1.6; max-width: 480px; }
+
+/* Stats */
+.profile-stats {
+    display: flex; gap: 1.2rem; margin-top: 1.2rem; flex-wrap: wrap;
+}
+.pstat {
+    display: flex; flex-direction: column; align-items: center;
+    background: rgba(201,166,107,.1); border: 1px solid rgba(201,166,107,.2);
+    border-radius: 14px; padding: .7rem 1.4rem; min-width: 80px;
+    cursor: pointer; transition: all .2s; text-decoration: none;
+}
+.pstat:hover { background: rgba(201,166,107,.18); transform: translateY(-2px); }
+.pstat .n { font-size: 1.5rem; font-weight: 800; color: white; line-height: 1; }
+.pstat .l { font-size: .68rem; color: rgba(245,230,211,.5); text-transform: uppercase; letter-spacing: .5px; margin-top: .25rem; }
+
+/* Follow button */
+.btn-follow {
+    display: inline-flex; align-items: center; gap: .5rem;
+    padding: .7rem 1.8rem; border-radius: 50px; font-weight: 800; font-size: .88rem;
+    cursor: pointer; border: none; transition: all .22s; margin-top: 1rem;
+    background: linear-gradient(135deg, var(--gold), #8b5e2e);
+    color: white; box-shadow: 0 4px 18px var(--gold-glow);
+}
+.btn-follow:hover { transform: translateY(-2px); box-shadow: 0 8px 28px var(--gold-glow); }
+.btn-follow.following {
+    background: rgba(201,166,107,.12); border: 1.5px solid rgba(201,166,107,.35);
+    color: var(--gold); box-shadow: none;
+}
+.btn-follow.following:hover { background: rgba(231,76,60,.1); border-color: #e74c3c; color: #e74c3c; }
+.btn-follow svg { width: 16px; height: 16px; fill: currentColor; }
+
+/* ===== TABS ===== */
+.profile-tabs {
+    display: flex; gap: .5rem; background: white; border-radius: 18px;
+    padding: .7rem .8rem; box-shadow: var(--shadow); border: 1px solid rgba(201,166,107,.1);
+}
+.ptab {
+    flex: 1; padding: .6rem 1rem; border-radius: 12px; border: none; background: none;
+    cursor: pointer; font-size: .85rem; font-weight: 700; color: var(--brown-light);
+    transition: all .18s; display: flex; align-items: center; justify-content: center; gap: .4rem;
+}
+.ptab:hover { background: rgba(201,166,107,.08); color: var(--brown-dark); }
+.ptab.active { background: linear-gradient(135deg, var(--gold), #8b5e2e); color: white; box-shadow: 0 4px 14px var(--gold-glow); }
+.ptab svg { width: 15px; height: 15px; fill: currentColor; }
+
+/* ===== TAB CONTENT ===== */
+.tab-pane { display: none; }
+.tab-pane.active { display: block; }
+
+/* ===== EDIT FORM ===== */
+.edit-card {
+    background: white; border-radius: var(--radius); padding: 2rem;
+    box-shadow: var(--shadow); border: 1px solid rgba(201,166,107,.12);
+}
+.edit-section-title {
+    font-size: .72rem; font-weight: 800; letter-spacing: .7px; text-transform: uppercase;
+    color: var(--brown-light); margin-bottom: 1.2rem; padding-bottom: .6rem;
+    border-bottom: 1px solid rgba(201,166,107,.15);
+}
+.edit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.edit-row { display: flex; flex-direction: column; gap: .4rem; }
+.edit-row.full { grid-column: 1 / -1; }
+.edit-row label { font-size: .78rem; font-weight: 700; color: var(--brown-light); text-transform: uppercase; letter-spacing: .4px; }
+.edit-row input, .edit-row textarea {
+    padding: .75rem 1rem; border: 1.5px solid rgba(201,166,107,.2);
+    border-radius: 12px; font-size: .92rem; font-family: inherit;
+    color: var(--brown-dark); background: rgba(248,243,238,.5); outline: none;
+    transition: all .18s;
+}
+.edit-row input:focus, .edit-row textarea:focus {
+    border-color: var(--gold); background: white;
+    box-shadow: 0 0 0 3px rgba(201,166,107,.15);
+}
+.edit-row textarea { resize: vertical; min-height: 80px; }
+.edit-submit {
+    display: inline-flex; align-items: center; gap: .5rem;
+    padding: .75rem 2rem; border-radius: 50px; border: none; cursor: pointer;
+    background: linear-gradient(135deg, var(--gold), #7a4e1c);
+    color: white; font-weight: 800; font-size: .9rem;
+    box-shadow: 0 4px 16px var(--gold-glow); transition: all .2s; margin-top: 1.2rem;
+}
+.edit-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 24px var(--gold-glow); }
+.edit-submit svg { width: 16px; height: 16px; fill: currentColor; }
+
+/* Toast */
+.profile-toast {
+    position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(80px);
+    background: #1a0f05; color: white; padding: .75rem 1.5rem; border-radius: 50px;
+    font-size: .88rem; font-weight: 700; z-index: 9999;
+    box-shadow: 0 8px 30px rgba(0,0,0,.3); border: 1px solid rgba(201,166,107,.2);
+    transition: transform .3s cubic-bezier(.34,1.56,.64,1); pointer-events: none;
+}
+.profile-toast.show { transform: translateX(-50%) translateY(0); }
+.profile-toast.error { border-color: rgba(231,76,60,.4); }
+
+/* ===== POSTS GRID ===== */
+.posts-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1.2rem;
+}
+.post-thumb {
+    border-radius: 18px; overflow: hidden; background: white;
+    box-shadow: var(--shadow); border: 1px solid rgba(201,166,107,.1);
+    transition: all .25s; cursor: pointer; text-decoration: none; display: block;
+    position: relative;
+}
+.post-thumb:hover { transform: translateY(-4px); box-shadow: 0 14px 40px rgba(74,60,47,.18); }
+.post-thumb-img {
+    width: 100%; height: 200px; object-fit: cover; background: linear-gradient(135deg, #f5f0eb, #e8ddd0);
+    display: block;
+}
+.post-thumb-no-img {
+    width: 100%; height: 200px;
+    background: linear-gradient(135deg, rgba(201,166,107,.12), rgba(201,166,107,.04));
+    display: flex; align-items: center; justify-content: center;
+}
+.post-thumb-no-img svg { width: 44px; height: 44px; fill: rgba(201,166,107,.35); }
+.post-thumb-body { padding: .9rem 1rem; }
+.post-thumb-text { font-size: .85rem; color: var(--brown-dark); line-height: 1.5; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.post-thumb-meta { display: flex; align-items: center; gap: .8rem; margin-top: .5rem; font-size: .75rem; color: #b8a890; }
+.post-thumb-meta svg { width: 13px; height: 13px; fill: currentColor; }
+
+/* No posts */
+.no-posts {
+    text-align: center; padding: 4rem 2rem;
+    background: white; border-radius: var(--radius);
+    box-shadow: var(--shadow); border: 1px solid rgba(201,166,107,.1);
+}
+.no-posts-icon {
+    width: 70px; height: 70px; border-radius: 22px;
+    background: rgba(201,166,107,.08); border: 1.5px solid rgba(201,166,107,.18);
+    display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;
+}
+.no-posts-icon svg { width: 32px; height: 32px; fill: rgba(201,166,107,.4); }
+.no-posts h3 { color: var(--brown-dark); margin-bottom: .4rem; }
+.no-posts p { color: #b8a890; font-size: .88rem; }
+
+@media(max-width: 640px) {
+    .profile-hero-inner { flex-direction: column; align-items: center; text-align: center; }
+    .edit-grid { grid-template-columns: 1fr; }
+    .profile-stats { justify-content: center; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="profile-wrap">
+
+  <!-- ===== HERO ===== -->
+  <div class="profile-hero">
+    <div class="profile-hero-glow"></div>
+    <div class="profile-hero-inner">
+
+      <!-- Avatar -->
+      <div class="profile-av-wrap">
+        <div class="profile-av-ring"></div>
+        <div class="profile-av" id="avatarDisplay">
+          {% if profile_user.photo %}
+            <img src="{{ profile_user.photo.url }}" alt="{{ profile_user.pseudonyme }}" id="avatarImg">
+          {% else %}
+            <img src="{% static 'images/photo-de-profil.jpg' %}" alt="{{ profile_user.pseudonyme }}" id="avatarImg" style="width:100%;height:100%;object-fit:cover;">
+          {% endif %}
+        </div>
+        {% if is_own_profile %}
+        <label class="profile-av-edit" for="photoInput" title="Changer la photo">
+          <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+        </label>
+        <input type="file" id="photoInput" accept="image/*" style="display:none;" onchange="previewAndUploadPhoto(event)">
+        {% endif %}
+      </div>
+
+      <!-- Info -->
+      <div class="profile-info">
+        <div class="profile-badge">
+          {% if profile_user.psychologue_profile %}
+            <svg viewBox="0 0 24 24" width="10" height="10" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
+            Psychologue
+          {% else %}
+            <svg viewBox="0 0 24 24" width="10" height="10" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+            Membre
+          {% endif %}
+        </div>
+        <div class="profile-name">{{ profile_user.pseudonyme }}</div>
+        {% if is_own_profile %}
+        <div class="profile-email">{{ profile_user.email }}</div>
+        {% endif %}
+        {% if profile_user.bio %}
+        <div class="profile-bio">{{ profile_user.bio }}</div>
+        {% endif %}
+
+        <div class="profile-stats">
+          <div class="pstat">
+            <span class="n">{{ posts|length }}</span>
+            <span class="l">Posts</span>
+          </div>
+          <div class="pstat" id="stat-abonnes">
+            <span class="n" id="nb-abonnes">{{ nb_abonnes }}</span>
+            <span class="l">Abonnés</span>
+          </div>
+          <div class="pstat">
+            <span class="n">{{ nb_abonnements }}</span>
+            <span class="l">Abonnements</span>
+          </div>
+        </div>
+
+        {% if not is_own_profile %}
+        <button class="btn-follow {% if is_following %}following{% endif %}"
+                id="followBtn" onclick="toggleFollow({{ profile_user.id }})">
+          {% if is_following %}
+            <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+            Abonné
+          {% else %}
+            <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+            S'abonner
+          {% endif %}
+        </button>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TABS ===== -->
+  <div class="profile-tabs">
+    <button class="ptab active" onclick="switchTab('posts', this)">
+      <svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
+      Posts
+    </button>
+    {% if is_own_profile %}
+    <button class="ptab" onclick="switchTab('edit', this)">
+      <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+      Modifier le profil
+    </button>
+    <button class="ptab" onclick="switchTab('password', this)">
+      <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+      Mot de passe
+    </button>
+    {% endif %}
+  </div>
+
+  <!-- ===== TAB: POSTS ===== -->
+  <div class="tab-pane active" id="tab-posts">
+    {% if posts %}
+    <div class="posts-grid">
+      {% for post in posts %}
+      <a href="{% url 'posts_feed' %}" class="post-thumb">
+        {% if post.image %}
+          <img src="{{ post.image.url }}" alt="" class="post-thumb-img">
+        {% elif post.video %}
+          <div class="post-thumb-no-img">
+            <svg viewBox="0 0 24 24"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/></svg>
+          </div>
+        {% else %}
+          <div class="post-thumb-no-img">
+            <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+          </div>
+        {% endif %}
+        <div class="post-thumb-body">
+          {% if post.contenu %}
+          <div class="post-thumb-text">{{ post.contenu }}</div>
+          {% else %}
+          <div class="post-thumb-text" style="color:#b8a890;">Post sans texte</div>
+          {% endif %}
+          <div class="post-thumb-meta">
+            <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            {{ post.nb_likes }}
+            <svg viewBox="0 0 24 24" style="margin-left:.3rem;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            {{ post.nb_commentaires }}
+            <span style="margin-left:auto;">{{ post.date_creation|date:"d/m/Y" }}</span>
+          </div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="no-posts">
+      <div class="no-posts-icon">
+        <svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
+      </div>
+      <h3>Aucun post pour l'instant</h3>
+      <p>{% if is_own_profile %}Partagez quelque chose avec la communauté !{% else %}Cet utilisateur n'a pas encore posté.{% endif %}</p>
+    </div>
+    {% endif %}
+  </div>
+
+  {% if is_own_profile %}
+  <!-- ===== TAB: MODIFIER PROFIL ===== -->
+  <div class="tab-pane" id="tab-edit">
+    <div class="edit-card">
+      <div class="edit-section-title">Informations personnelles</div>
+      <form id="editForm" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="update_info">
+        <div class="edit-grid">
+          <div class="edit-row">
+            <label>Pseudonyme</label>
+            <input type="text" name="pseudonyme" value="{{ profile_user.pseudonyme }}" placeholder="Ton pseudonyme">
+          </div>
+          <div class="edit-row">
+            <label>Adresse e-mail</label>
+            <input type="email" name="email" value="{{ profile_user.email }}" placeholder="ton@email.com">
+          </div>
+          <div class="edit-row full">
+            <label>Bio (max 300 caractères)</label>
+            <textarea name="bio" maxlength="300" placeholder="Parle un peu de toi...">{{ profile_user.bio }}</textarea>
+          </div>
+        </div>
+        <button type="submit" class="edit-submit">
+          <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+          Enregistrer les modifications
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===== TAB: MOT DE PASSE ===== -->
+  <div class="tab-pane" id="tab-password">
+    <div class="edit-card">
+      <div class="edit-section-title">Changer le mot de passe</div>
+      <form id="pwdForm">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="change_password">
+        <div class="edit-grid">
+          <div class="edit-row full">
+            <label>Mot de passe actuel</label>
+            <input type="password" name="old_password" placeholder="••••••••">
+          </div>
+          <div class="edit-row">
+            <label>Nouveau mot de passe</label>
+            <input type="password" name="new_password1" placeholder="••••••••">
+          </div>
+          <div class="edit-row">
+            <label>Confirmer le nouveau</label>
+            <input type="password" name="new_password2" placeholder="••••••••">
+          </div>
+        </div>
+        <button type="submit" class="edit-submit">
+          <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+          Changer le mot de passe
+        </button>
+      </form>
+    </div>
+  </div>
+  {% endif %}
+
+</div>
+
+<!-- Toast -->
+<div class="profile-toast" id="profileToast"></div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const CSRF = '{{ csrf_token }}';
+
+/* ===== TABS ===== */
+function switchTab(name, btn) {
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.ptab').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    btn.classList.add('active');
+}
+
+/* ===== TOAST ===== */
+function showToast(msg, type='success') {
+    const t = document.getElementById('profileToast');
+    t.textContent = (type === 'success' ? '✓ ' : '✗ ') + msg;
+    t.className = 'profile-toast show' + (type === 'error' ? ' error' : '');
+    setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+/* ===== PHOTO PREVIEW & UPLOAD ===== */
+function previewAndUploadPhoto(e) {
+    const file = e.target.files[0]; if (!file) return;
+    // Preview immediately
+    const reader = new FileReader();
+    reader.onload = ev => {
+        const av = document.getElementById('avatarDisplay');
+        av.innerHTML = `<img src="${ev.target.result}" style="width:100%;height:100%;object-fit:cover;">`;
+    };
+    reader.readAsDataURL(file);
+    // Upload
+    const fd = new FormData();
+    fd.append('action', 'update_info');
+    fd.append('pseudonyme', '{{ profile_user.pseudonyme }}');
+    fd.append('email', '{{ profile_user.email }}');
+    fd.append('bio', '{{ profile_user.bio }}');
+    fd.append('photo', file);
+    fd.append('csrfmiddlewaretoken', CSRF);
+    fetch('{% url "profile" %}', { method: 'POST', body: fd })
+        .then(r => r.json()).then(d => showToast(d.message, d.success ? 'success' : 'error'));
+}
+
+/* ===== EDIT FORM ===== */
+document.getElementById('editForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const r = await fetch('{% url "profile" %}', { method: 'POST', body: fd });
+    const d = await r.json();
+    showToast(d.message, d.success ? 'success' : 'error');
+    if (d.success) {
+        // Update displayed name
+        const nameEl = document.querySelector('.profile-name');
+        if (nameEl) nameEl.textContent = fd.get('pseudonyme');
+    }
+});
+
+/* ===== PASSWORD FORM ===== */
+document.getElementById('pwdForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const r = await fetch('{% url "profile" %}', { method: 'POST', body: fd });
+    const d = await r.json();
+    showToast(d.message, d.success ? 'success' : 'error');
+    if (d.success) e.target.reset();
+});
+
+/* ===== FOLLOW ===== */
+{% if not is_own_profile %}
+function toggleFollow(userId) {
+    fetch(`/follow/${userId}/`, { method: 'POST', headers: { 'X-CSRFToken': CSRF } })
+        .then(r => r.json()).then(d => {
+            if (!d.success) return;
+            const btn = document.getElementById('followBtn');
+            const nbEl = document.getElementById('nb-abonnes');
+            if (d.following) {
+                btn.className = 'btn-follow following';
+                btn.innerHTML = `<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Abonné`;
+            } else {
+                btn.className = 'btn-follow';
+                btn.innerHTML = `<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg> S'abonner`;
+            }
+            if (nbEl) nbEl.textContent = d.nb_abonnes;
+        });
+}
+{% endif %}
+</script>
+{% endblock %}

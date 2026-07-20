@@ -4,14 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Wanaag Corner - Votre santé mentale compte{% endblock %}</title>
+    <title>{% block title %}Wanaag Corner{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         :root {
             --beige-light: #F5E6D3;
             --beige: #E8D4B8;
@@ -20,282 +15,1160 @@
             --brown: #6B5744;
             --brown-dark: #4A3C2F;
             --accent: #C9A66B;
+            --accent-light: #E2C99A;
+            --accent-dark: #A8854A;
+            --sidebar-width: 265px;
+            --topbar-height: 64px;
+            --glass: rgba(255,255,255,0.88);
+            --glass-border: rgba(201,166,107,0.18);
+            --shadow-sm: 0 1px 4px rgba(74,60,47,0.07);
+            --shadow-md: 0 4px 20px rgba(74,60,47,0.11);
+            --shadow-lg: 0 12px 40px rgba(74,60,47,0.16);
+            --radius: 14px;
+            --radius-lg: 22px;
+        }
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{
+            font-family:'Inter','Segoe UI',system-ui,sans-serif;
+            background:var(--beige-light);
+            color:var(--brown-dark);
+            min-height:100vh;
+            overflow-x:hidden;
         }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, var(--beige-light) 0%, var(--beige) 100%);
-            color: var(--brown-dark);
-            line-height: 1.6;
-            min-height: 100vh;
+        /* ===== PUBLIC NAV ===== */
+        .public-nav{
+            background: rgba(26,15,5,0.82);
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
+            border-bottom: 1px solid rgba(201,166,107,.18);
+            height: 70px;
+            padding: 0 5%;
+            display: flex; align-items: center; justify-content: space-between;
+            position: sticky; top: 0; z-index: 1000;
+            box-shadow: 0 4px 32px rgba(0,0,0,.35);
+        }
+        /* Subtle gold line at top */
+        .public-nav::before{
+            content:''; position:absolute; top:0; left:0; right:0; height:1.5px;
+            background: linear-gradient(90deg, transparent 0%, rgba(201,166,107,.6) 30%, rgba(232,201,138,.9) 50%, rgba(201,166,107,.6) 70%, transparent 100%);
+        }
+        /* Floating glow */
+        .public-nav::after{
+            content:''; position:absolute; top:-40px; left:50%; transform:translateX(-50%);
+            width:340px; height:80px;
+            background: radial-gradient(ellipse, rgba(201,166,107,.12) 0%, transparent 70%);
+            pointer-events:none;
         }
 
-        /* Navigation */
-        nav {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 1rem 5%;
-            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
+        /* Brand */
+        .nav-brand{ display:flex; align-items:center; gap:.75rem; text-decoration:none; position:relative; z-index:1; }
+        .nav-logo-wrap{
+            width:42px; height:42px; border-radius:11px; overflow:hidden; flex-shrink:0;
+            box-shadow: 0 0 0 1px rgba(201,166,107,.35), 0 4px 14px rgba(0,0,0,.4);
+            position:relative;
+        }
+        .nav-logo-img{ width:100%; height:100%; object-fit:cover; display:block; }
+        .nav-brand-name{
+            font-family:'Playfair Display',serif; font-size:1.25rem; font-weight:700;
+            background: linear-gradient(135deg, #e8d4b0 0%, #c9a66b 50%, #e8c98a 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        .nav-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        /* Links */
+        .nav-public-links{ display:flex; align-items:center; gap:.4rem; list-style:none; position:relative; z-index:1; }
+        .nav-link-item{
+            text-decoration:none; color:rgba(245,230,211,.65); font-weight:500; font-size:.88rem;
+            padding:.45rem .9rem; border-radius:8px; transition:all .2s; position:relative;
+        }
+        .nav-link-item:hover{ color:rgba(245,230,211,.95); background:rgba(255,255,255,.06); }
+        .nav-link-item.active{ color:#c9a66b; }
+        .nav-link-item.active::after{
+            content:''; position:absolute; bottom:2px; left:50%; transform:translateX(-50%);
+            width:18px; height:2px; border-radius:2px;
+            background:linear-gradient(90deg,#c9a66b,#e8c98a);
         }
 
-        .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            transition: transform 0.3s ease;
+        /* Separator dot */
+        .nav-sep{ width:4px; height:4px; border-radius:50%; background:rgba(201,166,107,.25); flex-shrink:0; }
+
+        /* Buttons */
+        .btn-nav{
+            padding:.5rem 1.25rem; border-radius:8px; font-weight:600; font-size:.84rem;
+            text-decoration:none; transition:all .22s; cursor:pointer; border:none;
+            font-family:inherit; display:inline-block; position:relative; z-index:1;
+        }
+        .btn-nav-outline{
+            background:rgba(255,255,255,.05); color:rgba(245,230,211,.8);
+            border:1px solid rgba(201,166,107,.35);
+        }
+        .btn-nav-outline:hover{ background:rgba(255,255,255,.1); border-color:rgba(201,166,107,.6); color:white; }
+        .btn-nav-filled{
+            background:linear-gradient(135deg,#c9a66b 0%,#8b6030 100%);
+            color:white; box-shadow:0 3px 14px rgba(201,166,107,.35);
+        }
+        .btn-nav-filled:hover{ transform:translateY(-1px); box-shadow:0 6px 22px rgba(201,166,107,.55); }
+
+        @media(max-width:600px){
+            .nav-sep{display:none;}
+            .nav-link-item{font-size:.82rem;padding:.4rem .65rem;}
+            .btn-nav{padding:.42rem .85rem;font-size:.78rem;}
+            .nav-brand-name{font-size:1.05rem;}
+        }
+        /* Sur très petits écrans : masquer les liens texte, garder seulement les boutons */
+        @media(max-width:480px){
+            .nav-link-item:not(.btn-nav){ display:none; }
+            .nav-sep{ display:none; }
+            .btn-nav{ padding:.38rem .75rem; font-size:.75rem; }
+            .nav-brand-name{ font-size:.98rem; }
+            .public-nav{ padding:0 4%; }
         }
 
-        .logo-container:hover {
-            transform: scale(1.05);
+        /* ===== SIDEBAR ===== */
+        .sidebar{
+            width:var(--sidebar-width);
+            background:linear-gradient(175deg,#3A2C1E 0%,#2A1E12 55%,#1E1409 100%);
+            position:fixed;top:0;left:0;height:100vh;
+            display:flex;flex-direction:column;
+            z-index:200;
+            box-shadow:4px 0 30px rgba(0,0,0,.25);
+            overflow:hidden;
         }
-
-        .logo-img {
-            width: 80px;
-            height: 80px;
-            object-fit: contain;
-            border-radius: 8px;
+        .sidebar::after{
+            content:'';position:absolute;
+            bottom:-80px;left:-80px;
+            width:220px;height:220px;
+            background:radial-gradient(circle,rgba(201,166,107,.12) 0%,transparent 70%);
+            pointer-events:none;
         }
-
-        .site-title {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--brown-dark);
+        .sidebar-header{
+            padding:1.4rem 1.3rem 1.1rem;
+            border-bottom:1px solid rgba(255,255,255,.06);
+            display:flex;align-items:center;gap:.75rem;
         }
+        .sidebar-logo-img{width:38px;height:38px;border-radius:9px;object-fit:contain;}
+        .sidebar-brand-name{font-family:'Playfair Display',serif;font-size:1.08rem;font-weight:700;color:var(--accent-light);line-height:1.2;}
+        .sidebar-brand-sub{font-size:.65rem;color:rgba(255,255,255,.3);margin-top:.1rem;}
 
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-            align-items: center;
-            list-style: none;
+        .sidebar-nav{flex:1;padding:1rem .65rem;overflow-y:auto;scrollbar-width:none;}
+        .sidebar-nav::-webkit-scrollbar{display:none;}
+        .nav-label{font-size:.62rem;font-weight:700;letter-spacing:.1em;color:rgba(255,255,255,.28);text-transform:uppercase;padding:.9rem .75rem .35rem;}
+        .nav-item{
+            display:flex;align-items:center;gap:.7rem;
+            padding:.7rem .8rem;border-radius:11px;
+            text-decoration:none;color:rgba(255,255,255,.58);
+            font-size:.87rem;font-weight:500;
+            margin-bottom:.1rem;transition:all .18s;position:relative;
         }
+        .nav-item:hover{background:rgba(255,255,255,.07);color:rgba(255,255,255,.9);}
+        .nav-item.active{
+            background:linear-gradient(135deg,rgba(201,166,107,.22),rgba(201,166,107,.08));
+            color:var(--accent-light);
+            border:1px solid rgba(201,166,107,.18);
+        }
+        .nav-item.active::before{
+            content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);
+            width:3px;height:60%;background:var(--accent);border-radius:0 3px 3px 0;
+        }
+        .nav-icon{
+            width:30px;height:30px;border-radius:8px;
+            display:flex;align-items:center;justify-content:center;
+            font-size:.92rem;background:rgba(255,255,255,.05);flex-shrink:0;
+            overflow:hidden;
+        }
+        .nav-icon img{width:100%;height:100%;object-fit:cover;border-radius:8px;}
+        .nav-item.active .nav-icon{background:rgba(201,166,107,.18);}
 
-        .nav-links a {
-            text-decoration: none;
-            color: var(--brown);
-            font-weight: 500;
-            transition: color 0.3s;
+        .sidebar-user{
+            padding:.9rem 1.1rem;
+            border-top:1px solid rgba(255,255,255,.06);
+            display:flex;align-items:center;gap:.7rem;
+        }
+        .avatar-sidebar{
+            width:36px;height:36px;border-radius:50%;flex-shrink:0;
+            background:linear-gradient(135deg,var(--accent),var(--accent-dark));
+            display:flex;align-items:center;justify-content:center;
+            color:white;font-weight:700;font-size:.85rem;
+        }
+        .sidebar-user-info{flex:1;min-width:0;}
+        .sidebar-user-name{font-size:.82rem;font-weight:600;color:rgba(255,255,255,.82);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+        .sidebar-user-role{font-size:.68rem;color:var(--accent);font-weight:500;}
+        .logout-btn{background:none;border:none;cursor:pointer;color:rgba(255,255,255,.3);font-size:1rem;padding:.3rem;border-radius:6px;transition:all .2s;}
+        .logout-btn:hover{background:rgba(220,50,50,.15);color:#ff7070;}
+
+        /* ===== APP MAIN ===== */
+        .app-main{margin-left:var(--sidebar-width);min-height:100vh;display:flex;flex-direction:column;}
+        .app-topbar{
+            height:var(--topbar-height);
+            background:var(--glass);
+            backdrop-filter:blur(20px);
+            border-bottom:1px solid var(--glass-border);
+            display:flex;align-items:center;justify-content:space-between;
+            padding:0 2rem;
+            position:sticky;top:0;z-index:50;
+        }
+        .topbar-left{display:flex;align-items:center;gap:1rem;}
+        .hamburger{display:none;background:none;border:none;cursor:pointer;font-size:1.3rem;color:var(--brown-dark);}
+        .topbar-title{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:600;color:var(--brown-dark);}
+        .topbar-right{display:flex;align-items:center;gap:.75rem;}
+        .topbar-greeting{
+            font-size:.83rem;color:var(--brown-light);
+            transition:opacity .6s ease, transform .6s ease;
+        }
+        .topbar-greeting strong{color:var(--brown-dark);}
+        .topbar-greeting.hidden{opacity:0;transform:translateY(-6px);pointer-events:none;}
+        .avatar-topbar{
+            width:34px;height:34px;border-radius:50%;
+            background:linear-gradient(135deg,var(--accent),var(--accent-dark));
+            display:flex;align-items:center;justify-content:center;
+            color:white;font-weight:700;font-size:.8rem;
+        }
+        .app-content{flex:1;padding:2rem;}
+
+        /* ===== MESSAGES ===== */
+        .django-messages{margin-bottom:1.5rem;}
+        .alert{padding:.8rem 1.1rem;border-radius:10px;margin-bottom:.6rem;font-size:.87rem;font-weight:500;animation:slideDown .3s ease;}
+        @keyframes slideDown{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+        .alert-success{background:rgba(39,174,96,.1);color:#1a7a40;border:1px solid rgba(39,174,96,.2);}
+        .alert-error{background:rgba(231,76,60,.08);color:#b03030;border:1px solid rgba(231,76,60,.15);}
+        .alert-warning{background:rgba(243,156,18,.1);color:#8a6b08;border:1px solid rgba(243,156,18,.2);}
+        .alert-info{background:rgba(52,152,219,.08);color:#1a6fa8;border:1px solid rgba(52,152,219,.15);}
+
+        /* ===== PUBLIC FOOTER ===== */
+        .public-footer {
+            background: linear-gradient(180deg, #1a0f05 0%, #0d0804 100%);
+            color: rgba(245,230,211,.65);
             position: relative;
+            overflow: hidden;
         }
-
-        .nav-links a:hover {
-            color: var(--accent);
-        }
-
-        .nav-links a::after {
+        .public-footer::before {
             content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: var(--accent);
-            transition: width 0.3s;
+            position: absolute; top: 0; left: 0; right: 0; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(201,166,107,.5) 30%, rgba(232,201,138,.8) 50%, rgba(201,166,107,.5) 70%, transparent);
+        }
+        .public-footer::after {
+            content: '';
+            position: absolute; top: -120px; left: 50%; transform: translateX(-50%);
+            width: 600px; height: 240px;
+            background: radial-gradient(ellipse, rgba(201,166,107,.06) 0%, transparent 70%);
+            pointer-events: none;
         }
 
-        .nav-links a:hover::after {
-            width: 100%;
-        }
-
-        .btn {
-            padding: 0.8rem 2rem;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s;
-            border: none;
-            cursor: pointer;
-            font-size: 1rem;
-        }
-
-        /* Bouton S'inscrire avec effet hover */
-        .btn-primary {
-            background: transparent;
-            color: var(--brown-dark);
-            border: 2px solid var(--brown-dark);
-        }
-
-        .btn-primary:hover {
-            background: var(--brown-dark);
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-
-        .btn-secondary {
-            background: transparent;
-            color: var(--brown);
-            border: 2px solid var(--brown);
-        }
-
-        .btn-secondary:hover {
-            background: var(--brown);
-            color: white;
-        }
-
-        button.btn {
-            padding: 0.8rem 2rem;
-            border-radius: 50px;
-            font-weight: 600;
-            transition: all 0.3s;
-            border: none;
-            cursor: pointer;
-            font-size: 1rem;
-        }
-
-        button.btn-secondary {
-            background: transparent;
-            color: var(--brown);
-            border: 2px solid var(--brown);
-        }
-
-        button.btn-secondary:hover {
-            background: var(--brown);
-            color: white;
-        }
-
-        /* Messages */
-        .messages {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 2rem;
-        }
-
-        .alert {
-            padding: 1rem 1.5rem;
-            border-radius: 10px;
-            margin-bottom: 1rem;
-            animation: slideIn 0.5s ease;
-        }
-
-        .alert-success {
-            background: #d4edda;
-            color: #155724;
-            border-left: 4px solid #28a745;
-        }
-
-        .alert-error {
-            background: #f8d7da;
-            color: #721c24;
-            border-left: 4px solid #dc3545;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Main Content */
-        main {
-            max-width: 1400px;
+        /* Main grid */
+        .footer-main {
+            max-width: 1140px;
             margin: 0 auto;
-            padding: 2rem 5%;
+            padding: 4rem 2rem 3rem;
+            display: grid;
+            grid-template-columns: 1.8fr 1fr 1fr 1.4fr;
+            gap: 3rem;
+            position: relative; z-index: 1;
         }
 
-        /* Footer */
-        footer {
-            background: var(--brown-dark);
-            color: var(--beige-light);
-            text-align: center;
-            padding: 2rem;
-            margin-top: 4rem;
+        /* Brand col */
+        .footer-brand-logo {
+            display: flex; align-items: center; gap: .75rem;
+            margin-bottom: 1.1rem; text-decoration: none;
+        }
+        .footer-logo-img {
+            width: 44px; height: 44px; border-radius: 11px; object-fit: cover;
+            box-shadow: 0 0 0 1px rgba(201,166,107,.3), 0 4px 14px rgba(0,0,0,.5);
+        }
+        .footer-brand-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.25rem; font-weight: 700;
+            background: linear-gradient(135deg, #e8d4b0, #c9a66b, #e8c98a);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .footer-tagline {
+            font-size: .83rem; color: rgba(245,230,211,.45);
+            line-height: 1.65; margin-bottom: 1.4rem; max-width: 230px;
         }
 
-        footer p {
-            margin-bottom: 0.5rem;
+        /* Social icons */
+        .footer-socials { display: flex; gap: .7rem; }
+        .footer-social-btn {
+            width: 40px; height: 40px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            border: 1px solid rgba(201,166,107,.2);
+            background: rgba(201,166,107,.06);
+            text-decoration: none; transition: all .2s;
+            color: rgba(245,230,211,.6);
+        }
+        .footer-social-btn:hover {
+            background: rgba(201,166,107,.14);
+            border-color: rgba(201,166,107,.5);
+            transform: translateY(-2px);
+            color: #c9a66b;
+        }
+        .footer-social-btn svg { width: 18px; height: 18px; }
+
+        /* Nav cols */
+        .footer-col-title {
+            font-size: .7rem; font-weight: 800; letter-spacing: .08em;
+            text-transform: uppercase; color: #c9a66b;
+            margin-bottom: 1.1rem; padding-bottom: .6rem;
+            border-bottom: 1px solid rgba(201,166,107,.15);
+        }
+        .footer-links { list-style: none; display: flex; flex-direction: column; gap: .55rem; }
+        .footer-links a {
+            text-decoration: none; color: rgba(245,230,211,.5);
+            font-size: .84rem; font-weight: 500; transition: all .2s;
+            display: flex; align-items: center; gap: .45rem;
+        }
+        .footer-links a:hover { color: #c9a66b; padding-left: .3rem; }
+        .footer-links a::before {
+            content: '›'; font-size: .9rem; color: rgba(201,166,107,.35);
+            transition: color .2s;
+        }
+        .footer-links a:hover::before { color: #c9a66b; }
+
+        /* Contact col */
+        .footer-contact-items { display: flex; flex-direction: column; gap: .8rem; }
+        .footer-contact-item {
+            display: flex; align-items: flex-start; gap: .7rem;
+        }
+        .footer-contact-icon {
+            width: 32px; height: 32px; border-radius: 8px; flex-shrink: 0;
+            background: rgba(201,166,107,.1); border: 1px solid rgba(201,166,107,.18);
+            display: flex; align-items: center; justify-content: center;
+            margin-top: .05rem;
+        }
+        .footer-contact-icon svg { width: 14px; height: 14px; color: #c9a66b; }
+        .footer-contact-label { font-size: .7rem; color: rgba(201,166,107,.6); font-weight: 700; text-transform: uppercase; letter-spacing: .05em; margin-bottom: .15rem; }
+        .footer-contact-value {
+            font-size: .84rem; color: rgba(245,230,211,.7); font-weight: 500;
+            text-decoration: none; transition: color .2s;
+        }
+        a.footer-contact-value:hover { color: #c9a66b; }
+
+        /* Divider */
+        .footer-divider {
+            max-width: 1140px; margin: 0 auto;
+            border: none; border-top: 1px solid rgba(201,166,107,.1);
+            position: relative; z-index: 1;
         }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            .logo-img {
-                width: 60px;
-                height: 60px;
-            }
-
-            .site-title {
-                font-size: 1.5rem;
-            }
-
-            .nav-links {
-                gap: 1rem;
-            }
-
-            .btn {
-                padding: 0.6rem 1.2rem;
-                font-size: 0.9rem;
-            }
-
-            main {
-                padding: 1rem 3%;
-            }
+        /* Bottom bar */
+        .footer-bottom {
+            max-width: 1140px; margin: 0 auto;
+            padding: 1.4rem 2rem;
+            display: flex; align-items: center; justify-content: space-between;
+            flex-wrap: wrap; gap: .8rem;
+            position: relative; z-index: 1;
         }
+        .footer-bottom-left { font-size: .78rem; color: rgba(245,230,211,.3); }
+        .footer-bottom-left strong { color: rgba(245,230,211,.55); }
+        .footer-bottom-right { display: flex; gap: 1.2rem; }
+        .footer-bottom-right a {
+            font-size: .75rem; color: rgba(245,230,211,.3);
+            text-decoration: none; transition: color .2s;
+        }
+        .footer-bottom-right a:hover { color: #c9a66b; }
+
+        /* Badge */
+        .footer-dj-badge {
+            display: inline-flex; align-items: center; gap: .4rem;
+            background: rgba(201,166,107,.08); border: 1px solid rgba(201,166,107,.15);
+            border-radius: 20px; padding: .25rem .8rem;
+            font-size: .72rem; color: rgba(201,166,107,.7); font-weight: 600;
+            margin-top: .9rem;
+        }
+
+        @media(max-width: 900px) {
+            .footer-main { grid-template-columns: 1fr 1fr; gap: 2rem; }
+        }
+        @media(max-width: 560px) {
+            .footer-main { grid-template-columns: 1fr; gap: 1.8rem; padding: 2.5rem 1.5rem 2rem; }
+            .footer-bottom { flex-direction: column; align-items: flex-start; }
+        }
+
+        /* ===== GLOBAL BUTTONS ===== */
+        .btn{padding:.72rem 1.7rem;border-radius:50px;font-weight:600;font-size:.9rem;text-decoration:none;transition:all .22s;cursor:pointer;border:none;display:inline-flex;align-items:center;gap:.4rem;font-family:inherit;}
+        .btn-primary{background:linear-gradient(135deg,var(--accent) 0%,var(--accent-dark) 100%);color:white;box-shadow:0 4px 14px rgba(201,166,107,.35);}
+        .btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 22px rgba(201,166,107,.5);}
+        .btn-secondary{background:transparent;color:var(--brown-dark);border:2px solid var(--brown-dark);}
+        .btn-secondary:hover{background:var(--brown-dark);color:white;}
+
+        /* ===== SIDEBAR OVERLAY ===== */
+        .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:199;}
+        .sidebar-overlay.open{display:block;}
+
+        /* ===== RESPONSIVE ===== */
+        @media(max-width:900px){
+            .sidebar{transform:translateX(-100%);transition:transform .28s cubic-bezier(.4,0,.2,1);}
+            .sidebar.open{transform:translateX(0);}
+            .app-main{margin-left:0;}
+            .hamburger{display:block;}
+            .app-content{padding:1.25rem;}
+            .topbar-greeting{display:none;}
+            .app-topbar{padding:0 1.2rem;}
+        }
+        @media(max-width:480px){
+            .app-content{padding:.9rem;}
+            .app-topbar{padding:0 1rem;}
+            .topbar-title{font-size:.95rem;}
+        }
+        @media(max-width:600px){
+            .nav-public-links .btn-nav{padding:.45rem .9rem;font-size:.8rem;}
+            .nav-brand-name{font-size:1.1rem;}
+        }
+
+        /* ========================================
+           WOW ANIMATIONS — WANAAG CORNER
+           ======================================== */
+
+        /* 1. Keyframes */
+        @keyframes wowUp {
+            from { opacity:0; transform:translateY(40px); }
+            to   { opacity:1; transform:translateY(0);    }
+        }
+        @keyframes wowPop {
+            from { opacity:0; transform:scale(.9) translateY(22px); }
+            to   { opacity:1; transform:scale(1) translateY(0);     }
+        }
+        @keyframes wowLeft {
+            from { opacity:0; transform:translateX(-40px); }
+            to   { opacity:1; transform:translateX(0);     }
+        }
+        @keyframes wowRight {
+            from { opacity:0; transform:translateX(40px); }
+            to   { opacity:1; transform:translateX(0);    }
+        }
+
+        /* 2. Scroll-reveal */
+        .wow {
+            opacity: 0;
+            transform: translateY(60px) scale(0.96);
+            transition:
+                opacity   .75s cubic-bezier(.22,1,.36,1),
+                transform .75s cubic-bezier(.22,1,.36,1);
+            will-change: opacity, transform;
+        }
+        /* Hero : entrée encore plus dramatique */
+        .wow.wow-hero {
+            transform: translateY(50px) scale(0.92);
+            transition:
+                opacity   1.1s cubic-bezier(.22,1,.36,1),
+                transform 1.1s cubic-bezier(.22,1,.36,1);
+        }
+        /* Directionnels */
+        .wow.from-left  { transform: translateX(-80px) scale(0.97); }
+        .wow.from-right { transform: translateX(80px)  scale(0.97); }
+        /* Révélation */
+        .wow.animated {
+            opacity: 1 !important;
+            transform: none !important;
+        }
+        /* Stagger */
+        .wow.d1 { transition-delay: .10s !important; }
+        .wow.d2 { transition-delay: .20s !important; }
+        .wow.d3 { transition-delay: .30s !important; }
+        .wow.d4 { transition-delay: .40s !important; }
+        .wow.d5 { transition-delay: .50s !important; }
+
+        /* 3. Particules flottantes */
+        #particles-canvas {
+            position:fixed; top:0; left:0; width:100%; height:100%;
+            pointer-events:none; z-index:-1; opacity:.4;
+        }
+
+        /* 4. Cursor glow */
+        #cursor-glow {
+            position:fixed; width:320px; height:320px; border-radius:50%;
+            background:radial-gradient(circle, rgba(201,166,107,.08) 0%, transparent 70%);
+            pointer-events:none; z-index:9998;
+            transform:translate(-50%,-50%);
+            transition:left .12s ease, top .12s ease;
+        }
+
+
     </style>
     {% block extra_css %}{% endblock %}
 </head>
 <body>
-    <nav>
-        <div class="nav-container">
-            <div class="logo-container">
-                <img src="{% static 'images/logo.jpg' %}" alt="Logo Wanaag Corner" class="logo-img">
-                <span class="site-title">Wanaag Corner</span>
-            </div>
-            <ul class="nav-links">
-                {% if user.is_authenticated %}
-                    <li><a href="{% url 'dashboard' %}">Tableau de bord</a></li>
-                    <li><a href="{% url 'about' %}">À propos de nous</a></li>
-                    <li><span style="color: var(--accent);">Bonjour, {{ user.pseudonyme }}</span></li>
-                    <li>
-                        <form method="post" action="{% url 'logout' %}" style="display: inline; margin: 0;">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-secondary">Déconnexion</button>
-                        </form>
-                    </li>
-                {% else %}
-                    <li><a href="{% url 'home' %}">Accueil</a></li>
-                    <li><a href="{% url 'about' %}">À propos de nous</a></li>
-                    <li><a href="{% url 'login' %}" class="btn btn-secondary">Connexion</a></li>
-                    <li><a href="{% url 'register' %}" class="btn btn-primary">S'inscrire</a></li>
-                {% endif %}
-            </ul>
-        </div>
-    </nav>
 
-    {% if messages %}
-    <div class="messages">
-        {% for message in messages %}
-        <div class="alert alert-{{ message.tags }}">
-            {{ message }}
+<!-- Floating particles -->
+<canvas id="particles-canvas"></canvas>
+
+<!-- Cursor glow -->
+<div id="cursor-glow"></div>
+
+{% if user.is_authenticated %}
+<!-- ====== AUTHENTICATED: SIDEBAR LAYOUT ====== -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <img src="{% static 'images/logo.jpg' %}" alt="Logo" class="sidebar-logo-img">
+        <div>
+            <div class="sidebar-brand-name">Wanaag Corner</div>
+            <div class="sidebar-brand-sub">Santé mentale · Bien-être</div>
         </div>
+    </div>
+    <nav class="sidebar-nav">
+        <div class="nav-label">Principal</div>
+        <a href="{% url 'dashboard' %}" class="nav-item {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+            <span class="nav-icon"><img src="{% static 'images/espace-bien-etre.jpg' %}" alt=""></span> Tableau de bord
+        </a>
+        <a href="{% url 'posts_feed' %}" class="nav-item {% if request.resolver_match.url_name == 'posts_feed' %}active{% endif %}">
+            <span class="nav-icon"><img src="{% static 'images/posts.jpg' %}" alt=""></span> Posts
+        </a>
+        <a href="{% url 'forum_home' %}" class="nav-item {% if 'forum' in request.resolver_match.url_name %}active{% endif %}">
+            <span class="nav-icon"><img src="{% static 'images/forum.jpg' %}" alt=""></span> Forum
+        </a>
+        <a href="{% url 'ressources_home' %}" class="nav-item {% if 'ressource' in request.resolver_match.url_name %}active{% endif %}">
+            <span class="nav-icon"><img src="{% static 'images/ressources.jpg' %}" alt=""></span> Ressources
+        </a>
+        <a href="{% url 'parcours_home' %}" class="nav-item {% if 'parcours' in request.resolver_match.url_name %}active{% endif %}">
+            <span class="nav-icon" style="background:linear-gradient(135deg,rgba(201,166,107,.25),rgba(201,166,107,.08));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.9rem;">🌿</span> Parcours Bien-être
+        </a>
+        <a href="{% url 'chatbot' %}" class="nav-item {% if request.resolver_match.url_name == 'chatbot' %}active{% endif %}" style="position:relative;">
+            <span class="nav-icon" style="background:linear-gradient(135deg,rgba(201,166,107,.25),rgba(201,166,107,.08));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.9rem;">🤖</span>
+            Wana
+        </a>
+        {% if not user.psychologue_profile %}
+        <div class="nav-label">Santé</div>
+        <a href="{% url 'psychologues_list' %}" class="nav-item {% if request.resolver_match.url_name == 'psychologues_list' %}active{% endif %}">
+            <span class="nav-icon"><img src="{% static 'images/psychologue.jpg' %}" alt=""></span> Psychologues
+        </a>
+        <a href="{% url 'mes_consultations' %}" class="nav-item {% if 'consultation' in request.resolver_match.url_name %}active{% endif %}">
+            <span class="nav-icon"><img src="{% static 'images/consultation.jpg' %}" alt=""></span> Mes consultations
+        </a>
+        {% endif %}
+        {% if user.psychologue_profile %}
+        <div class="nav-label">Espace Psy</div>
+        <a href="{% url 'psychologue_dashboard' %}" class="nav-item {% if request.resolver_match.url_name == 'psychologue_dashboard' %}active{% endif %}">
+            <span class="nav-icon"><img src="{% static 'images/psychologue.jpg' %}" alt=""></span> Mon dashboard
+        </a>
+        <a href="{% url 'consultation_requests_list' %}" class="nav-item {% if request.resolver_match.url_name == 'consultation_requests_list' %}active{% endif %}">
+            <span class="nav-icon"><img src="{% static 'images/consultation.jpg' %}" alt=""></span> Demandes reçues
+        </a>
+        {% endif %}
+        <div class="nav-label">Infos</div>
+        <a href="{% url 'profile' %}" class="nav-item {% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
+            <span class="nav-icon">
+                {% if user.photo %}<img src="{{ user.photo.url }}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:8px;">
+                {% else %}<img src="{% static 'images/photo-de-profil.jpg' %}" alt="">{% endif %}
+            </span> Mon profil
+        </a>
+        <a href="{% url 'about' %}" class="nav-item {% if request.resolver_match.url_name == 'about' %}active{% endif %}">
+            <span class="nav-icon"><img src="{% static 'images/espace-bien-etre.jpg' %}" alt=""></span> À propos
+        </a>
+        {% if user.is_staff or user.is_superuser %}
+        <div class="nav-label" style="color:var(--accent);margin-top:.8rem;">Administration</div>
+        <a href="{% url 'admin_panel' %}" class="nav-item {% if 'admin' in request.resolver_match.url_name %}active{% endif %}" style="border-left:2px solid var(--accent);">
+            <span class="nav-icon" style="background:linear-gradient(135deg,var(--accent),var(--accent-dark));border-radius:8px;display:flex;align-items:center;justify-content:center;color:white;font-size:.9rem;">⚙</span> Dashboard Admin
+        </a>
+        <a href="/admin/" class="nav-item" target="_blank" style="opacity:.7;">
+            <span class="nav-icon" style="background:rgba(41,128,185,.15);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#2980b9;font-size:.9rem;">🔧</span> Django Admin
+        </a>
+        {% endif %}
+    </nav>
+    <div class="sidebar-user">
+        <div class="avatar-sidebar">{{ user.pseudonyme|first|upper }}</div>
+        <div class="sidebar-user-info">
+            <div class="sidebar-user-name">{{ user.pseudonyme }}</div>
+            <div class="sidebar-user-role">{% if user.psychologue_profile %}🩺 Psychologue{% else %}Membre{% endif %}</div>
+        </div>
+        <form method="post" action="{% url 'logout' %}" style="margin:0;">
+            {% csrf_token %}
+            <button type="submit" class="logout-btn" title="Déconnexion">⏻</button>
+        </form>
+    </div>
+</aside>
+
+<div class="app-main">
+    <header class="app-topbar">
+        <div class="topbar-left">
+            <button class="hamburger" onclick="toggleSidebar()">☰</button>
+            <span class="topbar-title">{% block page_title %}Wanaag Corner{% endblock %}</span>
+        </div>
+        <div class="topbar-right">
+            <span class="topbar-greeting">Bonjour, <strong>{{ user.pseudonyme }}</strong></span>
+            <div class="avatar-topbar">{{ user.pseudonyme|first|upper }}</div>
+        </div>
+    </header>
+    <div class="app-content">
+        {% if messages %}
+        <div class="django-messages">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+{% else %}
+<!-- ====== PUBLIC: STANDARD LAYOUT ====== -->
+<nav class="public-nav">
+    <a href="{% url 'home' %}" class="nav-brand">
+        <div class="nav-logo-wrap">
+            <img src="{% static 'images/logo.jpg' %}" alt="Logo" class="nav-logo-img">
+        </div>
+        <span class="nav-brand-name">Wanaag Corner</span>
+    </a>
+    <ul class="nav-public-links">
+        <li><a href="{% url 'home' %}" class="nav-link-item {% if request.resolver_match.url_name == 'home' %}active{% endif %}">Accueil</a></li>
+        <li><a href="{% url 'about' %}" class="nav-link-item {% if request.resolver_match.url_name == 'about' %}active{% endif %}">À propos</a></li>
+        <li><span class="nav-sep"></span></li>
+        <li><a href="{% url 'login' %}" class="btn-nav btn-nav-outline">Connexion</a></li>
+        <li><a href="{% url 'register' %}" class="btn-nav btn-nav-filled">S'inscrire</a></li>
+    </ul>
+</nav>
+<div class="public-page-content">
+    {% if messages %}
+    <div style="max-width:680px;margin:1.5rem auto;padding:0 1.5rem;">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
         {% endfor %}
     </div>
     {% endif %}
 
-    <main>
-        {% block content %}{% endblock %}
-    </main>
+{% endif %}
 
-    <footer>
-        <p><strong>Wanaag Corner</strong> - Votre santé mentale compte</p>
-        <p>Une safe place pour parler de santé mentale et de bien-être à Djibouti</p>
-        <p>&copy; 2025 Wanaag Corner. Tous droits réservés.</p>
-    </footer>
+{% block content %}{% endblock %}
 
-    {% block extra_js %}{% endblock %}
+{% if user.is_authenticated %}
+    </div><!-- end app-content -->
+</div><!-- end app-main -->
+{% else %}
+</div><!-- end public wrapper -->
+<footer class="public-footer">
+
+    <div class="footer-main">
+
+        <!-- COL 1 : BRAND -->
+        <div>
+            <a href="{% url 'home' %}" class="footer-brand-logo">
+                <img src="{% static 'images/logo.jpg' %}" alt="Logo" class="footer-logo-img">
+                <span class="footer-brand-name">Wanaag Corner</span>
+            </a>
+            <p class="footer-tagline">
+                Un espace bienveillant dédié à la santé mentale à Djibouti. Parce que votre bien-être compte, chaque jour.
+            </p>
+            <div class="footer-socials">
+                <!-- Instagram -->
+                <a href="https://www.instagram.com/wanaagcorner" target="_blank" class="footer-social-btn" title="Instagram">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                        <path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/>
+                        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+                    </svg>
+                </a>
+                <!-- TikTok -->
+                <a href="https://www.tiktok.com/@wanaagcorner" target="_blank" class="footer-social-btn" title="TikTok">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.17 8.17 0 004.78 1.52V6.76a4.85 4.85 0 01-1.01-.07z"/>
+                    </svg>
+                </a>
+                <!-- Gmail -->
+                <a href="https://mail.google.com/mail/?view=cm&to=wanaagcorner@gmail.com" target="_blank" class="footer-social-btn" title="Email">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                        <polyline points="22,6 12,13 2,6"/>
+                    </svg>
+                </a>
+            </div>
+            <div class="footer-dj-badge">
+                📍 Djibouti, République de Djibouti
+            </div>
+        </div>
+
+        <!-- COL 2 : NAVIGATION -->
+        <div>
+            <div class="footer-col-title">Navigation</div>
+            <ul class="footer-links">
+                <li><a href="{% url 'home' %}">Accueil</a></li>
+                <li><a href="{% url 'about' %}">À propos</a></li>
+                <li><a href="{% url 'register' %}">S'inscrire</a></li>
+                <li><a href="{% url 'login' %}">Se connecter</a></li>
+            </ul>
+        </div>
+
+        <!-- COL 3 : SERVICES -->
+        <div>
+            <div class="footer-col-title">Services</div>
+            <ul class="footer-links">
+                <li><a href="{% url 'login' %}">Forum communautaire</a></li>
+                <li><a href="{% url 'login' %}">Ressources éducatives</a></li>
+                <li><a href="{% url 'login' %}">Consulter un psy</a></li>
+                <li><a href="{% url 'login' %}">Visioconférence</a></li>
+                <li><a href="{% url 'login' %}">Posts & partages</a></li>
+            </ul>
+        </div>
+
+        <!-- COL 4 : CONTACT -->
+        <div>
+            <div class="footer-col-title">Contact</div>
+            <div class="footer-contact-items">
+                <div class="footer-contact-item">
+                    <div class="footer-contact-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.68A2 2 0 012 .18h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.09-1.09a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14.92z"/></svg>
+                    </div>
+                    <div>
+                        <div class="footer-contact-label">Téléphone</div>
+                        <a href="tel:+25377280597" class="footer-contact-value">+253 77 28 05 97</a>
+                    </div>
+                </div>
+                <div class="footer-contact-item">
+                    <div class="footer-contact-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                    </div>
+                    <div>
+                        <div class="footer-contact-label">Email</div>
+                        <a href="https://mail.google.com/mail/?view=cm&to=wanaagcorner@gmail.com" target="_blank" class="footer-contact-value">wanaagcorner@gmail.com</a>
+                    </div>
+                </div>
+                <div class="footer-contact-item">
+                    <div class="footer-contact-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    </div>
+                    <div>
+                        <div class="footer-contact-label">Localisation</div>
+                        <span class="footer-contact-value">Djibouti-Ville, Djibouti</span>
+                    </div>
+                </div>
+                <div class="footer-contact-item">
+                    <div class="footer-contact-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    </div>
+                    <div>
+                        <div class="footer-contact-label">Disponibilité</div>
+                        <span class="footer-contact-value">7j/7 · 24h/24</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <hr class="footer-divider">
+
+    <div class="footer-bottom">
+        <div class="footer-bottom-left">
+            &copy; 2025 <strong>Wanaag Corner</strong> — Tous droits réservés · Une safe place pour la santé mentale à Djibouti
+        </div>
+        <div class="footer-bottom-right">
+            <a href="{% url 'about' %}">À propos</a>
+            <a href="https://mail.google.com/mail/?view=cm&to=wanaagcorner@gmail.com" target="_blank">Contact</a>
+        </div>
+    </div>
+
+</footer>
+{% endif %}
+
+<script>
+/* =============================================
+   WANAAG CORNER — WOW ANIMATIONS ENGINE
+   ============================================= */
+
+// ── 1. SIDEBAR TOGGLE ──
+function toggleSidebar(){
+    document.getElementById('sidebar') && document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('sidebarOverlay') && document.getElementById('sidebarOverlay').classList.toggle('open');
+}
+
+
+document.addEventListener('DOMContentLoaded', () => {
+
+    // ── WOW SCROLL REVEAL ──
+    const _seen  = new Set();
+    const _order = [];   // order of addition = DOM order
+
+    function _add(el, opts) {
+        if (!el || _seen.has(el)) return;
+        if (el.closest && (el.closest('.sidebar') || el.closest('.app-topbar'))) return;
+        if (!el.tagName || el.tagName === 'STYLE' || el.tagName === 'SCRIPT') return;
+        _seen.add(el);
+        _order.push({ el, ...(opts || {}) });
+    }
+
+    // 1. Direct children of main wrappers (these become the "sections")
+    ['.app-content', '.public-page-content'].forEach(sel => {
+        let isFirst = true;
+        document.querySelectorAll(sel).forEach(root => {
+            Array.from(root.children).forEach(child => {
+                _add(child, { hero: isFirst });
+                isFirst = false;
+            });
+        });
+    });
+
+    // 2. Items inside grids/lists for per-card stagger
+    const GRID_SELS = [
+        '.psy-grid > .psy-card',
+        '.dash-grid > *', '.adm-stats-grid > *',
+        '.ab-values-grid > *',
+        '.forum-groups-grid > *', '.ressources-grid > *',
+        '.consultations-list > *', '.requests-list > *',
+        '.feed-wrap > *', '.posts-grid > *',
+    ];
+    GRID_SELS.forEach(sel => {
+        document.querySelectorAll(sel).forEach(el => _add(el));
+    });
+
+    // 3. Two-column items get left/right directional animation
+    document.querySelectorAll('.ab-two-col > *, .crf-wrap > *').forEach((el, i) => {
+        _add(el, { dir: i % 2 === 0 ? 'left' : 'right' });
+    });
+
+    // 4. Apply classes & observe
+    const wowObs = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+            const el = entry.target;
+            // Stagger siblings in the same parent grid
+            const delay = el._wowDelay || 0;
+            setTimeout(() => el.classList.add('animated'), delay);
+            wowObs.unobserve(el);
+        });
+    }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
+    _order.forEach(({ el, hero, dir }) => {
+        el.classList.add('wow');
+        if (hero)        el.classList.add('wow-hero');
+        if (dir === 'left')  el.classList.add('from-left');
+        if (dir === 'right') el.classList.add('from-right');
+
+        // Stagger for grid siblings
+        if (!hero && !dir) {
+            const sibs = _order
+                .filter(o => o.el.parentElement === el.parentElement && _seen.has(o.el))
+                .map(o => o.el);
+            const idx = sibs.indexOf(el);
+            if (idx > 0 && idx <= 5) el.classList.add('d' + idx);
+            el._wowDelay = 0;
+        }
+
+        wowObs.observe(el);
+    });
+
+    // ── 4. CURSOR GLOW ──
+    const glow = document.getElementById('cursor-glow');
+    if (glow) {
+        document.addEventListener('mousemove', e => {
+            glow.style.left = e.clientX + 'px';
+            glow.style.top  = e.clientY + 'px';
+        });
+    }
+
+    // ── 5. FLOATING PARTICLES ──
+    const canvas = document.getElementById('particles-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let W, H, particles = [];
+
+    function resize() {
+        W = canvas.width  = window.innerWidth;
+        H = canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    const COLORS = ['rgba(201,166,107,', 'rgba(232,201,138,', 'rgba(139,94,40,'];
+
+    function Particle() {
+        this.reset = function() {
+            this.x  = Math.random() * W;
+            this.y  = Math.random() * H;
+            this.r  = Math.random() * 1.8 + .4;
+            this.vx = (Math.random() - .5) * .35;
+            this.vy = (Math.random() - .5) * .35;
+            this.a  = Math.random() * .55 + .1;
+            this.c  = COLORS[Math.floor(Math.random() * COLORS.length)];
+        };
+        this.reset();
+    }
+
+    for (let i = 0; i < 55; i++) particles.push(new Particle());
+
+    function draw() {
+        ctx.clearRect(0, 0, W, H);
+        particles.forEach(p => {
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+            ctx.fillStyle = p.c + p.a + ')';
+            ctx.fill();
+
+            p.x += p.vx;
+            p.y += p.vy;
+
+            if (p.x < -10 || p.x > W + 10 || p.y < -10 || p.y > H + 10) p.reset();
+        });
+        requestAnimationFrame(draw);
+    }
+    draw();
+
+    // ── 6. TOPBAR SCROLL SHADOW ──
+    const topbar = document.querySelector('.app-topbar');
+    if (topbar) {
+        window.addEventListener('scroll', () => {
+            topbar.style.boxShadow = window.scrollY > 10
+                ? '0 4px 20px rgba(74,60,47,.14)'
+                : 'none';
+        }, { passive: true });
+    }
+
+    // ── 7. NAV ITEM RIPPLE ──
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.addEventListener('click', function(e) {
+            const rect = this.getBoundingClientRect();
+            const ripple = document.createElement('span');
+            const size = Math.max(rect.width, rect.height);
+            ripple.style.cssText = `
+                position:absolute;border-radius:50%;
+                width:${size}px;height:${size}px;
+                left:${e.clientX - rect.left - size/2}px;
+                top:${e.clientY - rect.top - size/2}px;
+                background:rgba(201,166,107,.25);
+                transform:scale(0);pointer-events:none;
+                animation:rippleOut .5s ease forwards;
+            `;
+            this.style.position = 'relative';
+            this.style.overflow = 'hidden';
+            this.appendChild(ripple);
+            setTimeout(() => ripple.remove(), 500);
+        });
+    });
+
+});
+
+// Ripple keyframe injected once
+const s = document.createElement('style');
+s.textContent = '@keyframes rippleOut{to{transform:scale(2.5);opacity:0;}}';
+document.head.appendChild(s);
+
+</script>
+{% block extra_js %}{% endblock %}
+
+{% if user.is_authenticated %}
+<!-- ═══════════════════════════════════════════════
+     WIDGET FLOTTANT — WANAAG IA
+     (partagé sur toutes les pages authentifiées)
+═══════════════════════════════════════════════ -->
+{% url 'chatbot_send' as chatbot_send_url %}
+{% url 'chatbot' as chatbot_url %}
+<div id="chatWidget">
+    <!-- Bouton bulle -->
+    <button class="wgt-bubble" id="wgtBubble" onclick="wgtToggle()" title="Parler à Wana">
+        <span id="wgtIconOpen">🤖</span>
+        <span id="wgtIconClose" style="display:none;font-size:1.2rem;font-weight:300;">✕</span>
+        <span class="wgt-pulse-ring"></span>
+    </button>
+
+    <!-- Panneau mini-chat -->
+    <div class="wgt-panel" id="wgtPanel" style="display:none;">
+        <div class="wgt-head">
+            <div class="wgt-av">🤖</div>
+            <div>
+                <div class="wgt-name">Wana</div>
+                <div class="wgt-status"><span class="wgt-dot"></span> En ligne · toujours disponible</div>
+            </div>
+            <a href="{{ chatbot_url }}" class="wgt-expand" title="Ouvrir en plein écran">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+            </a>
+        </div>
+        <div class="wgt-body" id="wgtBody">
+            <div class="wgt-welcome">
+                Bonjour <strong>{{ user.pseudonyme }}</strong> 💛<br>
+                Je suis là pour vous écouter. Comment vous sentez-vous ?
+            </div>
+        </div>
+        <div class="wgt-typing" id="wgtTyping" style="display:none;">
+            <span></span><span></span><span></span>
+        </div>
+        <div class="wgt-input-row">
+            <input type="text" id="wgtInput" class="wgt-input"
+                   placeholder="Écrivez ici…"
+                   onkeydown="if(event.key==='Enter') wgtSend()">
+            <button class="wgt-send" onclick="wgtSend()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+</div>
+
+<style>
+#chatWidget {
+    position:fixed; bottom:24px; right:24px; z-index:8888;
+    font-family:'Inter',sans-serif;
+}
+.wgt-bubble {
+    width:56px; height:56px; border-radius:50%;
+    background:linear-gradient(135deg,#c9a66b,#7a4e1c);
+    border:none; cursor:pointer; font-size:1.5rem;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 6px 24px rgba(201,166,107,.5), 0 0 0 3px rgba(201,166,107,.15);
+    transition:transform .22s, box-shadow .22s;
+    position:relative;
+}
+.wgt-bubble:hover { transform:scale(1.1) translateY(-2px); box-shadow:0 10px 36px rgba(201,166,107,.65), 0 0 0 4px rgba(201,166,107,.22); }
+.wgt-pulse-ring {
+    position:absolute; inset:-5px; border-radius:50%;
+    border:2px solid rgba(201,166,107,.35);
+    animation:wgtPulse 2.5s ease-in-out infinite;
+}
+@keyframes wgtPulse {
+    0%,100%{transform:scale(1);opacity:.6}
+    50%{transform:scale(1.18);opacity:0}
+}
+.wgt-panel {
+    position:absolute; bottom:68px; right:0; width:320px;
+    background:white; border-radius:20px;
+    box-shadow:0 20px 60px rgba(0,0,0,.2), 0 0 0 1px rgba(201,166,107,.18);
+    overflow:hidden; flex-direction:column;
+    animation:wgtPop .25s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes wgtPop { from{opacity:0;transform:scale(.85) translateY(10px)} to{opacity:1;transform:scale(1) translateY(0)} }
+.wgt-head {
+    background:linear-gradient(135deg,#2a1e12,#1e1409);
+    padding:.85rem 1rem; display:flex; align-items:center; gap:.65rem;
+}
+.wgt-av {
+    width:36px; height:36px; border-radius:50%;
+    background:linear-gradient(135deg,#c9a66b,#7a4e1c);
+    display:flex; align-items:center; justify-content:center;
+    font-size:1rem; flex-shrink:0;
+    box-shadow:0 0 0 2px rgba(201,166,107,.25);
+}
+.wgt-name { font-weight:700; color:#e2c99a; font-size:.88rem; }
+.wgt-status { font-size:.65rem; color:rgba(255,255,255,.38); display:flex; align-items:center; gap:.3rem; margin-top:.1rem; }
+.wgt-dot { width:6px; height:6px; border-radius:50%; background:#10b981; flex-shrink:0; }
+.wgt-expand { margin-left:auto; color:rgba(255,255,255,.4); text-decoration:none; transition:color .2s; }
+.wgt-expand:hover { color:#c9a66b; }
+.wgt-body {
+    height:220px; overflow-y:auto; padding:.9rem;
+    display:flex; flex-direction:column; gap:.55rem;
+    scrollbar-width:thin; scrollbar-color:rgba(201,166,107,.15) transparent;
+}
+.wgt-welcome {
+    background:#fdf8f2; border-left:3px solid #c9a66b;
+    padding:.65rem .8rem; border-radius:0 10px 10px 10px;
+    font-size:.8rem; color:#4a3c2f; line-height:1.55;
+}
+.wgt-msg-user {
+    background:linear-gradient(135deg,#c9a66b,#a8854a);
+    color:white; padding:.5rem .75rem;
+    border-radius:14px 14px 4px 14px;
+    font-size:.8rem; align-self:flex-end; max-width:86%;
+}
+.wgt-msg-bot {
+    background:#f5f0e8; border-left:2px solid rgba(201,166,107,.45);
+    color:#4a3c2f; padding:.5rem .75rem;
+    border-radius:14px 14px 14px 4px;
+    font-size:.8rem; align-self:flex-start; max-width:86%;
+}
+.wgt-typing {
+    padding:.5rem .9rem; display:flex; gap:4px; align-items:center;
+    background:white; border-top:1px solid rgba(201,166,107,.08);
+}
+.wgt-typing span {
+    width:6px; height:6px; border-radius:50%; background:#c9a66b;
+    animation:wgtBounce 1.3s infinite;
+}
+.wgt-typing span:nth-child(2){animation-delay:.18s}
+.wgt-typing span:nth-child(3){animation-delay:.36s}
+@keyframes wgtBounce { 0%,100%{transform:translateY(0);opacity:.3} 50%{transform:translateY(-5px);opacity:1} }
+.wgt-input-row {
+    border-top:1px solid rgba(201,166,107,.12);
+    padding:.65rem .75rem; display:flex; gap:.5rem; background:white;
+}
+.wgt-input {
+    flex:1; border:1px solid rgba(201,166,107,.2); border-radius:10px;
+    padding:.45rem .75rem; font-size:.8rem; outline:none;
+    color:#4a3c2f; background:#fdfaf6; transition:border-color .2s;
+}
+.wgt-input:focus { border-color:#c9a66b; }
+.wgt-send {
+    width:32px; height:32px; border-radius:9px;
+    background:linear-gradient(135deg,#c9a66b,#7a4e1c);
+    border:none; color:white; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    transition:transform .15s;
+}
+.wgt-send:hover { transform:scale(1.1); }
+@media(max-width:480px) {
+    .wgt-panel { width:calc(100vw - 32px); right:-12px; }
+    #chatWidget { bottom:16px; right:14px; }
+}
+</style>
+
+<script>
+const WGT_SEND_URL = '{{ chatbot_send_url }}';
+const WGT_CSRF     = document.cookie.match(/csrftoken=([^;]+)/)?.[1] || '{{ csrf_token }}';
+let wgtOpen = false;
+
+function wgtToggle() {
+    wgtOpen = !wgtOpen;
+    const panel = document.getElementById('wgtPanel');
+    const iconO = document.getElementById('wgtIconOpen');
+    const iconC = document.getElementById('wgtIconClose');
+    panel.style.display = wgtOpen ? 'flex' : 'none';
+    iconO.style.display  = wgtOpen ? 'none' : '';
+    iconC.style.display  = wgtOpen ? '' : 'none';
+    if (wgtOpen) document.getElementById('wgtInput').focus();
+}
+
+async function wgtSend() {
+    const input = document.getElementById('wgtInput');
+    const text  = input.value.trim();
+    if (!text) return;
+    input.value = '';
+
+    const body = document.getElementById('wgtBody');
+    const add = (cls, txt) => {
+        const d = document.createElement('div');
+        d.className = cls;
+        d.textContent = txt;
+        body.appendChild(d);
+        body.scrollTop = body.scrollHeight;
+    };
+
+    add('wgt-msg-user', text);
+
+    const typing = document.getElementById('wgtTyping');
+    typing.style.display = 'flex';
+    body.scrollTop = body.scrollHeight;
+
+    try {
+        const r = await fetch(WGT_SEND_URL, {
+            method:'POST',
+            headers:{'Content-Type':'application/json','X-CSRFToken':WGT_CSRF},
+            body: JSON.stringify({message: text}),
+        });
+        const d = await r.json();
+        typing.style.display = 'none';
+        add('wgt-msg-bot', d.reply || d.error || 'Erreur…');
+    } catch {
+        typing.style.display = 'none';
+        add('wgt-msg-bot', 'Connexion perdue. Réessayez.');
+    }
+}
+</script>
+{% endif %}
+
+{% if user.is_authenticated %}
+<script>
+(function(){
+    var key = 'wanaag_greeting_{{ user.pseudonyme }}';
+    var el = document.querySelector('.topbar-greeting');
+    if(!el) return;
+    var shown = sessionStorage.getItem(key);
+    if(shown){
+        el.classList.add('hidden');
+    } else {
+        setTimeout(function(){
+            el.classList.add('hidden');
+            sessionStorage.setItem(key, '1');
+        }, 5000);
+    }
+})();
+</script>
+{% endif %}
+
 </body>
 </html>
