@@ -5,6 +5,7 @@ __pycache__/
 
 # Environment / secrets
 .env
+data_export.json
 
 # Django
 staticfiles/

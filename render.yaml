@@ -1,0 +1,26 @@
+databases:
+  - name: wanaag-corner-db
+    plan: free
+    databaseName: wanaag_corner
+    user: wanaag_corner
+
+services:
+  - type: web
+    name: wanaag-corner
+    runtime: python
+    plan: free
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn Wanaag_Corner.wsgi:application"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.13.0
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: DJANGO_DEBUG
+        value: "False"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: wanaag-corner-db
+          property: connectionString
+      - key: ANTHROPIC_API_KEY
+        sync: false
