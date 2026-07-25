@@ -10,7 +10,7 @@
 
 /* ===== HERO ===== */
 .rsp-hero {
-    background: linear-gradient(135deg, #1a0f05 0%, #2d1f0e 55%, #3A2C1E 100%);
+    background: linear-gradient(135deg, #0e2418 0%, #152c1e 55%, #1c3a2a 100%);
     border-radius: 22px; padding: 2rem 2.5rem;
     position: relative; overflow: hidden;
     box-shadow: 0 10px 40px rgba(0,0,0,.35);
@@ -18,39 +18,39 @@
 }
 .rsp-hero::before {
     content: ''; position: absolute; inset: 0;
-    background: radial-gradient(ellipse at 15% 50%, rgba(201,166,107,.16) 0%, transparent 60%);
+    background: radial-gradient(ellipse at 15% 50%, rgba(60,122,90,.16) 0%, transparent 60%);
     pointer-events: none;
 }
 .rsp-avatar {
     position: relative; z-index: 1; flex-shrink: 0;
     width: 64px; height: 64px; border-radius: 50%;
-    background: linear-gradient(135deg, #c9a66b, #8b6030);
+    background: linear-gradient(135deg, #3c7a5a, #245840);
     display: flex; align-items: center; justify-content: center;
     color: white; font-weight: 800; font-size: 1.5rem;
-    box-shadow: 0 0 0 3px rgba(201,166,107,.3), 0 6px 20px rgba(0,0,0,.3);
+    box-shadow: 0 0 0 3px rgba(60,122,90,.3), 0 6px 20px rgba(0,0,0,.3);
 }
 .rsp-hero-text { position: relative; z-index: 1; flex: 1; }
 .rsp-hero-badge {
     display: inline-block; font-size: .7rem; font-weight: 700; letter-spacing: .5px;
     padding: .2rem .7rem; border-radius: 20px; margin-bottom: .5rem; text-transform: uppercase;
-    background: rgba(201,166,107,.15); border: 1px solid rgba(201,166,107,.3); color: #c9a66b;
+    background: rgba(60,122,90,.15); border: 1px solid rgba(60,122,90,.3); color: #3c7a5a;
 }
 .rsp-hero-title { font-size: 1.55rem; font-weight: 800; color: white; margin: 0 0 .25rem; font-family: 'Playfair Display', serif; }
-.rsp-hero-sub { font-size: .85rem; color: rgba(245,230,211,.5); margin: 0; }
+.rsp-hero-sub { font-size: .85rem; color: rgba(246,241,231,.5); margin: 0; }
 
 /* ===== REQUEST CARD ===== */
 .rsp-card {
     background: white; border-radius: 20px; overflow: hidden;
-    box-shadow: 0 4px 24px rgba(74,60,47,.09); border: 1px solid rgba(201,166,107,.1);
+    box-shadow: 0 4px 24px rgba(30,58,44,.09); border: 1px solid rgba(60,122,90,.1);
 }
 .rsp-card-header {
-    padding: 1.2rem 1.8rem; border-bottom: 1px solid rgba(201,166,107,.1);
+    padding: 1.2rem 1.8rem; border-bottom: 1px solid rgba(60,122,90,.1);
     display: flex; align-items: center; gap: .8rem;
     background: rgba(245,240,235,.4);
 }
 .rsp-card-icon {
     width: 36px; height: 36px; border-radius: 10px;
-    background: rgba(201,166,107,.12); border: 1px solid rgba(201,166,107,.22);
+    background: rgba(60,122,90,.12); border: 1px solid rgba(60,122,90,.22);
     display: flex; align-items: center; justify-content: center; flex-shrink: 0;
 }
 .rsp-card-icon svg { width: 17px; height: 17px; }
@@ -60,26 +60,26 @@
 
 .rsp-field {
     background: rgba(245,240,235,.6); border-radius: 12px; padding: 1rem 1.2rem;
-    border: 1px solid rgba(201,166,107,.12);
+    border: 1px solid rgba(60,122,90,.12);
 }
-.rsp-field-lbl { font-size: .72rem; font-weight: 700; color: #c9a66b; text-transform: uppercase; letter-spacing: .4px; margin-bottom: .3rem; }
+.rsp-field-lbl { font-size: .72rem; font-weight: 700; color: #3c7a5a; text-transform: uppercase; letter-spacing: .4px; margin-bottom: .3rem; }
 .rsp-field-val { font-size: .92rem; color: var(--brown-dark); line-height: 1.6; font-weight: 500; }
 
-.rsp-date { font-size: .8rem; color: #b0a090; display: flex; align-items: center; gap: .4rem; margin-top: .5rem; }
+.rsp-date { font-size: .8rem; color: #9fafa0; display: flex; align-items: center; gap: .4rem; margin-top: .5rem; }
 .rsp-date svg { width: 13px; height: 13px; }
 
 /* ===== FORM CARD ===== */
 .rsp-form-card {
     background: white; border-radius: 20px; overflow: hidden;
-    box-shadow: 0 4px 24px rgba(74,60,47,.09); border: 1px solid rgba(201,166,107,.1);
+    box-shadow: 0 4px 24px rgba(30,58,44,.09); border: 1px solid rgba(60,122,90,.1);
 }
 .rsp-form-header {
-    padding: 1.2rem 1.8rem; border-bottom: 1px solid rgba(201,166,107,.1);
+    padding: 1.2rem 1.8rem; border-bottom: 1px solid rgba(60,122,90,.1);
     display: flex; align-items: center; gap: .8rem;
 }
-.rsp-form-header .rsp-card-icon { background: linear-gradient(135deg, rgba(201,166,107,.18), rgba(139,94,40,.1)); }
+.rsp-form-header .rsp-card-icon { background: linear-gradient(135deg, rgba(60,122,90,.18), rgba(139,94,40,.1)); }
 .rsp-form-title { font-size: .95rem; font-weight: 700; color: var(--brown-dark); }
-.rsp-form-sub { font-size: .78rem; color: #b0a090; }
+.rsp-form-sub { font-size: .78rem; color: #9fafa0; }
 
 .rsp-form-body { padding: 1.6rem 1.8rem; }
 
@@ -91,14 +91,14 @@
 }
 .rsp-select, .rsp-textarea, .rsp-input {
     width: 100%; box-sizing: border-box;
-    padding: .85rem 1rem; border: 1.5px solid rgba(201,166,107,.25); border-radius: 12px;
+    padding: .85rem 1rem; border: 1.5px solid rgba(60,122,90,.25); border-radius: 12px;
     font-family: inherit; font-size: .92rem; color: var(--brown-dark);
     background: rgba(245,240,235,.35); transition: all .2s; outline: none;
     appearance: none;
 }
 .rsp-select:focus, .rsp-textarea:focus, .rsp-input:focus {
-    border-color: #c9a66b; background: white;
-    box-shadow: 0 0 0 3px rgba(201,166,107,.12);
+    border-color: #3c7a5a; background: white;
+    box-shadow: 0 0 0 3px rgba(60,122,90,.12);
 }
 .rsp-textarea { resize: vertical; min-height: 130px; line-height: 1.65; }
 
@@ -106,36 +106,36 @@
 .rsp-action-section {
     display: none; margin-top: 1rem;
     background: rgba(245,240,235,.5); border-radius: 12px; padding: 1.1rem 1.2rem;
-    border: 1px solid rgba(201,166,107,.15);
+    border: 1px solid rgba(60,122,90,.15);
 }
 .rsp-action-section.show { display: block; }
-.rsp-action-desc { font-size: .85rem; color: #7a6a5a; line-height: 1.55; margin-bottom: 1rem; }
+.rsp-action-desc { font-size: .85rem; color: #4f7a63; line-height: 1.55; margin-bottom: 1rem; }
 
 /* Buttons */
 .rsp-actions {
     display: flex; gap: 1rem; padding: 1.3rem 1.8rem;
-    border-top: 1px solid rgba(201,166,107,.1); background: rgba(245,240,235,.3);
+    border-top: 1px solid rgba(60,122,90,.1); background: rgba(245,240,235,.3);
 }
 .rsp-btn-submit {
     flex: 1; padding: .9rem 1.5rem;
-    background: linear-gradient(135deg, #c9a66b, #8b6030);
+    background: linear-gradient(135deg, #3c7a5a, #245840);
     color: white; border: none; border-radius: 12px;
     font-weight: 700; font-size: .92rem; cursor: pointer;
-    box-shadow: 0 4px 16px rgba(201,166,107,.35); transition: all .2s;
+    box-shadow: 0 4px 16px rgba(60,122,90,.35); transition: all .2s;
     display: flex; align-items: center; justify-content: center; gap: .5rem; font-family: inherit;
 }
-.rsp-btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(201,166,107,.5); }
+.rsp-btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(60,122,90,.5); }
 .rsp-btn-submit svg { width: 17px; height: 17px; }
 
 .rsp-btn-cancel {
     padding: .9rem 1.5rem; border-radius: 12px;
-    background: transparent; color: #8b6030;
-    border: 1.5px solid rgba(201,166,107,.4);
+    background: transparent; color: #245840;
+    border: 1.5px solid rgba(60,122,90,.4);
     font-weight: 700; font-size: .88rem; cursor: pointer;
     text-decoration: none; display: flex; align-items: center; justify-content: center; gap: .4rem;
     transition: all .2s; font-family: inherit;
 }
-.rsp-btn-cancel:hover { background: rgba(201,166,107,.08); border-color: #c9a66b; }
+.rsp-btn-cancel:hover { background: rgba(60,122,90,.08); border-color: #3c7a5a; }
 .rsp-btn-cancel svg { width: 15px; height: 15px; }
 
 @media(max-width:600px) {
@@ -177,7 +177,7 @@
     <div class="rsp-card">
         <div class="rsp-card-header">
             <div class="rsp-card-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="#c9a66b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#3c7a5a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/>
                 </svg>
             </div>
@@ -209,7 +209,7 @@
 
         <div class="rsp-form-header">
             <div class="rsp-card-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="#c9a66b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#3c7a5a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
                 </svg>
             </div>

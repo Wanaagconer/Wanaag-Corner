@@ -10,7 +10,7 @@
 
 /* ===== HERO ===== */
 .cd-hero {
-    background: linear-gradient(135deg, #1a0f05 0%, #2d1f0e 55%, #3A2C1E 100%);
+    background: linear-gradient(135deg, #0e2418 0%, #152c1e 55%, #1c3a2a 100%);
     border-radius: 22px; padding: 2rem 2.5rem;
     position: relative; overflow: hidden;
     box-shadow: 0 10px 40px rgba(0,0,0,.35);
@@ -18,8 +18,8 @@
 }
 .cd-hero::before {
     content: ''; position: absolute; inset: 0;
-    background: radial-gradient(ellipse at 15% 50%, rgba(201,166,107,.16) 0%, transparent 60%),
-                radial-gradient(ellipse at 85% 10%, rgba(201,166,107,.09) 0%, transparent 55%);
+    background: radial-gradient(ellipse at 15% 50%, rgba(60,122,90,.16) 0%, transparent 60%),
+                radial-gradient(ellipse at 85% 10%, rgba(60,122,90,.09) 0%, transparent 55%);
     pointer-events: none;
 }
 .cd-hero-avatars { position: relative; z-index: 1; flex-shrink: 0; display: flex; align-items: center; }
@@ -27,21 +27,21 @@
     width: 52px; height: 52px; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
     color: white; font-weight: 800; font-size: 1.1rem;
-    border: 2px solid rgba(201,166,107,.4);
+    border: 2px solid rgba(60,122,90,.4);
     box-shadow: 0 4px 14px rgba(0,0,0,.3);
 }
-.cd-av-patient  { background: linear-gradient(135deg, #c9a66b, #8b6030); }
-.cd-av-psy      { background: linear-gradient(135deg, #3A2C1E, #1a0f05); margin-left: -14px; }
-.cd-av-arrow    { color: rgba(201,166,107,.5); font-size: .9rem; margin: 0 .4rem; }
+.cd-av-patient  { background: linear-gradient(135deg, #3c7a5a, #245840); }
+.cd-av-psy      { background: linear-gradient(135deg, #1c3a2a, #0e2418); margin-left: -14px; }
+.cd-av-arrow    { color: rgba(60,122,90,.5); font-size: .9rem; margin: 0 .4rem; }
 
 .cd-hero-text { position: relative; z-index: 1; flex: 1; }
 .cd-hero-badge {
     display: inline-block; font-size: .7rem; font-weight: 700; letter-spacing: .5px;
     padding: .2rem .7rem; border-radius: 20px; margin-bottom: .5rem; text-transform: uppercase;
-    background: rgba(201,166,107,.15); border: 1px solid rgba(201,166,107,.3); color: #c9a66b;
+    background: rgba(60,122,90,.15); border: 1px solid rgba(60,122,90,.3); color: #3c7a5a;
 }
 .cd-hero-title { font-size: 1.45rem; font-weight: 800; color: white; margin: 0 0 .25rem; font-family: 'Playfair Display', serif; }
-.cd-hero-sub { font-size: .83rem; color: rgba(245,230,211,.45); margin: 0; }
+.cd-hero-sub { font-size: .83rem; color: rgba(246,241,231,.45); margin: 0; }
 .cd-status-pill {
     position: relative; z-index: 1; flex-shrink: 0;
     padding: .5rem 1.1rem; border-radius: 20px; font-size: .8rem; font-weight: 700;
@@ -55,16 +55,16 @@
 /* ===== INFO CARD ===== */
 .cd-info-card {
     background: white; border-radius: 18px; overflow: hidden;
-    box-shadow: 0 3px 20px rgba(74,60,47,.09); border: 1px solid rgba(201,166,107,.1);
+    box-shadow: 0 3px 20px rgba(30,58,44,.09); border: 1px solid rgba(60,122,90,.1);
 }
 .cd-info-header {
-    padding: 1rem 1.6rem; border-bottom: 1px solid rgba(201,166,107,.1);
+    padding: 1rem 1.6rem; border-bottom: 1px solid rgba(60,122,90,.1);
     background: rgba(245,240,235,.4);
     display: flex; align-items: center; gap: .7rem;
 }
 .cd-info-icon {
     width: 32px; height: 32px; border-radius: 9px; flex-shrink: 0;
-    background: rgba(201,166,107,.12); border: 1px solid rgba(201,166,107,.22);
+    background: rgba(60,122,90,.12); border: 1px solid rgba(60,122,90,.22);
     display: flex; align-items: center; justify-content: center;
 }
 .cd-info-icon svg { width: 15px; height: 15px; }
@@ -74,18 +74,18 @@
     padding: 1.3rem 1.6rem;
     display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: .9rem;
 }
-.cd-field { background: rgba(245,240,235,.5); border-radius: 10px; padding: .8rem 1rem; border: 1px solid rgba(201,166,107,.1); }
-.cd-field-lbl { font-size: .7rem; font-weight: 700; color: #c9a66b; text-transform: uppercase; letter-spacing: .4px; margin-bottom: .25rem; }
+.cd-field { background: rgba(245,240,235,.5); border-radius: 10px; padding: .8rem 1rem; border: 1px solid rgba(60,122,90,.1); }
+.cd-field-lbl { font-size: .7rem; font-weight: 700; color: #3c7a5a; text-transform: uppercase; letter-spacing: .4px; margin-bottom: .25rem; }
 .cd-field-val { font-size: .88rem; color: var(--brown-dark); font-weight: 500; line-height: 1.5; }
 .cd-field.full { grid-column: 1 / -1; }
 
 /* ===== CHAT ===== */
 .cd-chat-card {
     background: white; border-radius: 18px; overflow: hidden;
-    box-shadow: 0 3px 20px rgba(74,60,47,.09); border: 1px solid rgba(201,166,107,.1);
+    box-shadow: 0 3px 20px rgba(30,58,44,.09); border: 1px solid rgba(60,122,90,.1);
 }
 .cd-chat-header {
-    padding: 1rem 1.6rem; border-bottom: 1px solid rgba(201,166,107,.1);
+    padding: 1rem 1.6rem; border-bottom: 1px solid rgba(60,122,90,.1);
     background: rgba(245,240,235,.4);
     display: flex; align-items: center; gap: .7rem;
 }
@@ -93,10 +93,10 @@
     padding: 1.3rem 1.6rem;
     display: flex; flex-direction: column; gap: .9rem;
     max-height: 420px; overflow-y: auto;
-    scrollbar-width: thin; scrollbar-color: rgba(201,166,107,.2) transparent;
+    scrollbar-width: thin; scrollbar-color: rgba(60,122,90,.2) transparent;
 }
 .cd-chat-messages::-webkit-scrollbar { width: 4px; }
-.cd-chat-messages::-webkit-scrollbar-thumb { background: rgba(201,166,107,.25); border-radius: 4px; }
+.cd-chat-messages::-webkit-scrollbar-thumb { background: rgba(60,122,90,.25); border-radius: 4px; }
 
 .cd-msg {
     display: flex; gap: .75rem; align-items: flex-start;
@@ -107,8 +107,8 @@
     display: flex; align-items: center; justify-content: center;
     color: white; font-weight: 700; font-size: .85rem;
 }
-.cd-msg-av.patient { background: linear-gradient(135deg, #c9a66b, #8b6030); }
-.cd-msg-av.psy     { background: linear-gradient(135deg, #3A2C1E, #2d1f0e); }
+.cd-msg-av.patient { background: linear-gradient(135deg, #3c7a5a, #245840); }
+.cd-msg-av.psy     { background: linear-gradient(135deg, #1c3a2a, #152c1e); }
 
 .cd-msg-bubble {
     max-width: 70%; padding: .75rem 1rem; border-radius: 16px;
@@ -116,53 +116,53 @@
 }
 .cd-msg:not(.mine) .cd-msg-bubble {
     background: rgba(245,240,235,.9); color: var(--brown-dark);
-    border: 1px solid rgba(201,166,107,.15);
+    border: 1px solid rgba(60,122,90,.15);
     border-radius: 4px 16px 16px 16px;
 }
 .cd-msg.mine .cd-msg-bubble {
-    background: linear-gradient(135deg, #c9a66b, #8b6030);
+    background: linear-gradient(135deg, #3c7a5a, #245840);
     color: white; border-radius: 16px 4px 16px 16px;
 }
 .cd-msg-meta {
     font-size: .7rem; margin-top: .3rem;
-    color: rgba(74,60,47,.4);
+    color: rgba(30,58,44,.4);
 }
 .cd-msg.mine .cd-msg-meta { text-align: right; color: rgba(255,255,255,.6); }
 
 .cd-chat-empty {
-    text-align: center; padding: 2.5rem 1rem; color: #b0a090; font-size: .88rem;
+    text-align: center; padding: 2.5rem 1rem; color: #9fafa0; font-size: .88rem;
 }
 
 /* ===== SEND FORM ===== */
 .cd-send-wrap {
-    padding: 1rem 1.6rem; border-top: 1px solid rgba(201,166,107,.1);
+    padding: 1rem 1.6rem; border-top: 1px solid rgba(60,122,90,.1);
     background: rgba(245,240,235,.3);
 }
 .cd-send-form { display: flex; gap: .8rem; align-items: flex-end; }
 .cd-send-textarea {
-    flex: 1; padding: .75rem 1rem; border: 1.5px solid rgba(201,166,107,.25); border-radius: 12px;
+    flex: 1; padding: .75rem 1rem; border: 1.5px solid rgba(60,122,90,.25); border-radius: 12px;
     font-family: inherit; font-size: .9rem; color: var(--brown-dark);
     background: rgba(245,240,235,.4); resize: none; outline: none;
     transition: all .2s; min-height: 44px; max-height: 120px; line-height: 1.5;
 }
-.cd-send-textarea:focus { border-color: #c9a66b; background: white; box-shadow: 0 0 0 3px rgba(201,166,107,.1); }
+.cd-send-textarea:focus { border-color: #3c7a5a; background: white; box-shadow: 0 0 0 3px rgba(60,122,90,.1); }
 .cd-send-btn {
     padding: .75rem 1.3rem; border-radius: 12px;
-    background: linear-gradient(135deg, #c9a66b, #8b6030);
+    background: linear-gradient(135deg, #3c7a5a, #245840);
     color: white; border: none; cursor: pointer; font-weight: 700; font-family: inherit;
-    box-shadow: 0 3px 12px rgba(201,166,107,.35); transition: all .2s;
+    box-shadow: 0 3px 12px rgba(60,122,90,.35); transition: all .2s;
     display: flex; align-items: center; gap: .4rem; flex-shrink: 0;
 }
-.cd-send-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(201,166,107,.5); }
+.cd-send-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(60,122,90,.5); }
 .cd-send-btn svg { width: 16px; height: 16px; }
 
 /* Locked state */
 .cd-locked {
-    padding: 1rem 1.6rem; border-top: 1px solid rgba(201,166,107,.1);
+    padding: 1rem 1.6rem; border-top: 1px solid rgba(60,122,90,.1);
     display: flex; align-items: center; gap: .7rem;
-    font-size: .82rem; color: #b0a090; background: rgba(245,240,235,.2);
+    font-size: .82rem; color: #9fafa0; background: rgba(245,240,235,.2);
 }
-.cd-locked svg { width: 16px; height: 16px; flex-shrink: 0; color: #c9a66b; }
+.cd-locked svg { width: 16px; height: 16px; flex-shrink: 0; color: #3c7a5a; }
 
 /* Visio button */
 .cd-visio-banner {
@@ -208,7 +208,7 @@
 /* Back link */
 .cd-back {
     display: inline-flex; align-items: center; gap: .5rem;
-    color: #c9a66b; text-decoration: none; font-weight: 600; font-size: .85rem;
+    color: #3c7a5a; text-decoration: none; font-weight: 600; font-size: .85rem;
     transition: gap .2s;
 }
 .cd-back:hover { gap: .8rem; }
@@ -288,7 +288,7 @@
     <div class="cd-info-card">
         <div class="cd-info-header">
             <div class="cd-info-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="#c9a66b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="#3c7a5a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
             </div>
             <div class="cd-info-label">Détails de la consultation</div>
         </div>
@@ -367,7 +367,7 @@
     <div class="cd-chat-card">
         <div class="cd-chat-header">
             <div class="cd-info-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="#c9a66b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="#3c7a5a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
             </div>
             <div class="cd-info-label">Conversation</div>
         </div>

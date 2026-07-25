@@ -6,37 +6,37 @@
 {% block content %}
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,800;1,400&display=swap');
-:root { --gold:#c9a66b; --gold-light:#e8c98a; --warm:#1a1008; --warm2:#2e1f10; }
-.app-content { background:#1a1008 !important; }
-body { background:#1a1008 !important; }
+:root { --gold:#3c7a5a; --gold-light:#9fcbb2; --warm:#0f2417; --warm2:#16301f; }
+.app-content { background:#0f2417 !important; }
+body { background:#0f2417 !important; }
 .bc-card, .bc-tips { opacity:1 !important; transform:none !important; }
 
 /* ══ TOP BAR ══ */
 .studio-topbar {
     display:flex; align-items:center; justify-content:space-between;
     padding:1rem 0 1.5rem; margin-bottom:0; gap:1rem;
-    border-bottom:1px solid rgba(201,166,107,.1);
+    border-bottom:1px solid rgba(60,122,90,.1);
 }
 .studio-back {
     display:inline-flex; align-items:center; gap:.4rem;
-    color:rgba(245,230,211,.35); font-size:.82rem; text-decoration:none; transition:color .2s;
+    color:rgba(246,241,231,.35); font-size:.82rem; text-decoration:none; transition:color .2s;
 }
 .studio-back:hover { color:var(--gold); }
 .studio-meta-row {
     display:flex; align-items:center; gap:1rem;
 }
 .studio-word-count {
-    font-size:.78rem; color:rgba(245,230,211,.35);
+    font-size:.78rem; color:rgba(246,241,231,.35);
 }
 .studio-word-count strong { color:var(--gold); }
 .studio-publish-btn {
-    background:linear-gradient(135deg,var(--gold),#8b6832);
+    background:linear-gradient(135deg,var(--gold),#2e6647);
     color:#fff; font-weight:700; font-size:.88rem; border:none;
     padding:.6rem 1.5rem; border-radius:50px; cursor:pointer;
-    transition:all .25s; box-shadow:0 6px 18px rgba(201,166,107,.3);
+    transition:all .25s; box-shadow:0 6px 18px rgba(60,122,90,.3);
     font-family:inherit; display:flex; align-items:center; gap:.4rem;
 }
-.studio-publish-btn:hover { transform:translateY(-2px); box-shadow:0 10px 26px rgba(201,166,107,.5); }
+.studio-publish-btn:hover { transform:translateY(-2px); box-shadow:0 10px 26px rgba(60,122,90,.5); }
 
 /* ══ WRITING CANVAS ══ */
 .studio-canvas {
@@ -48,24 +48,24 @@ body { background:#1a1008 !important; }
 .studio-title-input {
     width:100%; background:transparent; border:none; outline:none;
     font-family:'Playfair Display',serif; font-size:clamp(1.8rem,4vw,2.8rem);
-    font-weight:800; color:#f5e6d3; line-height:1.15;
+    font-weight:800; color:#f6f1e7; line-height:1.15;
     caret-color:var(--gold); box-sizing:border-box;
-    border-bottom:2px solid rgba(201,166,107,.15);
+    border-bottom:2px solid rgba(60,122,90,.15);
     padding:0 0 .8rem;
     transition:border-color .2s;
 }
-.studio-title-input::placeholder { color:rgba(245,230,211,.18); font-style:italic; }
-.studio-title-input:focus { border-color:rgba(201,166,107,.4); }
+.studio-title-input::placeholder { color:rgba(246,241,231,.18); font-style:italic; }
+.studio-title-input:focus { border-color:rgba(60,122,90,.4); }
 
 /* Divider with gold dot */
 .studio-divider {
     display:flex; align-items:center; gap:1rem; margin:1.5rem 0;
-    color:rgba(201,166,107,.3); font-size:.75rem; letter-spacing:.1em;
+    color:rgba(60,122,90,.3); font-size:.75rem; letter-spacing:.1em;
     text-transform:uppercase;
 }
 .studio-divider::before, .studio-divider::after {
     content:''; flex:1; height:1px;
-    background:linear-gradient(to right,transparent,rgba(201,166,107,.2),transparent);
+    background:linear-gradient(to right,transparent,rgba(60,122,90,.2),transparent);
 }
 
 /* Content textarea */
@@ -73,12 +73,12 @@ body { background:#1a1008 !important; }
 .studio-content-input {
     width:100%; background:transparent; border:none; outline:none; resize:none;
     font-family:'Georgia','Playfair Display',serif; font-size:1.08rem;
-    color:rgba(245,230,211,.8); line-height:1.9;
+    color:rgba(246,241,231,.8); line-height:1.9;
     caret-color:var(--gold); box-sizing:border-box;
     min-height:420px;
     transition:all .2s;
 }
-.studio-content-input::placeholder { color:rgba(245,230,211,.2); font-style:italic; line-height:1.9; }
+.studio-content-input::placeholder { color:rgba(246,241,231,.2); font-style:italic; line-height:1.9; }
 
 /* ══ SIDEBAR FIELDS ══ */
 .studio-layout {
@@ -88,46 +88,46 @@ body { background:#1a1008 !important; }
 
 /* Sidebar card */
 .studio-side-card {
-    background:rgba(201,166,107,.04); border:1px solid rgba(201,166,107,.1);
+    background:rgba(60,122,90,.04); border:1px solid rgba(60,122,90,.1);
     border-radius:16px; padding:1.4rem; margin-bottom:1.2rem;
     position:sticky; top:1.5rem;
 }
 .studio-side-title {
     font-size:.68rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase;
-    color:rgba(201,166,107,.5); margin-bottom:1rem;
+    color:rgba(60,122,90,.5); margin-bottom:1rem;
 }
 
 /* Labels & inputs */
 .studio-field { margin-bottom:1.1rem; }
 .studio-label {
     display:block; font-size:.72rem; font-weight:700; letter-spacing:.07em;
-    color:rgba(245,230,211,.4); text-transform:uppercase; margin-bottom:.4rem;
+    color:rgba(246,241,231,.4); text-transform:uppercase; margin-bottom:.4rem;
 }
 .studio-input {
-    width:100%; background:rgba(255,255,255,.04); border:1px solid rgba(201,166,107,.12);
-    color:#f5e6d3; border-radius:10px; padding:.65rem .9rem;
+    width:100%; background:rgba(255,255,255,.04); border:1px solid rgba(60,122,90,.12);
+    color:#f6f1e7; border-radius:10px; padding:.65rem .9rem;
     font-family:inherit; font-size:.88rem; outline:none;
     transition:all .2s; box-sizing:border-box;
 }
-.studio-input:focus { border-color:rgba(201,166,107,.4); background:rgba(201,166,107,.05); }
-.studio-input::placeholder { color:rgba(245,230,211,.2); }
-.studio-hint { font-size:.68rem; color:rgba(245,230,211,.28); margin-top:.3rem; }
+.studio-input:focus { border-color:rgba(60,122,90,.4); background:rgba(60,122,90,.05); }
+.studio-input::placeholder { color:rgba(246,241,231,.2); }
+.studio-hint { font-size:.68rem; color:rgba(246,241,231,.28); margin-top:.3rem; }
 
 /* Image upload */
 .studio-upload {
-    border:2px dashed rgba(201,166,107,.18); border-radius:12px;
+    border:2px dashed rgba(60,122,90,.18); border-radius:12px;
     padding:1.5rem 1rem; text-align:center; cursor:pointer;
     transition:all .25s; position:relative;
 }
 .studio-upload:hover, .studio-upload.active {
-    border-color:rgba(201,166,107,.4); background:rgba(201,166,107,.05);
+    border-color:rgba(60,122,90,.4); background:rgba(60,122,90,.05);
 }
 .studio-upload input[type="file"] {
     position:absolute; inset:0; opacity:0; cursor:pointer; z-index:2;
 }
 .studio-upload-icon { font-size:1.8rem; margin-bottom:.4rem; }
-.studio-upload-text { font-size:.78rem; color:rgba(245,230,211,.35); }
-.studio-upload-hint { font-size:.65rem; color:rgba(245,230,211,.2); margin-top:.25rem; }
+.studio-upload-text { font-size:.78rem; color:rgba(246,241,231,.35); }
+.studio-upload-hint { font-size:.65rem; color:rgba(246,241,231,.2); margin-top:.25rem; }
 #imagePreview {
     max-width:100%; max-height:160px; border-radius:8px;
     margin-top:.8rem; display:none; object-fit:cover;
@@ -138,20 +138,20 @@ body { background:#1a1008 !important; }
     display:grid; grid-template-columns:1fr 1fr; gap:.6rem; margin-top:1rem;
 }
 .studio-stat {
-    background:rgba(201,166,107,.05); border:1px solid rgba(201,166,107,.08);
+    background:rgba(60,122,90,.05); border:1px solid rgba(60,122,90,.08);
     border-radius:10px; padding:.65rem .8rem; text-align:center;
 }
 .studio-stat-val { font-size:1.1rem; font-weight:800; color:var(--gold-light); }
-.studio-stat-lbl { font-size:.6rem; color:rgba(245,230,211,.3); text-transform:uppercase; letter-spacing:.06em; margin-top:.1rem; }
+.studio-stat-lbl { font-size:.6rem; color:rgba(246,241,231,.3); text-transform:uppercase; letter-spacing:.06em; margin-top:.1rem; }
 
 /* Tips */
 .studio-tips-list { list-style:none; padding:0; margin:0; }
 .studio-tips-list li {
-    font-size:.76rem; color:rgba(245,230,211,.38); padding:.28rem 0 .28rem 1rem;
+    font-size:.76rem; color:rgba(246,241,231,.38); padding:.28rem 0 .28rem 1rem;
     position:relative;
 }
 .studio-tips-list li::before {
-    content:'✦'; position:absolute; left:0; color:rgba(201,166,107,.35); font-size:.55rem; top:.4rem;
+    content:'✦'; position:absolute; left:0; color:rgba(60,122,90,.35); font-size:.55rem; top:.4rem;
 }
 
 /* Progress bar while typing */
@@ -285,7 +285,7 @@ Vos mots peuvent changer la vie de quelqu'un."
                 <li>Divisez en courts paragraphes</li>
                 <li>Terminez par un message d'espoir</li>
                 <li>Soyez authentique avant tout</li>
-                <li><kbd style="background:rgba(201,166,107,.12);border:1px solid rgba(201,166,107,.2);border-radius:3px;padding:.1rem .3rem;font-size:.65rem;">Ctrl+↵</kbd> pour publier</li>
+                <li><kbd style="background:rgba(60,122,90,.12);border:1px solid rgba(60,122,90,.2);border-radius:3px;padding:.1rem .3rem;font-size:.65rem;">Ctrl+↵</kbd> pour publier</li>
             </ul>
         </div>
 

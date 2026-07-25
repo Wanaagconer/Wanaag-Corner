@@ -8,7 +8,7 @@
 <style>
     /* ===== HERO BANNER ===== */
     .dash-hero{
-        background:linear-gradient(135deg,#3A2C1E 0%,#2A1E12 55%,#1A1008 100%);
+        background:linear-gradient(135deg,#1c3a2a 0%,#122a1e 55%,#0f2417 100%);
         border-radius:28px;
         padding:2.8rem 3rem;
         margin-bottom:2.2rem;
@@ -20,13 +20,13 @@
     .dash-hero::before{
         content:'';position:absolute;
         top:-100px;right:-60px;width:350px;height:350px;
-        background:radial-gradient(circle,rgba(201,166,107,.22),transparent 65%);
+        background:radial-gradient(circle,rgba(60,122,90,.22),transparent 65%);
         pointer-events:none;
     }
     .dash-hero::after{
         content:'';position:absolute;
         bottom:-80px;left:20%;width:250px;height:250px;
-        background:radial-gradient(circle,rgba(139,111,71,.18),transparent 65%);
+        background:radial-gradient(circle,rgba(79,122,99,.18),transparent 65%);
         pointer-events:none;
     }
     /* Ligne décorative dorée */
@@ -47,10 +47,10 @@
         letter-spacing:-.02em;line-height:1.2;
     }
     .dash-hero-title span{color:var(--accent);}
-    .dash-hero-subtitle{font-size:.88rem;color:rgba(245,230,211,.6);line-height:1.7;max-width:400px;}
+    .dash-hero-subtitle{font-size:.88rem;color:rgba(246,241,231,.6);line-height:1.7;max-width:400px;}
     .dash-hero-badge{
-        background:rgba(201,166,107,.12);
-        border:1px solid rgba(201,166,107,.22);
+        background:rgba(60,122,90,.12);
+        border:1px solid rgba(60,122,90,.22);
         border-radius:50px;
         padding:.4rem 1rem;
         font-size:.72rem;font-weight:700;color:var(--accent-light);
@@ -70,7 +70,7 @@
         backdrop-filter:blur(12px);
         transition:all .25s;
     }
-    .dash-stat-pill:hover{background:rgba(201,166,107,.12);border-color:rgba(201,166,107,.25);}
+    .dash-stat-pill:hover{background:rgba(60,122,90,.12);border-color:rgba(60,122,90,.25);}
     .dash-stat-pill .num{
         font-family:'Playfair Display',serif;font-size:1.9rem;font-weight:800;
         color:var(--accent);line-height:1;
@@ -84,13 +84,13 @@
         padding:1.5rem 2rem;
         margin-bottom:2.2rem;
         border-left:4px solid var(--accent);
-        box-shadow:0 4px 20px rgba(74,60,47,.07);
+        box-shadow:0 4px 20px rgba(30,58,44,.07);
         display:flex;align-items:center;gap:1.2rem;
         position:relative;overflow:hidden;
     }
     .dash-quote::after{
         content:'"';position:absolute;right:1.5rem;top:-1rem;
-        font-size:6rem;color:rgba(201,166,107,.07);font-family:'Playfair Display',serif;
+        font-size:6rem;color:rgba(60,122,90,.07);font-family:'Playfair Display',serif;
         line-height:1;pointer-events:none;
     }
     .dash-quote-icon{font-size:1.6rem;flex-shrink:0;}
@@ -103,7 +103,7 @@
         margin-bottom:1.4rem;
         display:flex;align-items:center;gap:.65rem;
     }
-    .sec-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(74,60,47,.12),transparent);margin-left:.3rem;}
+    .sec-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(30,58,44,.12),transparent);margin-left:.3rem;}
 
     /* ===== MODULES GRID ===== */
     .modules-grid{
@@ -120,9 +120,9 @@
         transition:all .32s cubic-bezier(.4,0,.2,1);
         text-decoration:none;
         display:block;
-        box-shadow:0 4px 20px rgba(74,60,47,.1);
+        box-shadow:0 4px 20px rgba(30,58,44,.1);
     }
-    .module-card:hover{transform:translateY(-8px) scale(1.01);box-shadow:0 20px 50px rgba(74,60,47,.22);}
+    .module-card:hover{transform:translateY(-8px) scale(1.01);box-shadow:0 20px 50px rgba(30,58,44,.22);}
     .module-bg{
         height:185px;
         position:relative;overflow:hidden;
@@ -136,12 +136,12 @@
         content:'';position:absolute;inset:0;
         background:linear-gradient(180deg,rgba(0,0,0,.05) 0%,rgba(0,0,0,.45) 100%);
     }
-    .bg-posts{background:linear-gradient(135deg,#F5DEB3 0%,#D4A853 100%);}
-    .bg-forum{background:linear-gradient(135deg,#C4A882 0%,#7B5C3A 100%);}
-    .bg-ressources{background:linear-gradient(135deg,#E8D0A0 0%,#B8873A 100%);}
-    .bg-psy{background:linear-gradient(135deg,#D4C4A0 0%,#8B7050 100%);}
-    .bg-consult{background:linear-gradient(135deg,#C8B898 0%,#9A7A5A 100%);}
-    .bg-parcours{background:linear-gradient(135deg,#E0D0B0,#B09060);}
+    .bg-posts{background:linear-gradient(135deg,#E9E1CC 0%,#7FB69A 100%);}
+    .bg-forum{background:linear-gradient(135deg,#7FB69A 0%,#245840 100%);}
+    .bg-ressources{background:linear-gradient(135deg,#DCD0AE 0%,#3C7A5A 100%);}
+    .bg-psy{background:linear-gradient(135deg,#9FCBB2 0%,#1E3A2C 100%);}
+    .bg-consult{background:linear-gradient(135deg,#E9E1CC 0%,#245840 100%);}
+    .bg-parcours{background:linear-gradient(135deg,#C7C0A6,#365446);}
     .module-bg-label {
         position:absolute;bottom:.7rem;left:.9rem;z-index:2;
         color:white;font-size:.7rem;font-weight:700;
@@ -160,16 +160,16 @@
         display:inline-flex;align-items:center;gap:.35rem;
         font-size:.8rem;font-weight:700;color:var(--accent-dark);
         padding:.35rem .9rem;
-        background:rgba(201,166,107,.1);
+        background:rgba(60,122,90,.1);
         border-radius:50px;
         transition:background .2s;
     }
-    .module-card:hover .module-cta{background:rgba(201,166,107,.2);}
+    .module-card:hover .module-cta{background:rgba(60,122,90,.2);}
     .module-card.disabled{opacity:.7;cursor:default;}
-    .module-card.disabled:hover{transform:none;box-shadow:0 4px 20px rgba(74,60,47,.1);}
+    .module-card.disabled:hover{transform:none;box-shadow:0 4px 20px rgba(30,58,44,.1);}
     .badge-soon{
         position:absolute;top:.8rem;right:.8rem;z-index:2;
-        background:rgba(74,60,47,.8);color:rgba(255,255,255,.9);
+        background:rgba(30,58,44,.8);color:rgba(255,255,255,.9);
         font-size:.62rem;font-weight:700;padding:.28rem .65rem;border-radius:8px;
         backdrop-filter:blur(8px);letter-spacing:.05em;
     }
@@ -204,7 +204,7 @@
     .recent-posts{
         background:white;
         border-radius:18px;
-        box-shadow:0 2px 12px rgba(74,60,47,.06);
+        box-shadow:0 2px 12px rgba(30,58,44,.06);
         overflow:hidden;margin-bottom:2rem;
     }
     .recent-posts-header{
