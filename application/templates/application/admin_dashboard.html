@@ -10,9 +10,9 @@
 :root {
     --adm-bg: #e9e1cc;
     --adm-card: #ffffff;
-    --adm-border: rgba(139,105,70,.13);
+    --adm-border: rgba(46,125,50,.13);
     --adm-radius: 16px;
-    --adm-shadow: 0 4px 24px rgba(30,58,44,.10);
+    --adm-shadow: 0 4px 24px rgba(23,79,25,.10);
     --green: #27ae60; --red: #e74c3c; --blue: #2980b9; --orange: #e67e22;
     --green-bg: rgba(39,174,96,.1); --red-bg: rgba(231,76,60,.08);
     --blue-bg: rgba(41,128,185,.08); --orange-bg: rgba(230,126,34,.1);
@@ -35,7 +35,7 @@
     transition: all .18s; display: flex; align-items: center; gap: .4rem;
 }
 .adm-tab:hover { background: var(--beige-light); color: var(--brown-dark); }
-.adm-tab.active { background: linear-gradient(135deg, var(--accent), var(--accent-dark)); color: white; box-shadow: 0 4px 14px rgba(60,122,90,.4); }
+.adm-tab.active { background: linear-gradient(135deg, var(--accent), var(--accent-dark)); color: white; box-shadow: 0 4px 14px rgba(76,175,80,.4); }
 .adm-tab .tab-badge { background: rgba(255,255,255,.3); border-radius: 20px; padding: .1rem .45rem; font-size: .72rem; }
 .adm-tab.active .tab-badge { background: rgba(255,255,255,.25); }
 
@@ -89,7 +89,7 @@
     padding: .75rem 1rem; text-align: left; font-size: .75rem; text-transform: uppercase;
     letter-spacing: .4px; border-bottom: 1px solid var(--adm-border);
 }
-.adm-table tbody tr { border-bottom: 1px solid rgba(139,105,70,.07); transition: background .15s; }
+.adm-table tbody tr { border-bottom: 1px solid rgba(46,125,50,.07); transition: background .15s; }
 .adm-table tbody tr:last-child { border-bottom: none; }
 .adm-table tbody tr:hover { background: var(--beige-light); }
 .adm-table td { padding: .75rem 1rem; color: var(--brown-dark); vertical-align: middle; }
@@ -102,7 +102,7 @@
     align-items: center; gap: .3rem; text-decoration: none;
 }
 .btn-adm-primary { background: linear-gradient(135deg, var(--accent), var(--accent-dark)); color: white; }
-.btn-adm-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(60,122,90,.4); }
+.btn-adm-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(76,175,80,.4); }
 .btn-adm-green { background: var(--green-bg); color: var(--green); border: 1px solid rgba(39,174,96,.2); }
 .btn-adm-green:hover { background: var(--green); color: white; }
 .btn-adm-red { background: var(--red-bg); color: var(--red); border: 1px solid rgba(231,76,60,.2); }
@@ -183,7 +183,7 @@
 .adm-form-row select:focus,
 .adm-form-row textarea:focus {
     outline: none; border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(60,122,90,.15);
+    box-shadow: 0 0 0 3px rgba(76,175,80,.15);
 }
 .adm-form-row textarea { resize: vertical; min-height: 80px; }
 .adm-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
@@ -434,15 +434,15 @@
             <tr id="res-row-{{ r.id }}">
               <td><strong>{{ r.titre|truncatechars:40 }}</strong></td>
               <td>
-                <span style="display:inline-flex;align-items:center;gap:.5rem;padding:.3rem .8rem .3rem .3rem;border-radius:20px;background:rgba(245,240,235,.8);border:1px solid rgba(60,122,90,.2);font-size:.82rem;font-weight:600;color:var(--brown);">
-                  {% with img=r.type_ressource|type_img %}{% if img %}<img src="{% static 'images/' %}{{ img }}" alt="" style="width:38px;height:38px;border-radius:10px;object-fit:cover;border:1.5px solid rgba(60,122,90,.3);">{% endif %}{% endwith %}
+                <span style="display:inline-flex;align-items:center;gap:.5rem;padding:.3rem .8rem .3rem .3rem;border-radius:20px;background:rgba(246,241,231,.8);border:1px solid rgba(76,175,80,.2);font-size:.82rem;font-weight:600;color:var(--brown);">
+                  {% with img=r.type_ressource|type_img %}{% if img %}<img src="{% static 'images/' %}{{ img }}" alt="" style="width:38px;height:38px;border-radius:10px;object-fit:cover;border:1.5px solid rgba(76,175,80,.3);">{% endif %}{% endwith %}
                   {{ r.get_type_ressource_display }}
                 </span>
               </td>
               <td class="muted">{{ r.categorie|default:"—" }}</td>
               <td>
                 {% if r.acces == 'premium' %}
-                  <span style="display:inline-flex;align-items:center;gap:.35rem;padding:.25rem .7rem;border-radius:20px;background:linear-gradient(135deg,#3c7a5a,#245840);color:white;font-size:.78rem;font-weight:700;">
+                  <span style="display:inline-flex;align-items:center;gap:.35rem;padding:.25rem .7rem;border-radius:20px;background:linear-gradient(135deg,#4caf50,#2e7d32);color:white;font-size:.78rem;font-weight:700;">
                     <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                     Premium
                   </span>
@@ -781,9 +781,9 @@
                 <small style="color:var(--brown-light);margin-top:.3rem;display:block;">Formats acceptés : MP4, MOV, AVI, MKV</small>
               </div>
               <div class="adm-form-row full" style="display:flex;align-items:center;gap:1rem;">
-                <div style="flex:1;height:1px;background:rgba(60,122,90,.2);"></div>
+                <div style="flex:1;height:1px;background:rgba(76,175,80,.2);"></div>
                 <span style="font-size:.8rem;color:var(--brown-light);font-weight:600;white-space:nowrap;">OU lien YouTube / Vimeo</span>
-                <div style="flex:1;height:1px;background:rgba(60,122,90,.2);"></div>
+                <div style="flex:1;height:1px;background:rgba(76,175,80,.2);"></div>
               </div>
               <div class="adm-form-row full">
                 <label>🔗 Lien YouTube / Vimeo</label>

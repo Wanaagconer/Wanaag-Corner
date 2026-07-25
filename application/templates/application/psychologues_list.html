@@ -8,21 +8,21 @@
 <style>
 /* ===== HERO ===== */
 .psy-hero {
-    background: linear-gradient(135deg, var(--brown-dark) 0%, #152c1e 60%, #0e2418 100%);
+    background: linear-gradient(135deg, var(--brown-dark) 0%, #0f3310 60%, #0a240b 100%);
     border-radius: 22px; padding: 2.4rem 2.5rem; margin-bottom: 2rem;
     position: relative; overflow: hidden;
     box-shadow: 0 10px 40px rgba(0,0,0,.3);
 }
 .psy-hero::before {
     content: ''; position: absolute; inset: 0;
-    background: radial-gradient(ellipse at 15% 50%, rgba(60,122,90,.18) 0%, transparent 60%),
-                radial-gradient(ellipse at 85% 20%, rgba(60,122,90,.10) 0%, transparent 55%);
+    background: radial-gradient(ellipse at 15% 50%, rgba(76,175,80,.18) 0%, transparent 60%),
+                radial-gradient(ellipse at 85% 20%, rgba(76,175,80,.10) 0%, transparent 55%);
     pointer-events: none;
 }
 .psy-hero-inner { position: relative; z-index: 1; display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap; }
 .psy-hero-img {
     width: 72px; height: 72px; border-radius: 18px; overflow: hidden; flex-shrink: 0;
-    box-shadow: 0 0 0 2px rgba(60,122,90,.4), 0 8px 24px rgba(0,0,0,.4);
+    box-shadow: 0 0 0 2px rgba(76,175,80,.4), 0 8px 24px rgba(0,0,0,.4);
 }
 .psy-hero-img img { width: 100%; height: 100%; object-fit: cover; }
 .psy-hero-text h1 {
@@ -31,7 +31,7 @@
 }
 .psy-hero-text p { font-size: .92rem; color: rgba(246,241,231,.65); margin: 0; }
 .psy-hero-count {
-    margin-left: auto; background: rgba(60,122,90,.15); border: 1px solid rgba(60,122,90,.3);
+    margin-left: auto; background: rgba(76,175,80,.15); border: 1px solid rgba(76,175,80,.3);
     border-radius: 50px; padding: .5rem 1.2rem; color: rgba(246,241,231,.8);
     font-size: .82rem; font-weight: 700; white-space: nowrap;
 }
@@ -46,23 +46,23 @@
 /* ===== CARD ===== */
 .psy-card {
     background: white; border-radius: 22px; overflow: hidden;
-    box-shadow: 0 4px 24px rgba(30,58,44,.10);
-    border: 1px solid rgba(60,122,90,.12);
+    box-shadow: 0 4px 24px rgba(23,79,25,.10);
+    border: 1px solid rgba(76,175,80,.12);
     transition: box-shadow .25s, transform .25s;
     position: relative;
     animation: cardIn .35s ease both;
 }
-.psy-card:hover { transform: translateY(-5px); box-shadow: 0 14px 44px rgba(30,58,44,.18); }
+.psy-card:hover { transform: translateY(-5px); box-shadow: 0 14px 44px rgba(23,79,25,.18); }
 @keyframes cardIn { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
 
 /* Card top banner */
 .psy-card-banner {
     height: 90px; position: relative; overflow: hidden;
-    background: linear-gradient(135deg, var(--brown-dark), #152c1e);
+    background: linear-gradient(135deg, var(--brown-dark), #0f3310);
 }
 .psy-card-banner::after {
     content: ''; position: absolute; inset: 0;
-    background: radial-gradient(ellipse at 30% 60%, rgba(60,122,90,.25) 0%, transparent 65%);
+    background: radial-gradient(ellipse at 30% 60%, rgba(76,175,80,.25) 0%, transparent 65%);
 }
 
 /* Avatar ring */
@@ -72,13 +72,13 @@
 }
 .psy-av-ring {
     position: absolute; inset: -3px; border-radius: 50%;
-    background: conic-gradient(#3c7a5a 0%, #9fcbb2 45%, transparent 55%, #3c7a5a 100%);
+    background: conic-gradient(#4caf50 0%, #75d779 45%, transparent 55%, #4caf50 100%);
     animation: spinRing 6s linear infinite;
 }
 @keyframes spinRing { to { transform: rotate(360deg); } }
 .psy-av {
     width: 76px; height: 76px; border-radius: 50%; overflow: hidden; position: relative; z-index: 1;
-    background: linear-gradient(135deg, #3c7a5a, var(--brown-dark));
+    background: linear-gradient(135deg, #4caf50, var(--brown-dark));
     border: 3px solid white;
     display: flex; align-items: center; justify-content: center;
     box-shadow: 0 4px 20px rgba(0,0,0,.2);
@@ -94,16 +94,16 @@
 }
 .psy-role {
     display: inline-block; font-size: .72rem; font-weight: 700; padding: .18rem .65rem;
-    border-radius: 20px; background: linear-gradient(135deg, rgba(60,122,90,.15), rgba(139,94,40,.1));
-    color: #245840; border: 1px solid rgba(60,122,90,.3); margin-bottom: 1rem;
+    border-radius: 20px; background: linear-gradient(135deg, rgba(76,175,80,.15), rgba(46,125,50,.1));
+    color: #2e7d32; border: 1px solid rgba(76,175,80,.3); margin-bottom: 1rem;
     letter-spacing: .3px;
 }
 
 /* Specialties tags */
 .psy-tags { display: flex; flex-wrap: wrap; gap: .4rem; justify-content: center; margin-bottom: 1rem; }
 .psy-tag {
-    background: rgba(245,240,235,.9); color: var(--brown); font-size: .73rem; font-weight: 600;
-    padding: .22rem .65rem; border-radius: 20px; border: 1px solid rgba(139,105,70,.15);
+    background: rgba(246,241,231,.9); color: var(--brown); font-size: .73rem; font-weight: 600;
+    padding: .22rem .65rem; border-radius: 20px; border: 1px solid rgba(46,125,50,.15);
 }
 
 /* Experience */
@@ -113,35 +113,35 @@
 }
 .psy-exp-dot {
     width: 6px; height: 6px; border-radius: 50%;
-    background: linear-gradient(135deg, #3c7a5a, #245840);
+    background: linear-gradient(135deg, #4caf50, #2e7d32);
 }
 .psy-exp strong { color: var(--brown-dark); font-size: .95rem; }
 
 /* Bio */
 .psy-bio {
-    font-size: .84rem; color: #9fafa0; line-height: 1.6; margin-bottom: 1.3rem;
+    font-size: .84rem; color: #95ac96; line-height: 1.6; margin-bottom: 1.3rem;
     display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
 }
 
 /* CTA */
 .psy-cta {
     display: block; width: 100%; padding: .75rem;
-    background: linear-gradient(135deg, #3c7a5a, #245840);
+    background: linear-gradient(135deg, #4caf50, #2e7d32);
     color: white; border: none; border-radius: 12px; font-weight: 700;
     font-size: .88rem; cursor: pointer; text-decoration: none; text-align: center;
-    transition: all .2s; box-shadow: 0 4px 14px rgba(60,122,90,.35);
+    transition: all .2s; box-shadow: 0 4px 14px rgba(76,175,80,.35);
     letter-spacing: .3px;
 }
-.psy-cta:hover { transform: translateY(-2px); box-shadow: 0 7px 22px rgba(60,122,90,.5); }
+.psy-cta:hover { transform: translateY(-2px); box-shadow: 0 7px 22px rgba(76,175,80,.5); }
 
 /* Empty */
 .psy-empty {
     text-align: center; padding: 4rem 2rem; background: white;
-    border-radius: 22px; box-shadow: 0 4px 24px rgba(30,58,44,.08);
-    border: 1px solid rgba(60,122,90,.12);
+    border-radius: 22px; box-shadow: 0 4px 24px rgba(23,79,25,.08);
+    border: 1px solid rgba(76,175,80,.12);
     grid-column: 1 / -1;
 }
-.psy-empty p { color: #9fafa0; font-size: .95rem; }
+.psy-empty p { color: #95ac96; font-size: .95rem; }
 
 @media(max-width:900px) {
     .psy-grid { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }

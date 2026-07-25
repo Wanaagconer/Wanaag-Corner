@@ -10,21 +10,21 @@
 
 /* ===== HERO ===== */
 .ab-hero {
-    background: linear-gradient(135deg, var(--brown-dark) 0%, #152c1e 55%, #0e2418 100%);
+    background: linear-gradient(135deg, var(--brown-dark) 0%, #0f3310 55%, #0a240b 100%);
     border-radius: 22px; padding: 3rem 2.5rem;
     position: relative; overflow: hidden;
     box-shadow: 0 10px 40px rgba(0,0,0,.3);
 }
 .ab-hero::before {
     content: ''; position: absolute; inset: 0;
-    background: radial-gradient(ellipse at 15% 50%, rgba(60,122,90,.18) 0%, transparent 60%),
-                radial-gradient(ellipse at 85% 20%, rgba(60,122,90,.10) 0%, transparent 55%);
+    background: radial-gradient(ellipse at 15% 50%, rgba(76,175,80,.18) 0%, transparent 60%),
+                radial-gradient(ellipse at 85% 20%, rgba(76,175,80,.10) 0%, transparent 55%);
     pointer-events: none;
 }
 .ab-hero-inner { position: relative; z-index: 1; display: flex; align-items: center; gap: 2rem; flex-wrap: wrap; }
 .ab-hero-logo {
     width: 80px; height: 80px; border-radius: 20px; overflow: hidden; flex-shrink: 0;
-    box-shadow: 0 0 0 2px rgba(60,122,90,.4), 0 8px 24px rgba(0,0,0,.4);
+    box-shadow: 0 0 0 2px rgba(76,175,80,.4), 0 8px 24px rgba(0,0,0,.4);
 }
 .ab-hero-logo img { width: 100%; height: 100%; object-fit: cover; }
 .ab-hero-text h1 {
@@ -34,7 +34,7 @@
 .ab-hero-text p { font-size: .9rem; color: rgba(246,241,231,.6); margin: 0; max-width: 520px; line-height: 1.6; }
 .ab-hero-badge {
     margin-left: auto; flex-shrink: 0;
-    background: rgba(60,122,90,.15); border: 1px solid rgba(60,122,90,.3);
+    background: rgba(76,175,80,.15); border: 1px solid rgba(76,175,80,.3);
     border-radius: 50px; padding: .5rem 1.2rem;
     color: rgba(246,241,231,.8); font-size: .8rem; font-weight: 700; white-space: nowrap;
 }
@@ -48,11 +48,11 @@
 /* ===== CARD BASE ===== */
 .ab-card {
     background: white; border-radius: 22px; overflow: hidden;
-    box-shadow: 0 4px 24px rgba(30,58,44,.09);
-    border: 1px solid rgba(60,122,90,.12);
+    box-shadow: 0 4px 24px rgba(23,79,25,.09);
+    border: 1px solid rgba(76,175,80,.12);
     transition: box-shadow .3s, transform .3s;
 }
-.ab-card:hover { transform: translateY(-5px); box-shadow: 0 16px 44px rgba(30,58,44,.16); }
+.ab-card:hover { transform: translateY(-5px); box-shadow: 0 16px 44px rgba(23,79,25,.16); }
 
 /* Big icon header cards */
 .ab-card-top {
@@ -66,13 +66,13 @@
 }
 .ab-big-icon::before {
     content: ''; position: absolute; inset: 0; border-radius: 18px;
-    background: linear-gradient(135deg, rgba(60,122,90,.22) 0%, rgba(139,94,40,.14) 100%);
-    border: 1.5px solid rgba(60,122,90,.35);
+    background: linear-gradient(135deg, rgba(76,175,80,.22) 0%, rgba(46,125,50,.14) 100%);
+    border: 1.5px solid rgba(76,175,80,.35);
 }
 .ab-big-icon svg { width: 28px; height: 28px; position: relative; z-index: 1; }
 .ab-big-icon-glow {
     position: absolute; inset: -4px; border-radius: 22px;
-    background: radial-gradient(ellipse at center, rgba(60,122,90,.18) 0%, transparent 70%);
+    background: radial-gradient(ellipse at center, rgba(76,175,80,.18) 0%, transparent 70%);
     animation: iconPulse 3s ease-in-out infinite;
 }
 @keyframes iconPulse { 0%,100%{opacity:.5} 50%{opacity:1} }
@@ -80,46 +80,46 @@
 .ab-card-title-wrap { display: flex; flex-direction: column; gap: .2rem; }
 .ab-card-label {
     font-size: .68rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
-    color: #3c7a5a;
+    color: #4caf50;
 }
 .ab-card-title { font-size: 1.25rem; font-weight: 800; color: var(--brown-dark); margin: 0; font-family: 'Playfair Display', serif; }
 
 /* Divider */
 .ab-card-divider {
     height: 1px; margin: 1.2rem 2rem 0;
-    background: linear-gradient(90deg, rgba(60,122,90,.3) 0%, rgba(60,122,90,.06) 100%);
+    background: linear-gradient(90deg, rgba(76,175,80,.3) 0%, rgba(76,175,80,.06) 100%);
 }
 .ab-card-body { padding: 1.4rem 2rem 2rem; }
-.ab-card-body p { font-size: .88rem; color: #4f7a63; line-height: 1.8; margin-bottom: .9rem; }
+.ab-card-body p { font-size: .88rem; color: #257e28; line-height: 1.8; margin-bottom: .9rem; }
 .ab-card-body p:last-child { margin-bottom: 0; }
 
 /* Highlight quote in Histoire */
 .ab-quote {
-    border-left: 3px solid #3c7a5a;
+    border-left: 3px solid #4caf50;
     padding: .7rem 1rem; margin: 1rem 0;
-    background: rgba(60,122,90,.06); border-radius: 0 10px 10px 0;
-    font-size: .86rem; color: #245840; font-style: italic; line-height: 1.7;
+    background: rgba(76,175,80,.06); border-radius: 0 10px 10px 0;
+    font-size: .86rem; color: #2e7d32; font-style: italic; line-height: 1.7;
 }
 
 /* Mission list */
 .ab-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: .85rem; }
 .ab-list li {
     display: flex; align-items: flex-start; gap: .85rem;
-    font-size: .88rem; color: #4f7a63; line-height: 1.6;
+    font-size: .88rem; color: #257e28; line-height: 1.6;
 }
 .ab-list-num {
     width: 26px; height: 26px; border-radius: 8px; flex-shrink: 0; margin-top: .5px;
-    background: linear-gradient(135deg, #3c7a5a, #245840);
+    background: linear-gradient(135deg, #4caf50, #2e7d32);
     display: flex; align-items: center; justify-content: center;
     font-size: .7rem; font-weight: 800; color: white;
-    box-shadow: 0 3px 10px rgba(60,122,90,.35);
+    box-shadow: 0 3px 10px rgba(76,175,80,.35);
 }
 
 /* Old dot — keep for values section */
 .ab-list-dot {
     width: 22px; height: 22px; border-radius: 8px; flex-shrink: 0; margin-top: 1px;
-    background: linear-gradient(135deg, rgba(60,122,90,.2), rgba(139,94,40,.12));
-    border: 1px solid rgba(60,122,90,.3);
+    background: linear-gradient(135deg, rgba(76,175,80,.2), rgba(46,125,50,.12));
+    border: 1px solid rgba(76,175,80,.3);
     display: flex; align-items: center; justify-content: center;
 }
 .ab-list-dot svg { width: 11px; height: 11px; }
@@ -127,13 +127,13 @@
 /* Card header (old style — used for Valeurs) */
 .ab-card-header {
     padding: 1.4rem 1.8rem 1.1rem;
-    border-bottom: 1px solid rgba(60,122,90,.1);
+    border-bottom: 1px solid rgba(76,175,80,.1);
     display: flex; align-items: center; gap: .8rem;
 }
 .ab-card-icon {
     width: 38px; height: 38px; border-radius: 12px; flex-shrink: 0;
-    background: linear-gradient(135deg, rgba(60,122,90,.15), rgba(139,94,40,.1));
-    border: 1px solid rgba(60,122,90,.25);
+    background: linear-gradient(135deg, rgba(76,175,80,.15), rgba(46,125,50,.1));
+    border: 1px solid rgba(76,175,80,.25);
     display: flex; align-items: center; justify-content: center;
 }
 .ab-card-icon svg { width: 18px; height: 18px; }
@@ -155,7 +155,7 @@
 }
 .ab-card-label-over {
     font-size: .65rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
-    color: #3c7a5a; margin-bottom: .2rem;
+    color: #4caf50; margin-bottom: .2rem;
 }
 .ab-card-title-over {
     font-size: 1.3rem; font-weight: 800; color: white;
@@ -172,21 +172,21 @@
 
 .ab-val-card {
     background: white; border-radius: 18px; overflow: hidden;
-    box-shadow: 0 4px 18px rgba(30,58,44,.08);
-    border: 1px solid rgba(60,122,90,.12);
+    box-shadow: 0 4px 18px rgba(23,79,25,.08);
+    border: 1px solid rgba(76,175,80,.12);
     transition: transform .25s, box-shadow .25s;
 }
-.ab-val-card:hover { transform: translateY(-5px); box-shadow: 0 12px 32px rgba(30,58,44,.15); }
+.ab-val-card:hover { transform: translateY(-5px); box-shadow: 0 12px 32px rgba(23,79,25,.15); }
 .ab-val-img { width: 100%; height: 120px; object-fit: cover; display: block; }
 .ab-val-body { padding: 1rem 1.2rem 1.2rem; }
 .ab-val-body h3 { font-size: .92rem; font-weight: 800; color: var(--brown-dark); margin: 0 0 .3rem; font-family: 'Playfair Display', serif; }
-.ab-val-body p { font-size: .78rem; color: #9fafa0; line-height: 1.55; margin: 0; }
+.ab-val-body p { font-size: .78rem; color: #95ac96; line-height: 1.55; margin: 0; }
 
 /* ===== FOUNDER ===== */
 .ab-founder {
     background: white; border-radius: 22px; overflow: hidden;
-    box-shadow: 0 4px 24px rgba(30,58,44,.09);
-    border: 1px solid rgba(60,122,90,.12);
+    box-shadow: 0 4px 24px rgba(23,79,25,.09);
+    border: 1px solid rgba(76,175,80,.12);
 }
 .ab-founder-inner { display: grid; grid-template-columns: 340px 1fr; gap: 0; min-height: 420px; }
 @media(max-width:800px){ .ab-founder-inner { grid-template-columns: 1fr; } }
@@ -211,8 +211,8 @@
 .ab-founder-role {
     display: inline-block; font-size: .72rem; font-weight: 700;
     padding: .22rem .75rem; border-radius: 20px;
-    background: rgba(60,122,90,.25); border: 1px solid rgba(60,122,90,.5);
-    color: #9fcbb2; letter-spacing: .4px; backdrop-filter: blur(6px);
+    background: rgba(76,175,80,.25); border: 1px solid rgba(76,175,80,.5);
+    color: #75d779; letter-spacing: .4px; backdrop-filter: blur(6px);
 }
 @keyframes spinRing { to { transform: rotate(360deg); } }
 
@@ -229,18 +229,18 @@
 .ab-founder-right::before {
     content: ''; position: absolute; top: -40px; right: -40px;
     width: 220px; height: 220px; border-radius: 50%;
-    background: radial-gradient(ellipse, rgba(60,122,90,.12) 0%, transparent 70%);
+    background: radial-gradient(ellipse, rgba(76,175,80,.12) 0%, transparent 70%);
     pointer-events: none;
 }
 .ab-founder-right::after {
     content: '"'; position: absolute; top: 1rem; right: 2rem;
     font-size: 8rem; font-family: 'Playfair Display', serif;
-    color: rgba(60,122,90,.12); line-height: 1; pointer-events: none;
+    color: rgba(76,175,80,.12); line-height: 1; pointer-events: none;
     font-weight: 900;
 }
 .ab-founder-right-label {
     font-size: .68rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
-    color: #3c7a5a; margin-bottom: .4rem;
+    color: #4caf50; margin-bottom: .4rem;
 }
 .ab-founder-right h3 {
     font-size: 1.4rem; font-weight: 800; color: var(--brown-dark);
@@ -249,17 +249,17 @@
 }
 .ab-founder-right h3::after {
     content: ''; display: block; width: 42px; height: 3px; border-radius: 2px;
-    background: linear-gradient(90deg, #3c7a5a, #9fcbb2); margin-top: .5rem;
+    background: linear-gradient(90deg, #4caf50, #75d779); margin-top: .5rem;
 }
 .ab-founder-right p {
-    font-size: .92rem; color: #365446; line-height: 1.85;
+    font-size: .92rem; color: #1d631f; line-height: 1.85;
     margin-bottom: 1rem; position: relative; z-index: 1;
 }
 .ab-founder-right p:last-child { margin-bottom: 0; }
 
 /* ===== CONTACT ===== */
 .ab-contact {
-    background: linear-gradient(135deg, var(--brown-dark) 0%, #152c1e 55%, #0e2418 100%);
+    background: linear-gradient(135deg, var(--brown-dark) 0%, #0f3310 55%, #0a240b 100%);
     border-radius: 22px; padding: 2.8rem 2.5rem;
     position: relative; overflow: hidden;
     box-shadow: 0 10px 40px rgba(0,0,0,.3);
@@ -267,7 +267,7 @@
 }
 .ab-contact::before {
     content: ''; position: absolute; inset: 0;
-    background: radial-gradient(ellipse at 50% 0%, rgba(60,122,90,.18) 0%, transparent 60%);
+    background: radial-gradient(ellipse at 50% 0%, rgba(76,175,80,.18) 0%, transparent 60%);
     pointer-events: none;
 }
 .ab-contact-inner { position: relative; z-index: 1; }
@@ -279,23 +279,23 @@
 
 .ab-contact-email {
     display: inline-flex; align-items: center; gap: .5rem;
-    background: rgba(60,122,90,.12); border: 1px solid rgba(60,122,90,.3);
+    background: rgba(76,175,80,.12); border: 1px solid rgba(76,175,80,.3);
     border-radius: 12px; padding: .55rem 1.1rem; margin-bottom: 1.8rem;
-    color: #3c7a5a; font-size: .82rem; font-weight: 700; text-decoration: none;
+    color: #4caf50; font-size: .82rem; font-weight: 700; text-decoration: none;
     transition: background .2s;
 }
-.ab-contact-email:hover { background: rgba(60,122,90,.22); }
+.ab-contact-email:hover { background: rgba(76,175,80,.22); }
 .ab-contact-email svg { width: 15px; height: 15px; }
 
 .ab-contact-btn {
     display: inline-flex; align-items: center; gap: .6rem;
-    background: linear-gradient(135deg, #3c7a5a, #245840);
+    background: linear-gradient(135deg, #4caf50, #2e7d32);
     color: white; padding: .9rem 2.2rem; border-radius: 50px;
     font-weight: 700; font-size: .92rem; text-decoration: none; letter-spacing: .3px;
-    box-shadow: 0 4px 18px rgba(60,122,90,.4);
+    box-shadow: 0 4px 18px rgba(76,175,80,.4);
     transition: all .2s;
 }
-.ab-contact-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(60,122,90,.55); }
+.ab-contact-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(76,175,80,.55); }
 .ab-contact-btn svg { width: 17px; height: 17px; }
 
 /* Social links */
@@ -308,7 +308,7 @@
     color: rgba(246,241,231,.8);
     transition: all .2s;
 }
-.ab-social-link:hover { border-color: rgba(60,122,90,.5); color: #3c7a5a; background: rgba(60,122,90,.08); }
+.ab-social-link:hover { border-color: rgba(76,175,80,.5); color: #4caf50; background: rgba(76,175,80,.08); }
 .ab-social-link svg { width: 18px; height: 18px; flex-shrink: 0; }
 .ab-social-divider { color: rgba(246,241,231,.2); font-size: 1.2rem; }
 
@@ -400,7 +400,7 @@
                 </div>
             </div>
             <div class="ab-card-body">
-                <p style="font-weight:600;color:#1e3a2c;">Wanaag Corner, c'est bien plus qu'une plateforme — c'est un mouvement.</p>
+                <p style="font-weight:600;color:#174f19;">Wanaag Corner, c'est bien plus qu'une plateforme — c'est un mouvement.</p>
                 <ul class="ab-list">
                     <li><span class="ab-list-num">01</span>Briser les tabous et libérer la parole autour de la santé mentale</li>
                     <li><span class="ab-list-num">02</span>Offrir des ressources fiables adaptées à notre culture</li>
@@ -416,7 +416,7 @@
     <div class="ab-card">
         <div class="ab-card-header">
             <div class="ab-card-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="#3c7a5a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#4caf50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
                 </svg>
             </div>
