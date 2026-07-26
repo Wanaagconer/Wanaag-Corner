@@ -1,277 +1,92 @@
 {% extends 'application/base.html' %}
 {% load static %}
 
-{% block title %}Wanaag Corner — Votre santé mentale compte{% endblock %}
+{% block title %}Wanaag Corner — Votre santé mentale mérite une place{% endblock %}
 
 {% block extra_css %}
 <style>
-    /* ===== HERO ===== */
-    .hero{
-        min-height:92vh;
-        display:flex;align-items:center;
-        position:relative;overflow:hidden;
-        background:linear-gradient(135deg,#113b13 0%,#154917 40%,#2e7d32 100%);
-    }
-    .hero-blobs{position:absolute;inset:0;pointer-events:none;overflow:hidden;}
-    .blob{
-        position:absolute;border-radius:50%;filter:blur(80px);opacity:.55;
-        animation:blobFloat 12s ease-in-out infinite;
-    }
-    .blob-1{width:500px;height:500px;background:radial-gradient(circle,rgba(76,175,80,.35),transparent);top:-100px;right:-80px;animation-delay:0s;}
-    .blob-2{width:380px;height:380px;background:radial-gradient(circle,rgba(79,122,99,.3),transparent);bottom:-60px;left:-60px;animation-delay:-4s;}
-    .blob-3{width:280px;height:280px;background:radial-gradient(circle,rgba(226,201,154,.2),transparent);top:40%;left:35%;animation-delay:-8s;}
-    @keyframes blobFloat{
-        0%,100%{transform:translate(0,0) scale(1);}
-        33%{transform:translate(20px,-30px) scale(1.05);}
-        66%{transform:translate(-15px,20px) scale(.95);}
-    }
+    .home-wrap{max-width:1180px;margin:0 auto;padding:0 28px;}
 
-    .hero-inner{
-        position:relative;z-index:1;
-        max-width:1200px;margin:0 auto;
-        padding:6rem 6% 5rem;
-        display:grid;grid-template-columns:1fr 1fr;
-        align-items:center;gap:5rem;
+    /* ---------- Hero ---------- */
+    .hero{padding:76px 0 64px;}
+    .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:64px;align-items:center;}
+    .eyebrow{
+        display:inline-flex;align-items:center;gap:9px;
+        font-size:13px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;
+        color:var(--foret);margin-bottom:26px;
     }
-    .hero-text{}
-    .hero-eyebrow{
-        display:inline-flex;align-items:center;gap:.5rem;
-        background:rgba(76,175,80,.15);
-        border:1px solid rgba(76,175,80,.3);
-        color:var(--accent-light);
-        font-size:.78rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
-        padding:.4rem .9rem;border-radius:50px;margin-bottom:1.5rem;
+    .eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--sauge);}
+    .hero h1{
+        font-family:'Fraunces',serif;font-weight:400;font-size:clamp(44px,6vw,72px);
+        line-height:1.04;letter-spacing:-.01em;margin-bottom:26px;
     }
-    .hero-title{
-        font-family:'Playfair Display',serif;
-        font-size:clamp(2.6rem,5vw,4rem);
-        font-weight:800;
-        color:white;
-        line-height:1.15;
-        margin-bottom:1.2rem;
+    .hero h1 em{font-style:italic;color:var(--or);}
+    .lede{font-size:19px;color:var(--taupe);max-width:30em;margin-bottom:34px;}
+    .hero-cta{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:30px;}
+    .ground{
+        font-family:'Fraunces',serif;font-style:italic;font-size:17px;color:var(--taupe);
+        padding-left:16px;border-left:2px solid var(--sauge);
     }
-    .hero-title span{color:var(--accent);}
-    .hero-subtitle{
-        font-size:1.05rem;line-height:1.8;
-        color:rgba(246,241,231,.75);
-        max-width:480px;margin-bottom:2.5rem;
-    }
-    .hero-actions{display:flex;gap:1rem;flex-wrap:wrap;}
-    .btn-hero-primary{
-        padding:.9rem 2.2rem;border-radius:50px;font-weight:700;font-size:.95rem;
-        background:linear-gradient(135deg,var(--accent),var(--accent-dark));
-        color:white;text-decoration:none;
-        box-shadow:0 6px 24px rgba(76,175,80,.4);
-        transition:all .25s;display:inline-flex;align-items:center;gap:.5rem;
-    }
-    .btn-hero-primary:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(76,175,80,.55);}
-    .btn-hero-secondary{
-        padding:.9rem 2.2rem;border-radius:50px;font-weight:600;font-size:.95rem;
-        background:rgba(255,255,255,.1);color:rgba(255,255,255,.9);
-        border:1px solid rgba(255,255,255,.2);text-decoration:none;
-        backdrop-filter:blur(10px);
-        transition:all .25s;display:inline-flex;align-items:center;gap:.5rem;
-    }
-    .btn-hero-secondary:hover{background:rgba(255,255,255,.18);}
+    .ground b{font-style:normal;font-weight:500;color:var(--foret);}
 
-    /* Hero stats inline */
-    .hero-stats{
-        display:flex;gap:2rem;margin-top:2.5rem;
-        padding-top:2rem;border-top:1px solid rgba(255,255,255,.1);
+    /* Visuel du hero + halo qui respire */
+    .hero-media{position:relative;display:grid;place-items:center;}
+    .hero-media .halo{width:112%;aspect-ratio:1;left:50%;top:45%;transform:translate(-50%,-50%);z-index:0;}
+    .hero-ph{
+        position:relative;z-index:1;width:100%;aspect-ratio:4/5;border-radius:20px;overflow:hidden;
+        border:1px solid var(--trait);
+        box-shadow:0 24px 60px -34px rgba(42,33,27,.5);
     }
-    .hstat{}
-    .hstat-num{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;color:var(--accent);}
-    .hstat-label{font-size:.78rem;color:rgba(255,255,255,.45);margin-top:.1rem;}
+    .hero-ph img{width:100%;height:100%;object-fit:cover;display:block;}
 
-    /* Hero visual side */
-    .hero-visual{display:flex;flex-direction:column;gap:1rem;position:relative;}
-    .hero-card{
-        background:rgba(255,255,255,.07);
-        border:1px solid rgba(76,175,80,.15);
-        border-radius:18px;
-        overflow:hidden;
-        backdrop-filter:blur(12px);
-        transition:transform .3s;
+    /* ---------- Section offre ---------- */
+    section.offre{padding:20px 0 40px;}
+    .sec-head{margin-bottom:36px;}
+    .sec-eye{font-size:13px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;color:var(--foret);margin-bottom:12px;}
+    .sec-title{font-family:'Fraunces',serif;font-weight:400;font-size:clamp(30px,3.6vw,40px);letter-spacing:-.01em;}
+    .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+    .card{
+        background:var(--papier);border:1px solid var(--trait);border-radius:16px;overflow:hidden;
+        transition:transform .2s ease, box-shadow .2s ease;text-decoration:none;display:block;color:inherit;
     }
-    .hero-card:hover{transform:translateY(-4px);}
-    .hero-card-img{
-        width:100%;height:110px;object-fit:cover;
-        display:block;
-    }
-    .hero-card.featured .hero-card-img{height:130px;}
-    .hero-card-body{padding:1rem 1.2rem;}
-    .hero-card-title{font-size:.92rem;font-weight:700;color:rgba(255,255,255,.9);margin-bottom:.3rem;}
-    .hero-card-desc{font-size:.78rem;color:rgba(255,255,255,.5);line-height:1.5;}
-    .hero-card.featured{
-        border-color:rgba(76,175,80,.4);
-    }
-    .hero-card-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+    .card:hover{transform:translateY(-4px);box-shadow:0 26px 50px -30px rgba(42,33,27,.4);}
+    .card-ph{aspect-ratio:3/2;overflow:hidden;}
+    .card-ph img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s ease;}
+    .card:hover .card-ph img{transform:scale(1.06);}
+    .card-body{padding:22px 22px 26px;}
+    .card h3{font-family:'Fraunces',serif;font-weight:500;font-size:22px;margin-bottom:7px;}
+    .card p{font-size:15.5px;color:var(--taupe);}
+    .card .tag{display:inline-block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--foret);font-weight:600;margin-top:16px;}
 
-    /* ===== FEATURES ===== */
-    .features-section{background:var(--beige-light);padding:6rem 6%;}
-    .section-header{text-align:center;margin-bottom:4rem;}
-    .section-label{
-        display:inline-block;
-        font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
-        color:var(--accent-dark);
-        background:rgba(76,175,80,.12);
-        padding:.35rem .9rem;border-radius:50px;margin-bottom:1rem;
+    /* Bandeau bien-être */
+    .feature{
+        margin:44px 0 8px;background:var(--papier);border:1px solid var(--trait);border-radius:22px;
+        display:grid;grid-template-columns:.9fr 1.1fr;gap:0;overflow:hidden;
     }
-    .section-title{
-        font-family:'Playfair Display',serif;
-        font-size:clamp(1.9rem,4vw,2.8rem);font-weight:700;
-        color:var(--brown-dark);margin-bottom:.75rem;
-    }
-    .section-subtitle{font-size:1rem;color:var(--brown-light);max-width:560px;margin:0 auto;line-height:1.7;}
+    .feature-ph{height:100%;min-height:280px;overflow:hidden;border-right:1px solid var(--trait);}
+    .feature-ph img{width:100%;height:100%;object-fit:cover;display:block;}
+    .feature-txt{padding:44px 46px;align-self:center;}
+    .feature-txt h3{font-family:'Fraunces',serif;font-weight:400;font-size:clamp(26px,3vw,34px);margin-bottom:14px;line-height:1.1;}
+    .feature-txt p{color:var(--taupe);max-width:34em;margin-bottom:22px;}
 
-    .features-grid{
-        display:grid;
-        grid-template-columns:repeat(auto-fit,minmax(270px,1fr));
-        gap:1.5rem;
-        max-width:1200px;margin:0 auto;
-    }
-    .feature-card{
-        background:white;
-        border-radius:22px;
-        overflow:hidden;
-        box-shadow:0 4px 20px rgba(23,79,25,.08);
-        transition:all .32s cubic-bezier(.4,0,.2,1);
-        border:1px solid rgba(76,175,80,.1);
-    }
-    .feature-card:hover{transform:translateY(-8px);box-shadow:0 20px 50px rgba(23,79,25,.16);}
-    .feature-card-top{
-        height:160px;position:relative;overflow:hidden;
-    }
-    .feature-card-top img{
-        width:100%;height:100%;object-fit:cover;
-        transition:transform .5s ease;
-    }
-    .feature-card:hover .feature-card-top img{transform:scale(1.07);}
-    .feature-card-top::after{
-        content:'';position:absolute;inset:0;
-        background:linear-gradient(180deg,transparent 40%,rgba(0,0,0,.35));
-    }
-    .fc-amber{background:linear-gradient(135deg,#E9E1CC,#81c784);}
-    .fc-brown{background:linear-gradient(135deg,#DCD0AE,#4caf50);}
-    .fc-warm{background:linear-gradient(135deg,#75d779,#4caf50);}
-    .fc-sand{background:linear-gradient(135deg,#e9e1cc,#81c784);}
-    .fc-earth{background:linear-gradient(135deg,#dcd0ae,#1d631f);}
-    .fc-gold{background:linear-gradient(135deg,#81c784,#4caf50);}
-    .feature-card-body{padding:1.4rem 1.5rem;}
-    .feature-card-title{font-size:1.05rem;font-weight:700;color:var(--brown-dark);margin-bottom:.5rem;}
-    .feature-card-desc{font-size:.85rem;color:var(--brown-light);line-height:1.6;margin-bottom:1.2rem;}
-    .feature-card-link{
-        display:inline-flex;align-items:center;gap:.35rem;
-        font-size:.83rem;font-weight:700;color:var(--accent-dark);text-decoration:none;
-        padding:.38rem .9rem;background:rgba(76,175,80,.1);border-radius:50px;
-        transition:background .2s;
-    }
-    .feature-card-link:hover{background:rgba(76,175,80,.22);}
-
-    /* ===== TESTIMONIALS / QUOTE ===== */
-    .quote-section{
-        background:linear-gradient(135deg,var(--brown-dark) 0%,#113b13 100%);
-        padding:6rem 6%;text-align:center;position:relative;overflow:hidden;
-    }
-    .quote-section::before{
-        content:'❝';
-        position:absolute;top:-1rem;left:50%;transform:translateX(-50%);
-        font-size:12rem;color:rgba(76,175,80,.07);font-family:Georgia,serif;
-        line-height:1;pointer-events:none;
-    }
-    .quote-inner{max-width:750px;margin:0 auto;position:relative;z-index:1;}
-    .quote-text{
-        font-family:'Playfair Display',serif;
-        font-size:clamp(1.4rem,3vw,2rem);
-        font-weight:400;font-style:italic;
-        color:rgba(246,241,231,.92);
-        line-height:1.7;margin-bottom:2rem;
-    }
-    .quote-author{
-        display:inline-flex;align-items:center;gap:.75rem;
-        background:rgba(76,175,80,.12);
-        border:1px solid rgba(76,175,80,.2);
-        border-radius:50px;padding:.5rem 1.2rem;
-    }
-    .quote-author-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);}
-    .quote-author-name{font-size:.85rem;font-weight:600;color:var(--accent-light);}
-
-    /* ===== CTA ===== */
-    .cta-section{
-        padding:6rem 6%;
-        background:var(--beige-light);
-        text-align:center;
-    }
-    .cta-box{
-        max-width:680px;margin:0 auto;
-        background:white;
-        border-radius:28px;
-        padding:4rem 3rem;
-        box-shadow:0 8px 40px rgba(23,79,25,.1);
-        border:1px solid rgba(76,175,80,.15);
-    }
-    .cta-icon{font-size:3rem;margin-bottom:1.2rem;}
-    .cta-title{font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;color:var(--brown-dark);margin-bottom:.75rem;}
-    .cta-desc{font-size:1rem;color:var(--brown-light);line-height:1.7;margin-bottom:2rem;}
-    .cta-actions{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;}
-    .btn-cta-main{
-        padding:1rem 2.5rem;border-radius:50px;font-weight:700;font-size:.97rem;
-        background:linear-gradient(135deg,var(--brown-dark),var(--brown));
-        color:white;text-decoration:none;
-        box-shadow:0 6px 20px rgba(23,79,25,.25);
-        transition:all .25s;
-    }
-    .btn-cta-main:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(23,79,25,.35);}
-    .btn-cta-sec{
-        padding:1rem 2.5rem;border-radius:50px;font-weight:600;font-size:.97rem;
-        background:transparent;color:var(--brown-dark);
-        border:2px solid rgba(23,79,25,.25);text-decoration:none;
-        transition:all .25s;
-    }
-    .btn-cta-sec:hover{border-color:var(--brown-dark);background:rgba(23,79,25,.04);}
+    /* ---------- Bandeau final ---------- */
+    .closing{margin:70px 0 40px;text-align:center;padding:64px 28px;
+        background:linear-gradient(160deg,#EDE5D4, #E7E4D2);border-radius:26px;border:1px solid var(--trait);}
+    .closing h2{font-family:'Fraunces',serif;font-weight:400;font-size:clamp(30px,4vw,46px);line-height:1.08;margin-bottom:16px;}
+    .closing p{color:var(--taupe);font-size:18px;max-width:34em;margin:0 auto 30px;}
+    .closing-actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
 
     @media(max-width:900px){
-        .hero{min-height:auto;}
-        .hero-inner{grid-template-columns:1fr;gap:3rem;padding:4rem 6% 3rem;}
-        .hero-visual{display:none;}
-        .hero-stats{gap:1.5rem;}
-        .features-section{padding:4rem 6%;}
-        .quote-section{padding:4rem 6%;}
-        .cta-section{padding:4rem 6%;}
-        .section-header{margin-bottom:2.5rem;}
-        .features-grid{grid-template-columns:repeat(auto-fit,minmax(220px,1fr));}
+        .hero-grid{grid-template-columns:1fr;gap:40px;}
+        .hero-media{order:-1;max-width:440px;margin:0 auto;}
+        .cards{grid-template-columns:1fr;}
+        .feature{grid-template-columns:1fr;}
+        .feature-ph{border-right:none;border-bottom:1px solid var(--trait);min-height:220px;}
     }
-    @media(max-width:600px){
-        .hero-inner{padding:3rem 6% 2.5rem;}
-        .hero-title{font-size:clamp(2.1rem,8vw,2.8rem);}
-        .hero-subtitle{max-width:100%;}
-        .hero-actions{flex-direction:column;align-items:stretch;}
-        .btn-hero-primary,.btn-hero-secondary{justify-content:center;text-align:center;}
-        .hero-stats{flex-wrap:wrap;gap:1.2rem;}
-        .features-section{padding:3rem 6%;}
-        .features-grid{grid-template-columns:1fr;gap:1.2rem;}
-        .quote-section{padding:3.5rem 6%;}
-        .quote-section::before{font-size:8rem;}
-        .cta-section{padding:3rem 6%;}
-        .cta-box{padding:2.5rem 1.5rem;}
-        .cta-title{font-size:1.6rem;}
-        .cta-actions{flex-direction:column;align-items:stretch;}
-        .btn-cta-main,.btn-cta-sec{text-align:center;}
-    }
-    @media(max-width:480px){
-        .hero-inner{padding:2.5rem 5.5% 2rem;}
-        .hero-eyebrow{font-size:.7rem;padding:.35rem .75rem;}
-        .hero-title{font-size:clamp(1.85rem,9vw,2.3rem);}
-        .hero-subtitle{font-size:.95rem;}
-        .hero-stats{gap:1rem;padding-top:1.5rem;}
-        .hstat-num{font-size:1.5rem;}
-        .section-title{font-size:1.6rem;}
-        .section-subtitle{font-size:.9rem;}
-        .feature-card-body{padding:1.2rem 1.2rem;}
-        .quote-text{font-size:1.2rem;}
-        .cta-box{padding:2rem 1.2rem;border-radius:20px;}
-        .cta-title{font-size:1.4rem;}
-        .cta-icon{font-size:2.4rem;}
+    @media(max-width:520px){
+        .home-wrap{padding:0 20px;}
+        .hero{padding:48px 0 40px;}
+        .closing{padding:48px 22px;}
     }
 </style>
 {% endblock %}
@@ -280,181 +95,86 @@
 
 <!-- HERO -->
 <section class="hero">
-    <div class="hero-blobs">
-        <div class="blob blob-1"></div>
-        <div class="blob blob-2"></div>
-        <div class="blob blob-3"></div>
-    </div>
-    <div class="hero-inner">
+    <div class="home-wrap hero-grid">
         <div class="hero-text">
-            <div class="hero-eyebrow">🌿 Safe place · Djibouti</div>
-            <h1 class="hero-title">
-                Votre <span>santé mentale</span><br>mérite une place
-            </h1>
-            <p class="hero-subtitle">
-                Wanaag Corner est un espace bienveillant et sécurisé où vous pouvez parler librement,
-                trouver du soutien et accéder à des ressources de qualité sur la santé mentale.
-            </p>
-            <div class="hero-actions">
-                <a href="{% url 'register' %}" class="btn-hero-primary">✨ Rejoindre la communauté</a>
-                <a href="{% url 'about' %}" class="btn-hero-secondary">En savoir plus →</a>
+            <span class="eyebrow"><span class="dot"></span> Espace sûr · Djibouti</span>
+            <h1>Votre santé mentale mérite une <em>place</em></h1>
+            <p class="lede">Un espace bienveillant pour parler librement, trouver du soutien et accéder à des ressources fiables — pensé pour Djibouti.</p>
+            <div class="hero-cta">
+                <a class="btn btn-primary" href="{% url 'register' %}">Rejoindre la communauté</a>
+                <a class="btn btn-secondary" href="#offre">Découvrir nos espaces →</a>
             </div>
-            <div class="hero-stats">
-                <div class="hstat">
-                    <div class="hstat-num">100%</div>
-                    <div class="hstat-label">Anonyme</div>
-                </div>
-                <div class="hstat">
-                    <div class="hstat-num">0</div>
-                    <div class="hstat-label">Jugement</div>
-                </div>
-                <div class="hstat">
-                    <div class="hstat-num">24/7</div>
-                    <div class="hstat-label">Disponible</div>
-                </div>
-            </div>
+            <p class="ground"><b>Wanaag</b> — « le bien-être », en somali.</p>
         </div>
-        <div class="hero-visual">
-            <div class="hero-card featured">
-                <img src="{% static 'images/espace-bien-etre.jpg' %}" alt="Espace bien-être" class="hero-card-img">
-                <div class="hero-card-body">
-                    <div class="hero-card-title">Espace de bien-être</div>
-                    <div class="hero-card-desc">Partagez, écoutez, progressez dans un cadre sécurisé et bienveillant.</div>
-                </div>
-            </div>
-            <div class="hero-card-grid">
-                <div class="hero-card">
-                    <img src="{% static 'images/forum.jpg' %}" alt="Forum" class="hero-card-img">
-                    <div class="hero-card-body">
-                        <div class="hero-card-title">Forum</div>
-                        <div class="hero-card-desc">Communauté bienveillante</div>
-                    </div>
-                </div>
-                <div class="hero-card">
-                    <img src="{% static 'images/psychologue.jpg' %}" alt="Psychologues" class="hero-card-img">
-                    <div class="hero-card-body">
-                        <div class="hero-card-title">Psychologues</div>
-                        <div class="hero-card-desc">Professionnels certifiés</div>
-                    </div>
-                </div>
-                <div class="hero-card">
-                    <img src="{% static 'images/ressources.jpg' %}" alt="Ressources" class="hero-card-img">
-                    <div class="hero-card-body">
-                        <div class="hero-card-title">Ressources</div>
-                        <div class="hero-card-desc">Articles & guides</div>
-                    </div>
-                </div>
-                <div class="hero-card">
-                    <img src="{% static 'images/posts.jpg' %}" alt="Posts" class="hero-card-img">
-                    <div class="hero-card-body">
-                        <div class="hero-card-title">Posts</div>
-                        <div class="hero-card-desc">Partagez vos moments</div>
-                    </div>
-                </div>
+
+        <div class="hero-media">
+            <div class="halo" aria-hidden="true"></div>
+            <div class="hero-ph">
+                <img src="{% static 'images/espace-bien-etre.jpg' %}" alt="Espace de bien-être Wanaag Corner">
             </div>
         </div>
     </div>
 </section>
 
-<!-- FEATURES -->
-<section class="features-section">
-    <div class="section-header">
-        <div class="section-label">Nos rubriques</div>
-        <h2 class="section-title">Tout ce dont vous avez besoin</h2>
-        <p class="section-subtitle">Des outils pensés pour accompagner votre bien-être mental au quotidien.</p>
+<!-- OFFRE -->
+<section class="offre home-wrap" id="offre">
+    <div class="sec-head">
+        <div class="sec-eye">Ce que vous trouverez ici</div>
+        <h2 class="sec-title">Trois espaces, un même soin</h2>
     </div>
-    <div class="features-grid">
-        <div class="feature-card">
-            <div class="feature-card-top">
-                <img src="{% static 'images/posts.jpg' %}" alt="Posts">
+
+    <div class="cards">
+        <a class="card" href="{% url 'register' %}">
+            <div class="card-ph"><img src="{% static 'images/forum.jpg' %}" alt="Forum"></div>
+            <div class="card-body">
+                <h3>Forum</h3>
+                <p>Une communauté qui écoute, sans jugement, à toute heure.</p>
+                <span class="tag">Communauté bienveillante</span>
             </div>
-            <div class="feature-card-body">
-                <div class="feature-card-title">Posts & Partages</div>
-                <div class="feature-card-desc">Partagez vos pensées, photos et moments. Une communauté qui vous écoute et vous soutient.</div>
-                <a href="{% url 'register' %}" class="feature-card-link">Commencer →</a>
+        </a>
+
+        <a class="card" href="{% url 'register' %}">
+            <div class="card-ph"><img src="{% static 'images/psychologue.jpg' %}" alt="Psychologues"></div>
+            <div class="card-body">
+                <h3>Psychologues</h3>
+                <p>Des professionnels certifiés, joignables près de chez vous.</p>
+                <span class="tag">Professionnels certifiés</span>
             </div>
+        </a>
+
+        <a class="card" href="{% url 'register' %}">
+            <div class="card-ph"><img src="{% static 'images/ressources.jpg' %}" alt="Ressources"></div>
+            <div class="card-body">
+                <h3>Ressources</h3>
+                <p>Des articles et des guides fiables, écrits et vérifiés en français.</p>
+                <span class="tag">Articles &amp; guides</span>
+            </div>
+        </a>
+    </div>
+
+    <!-- Bandeau bien-être -->
+    <div class="feature">
+        <div class="feature-ph">
+            <img src="{% static 'images/bienveillance.jpg' %}" alt="Parcours bien-être">
         </div>
-        <div class="feature-card">
-            <div class="feature-card-top">
-                <img src="{% static 'images/forum.jpg' %}" alt="Forum">
-            </div>
-            <div class="feature-card-body">
-                <div class="feature-card-title">Forum Communautaire</div>
-                <div class="feature-card-desc">Des groupes de discussion thématiques sur l'anxiété, la dépression, la méditation et plus.</div>
-                <a href="{% url 'register' %}" class="feature-card-link">Explorer →</a>
-            </div>
-        </div>
-        <div class="feature-card">
-            <div class="feature-card-top">
-                <img src="{% static 'images/consultation.jpg' %}" alt="Consultation">
-            </div>
-            <div class="feature-card-body">
-                <div class="feature-card-title">Consultation Psy</div>
-                <div class="feature-card-desc">Accédez à des psychologues professionnels et qualifiés pour un accompagnement personnalisé.</div>
-                <a href="{% url 'register' %}" class="feature-card-link">Consulter →</a>
-            </div>
-        </div>
-        <div class="feature-card">
-            <div class="feature-card-top">
-                <img src="{% static 'images/ressources.jpg' %}" alt="Ressources">
-            </div>
-            <div class="feature-card-body">
-                <div class="feature-card-title">Ressources Éducatives</div>
-                <div class="feature-card-desc">Articles, guides pratiques, vidéos et podcasts pour approfondir vos connaissances.</div>
-                <a href="{% url 'register' %}" class="feature-card-link">Découvrir →</a>
-            </div>
-        </div>
-        <div class="feature-card">
-            <div class="feature-card-top">
-                <img src="{% static 'images/psychologue.jpg' %}" alt="Psychologues">
-            </div>
-            <div class="feature-card-body">
-                <div class="feature-card-title">100% Anonyme</div>
-                <div class="feature-card-desc">Votre pseudonyme protège votre identité. Parlez librement, sans crainte du jugement.</div>
-                <a href="{% url 'register' %}" class="feature-card-link">Créer un compte →</a>
-            </div>
-        </div>
-        <div class="feature-card">
-            <div class="feature-card-top">
-                <img src="{% static 'images/espace-bien-etre.jpg' %}" alt="Bien-être">
-            </div>
-            <div class="feature-card-body">
-                <div class="feature-card-title">Parcours Bien-être</div>
-                <div class="feature-card-desc">Suivez votre progression, fixez vos objectifs et célébrez chaque victoire du quotidien.</div>
-                <a href="{% url 'register' %}" class="feature-card-link">Découvrir →</a>
-            </div>
+        <div class="feature-txt">
+            <h3>Un espace de bien-être, à votre rythme</h3>
+            <p>Un journal intime, des citations inspirantes, un suivi santé personnalisé et un blog bien-être — quelques minutes suffisent. Rien à prouver, personne à impressionner.</p>
+            <a class="btn btn-secondary" href="{% url 'register' %}">Découvrir le Parcours Bien-être</a>
         </div>
     </div>
 </section>
 
-<!-- QUOTE -->
-<section class="quote-section">
-    <div class="quote-inner">
-        <p class="quote-text">
-            "Prendre soin de sa santé mentale n'est pas un luxe — c'est un acte de courage.
-            Chaque pas vers le mieux-être compte, peu importe sa taille."
-        </p>
-        <div class="quote-author">
-            <div class="quote-author-dot"></div>
-            <span class="quote-author-name">L'équipe Wanaag Corner</span>
+<!-- FINAL -->
+<div class="home-wrap">
+    <div class="closing">
+        <h2>Vous n'avez pas à traverser ça seul·e</h2>
+        <p>Rejoignez une communauté bienveillante et des professionnels de confiance, à votre rythme. Votre anonymat est garanti.</p>
+        <div class="closing-actions">
+            <a class="btn btn-primary" href="{% url 'register' %}">Créer un compte gratuit</a>
+            <a class="btn btn-secondary" href="{% url 'login' %}">J'ai déjà un compte</a>
         </div>
     </div>
-</section>
-
-<!-- CTA -->
-<section class="cta-section">
-    <div class="cta-box">
-        <div class="cta-icon">🌿</div>
-        <h2 class="cta-title">Prêt·e à prendre soin de vous ?</h2>
-        <p class="cta-desc">
-            Rejoignez des centaines de personnes à Djibouti qui prennent leur santé mentale au sérieux.
-            Votre anonymat est garanti. Votre voix est importante.
-        </p>
-        <div class="cta-actions">
-            <a href="{% url 'register' %}" class="btn-cta-main">Créer mon compte</a>
-            <a href="{% url 'login' %}" class="btn-cta-sec">J'ai déjà un compte</a>
-        </div>
-    </div>
-</section>
+</div>
 
 {% endblock %}

@@ -9,7 +9,7 @@
 
 /* ===== HERO ===== */
 .req-hero {
-    background: linear-gradient(135deg, #0a240b 0%, #0f3310 55%, #154917 100%);
+    background: linear-gradient(135deg, #1d2316 0%, #2d3521 55%, #4a5837 100%);
     border-radius: 22px; padding: 2.2rem 2.5rem;
     position: relative; overflow: hidden;
     box-shadow: 0 10px 40px rgba(0,0,0,.35);
@@ -17,14 +17,14 @@
 }
 .req-hero::before {
     content: ''; position: absolute; inset: 0;
-    background: radial-gradient(ellipse at 15% 50%, rgba(76,175,80,.16) 0%, transparent 60%),
-                radial-gradient(ellipse at 85% 10%, rgba(76,175,80,.09) 0%, transparent 55%);
+    background: radial-gradient(ellipse at 15% 50%, rgba(190,140,60,.16) 0%, transparent 60%),
+                radial-gradient(ellipse at 85% 10%, rgba(190,140,60,.09) 0%, transparent 55%);
     pointer-events: none;
 }
 .req-hero-icon {
     position: relative; z-index: 1; flex-shrink: 0;
     width: 64px; height: 64px; border-radius: 18px;
-    background: rgba(76,175,80,.15); border: 1px solid rgba(76,175,80,.3);
+    background: rgba(190,140,60,.15); border: 1px solid rgba(190,140,60,.3);
     display: flex; align-items: center; justify-content: center;
 }
 .req-hero-icon svg { width: 30px; height: 30px; }
@@ -32,63 +32,63 @@
 .req-hero-badge {
     display: inline-block; font-size: .7rem; font-weight: 700; letter-spacing: .5px;
     padding: .2rem .7rem; border-radius: 20px; margin-bottom: .6rem; text-transform: uppercase;
-    background: rgba(76,175,80,.15); border: 1px solid rgba(76,175,80,.3); color: #4caf50;
+    background: rgba(190,140,60,.15); border: 1px solid rgba(190,140,60,.3); color: #be8c3c;
 }
 .req-hero-title {
     font-size: 1.75rem; font-weight: 800; color: white; margin: 0 0 .3rem;
-    font-family: 'Playfair Display', serif;
+    font-family: 'Fraunces', serif;
 }
-.req-hero-sub { font-size: .88rem; color: rgba(246,241,231,.5); margin: 0; }
+.req-hero-sub { font-size: .88rem; color: rgba(244,238,226,.5); margin: 0; }
 
 /* Stats pills in hero */
 .req-hero-stats { position: relative; z-index: 1; display: flex; gap: .8rem; flex-shrink: 0; }
 .req-stat {
-    background: rgba(76,175,80,.12); border: 1px solid rgba(76,175,80,.22);
+    background: rgba(190,140,60,.12); border: 1px solid rgba(190,140,60,.22);
     border-radius: 14px; padding: .7rem 1.1rem; text-align: center; min-width: 70px;
 }
 .req-stat strong {
     display: block; font-size: 1.5rem; font-weight: 800;
-    background: linear-gradient(135deg, #4caf50, #75d779);
+    background: linear-gradient(135deg, #be8c3c, #ddc092);
     -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
     line-height: 1;
 }
-.req-stat span { font-size: .68rem; color: rgba(246,241,231,.45); font-weight: 600; }
+.req-stat span { font-size: .68rem; color: rgba(244,238,226,.45); font-weight: 600; }
 
 /* ===== FILTER TABS ===== */
 .req-filters {
     display: flex; gap: .6rem; flex-wrap: wrap;
     background: white; border-radius: 16px; padding: .9rem 1.2rem;
-    box-shadow: 0 2px 16px rgba(23,79,25,.08); border: 1px solid rgba(76,175,80,.1);
+    box-shadow: 0 2px 16px rgba(42,33,27,.08); border: 1px solid rgba(190,140,60,.1);
 }
 .req-tab {
     padding: .55rem 1.3rem; border-radius: 10px;
     font-size: .85rem; font-weight: 600; text-decoration: none;
     transition: all .2s; border: 1.5px solid transparent;
-    color: #95ac96; background: transparent;
+    color: #9b8b7e; background: transparent;
     display: flex; align-items: center; gap: .4rem;
 }
-.req-tab:hover { background: rgba(76,175,80,.08); color: var(--brown-dark); border-color: rgba(76,175,80,.2); }
+.req-tab:hover { background: rgba(190,140,60,.08); color: var(--brown-dark); border-color: rgba(190,140,60,.2); }
 .req-tab.active {
-    background: linear-gradient(135deg, #4caf50, #2e7d32);
-    color: white; box-shadow: 0 3px 12px rgba(76,175,80,.35);
+    background: linear-gradient(135deg, #be8c3c, #ab7e36);
+    color: white; box-shadow: 0 3px 12px rgba(190,140,60,.35);
 }
 .req-tab.active svg, .req-tab svg { width: 14px; height: 14px; }
 .req-tab-count {
     background: rgba(255,255,255,.25); border-radius: 20px;
     padding: .05rem .45rem; font-size: .72rem; font-weight: 700;
 }
-.req-tab:not(.active) .req-tab-count { background: rgba(76,175,80,.12); color: #2e7d32; }
+.req-tab:not(.active) .req-tab-count { background: rgba(190,140,60,.12); color: #ab7e36; }
 
 /* ===== CARDS ===== */
 .requests-list { display: flex; flex-direction: column; gap: 1.2rem; }
 
 .req-card {
     background: white; border-radius: 18px; overflow: hidden;
-    box-shadow: 0 3px 20px rgba(23,79,25,.09);
-    border: 1px solid rgba(76,175,80,.1);
+    box-shadow: 0 3px 20px rgba(42,33,27,.09);
+    border: 1px solid rgba(190,140,60,.1);
     transition: box-shadow .25s, transform .25s;
 }
-.req-card:hover { box-shadow: 0 8px 32px rgba(23,79,25,.16); transform: translateY(-2px); }
+.req-card:hover { box-shadow: 0 8px 32px rgba(42,33,27,.16); transform: translateY(-2px); }
 
 /* Left accent bar */
 .req-card-inner {
@@ -96,7 +96,7 @@
 }
 .req-card-bar {
     width: 4px; flex-shrink: 0;
-    background: linear-gradient(180deg, #4caf50, #2e7d32);
+    background: linear-gradient(180deg, #be8c3c, #ab7e36);
 }
 .req-card-bar.en-attente { background: linear-gradient(180deg, #f39c12, #e67e22); }
 .req-card-bar.confirmee  { background: linear-gradient(180deg, #27ae60, #1e8449); }
@@ -111,13 +111,13 @@
 .req-card-user { display: flex; align-items: center; gap: .85rem; }
 .req-avatar {
     width: 44px; height: 44px; border-radius: 50%; flex-shrink: 0;
-    background: linear-gradient(135deg, #4caf50, #2e7d32);
+    background: linear-gradient(135deg, #be8c3c, #ab7e36);
     display: flex; align-items: center; justify-content: center;
     color: white; font-weight: 800; font-size: 1rem;
-    box-shadow: 0 2px 10px rgba(76,175,80,.3);
+    box-shadow: 0 2px 10px rgba(190,140,60,.3);
 }
 .req-user-name { font-size: 1rem; font-weight: 700; color: var(--brown-dark); margin: 0 0 .2rem; }
-.req-user-date { font-size: .78rem; color: #95ac96; display: flex; align-items: center; gap: .35rem; }
+.req-user-date { font-size: .78rem; color: #9b8b7e; display: flex; align-items: center; gap: .35rem; }
 .req-user-date svg { width: 12px; height: 12px; }
 
 /* Status badge */
@@ -132,12 +132,12 @@
 
 /* Subject block */
 .req-subject {
-    background: rgba(246,241,231,.6); border-radius: 12px; padding: 1rem 1.2rem;
-    border: 1px solid rgba(76,175,80,.12); margin-bottom: 1.2rem;
+    background: rgba(244,238,226,.6); border-radius: 12px; padding: 1rem 1.2rem;
+    border: 1px solid rgba(190,140,60,.12); margin-bottom: 1.2rem;
 }
 .req-subject-label {
     font-size: .72rem; font-weight: 700; letter-spacing: .4px; text-transform: uppercase;
-    color: #4caf50; margin-bottom: .35rem;
+    color: #be8c3c; margin-bottom: .35rem;
 }
 .req-subject-text { font-size: .92rem; color: var(--brown-dark); font-weight: 500; line-height: 1.5; }
 
@@ -150,25 +150,25 @@
 }
 .req-btn svg { width: 15px; height: 15px; }
 .req-btn-primary {
-    background: linear-gradient(135deg, #4caf50, #2e7d32); color: white;
-    box-shadow: 0 3px 12px rgba(76,175,80,.35);
+    background: linear-gradient(135deg, #be8c3c, #ab7e36); color: white;
+    box-shadow: 0 3px 12px rgba(190,140,60,.35);
 }
-.req-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(76,175,80,.5); }
+.req-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(190,140,60,.5); }
 .req-btn-secondary {
     background: transparent; color: var(--brown-dark);
-    border: 1.5px solid rgba(76,175,80,.35);
+    border: 1.5px solid rgba(190,140,60,.35);
 }
-.req-btn-secondary:hover { background: rgba(76,175,80,.08); border-color: #4caf50; }
+.req-btn-secondary:hover { background: rgba(190,140,60,.08); border-color: #be8c3c; }
 
 /* ===== EMPTY STATE ===== */
 .req-empty {
     text-align: center; padding: 4rem 2rem;
     background: white; border-radius: 20px;
-    box-shadow: 0 4px 24px rgba(23,79,25,.07);
-    border: 1px solid rgba(76,175,80,.1);
+    box-shadow: 0 4px 24px rgba(42,33,27,.07);
+    border: 1px solid rgba(190,140,60,.1);
 }
 .req-empty-icon { font-size: 3rem; margin-bottom: 1rem; }
-.req-empty p { color: #95ac96; font-size: .95rem; }
+.req-empty p { color: #9b8b7e; font-size: .95rem; }
 
 @media(max-width:900px) {
     .req-hero { padding: 1.8rem 2rem; }
@@ -204,7 +204,7 @@
 <!-- HERO -->
 <div class="req-hero">
     <div class="req-hero-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#4caf50" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#be8c3c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
             <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
             <polyline points="14 2 14 8 20 8"/>
             <line x1="16" y1="13" x2="8" y2="13"/>

@@ -17,7 +17,7 @@
 
 /* ===== HERO BANNER ===== */
 .crf-hero {
-    background: linear-gradient(135deg, var(--brown-dark) 0%, #0f3310 55%, #0a240b 100%);
+    background: linear-gradient(135deg, var(--brown-dark) 0%, #2d3521 55%, #1d2316 100%);
     border-radius: 22px;
     overflow: hidden;
     position: relative;
@@ -25,8 +25,8 @@
 }
 .crf-hero-bg {
     position: absolute; inset: 0;
-    background: radial-gradient(ellipse at 10% 50%, rgba(76,175,80,.18) 0%, transparent 55%),
-                radial-gradient(ellipse at 90% 10%, rgba(76,175,80,.10) 0%, transparent 55%);
+    background: radial-gradient(ellipse at 10% 50%, rgba(190,140,60,.18) 0%, transparent 55%),
+                radial-gradient(ellipse at 90% 10%, rgba(190,140,60,.10) 0%, transparent 55%);
     pointer-events: none;
 }
 .crf-hero-inner {
@@ -39,14 +39,14 @@
 .crf-av-wrap { position: relative; flex-shrink: 0; width: 90px; height: 90px; }
 .crf-av-ring {
     position: absolute; inset: -3px; border-radius: 50%;
-    background: conic-gradient(#4caf50 0%, #75d779 45%, transparent 55%, #4caf50 100%);
+    background: conic-gradient(#be8c3c 0%, #ddc092 45%, transparent 55%, #be8c3c 100%);
     animation: spinRing 6s linear infinite;
 }
 @keyframes spinRing { to { transform: rotate(360deg); } }
 .crf-av {
     position: absolute; inset: 3px; border-radius: 50%; overflow: hidden;
-    background: linear-gradient(135deg, #4caf50, var(--brown-dark));
-    border: 3px solid #0a240b;
+    background: linear-gradient(135deg, #be8c3c, var(--brown-dark));
+    border: 3px solid #1d2316;
     display: flex; align-items: center; justify-content: center;
     box-shadow: 0 4px 20px rgba(0,0,0,.4);
 }
@@ -58,59 +58,59 @@
 .crf-hero-badge {
     display: inline-block; font-size: .7rem; font-weight: 700; letter-spacing: .5px;
     padding: .2rem .7rem; border-radius: 20px;
-    background: rgba(76,175,80,.15); border: 1px solid rgba(76,175,80,.35);
-    color: #4caf50; margin-bottom: .6rem; text-transform: uppercase;
+    background: rgba(190,140,60,.15); border: 1px solid rgba(190,140,60,.35);
+    color: #be8c3c; margin-bottom: .6rem; text-transform: uppercase;
 }
 .crf-hero-name {
     font-size: 1.65rem; font-weight: 800; color: white; margin: 0 0 .3rem;
-    font-family: 'Playfair Display', serif;
+    font-family: 'Fraunces', serif;
 }
-.crf-hero-sub { font-size: .85rem; color: rgba(246,241,231,.55); margin: 0; }
+.crf-hero-sub { font-size: .85rem; color: rgba(244,238,226,.55); margin: 0; }
 
 /* Specs pills */
 .crf-specs { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .8rem; }
 .crf-spec-pill {
-    background: rgba(76,175,80,.12); border: 1px solid rgba(76,175,80,.25);
-    color: rgba(246,241,231,.75); font-size: .72rem; font-weight: 600;
+    background: rgba(190,140,60,.12); border: 1px solid rgba(190,140,60,.25);
+    color: rgba(244,238,226,.75); font-size: .72rem; font-weight: 600;
     padding: .2rem .65rem; border-radius: 20px;
 }
 
 /* exp badge in hero */
 .crf-hero-exp {
     margin-left: auto; flex-shrink: 0;
-    background: rgba(76,175,80,.12); border: 1px solid rgba(76,175,80,.25);
+    background: rgba(190,140,60,.12); border: 1px solid rgba(190,140,60,.25);
     border-radius: 16px; padding: .7rem 1.2rem; text-align: center;
 }
 .crf-hero-exp strong {
     display: block; font-size: 1.6rem; font-weight: 800;
-    background: linear-gradient(135deg, #4caf50, #75d779);
+    background: linear-gradient(135deg, #be8c3c, #ddc092);
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     background-clip: text; line-height: 1;
 }
-.crf-hero-exp span { font-size: .72rem; color: rgba(246,241,231,.5); font-weight: 600; }
+.crf-hero-exp span { font-size: .72rem; color: rgba(244,238,226,.5); font-weight: 600; }
 
 /* ===== FORM CARD ===== */
 .crf-card {
     background: white;
     border-radius: 22px;
     overflow: hidden;
-    box-shadow: 0 4px 30px rgba(23,79,25,.10);
-    border: 1px solid rgba(76,175,80,.12);
+    box-shadow: 0 4px 30px rgba(42,33,27,.10);
+    border: 1px solid rgba(190,140,60,.12);
 }
 .crf-card-header {
     padding: 1.4rem 2rem 1.2rem;
-    border-bottom: 1px solid rgba(76,175,80,.12);
+    border-bottom: 1px solid rgba(190,140,60,.12);
     display: flex; align-items: center; gap: .8rem;
 }
 .crf-card-icon {
     width: 38px; height: 38px; border-radius: 12px;
-    background: linear-gradient(135deg, rgba(76,175,80,.15), rgba(46,125,50,.1));
-    border: 1px solid rgba(76,175,80,.25);
+    background: linear-gradient(135deg, rgba(190,140,60,.15), rgba(171,126,54,.1));
+    border: 1px solid rgba(190,140,60,.25);
     display: flex; align-items: center; justify-content: center; flex-shrink: 0;
 }
 .crf-card-icon svg { width: 18px; height: 18px; }
 .crf-card-title { font-size: 1rem; font-weight: 800; color: var(--brown-dark); margin: 0; }
-.crf-card-sub { font-size: .78rem; color: #95ac96; margin: 0; }
+.crf-card-sub { font-size: .78rem; color: #9b8b7e; margin: 0; }
 
 .crf-card-body { padding: 1.8rem 2rem; }
 
@@ -124,70 +124,70 @@
 .crf-label svg { width: 14px; height: 14px; opacity: .7; }
 .crf-required {
     display: inline-block; width: 6px; height: 6px; border-radius: 50%;
-    background: linear-gradient(135deg, #4caf50, #2e7d32); margin-left: auto;
+    background: linear-gradient(135deg, #be8c3c, #ab7e36); margin-left: auto;
 }
 
 .crf-input, .crf-textarea {
     width: 100%; box-sizing: border-box;
     padding: .85rem 1rem;
-    border: 1.5px solid rgba(76,175,80,.25);
+    border: 1.5px solid rgba(190,140,60,.25);
     border-radius: 12px;
     font-family: inherit; font-size: .92rem; color: var(--brown-dark);
-    background: rgba(246,241,231,.35);
+    background: rgba(244,238,226,.35);
     transition: border-color .2s, box-shadow .2s, background .2s;
     outline: none;
 }
-.crf-input::placeholder, .crf-textarea::placeholder { color: #95ac96; font-size: .88rem; }
+.crf-input::placeholder, .crf-textarea::placeholder { color: #9b8b7e; font-size: .88rem; }
 .crf-input:focus, .crf-textarea:focus {
-    border-color: #4caf50;
+    border-color: #be8c3c;
     background: white;
-    box-shadow: 0 0 0 3px rgba(76,175,80,.12);
+    box-shadow: 0 0 0 3px rgba(190,140,60,.12);
 }
 .crf-textarea { resize: vertical; min-height: 180px; line-height: 1.65; }
 
 .crf-count {
     display: flex; justify-content: flex-end;
-    font-size: .75rem; color: #95ac96; margin-top: .35rem;
+    font-size: .75rem; color: #9b8b7e; margin-top: .35rem;
 }
-.crf-count span { font-weight: 700; color: #2e7d32; }
+.crf-count span { font-weight: 700; color: #ab7e36; }
 
 /* ===== ACTIONS ===== */
 .crf-actions {
     display: flex; gap: 1rem; padding: 1.4rem 2rem;
-    border-top: 1px solid rgba(76,175,80,.10);
-    background: rgba(246,241,231,.3);
+    border-top: 1px solid rgba(190,140,60,.10);
+    background: rgba(244,238,226,.3);
 }
 .crf-btn-submit {
     flex: 1; padding: .9rem 1.5rem;
-    background: linear-gradient(135deg, #4caf50, #2e7d32);
+    background: linear-gradient(135deg, #be8c3c, #ab7e36);
     color: white; border: none; border-radius: 12px;
     font-weight: 700; font-size: .92rem; cursor: pointer; letter-spacing: .3px;
-    box-shadow: 0 4px 16px rgba(76,175,80,.35);
+    box-shadow: 0 4px 16px rgba(190,140,60,.35);
     transition: all .2s; display: flex; align-items: center; justify-content: center; gap: .5rem;
 }
-.crf-btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(76,175,80,.5); }
+.crf-btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(190,140,60,.5); }
 .crf-btn-submit svg { width: 17px; height: 17px; }
 
 .crf-btn-cancel {
     padding: .9rem 1.6rem;
-    background: transparent; color: #2e7d32;
-    border: 1.5px solid rgba(76,175,80,.4); border-radius: 12px;
+    background: transparent; color: #ab7e36;
+    border: 1.5px solid rgba(190,140,60,.4); border-radius: 12px;
     font-weight: 700; font-size: .88rem; cursor: pointer; letter-spacing: .3px;
     text-decoration: none; display: flex; align-items: center; justify-content: center; gap: .4rem;
     transition: all .2s;
 }
-.crf-btn-cancel:hover { background: rgba(76,175,80,.08); border-color: #4caf50; }
+.crf-btn-cancel:hover { background: rgba(190,140,60,.08); border-color: #be8c3c; }
 .crf-btn-cancel svg { width: 15px; height: 15px; }
 
 /* ===== SUCCESS TOAST ===== */
 .crf-tip {
     display: flex; align-items: flex-start; gap: .8rem;
-    background: rgba(76,175,80,.08); border: 1px solid rgba(76,175,80,.2);
+    background: rgba(190,140,60,.08); border: 1px solid rgba(190,140,60,.2);
     border-radius: 14px; padding: 1rem 1.3rem;
 }
 .crf-tip-icon { flex-shrink: 0; margin-top: .05rem; }
 .crf-tip-icon svg { width: 18px; height: 18px; }
-.crf-tip p { margin: 0; font-size: .82rem; color: #2e7d32; line-height: 1.5; }
+.crf-tip p { margin: 0; font-size: .82rem; color: #ab7e36; line-height: 1.5; }
 .crf-tip strong { color: var(--brown-dark); }
 
 @media(max-width:900px) {
@@ -266,7 +266,7 @@
     <!-- TIP -->
     <div class="crf-tip">
         <div class="crf-tip-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#4caf50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#be8c3c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
             </svg>
         </div>
@@ -279,7 +279,7 @@
 
         <div class="crf-card-header">
             <div class="crf-card-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="#4caf50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#be8c3c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
                 </svg>
             </div>
@@ -303,24 +303,24 @@
                     <!-- Présentiel -->
                     <button type="button" id="btn-presentiel" onclick="selectSeance('presentiel')"
                         style="flex:1;padding:1.2rem 1rem;border-radius:16px;cursor:pointer;
-                               border:2px solid #4caf50;background:linear-gradient(135deg,rgba(76,175,80,.18),rgba(76,175,80,.08));
+                               border:2px solid #be8c3c;background:linear-gradient(135deg,rgba(190,140,60,.18),rgba(190,140,60,.08));
                                display:flex;flex-direction:column;align-items:center;gap:.6rem;transition:all .2s;">
-                        <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="#4caf50" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="#be8c3c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
                         </svg>
                         <div style="font-weight:800;font-size:.95rem;color:var(--brown-dark);">Présentiel</div>
-                        <div style="font-size:.75rem;color:#257e28;text-align:center;">Rencontre physique au cabinet</div>
+                        <div style="font-size:.75rem;color:#5e5044;text-align:center;">Rencontre physique au cabinet</div>
                     </button>
                     <!-- Visioconférence -->
                     <button type="button" id="btn-visio" onclick="selectSeance('visio')"
                         style="flex:1;padding:1.2rem 1rem;border-radius:16px;cursor:pointer;
-                               border:2px solid rgba(76,175,80,.25);background:rgba(246,241,231,.4);
+                               border:2px solid rgba(190,140,60,.25);background:rgba(244,238,226,.4);
                                display:flex;flex-direction:column;align-items:center;gap:.6rem;transition:all .2s;">
-                        <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="#257e28" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="#5e5044" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                             <polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
                         </svg>
                         <div style="font-weight:800;font-size:.95rem;color:var(--brown-dark);">Visioconférence</div>
-                        <div style="font-size:.75rem;color:#257e28;text-align:center;">Appel vidéo sécurisé en ligne</div>
+                        <div style="font-size:.75rem;color:#5e5044;text-align:center;">Appel vidéo sécurisé en ligne</div>
                     </button>
                 </div>
             </div>
@@ -339,7 +339,7 @@
                     required
                     style="cursor:pointer;"
                 >
-                <div style="font-size:.75rem;color:#95ac96;margin-top:.35rem;">
+                <div style="font-size:.75rem;color:#9b8b7e;margin-top:.35rem;">
                     Choisissez la date et l'heure de votre séance
                 </div>
             </div>
@@ -418,19 +418,19 @@ function selectSeance(type) {
     const btnP = document.getElementById('btn-presentiel');
     const btnV = document.getElementById('btn-visio');
     if (type === 'presentiel') {
-        btnP.style.border = '2px solid #4caf50';
-        btnP.style.background = 'linear-gradient(135deg,rgba(76,175,80,.18),rgba(76,175,80,.08))';
-        btnP.querySelector('svg').setAttribute('stroke','#4caf50');
-        btnV.style.border = '2px solid rgba(76,175,80,.25)';
-        btnV.style.background = 'rgba(246,241,231,.4)';
-        btnV.querySelector('svg').setAttribute('stroke','#257e28');
+        btnP.style.border = '2px solid #be8c3c';
+        btnP.style.background = 'linear-gradient(135deg,rgba(190,140,60,.18),rgba(190,140,60,.08))';
+        btnP.querySelector('svg').setAttribute('stroke','#be8c3c');
+        btnV.style.border = '2px solid rgba(190,140,60,.25)';
+        btnV.style.background = 'rgba(244,238,226,.4)';
+        btnV.querySelector('svg').setAttribute('stroke','#5e5044');
     } else {
-        btnV.style.border = '2px solid #4caf50';
-        btnV.style.background = 'linear-gradient(135deg,rgba(76,175,80,.18),rgba(76,175,80,.08))';
-        btnV.querySelector('svg').setAttribute('stroke','#4caf50');
-        btnP.style.border = '2px solid rgba(76,175,80,.25)';
-        btnP.style.background = 'rgba(246,241,231,.4)';
-        btnP.querySelector('svg').setAttribute('stroke','#257e28');
+        btnV.style.border = '2px solid #be8c3c';
+        btnV.style.background = 'linear-gradient(135deg,rgba(190,140,60,.18),rgba(190,140,60,.08))';
+        btnV.querySelector('svg').setAttribute('stroke','#be8c3c');
+        btnP.style.border = '2px solid rgba(190,140,60,.25)';
+        btnP.style.background = 'rgba(244,238,226,.4)';
+        btnP.querySelector('svg').setAttribute('stroke','#5e5044');
     }
 }
 </script>

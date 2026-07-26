@@ -13,39 +13,39 @@
         margin-bottom: 2rem;
         position: relative;
         height: 200px;
-        box-shadow: 0 8px 32px rgba(23,79,25,.15);
+        box-shadow: 0 8px 32px rgba(42,33,27,.15);
     }
     .forum-hero img {
         width: 100%; height: 100%; object-fit: cover; display: block;
     }
     .forum-hero-overlay {
         position: absolute; inset: 0;
-        background: linear-gradient(135deg, rgba(30,10,0,.72) 0%, rgba(23,79,25,.45) 100%);
+        background: linear-gradient(135deg, rgba(30,10,0,.72) 0%, rgba(42,33,27,.45) 100%);
         display: flex; align-items: center; justify-content: space-between;
         padding: 0 2.5rem;
     }
     .forum-hero-left { display: flex; align-items: center; gap: 1.2rem; }
     .forum-hero-avatar {
         width: 62px; height: 62px; border-radius: 16px; overflow: hidden;
-        border: 2px solid rgba(76,175,80,.5);
+        border: 2px solid rgba(190,140,60,.5);
         flex-shrink: 0;
     }
     .forum-hero-avatar img { width: 100%; height: 100%; object-fit: cover; }
     .forum-hero-title {
-        font-family: 'Playfair Display', serif;
+        font-family: 'Fraunces', serif;
         font-size: 1.9rem; font-weight: 800; color: white; line-height: 1.2;
     }
-    .forum-hero-sub { font-size: .88rem; color: rgba(246,241,231,.7); margin-top: .3rem; }
+    .forum-hero-sub { font-size: .88rem; color: rgba(244,238,226,.7); margin-top: .3rem; }
     .btn-create {
         background: linear-gradient(135deg, var(--accent), var(--accent-dark));
         color: white; border: none;
         padding: .75rem 1.6rem; border-radius: 50px;
         font-weight: 700; font-size: .9rem; cursor: pointer;
         transition: all .22s; white-space: nowrap;
-        box-shadow: 0 4px 16px rgba(76,175,80,.4);
+        box-shadow: 0 4px 16px rgba(190,140,60,.4);
         display: inline-flex; align-items: center; gap: .4rem;
     }
-    .btn-create:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(76,175,80,.55); }
+    .btn-create:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(190,140,60,.55); }
 
     /* ===== SEARCH ===== */
     .forum-search {
@@ -62,7 +62,7 @@
     }
     .forum-search input:focus {
         border-color: var(--accent);
-        box-shadow: 0 0 0 3px rgba(76,175,80,.12);
+        box-shadow: 0 0 0 3px rgba(190,140,60,.12);
     }
     .forum-search-icon {
         position: absolute; left: 1rem; top: 50%; transform: translateY(-50%);
@@ -92,12 +92,12 @@
 
     /* ===== SECTION TITLE ===== */
     .sec-title {
-        font-family: 'Playfair Display', serif;
+        font-family: 'Fraunces', serif;
         font-size: 1.1rem; font-weight: 700; color: var(--brown-dark);
         margin-bottom: 1.2rem;
         display: flex; align-items: center; gap: .5rem;
     }
-    .sec-title::after { content: ''; flex: 1; height: 1px; background: rgba(23,79,25,.08); margin-left: .5rem; }
+    .sec-title::after { content: ''; flex: 1; height: 1px; background: rgba(42,33,27,.08); margin-left: .5rem; }
 
     /* ===== GROUPS GRID ===== */
     .groups-grid {
@@ -111,14 +111,14 @@
         background: white;
         border-radius: 18px;
         overflow: hidden;
-        box-shadow: 0 2px 14px rgba(23,79,25,.08);
+        box-shadow: 0 2px 14px rgba(42,33,27,.08);
         transition: all .28s cubic-bezier(.4,0,.2,1);
         cursor: pointer;
-        border: 1px solid rgba(76,175,80,.1);
+        border: 1px solid rgba(190,140,60,.1);
     }
     .group-card:hover {
         transform: translateY(-5px);
-        box-shadow: 0 12px 36px rgba(23,79,25,.15);
+        box-shadow: 0 12px 36px rgba(42,33,27,.15);
     }
     .group-card-bar {
         height: 4px;
@@ -149,7 +149,7 @@
     }
     .group-card-cat {
         font-size: .7rem; font-weight: 600; color: var(--accent-dark);
-        background: rgba(76,175,80,.12); border-radius: 50px;
+        background: rgba(190,140,60,.12); border-radius: 50px;
         padding: .15rem .55rem; display: inline-block; margin-bottom: .6rem;
     }
     .group-card-desc {
@@ -206,7 +206,7 @@
         to   { opacity: 1; transform: translateY(0); }
     }
     .modal-title {
-        font-family: 'Playfair Display', serif;
+        font-family: 'Fraunces', serif;
         font-size: 1.3rem; font-weight: 700; color: var(--brown-dark);
         margin-bottom: 1.5rem; padding-bottom: 1rem;
         border-bottom: 1px solid var(--beige);
@@ -229,7 +229,7 @@
     .form-group textarea:focus,
     .form-group select:focus {
         border-color: var(--accent);
-        box-shadow: 0 0 0 3px rgba(76,175,80,.1);
+        box-shadow: 0 0 0 3px rgba(190,140,60,.1);
     }
     .modal-actions { display: flex; gap: .75rem; justify-content: flex-end; margin-top: 1.5rem; }
     .btn-modal-cancel {
@@ -355,7 +355,7 @@
     {% endfor %}
 </div>
 {% else %}
-<div class="empty-state" style="background:white;border-radius:18px;box-shadow:0 2px 14px rgba(23,79,25,.07);margin-bottom:2rem;">
+<div class="empty-state" style="background:white;border-radius:18px;box-shadow:0 2px 14px rgba(42,33,27,.07);margin-bottom:2rem;">
     <div class="empty-icon">📭</div>
     <h3>Vous n'avez rejoint aucun groupe</h3>
     <p>Explorez les groupes ci-dessous et rejoignez une communauté !</p>
@@ -381,7 +381,7 @@
     {% endfor %}
 </div>
 {% else %}
-<div class="empty-state" style="background:white;border-radius:18px;box-shadow:0 2px 14px rgba(23,79,25,.07);">
+<div class="empty-state" style="background:white;border-radius:18px;box-shadow:0 2px 14px rgba(42,33,27,.07);">
     <div class="empty-icon">🎉</div>
     <h3>Vous avez rejoint tous les groupes !</h3>
     <p>Créez un nouveau groupe pour démarrer une nouvelle communauté.</p>
