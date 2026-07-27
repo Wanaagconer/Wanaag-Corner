@@ -14,3 +14,21 @@ python manage.py migrate
 if [ -n "$DJANGO_SUPERUSER_PASSWORD" ]; then
   python manage.py createsuperuser --noinput || true
 fi
+
+# Réinitialise le mot de passe d'un compte existant si ADMIN_RESET_EMAIL
+# et ADMIN_RESET_PASSWORD sont fournis (utilitaire ponctuel, à retirer des
+# variables d'environnement une fois utilisé).
+if [ -n "$ADMIN_RESET_EMAIL" ] && [ -n "$ADMIN_RESET_PASSWORD" ]; then
+  python manage.py shell -c "
+from django.contrib.auth import get_user_model
+import os
+User = get_user_model()
+u = User.objects.filter(email=os.environ['ADMIN_RESET_EMAIL']).first()
+if u:
+    u.set_password(os.environ['ADMIN_RESET_PASSWORD'])
+    u.save()
+    print('password reset for', u.email)
+else:
+    print('no user found for', os.environ['ADMIN_RESET_EMAIL'])
+"
+fi
