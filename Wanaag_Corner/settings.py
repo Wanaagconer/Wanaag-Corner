@@ -43,6 +43,20 @@ if DEBUG and not ALLOWED_HOSTS:
 
 CSRF_TRUSTED_ORIGINS = [f'https://{h}' for h in ALLOWED_HOSTS if h not in ('localhost', '127.0.0.1')]
 
+# Django's PBKDF2 default (1.2M iterations) is tuned for beefy hardware and
+# takes several seconds to verify on Render's constrained free-tier CPU.
+# 320k iterations is Django's own historical default for years and still
+# well above OWASP's minimum recommendation — just fast enough to log in
+# without a multi-second wait on this host.
+PASSWORD_HASHERS = [
+    'application.hashers.FastPBKDF2PasswordHasher',
+    'django.contrib.auth.hashers.PBKDF2PasswordHasher',
+    'django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher',
+    'django.contrib.auth.hashers.Argon2PasswordHasher',
+    'django.contrib.auth.hashers.BCryptSHA256PasswordHasher',
+    'django.contrib.auth.hashers.ScryptPasswordHasher',
+]
+
 
 # Application definition
 
