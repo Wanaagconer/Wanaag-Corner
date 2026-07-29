@@ -256,8 +256,13 @@
 @media(max-width:700px) {
     .adm-form-grid { grid-template-columns: 1fr; }
     .stat-grid { grid-template-columns: repeat(2, 1fr); }
-    .adm-tabs { gap: .3rem; padding: .8rem 1rem; }
-    .adm-tab { font-size: .75rem; padding: .4rem .8rem; }
+    .adm-tabs {
+        gap: .3rem; padding: .8rem 1rem;
+        flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+    .adm-tabs::-webkit-scrollbar { display: none; }
+    .adm-tab { font-size: .75rem; padding: .4rem .8rem; white-space: nowrap; flex-shrink: 0; }
     .adm-search { width: 150px; }
     .adm-search:focus { width: 150px; }
     .adm-table-head { flex-wrap: wrap; gap: .8rem; }

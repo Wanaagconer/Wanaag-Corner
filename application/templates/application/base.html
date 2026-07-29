@@ -45,12 +45,14 @@
             --radius-lg: 22px;
         }
         *{margin:0;padding:0;box-sizing:border-box;}
-        html{scroll-behavior:smooth;}
+        html{scroll-behavior:smooth;overflow-x:hidden;max-width:100%;}
         body{
             font-family:'Instrument Sans','Segoe UI',system-ui,sans-serif;
             background:var(--sable);
             color:var(--encre);
             min-height:100vh;
+            overflow-x:hidden;
+            max-width:100%;
             overflow-x:hidden;
             line-height:1.6;
             -webkit-font-smoothing:antialiased;
@@ -80,7 +82,7 @@
         .nav-logo-img{ width:100%; height:100%; object-fit:cover; display:block; }
         .nav-brand-name{
             font-family:'Fraunces',serif; font-size:1.3rem; font-weight:500;
-            color:var(--encre); letter-spacing:.1px;
+            color:var(--encre); letter-spacing:.1px; white-space:nowrap;
         }
 
         /* Links */
@@ -124,8 +126,10 @@
         }
         /* Sur très petits écrans : masquer les liens texte, garder seulement les boutons */
         @media(max-width:480px){
+            .nav-li-text, .nav-li-sep{ display:none; }
             .nav-link-item:not(.btn-nav){ display:none; }
             .nav-sep{ display:none; }
+            .nav-public-links{ gap:.5rem; }
             .btn-nav{ padding:.45rem .85rem; font-size:.78rem; }
             .nav-brand-name{ font-size:1.02rem; }
             .public-nav{ padding:0 4%; }
@@ -397,11 +401,6 @@
             .app-topbar{padding:0 1rem;}
             .topbar-title{font-size:.95rem;}
         }
-        @media(max-width:600px){
-            .nav-public-links .btn-nav{padding:.5rem .95rem;font-size:.8rem;}
-            .nav-brand-name{font-size:1.1rem;}
-        }
-
         /* ========================================
            ANIMATIONS — WANAAG CORNER
            ======================================== */
@@ -608,9 +607,9 @@
         <span class="nav-brand-name">Wanaag Corner</span>
     </a>
     <ul class="nav-public-links">
-        <li><a href="{% url 'home' %}" class="nav-link-item {% if request.resolver_match.url_name == 'home' %}active{% endif %}">Accueil</a></li>
-        <li><a href="{% url 'about' %}" class="nav-link-item {% if request.resolver_match.url_name == 'about' %}active{% endif %}">À propos</a></li>
-        <li><span class="nav-sep"></span></li>
+        <li class="nav-li-text"><a href="{% url 'home' %}" class="nav-link-item {% if request.resolver_match.url_name == 'home' %}active{% endif %}">Accueil</a></li>
+        <li class="nav-li-text"><a href="{% url 'about' %}" class="nav-link-item {% if request.resolver_match.url_name == 'about' %}active{% endif %}">À propos</a></li>
+        <li class="nav-li-sep"><span class="nav-sep"></span></li>
         <li><a href="{% url 'login' %}" class="btn-nav btn-nav-outline">Connexion</a></li>
         <li><a href="{% url 'register' %}" class="btn-nav btn-nav-filled">S'inscrire</a></li>
     </ul>
@@ -941,10 +940,11 @@ document.head.appendChild(s);
 </script>
 {% block extra_js %}{% endblock %}
 
-{% if user.is_authenticated %}
+{% if user.is_authenticated and request.resolver_match.url_name != 'chatbot' %}
 <!-- ═══════════════════════════════════════════════
      WIDGET FLOTTANT — WANAAG IA
-     (partagé sur toutes les pages authentifiées)
+     (partagé sur toutes les pages authentifiées, sauf la page du chat
+     elle-même où il ferait doublon avec le champ de saisie réel)
 ═══════════════════════════════════════════════ -->
 {% url 'chatbot_send' as chatbot_send_url %}
 {% url 'chatbot' as chatbot_url %}
