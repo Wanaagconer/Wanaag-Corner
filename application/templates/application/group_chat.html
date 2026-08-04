@@ -16,87 +16,78 @@
         background: white;
     }
 
-    /* ===== SIDEBAR MEMBRES ===== */
-    .members-panel {
-        width: 240px;
-        flex-shrink: 0;
-        background: #191410;
-        display: flex;
-        flex-direction: column;
-        border-right: 1px solid rgba(190,140,60,.15);
+    /* ===== INFOS GROUPE (façon WhatsApp : cachées, visibles seulement
+       en touchant l'en-tête — pas de panneau permanent) ===== */
+    .group-info-overlay {
+        display: none; position: fixed; inset: 0;
+        background: rgba(26,16,8,.5); z-index: 3000;
+        align-items: center; justify-content: center;
     }
-    .members-panel-header {
-        padding: 1.2rem 1.1rem .9rem;
-        border-bottom: 1px solid rgba(255,255,255,.07);
+    .group-info-overlay.show { display: flex; }
+    .group-info-box {
+        background: white; border-radius: 22px;
+        width: 90%; max-width: 400px; max-height: 82vh;
+        display: flex; flex-direction: column; overflow: hidden;
+        animation: fadeUp .22s ease;
     }
-    .group-name {
-        font-family: 'Fraunces', serif;
-        font-size: .95rem;
-        font-weight: 700;
-        color: var(--accent-light);
-        margin-bottom: .3rem;
+    @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+    .group-info-head {
+        padding: 2rem 1.5rem 1.4rem; text-align: center;
+        background: linear-gradient(160deg, var(--beige-light), white);
+        border-bottom: 1px solid var(--beige);
     }
-    .group-category {
-        display: inline-block;
-        font-size: .68rem;
-        font-weight: 600;
-        color: rgba(255,255,255,.45);
-        background: rgba(190,140,60,.12);
-        border: 1px solid rgba(190,140,60,.18);
-        border-radius: 20px;
-        padding: .18rem .55rem;
+    .group-info-close {
+        position: absolute; top: 1rem; right: 1.2rem;
+        width: 30px; height: 30px; border-radius: 50%;
+        background: rgba(42,33,27,.06); border: none; cursor: pointer;
+        color: var(--brown-dark); font-size: 1rem;
+        display: flex; align-items: center; justify-content: center;
     }
-    .members-scroll {
-        flex: 1;
-        overflow-y: auto;
-        padding: .75rem .7rem;
-        scrollbar-width: thin;
-        scrollbar-color: rgba(255,255,255,.1) transparent;
-    }
-    .member-row {
-        display: flex;
-        align-items: center;
-        gap: .65rem;
-        padding: .55rem .65rem;
-        border-radius: 10px;
-        margin-bottom: .2rem;
-        transition: background .15s;
-    }
-    .member-row:hover { background: rgba(255,255,255,.05); }
-    .member-av {
-        width: 34px;
-        height: 34px;
-        border-radius: 50%;
+    .group-info-avatar {
+        width: 76px; height: 76px; border-radius: 50%; margin: 0 auto .8rem;
         background: linear-gradient(135deg, var(--accent), var(--accent-dark));
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-weight: 700;
-        font-size: .82rem;
-        flex-shrink: 0;
+        color: white; font-family: 'Fraunces', serif; font-weight: 700; font-size: 1.9rem;
+        display: flex; align-items: center; justify-content: center;
+    }
+    .group-info-name { font-family: 'Fraunces', serif; font-size: 1.2rem; font-weight: 700; color: var(--brown-dark); }
+    .group-info-cat {
+        display: inline-block; margin-top: .5rem;
+        font-size: .72rem; font-weight: 600; color: var(--accent-dark);
+        background: rgba(190,140,60,.12); border-radius: 20px; padding: .2rem .7rem;
+    }
+    .group-info-desc { font-size: .82rem; color: var(--brown-light); margin-top: .7rem; line-height: 1.55; }
+    .group-info-members-label {
+        padding: 1rem 1.5rem .5rem; font-size: .72rem; font-weight: 700;
+        letter-spacing: .04em; text-transform: uppercase; color: var(--brown-light);
+    }
+    .members-scroll { flex: 1; overflow-y: auto; padding: 0 .8rem .5rem; }
+    .member-row { display: flex; align-items: center; gap: .65rem; padding: .55rem .7rem; border-radius: 10px; }
+    .member-row:hover { background: var(--beige-light); }
+    .member-av {
+        width: 38px; height: 38px; border-radius: 50%;
+        background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+        display: flex; align-items: center; justify-content: center;
+        color: white; font-weight: 700; font-size: .88rem; flex-shrink: 0;
     }
     .member-av.creator { background: linear-gradient(135deg,#f59e0b,#d97706); }
-    .member-name { font-size: .82rem; font-weight: 500; color: rgba(255,255,255,.7); }
-    .member-badge { font-size: .65rem; margin-left: .25rem; }
-    .member-online { font-size: .65rem; color: #2ecc71; display: flex; align-items: center; gap: .25rem; }
-    .dot-online { width: 6px; height: 6px; border-radius: 50%; background: #2ecc71; }
+    .member-name { font-size: .87rem; font-weight: 500; color: var(--brown-dark); }
+    .member-badge { font-size: .68rem; margin-left: .25rem; }
 
     .leave-btn-panel {
-        margin: .75rem;
-        padding: .65rem;
-        background: rgba(231,76,60,.1);
+        margin: .9rem 1.2rem 1.2rem;
+        padding: .7rem;
+        background: rgba(231,76,60,.08);
         border: 1px solid rgba(231,76,60,.2);
-        border-radius: 10px;
-        color: #ff7070;
-        font-size: .8rem;
+        border-radius: 12px;
+        color: #c0392b;
+        font-size: .85rem;
         font-weight: 600;
         cursor: pointer;
         text-align: center;
         transition: all .2s;
         font-family: inherit;
     }
-    .leave-btn-panel:hover { background: rgba(231,76,60,.2); }
+    .leave-btn-panel:hover { background: rgba(231,76,60,.15); }
 
     /* ===== ZONE CHAT ===== */
     .chat-area {
@@ -126,6 +117,13 @@
         transition: background .15s;
     }
     .chat-back-btn:hover { background: var(--beige-light); }
+    .chat-topbar-click {
+        display: flex; align-items: center; gap: .85rem; min-width: 0;
+        flex: 1; cursor: pointer; padding: .2rem .4rem; margin: -.2rem -.4rem;
+        border-radius: 10px; transition: background .15s;
+    }
+    .chat-topbar-click:hover { background: var(--beige-light); }
+    .chat-topbar-click:hover .chat-topbar-sub::after { opacity: 1; }
     .chat-topbar-avatar {
         width: 42px; height: 42px; border-radius: 50%; flex-shrink: 0;
         background: linear-gradient(135deg, var(--accent), var(--accent-dark));
@@ -248,19 +246,28 @@
         border-radius: 16px 16px 4px 16px;
     }
 
-    /* Empty state */
+    /* Empty state — chaleureux plutôt que froid */
     .empty-chat {
         flex: 1;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        color: var(--brown-light);
         text-align: center;
         padding: 2rem;
     }
-    .empty-chat-icon { font-size: 3rem; margin-bottom: .75rem; }
-    .empty-chat-text { font-size: .9rem; line-height: 1.6; }
+    .empty-chat-avatar {
+        width: 84px; height: 84px; border-radius: 50%; margin-bottom: 1.1rem;
+        background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+        color: white; font-family: 'Fraunces', serif; font-weight: 700; font-size: 2.1rem;
+        display: flex; align-items: center; justify-content: center;
+        box-shadow: 0 10px 28px rgba(190,140,60,.3);
+    }
+    .empty-chat-title {
+        font-family: 'Fraunces', serif; font-size: 1.15rem; font-weight: 700;
+        color: var(--brown-dark); margin-bottom: .5rem;
+    }
+    .empty-chat-text { font-size: .88rem; line-height: 1.6; color: var(--brown-light); max-width: 26em; }
 
     /* ===== INPUT ZONE ===== */
     .input-zone {
@@ -325,7 +332,6 @@
     }
 
     @media(max-width:900px){
-        .members-panel { display: none; }
         .chat-back-btn { display: flex; }
     }
     @media(max-width:600px){
@@ -353,39 +359,16 @@
 {% block content %}
 <div class="chat-wrapper">
 
-    <!-- ===== PANNEAU MEMBRES ===== -->
-    <div class="members-panel">
-        <div class="members-panel-header">
-            <div class="group-name">{{ group.name }}</div>
-            <span class="group-category">{{ group.get_category_display }}</span>
-        </div>
-        <div class="members-scroll">
-            {% for member in members %}
-            <div class="member-row">
-                <div class="member-av {% if member == group.creator %}creator{% endif %}">
-                    {{ member.pseudonyme|first|upper }}
-                </div>
-                <div>
-                    <div class="member-name">
-                        {{ member.pseudonyme }}
-                        {% if member == group.creator %}<span class="member-badge">👑</span>{% endif %}
-                    </div>
-                    <div class="member-online"><span class="dot-online"></span> En ligne</div>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-        <button class="leave-btn-panel" onclick="leaveGroup()">🚪 Quitter le groupe</button>
-    </div>
-
-    <!-- ===== ZONE CHAT ===== -->
+    <!-- ===== ZONE CHAT (pleine largeur — infos groupe accessibles au clic sur l'en-tête, comme WhatsApp) ===== -->
     <div class="chat-area">
         <div class="chat-topbar">
             <a href="{% url 'forum_home' %}" class="chat-back-btn" title="Retour aux groupes">←</a>
-            <div class="chat-topbar-avatar">{{ group.name|first|upper }}</div>
-            <div class="chat-topbar-info">
-                <div class="chat-topbar-title">{{ group.name }}</div>
-                <div class="chat-topbar-sub">👥 {{ members|length }} membre{{ members|length|pluralize }}</div>
+            <div class="chat-topbar-click" onclick="toggleGroupInfo()" title="Infos du groupe">
+                <div class="chat-topbar-avatar">{{ group.name|first|upper }}</div>
+                <div class="chat-topbar-info">
+                    <div class="chat-topbar-title">{{ group.name }}</div>
+                    <div class="chat-topbar-sub">👥 {{ members|length }} membre{{ members|length|pluralize }} · voir les infos</div>
+                </div>
             </div>
         </div>
 
@@ -413,10 +396,11 @@
                 {% endfor %}
             {% else %}
                 <div class="empty-chat" id="emptyChat">
-                    <div class="empty-chat-icon">💬</div>
+                    <div class="empty-chat-avatar">{{ group.name|first|upper }}</div>
+                    <div class="empty-chat-title">C'est le début de {{ group.name }}</div>
                     <div class="empty-chat-text">
-                        Aucun message pour le moment.<br>
-                        Soyez le premier à écrire !
+                        Un espace bienveillant pour échanger en toute confiance.<br>
+                        Envoyez le premier message pour lancer la conversation !
                     </div>
                 </div>
             {% endif %}
@@ -436,6 +420,34 @@
             </div>
             <div class="input-hint">Entrée pour envoyer · Shift+Entrée pour une nouvelle ligne</div>
         </div>
+    </div>
+</div>
+
+<!-- ===== INFOS GROUPE — visible uniquement en touchant l'en-tête ===== -->
+<div class="group-info-overlay" id="groupInfoOverlay" onclick="if(event.target===this) toggleGroupInfo()">
+    <div class="group-info-box">
+        <div class="group-info-head" style="position:relative;">
+            <button class="group-info-close" onclick="toggleGroupInfo()">✕</button>
+            <div class="group-info-avatar">{{ group.name|first|upper }}</div>
+            <div class="group-info-name">{{ group.name }}</div>
+            <span class="group-info-cat">{{ group.get_category_display }}</span>
+            {% if group.description %}<div class="group-info-desc">{{ group.description }}</div>{% endif %}
+        </div>
+        <div class="group-info-members-label">{{ members|length }} membre{{ members|length|pluralize }}</div>
+        <div class="members-scroll">
+            {% for member in members %}
+            <div class="member-row">
+                <div class="member-av {% if member == group.creator %}creator{% endif %}">
+                    {{ member.pseudonyme|first|upper }}
+                </div>
+                <div class="member-name">
+                    {{ member.pseudonyme }}
+                    {% if member == group.creator %}<span class="member-badge">👑</span>{% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <button class="leave-btn-panel" onclick="leaveGroup()">🚪 Quitter le groupe</button>
     </div>
 </div>
 {% endblock %}
@@ -570,6 +582,11 @@ function esc(str) {
     const d = document.createElement('div');
     d.textContent = str;
     return d.innerHTML;
+}
+
+/* ===== INFOS GROUPE ===== */
+function toggleGroupInfo() {
+    document.getElementById('groupInfoOverlay').classList.toggle('show');
 }
 
 /* ===== QUITTER ===== */
