@@ -174,25 +174,59 @@ def leave_group(request, group_id):
 def group_chat(request, group_id):
     """Page de chat d'un groupe"""
     group = get_object_or_404(ForumGroup, id=group_id)
-    
+
     # Vérifier que l'utilisateur est membre
     if request.user not in group.members.all():
         return redirect('forum_home')
-    
+
     # Récupérer tous les messages
-    messages_list = group.messages.filter(is_deleted=False).select_related('sender')
-    
+    messages_list = list(
+        group.messages.filter(is_deleted=False).select_related('sender').order_by('created_at')
+    )
+
+    # Enrichir pour l'affichage façon messagerie (séparateurs de jour,
+    # regroupement des messages consécutifs du même auteur)
+    today = timezone.localdate()
+    yesterday = today - timedelta(days=1)
+    chat_items = []
+    prev_sender_id, prev_date, prev_time = None, None, None
+    for msg in messages_list:
+        msg_date = timezone.localtime(msg.created_at).date()
+        is_new_day = msg_date != prev_date
+        show_header = (
+            is_new_day
+            or msg.sender_id != prev_sender_id
+            or (prev_time and (msg.created_at - prev_time).total_seconds() > 300)
+        )
+        if is_new_day:
+            if msg_date == today:
+                date_label = "Aujourd'hui"
+            elif msg_date == yesterday:
+                date_label = "Hier"
+            else:
+                date_label = None  # gabarit utilisera msg.created_at|date
+        else:
+            date_label = None
+        chat_items.append({
+            'msg': msg,
+            'show_header': show_header,
+            'is_new_day': is_new_day,
+            'date_label': date_label,
+        })
+        prev_sender_id, prev_date, prev_time = msg.sender_id, msg_date, msg.created_at
+
     # Marquer comme lu
     status, created = GroupMemberStatus.objects.get_or_create(
-        group=group, 
+        group=group,
         user=request.user
     )
     status.last_read_at = timezone.now()
     status.save()
-    
+
     context = {
         'group': group,
-        'chat_messages': messages_list,
+        'chat_items': chat_items,
+        'last_message_id': messages_list[-1].id if messages_list else 0,
         'members': group.members.all(),
     }
     return render(request, 'application/group_chat.html', context)

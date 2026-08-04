@@ -940,11 +940,15 @@ document.head.appendChild(s);
 </script>
 {% block extra_js %}{% endblock %}
 
-{% if user.is_authenticated and request.resolver_match.url_name != 'chatbot' %}
+{% url 'chatbot' as wgtChatbotUrl %}
+{% url 'group_chat' group.id as wgtGroupChatUrl %}
+{% if user.is_authenticated and request.path != wgtChatbotUrl and request.path != wgtGroupChatUrl %}
 <!-- ═══════════════════════════════════════════════
      WIDGET FLOTTANT — WANAAG IA
-     (partagé sur toutes les pages authentifiées, sauf la page du chat
-     elle-même où il ferait doublon avec le champ de saisie réel)
+     (partagé sur toutes les pages authentifiées, sauf les pages qui ont
+     déjà leur propre champ d'envoi en bas à droite — le chatbot plein
+     écran et les chats de groupe — où le widget recouvrirait et
+     bloquerait réellement le clic sur le bouton d'envoi)
 ═══════════════════════════════════════════════ -->
 {% url 'chatbot_send' as chatbot_send_url %}
 {% url 'chatbot' as chatbot_url %}
