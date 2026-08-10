@@ -136,7 +136,7 @@
     font-size: .84rem; color: var(--brown-dark); cursor: pointer;
     transition: background .1s; border: none; background: none; width: 100%; text-align: left;
 }
-.dropdown-item:hover { background: #fcfaf4; }
+.dropdown-item:hover { background: #f1eada; }
 .dropdown-item.danger { color: #e74c3c; }
 .dropdown-item.danger:hover { background: #fdf0ef; }
 .dropdown-item svg { width: 15px; height: 15px; fill: currentColor; flex-shrink: 0; }
@@ -194,7 +194,7 @@
 @keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
 .comment-item { display: flex; gap: .65rem; margin-bottom: .75rem; align-items: flex-start; }
 .comment-bubble {
-    background: linear-gradient(135deg, #f4eee2, #fcfaf4);
+    background: linear-gradient(135deg, #e7d8bb, #f1eada);
     border-radius: 0 18px 18px 18px; padding: .6rem 1rem; flex: 1;
     border: 1px solid rgba(190,140,60,.08);
 }
@@ -206,7 +206,7 @@
     margin-top: .8rem; padding-top: .7rem; border-top: 1px solid rgba(171,126,54,.07);
 }
 .comment-input {
-    flex: 1; background: #f4eee2; border: 1.5px solid rgba(190,140,60,.15);
+    flex: 1; background: #e7d8bb; border: 1.5px solid rgba(190,140,60,.15);
     border-radius: 50px; padding: .58rem 1.1rem; font-size: .84rem;
     outline: none; font-family: inherit; color: var(--brown-dark); transition: all .18s;
 }
@@ -266,10 +266,10 @@
 .modal-head {
     display: flex; align-items: center; justify-content: space-between;
     padding: 1.2rem 1.5rem; border-bottom: 1px solid rgba(171,126,54,.1);
-    background: linear-gradient(135deg,#f4eee2,white);
+    background: linear-gradient(135deg,#e7d8bb,white);
 }
 .modal-head h4 { font-size: 1.05rem; font-weight: 800; color: var(--brown-dark); margin: 0; font-family: 'Fraunces',serif; }
-.modal-close-btn { width: 32px; height: 32px; border-radius: 50%; background: #fcfaf4; border: none; cursor: pointer; font-size: 1rem; color: var(--brown); display: flex; align-items: center; justify-content: center; transition: all .15s; }
+.modal-close-btn { width: 32px; height: 32px; border-radius: 50%; background: #f1eada; border: none; cursor: pointer; font-size: 1rem; color: var(--brown); display: flex; align-items: center; justify-content: center; transition: all .15s; }
 .modal-close-btn:hover { background: #fde8e8; color: #e74c3c; transform: rotate(90deg); }
 .modal-author-row { display: flex; align-items: center; gap: .9rem; padding: 1.1rem 1.5rem .5rem; }
 .modal-author-row .m-name { font-weight: 700; font-size: .9rem; color: var(--brown-dark); }
@@ -312,7 +312,7 @@
     box-shadow: 0 4px 18px var(--gold-glow), inset 0 1px 0 rgba(255,255,255,.2);
 }
 .btn-publish:hover { transform: translateY(-2px); box-shadow: 0 10px 32px var(--gold-glow); }
-.btn-publish:disabled { background: #e4dbcb; color: #9b8b7e; cursor: not-allowed; transform: none; box-shadow: none; }
+.btn-publish:disabled { background: #d4c3a5; color: #9b8b7e; cursor: not-allowed; transform: none; box-shadow: none; }
 
 /* ===== DELETE MODAL ===== */
 .delete-box { background: white; border-radius: 24px; width: 90%; max-width: 360px; overflow: hidden; box-shadow: 0 24px 70px rgba(0,0,0,.22); animation: modalIn .22s cubic-bezier(.34,1.56,.64,1); }
@@ -322,8 +322,8 @@
 .delete-box-body h4 { color: var(--brown-dark); font-size: 1.05rem; margin-bottom: .4rem; }
 .delete-box-body p { color: #9b8b7e; font-size: .84rem; }
 .delete-box-footer { display: flex; gap: .8rem; padding: 1rem 1.8rem 1.6rem; justify-content: center; }
-.btn-cancel-del { background: #f4eee2; color: var(--brown-dark); border: none; padding: .68rem 1.6rem; border-radius: 50px; font-weight: 700; cursor: pointer; font-size: .86rem; transition: background .15s; }
-.btn-cancel-del:hover { background: #e4dbcb; }
+.btn-cancel-del { background: #e7d8bb; color: var(--brown-dark); border: none; padding: .68rem 1.6rem; border-radius: 50px; font-weight: 700; cursor: pointer; font-size: .86rem; transition: background .15s; }
+.btn-cancel-del:hover { background: #d4c3a5; }
 .btn-confirm-del { background: linear-gradient(135deg,#e74c3c,#b03a2e); color: white; border: none; padding: .68rem 1.6rem; border-radius: 50px; font-weight: 700; cursor: pointer; font-size: .86rem; box-shadow: 0 4px 14px rgba(231,76,60,.3); transition: all .15s; }
 .btn-confirm-del:hover { transform: translateY(-1px); box-shadow: 0 8px 22px rgba(231,76,60,.4); }
 
