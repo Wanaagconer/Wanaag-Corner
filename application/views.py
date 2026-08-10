@@ -1763,11 +1763,24 @@ def parcours_journal(request):
             contenu = request.POST.get('contenu', '').strip()
             humeur = request.POST.get('humeur', '3')
             if contenu:
-                JournalEntry.objects.create(
+                entry = JournalEntry.objects.create(
                     utilisateur=user, titre=titre, contenu=contenu, humeur=humeur
                 )
-                return JsonResponse({'success': True})
+                return JsonResponse({'success': True, 'entry_id': entry.id})
             return JsonResponse({'success': False, 'message': 'Contenu vide'})
+        elif action == 'update':
+            entry_id = request.POST.get('entry_id')
+            entry = JournalEntry.objects.filter(id=entry_id, utilisateur=user).first()
+            if not entry:
+                return JsonResponse({'success': False, 'message': 'Page introuvable'})
+            contenu = request.POST.get('contenu', '').strip()
+            if not contenu:
+                return JsonResponse({'success': False, 'message': 'Contenu vide'})
+            entry.titre = request.POST.get('titre', '').strip()
+            entry.contenu = contenu
+            entry.humeur = request.POST.get('humeur', entry.humeur)
+            entry.save()
+            return JsonResponse({'success': True, 'entry_id': entry.id})
         elif action == 'delete':
             entry_id = request.POST.get('entry_id')
             JournalEntry.objects.filter(id=entry_id, utilisateur=user).delete()
@@ -1778,8 +1791,20 @@ def parcours_journal(request):
     for e in entries:
         mood_stats[e.humeur] = mood_stats.get(e.humeur, 0) + 1
 
+    entries_data = [
+        {
+            'id': e.id,
+            'titre': e.titre,
+            'contenu': e.contenu,
+            'humeur': e.humeur,
+            'date_iso': timezone.localtime(e.date_creation).isoformat(),
+        }
+        for e in entries
+    ]
+
     return render(request, 'application/parcours_journal.html', {
         'entries': entries,
+        'entries_data': entries_data,
         'mood_stats': mood_stats,
     })
 

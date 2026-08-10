@@ -196,7 +196,7 @@
 .jnl-page-footer {
     margin-top:auto; padding-top:.8rem;
     border-top:1px solid rgba(171,126,54,.15);
-    display:flex; justify-content:flex-end;
+    display:flex; align-items:center; justify-content:space-between;
 }
 .jnl-page-delete {
     background:none; border:none; color:rgba(42,33,27,.2);
@@ -298,6 +298,15 @@
     border-radius:20px; cursor:pointer; transition:all .2s; font-family:inherit;
 }
 .writer-close-btn:hover { background:rgba(190,140,60,.2); color:var(--gold); }
+
+.writer-nav-btn {
+    background:none; border:1px solid rgba(190,140,60,.25);
+    color:rgba(190,140,60,.65); font-size:.75rem; padding:.35rem .8rem;
+    border-radius:20px; cursor:pointer; transition:all .2s; font-family:inherit;
+    white-space:nowrap;
+}
+.writer-nav-btn:hover:not(:disabled) { background:rgba(190,140,60,.15); color:var(--gold-light); }
+.writer-nav-btn:disabled { opacity:.25; cursor:default; }
 
 /* Page scroll area */
 .writer-scroll {
@@ -420,6 +429,10 @@
 
     /* Full-screen writer: adapt to narrow screens */
     .writer-topbar { padding:.6rem 1rem; flex-wrap: wrap; gap:.5rem; }
+    .writer-topbar-brand { display: none; }
+    .writer-topbar-center { flex-wrap: wrap; justify-content: center; gap: .5rem; flex: 1; }
+    .writer-word-stat { display: none; }
+    .writer-nav-btn { font-size: .7rem; padding: .3rem .65rem; }
     .writer-page { padding: 2rem 1rem 5rem; max-width: 100%; }
     /* Decorative margin rule is positioned relative to a 680px page — remove it
        on mobile so it doesn't push a negative offset and cause overflow */
@@ -494,12 +507,14 @@
     <div class="jnl-stat-pill">⌨️ <strong id="totalWords">—</strong> mots écrits</div>
 </div>
 
+{{ entries_data|json_script:"entries-data" }}
+
 <!-- ═══ PAGES GRID ═══ -->
 {% if entries %}
-<div class="jnl-pages-label">Vos pages</div>
+<div class="jnl-pages-label">Vos pages · cliquez pour relire</div>
 <div class="jnl-pages-grid">
     {% for entry in entries %}
-    <div class="jnl-page-card jnl-page-m{{ entry.humeur }}">
+    <div class="jnl-page-card jnl-page-m{{ entry.humeur }}" onclick="openReader({{ entry.id }})">
         <div class="jnl-page-fold"></div>
         <div class="jnl-page-num">p. {{ forloop.counter }}</div>
         <div class="jnl-page-inner">
@@ -513,7 +528,8 @@
             <div class="jnl-page-title">{{ entry.titre|default:"Sans titre" }}</div>
             <div class="jnl-page-text">{{ entry.contenu }}</div>
             <div class="jnl-page-footer">
-                <button class="jnl-page-delete" onclick="deleteEntry({{ entry.id }}, this)" title="Supprimer cette page">🗑</button>
+                <span style="font-size:.72rem;color:var(--ink3);">Lire la page entière →</span>
+                <button class="jnl-page-delete" onclick="event.stopPropagation(); deleteEntry({{ entry.id }}, this)" title="Supprimer cette page">🗑</button>
             </div>
         </div>
     </div>
@@ -541,13 +557,18 @@
     <div class="writer-topbar">
         <div class="writer-topbar-brand">Journal Intime · Wanaag Corner</div>
         <div class="writer-topbar-center">
+            <button class="writer-nav-btn" id="prevPageBtn" onclick="goToAdjacent(1)" title="Page précédente">‹ Précédente</button>
             <div class="writer-status">
                 <div class="writer-status-dot" id="statusDot"></div>
                 <span id="statusText">Prêt</span>
             </div>
             <div class="writer-word-stat" id="topWordStat">0 mot</div>
+            <button class="writer-nav-btn" id="nextPageBtn" onclick="goToAdjacent(-1)" title="Page suivante">Suivante ›</button>
         </div>
-        <button class="writer-close-btn" onclick="closeWriter()">← Fermer</button>
+        <div style="display:flex; gap:.5rem;">
+            <button class="writer-close-btn" id="writerDeleteBtn" onclick="deleteFromWriter()" style="display:none; background:rgba(239,68,68,.1); border-color:rgba(239,68,68,.25); color:#ef4444;">🗑 Supprimer</button>
+            <button class="writer-close-btn" onclick="closeWriter()">← Fermer</button>
+        </div>
     </div>
 
     <!-- Scrollable page area -->
@@ -567,7 +588,6 @@ Qu'est-ce qui a traversé votre esprit aujourd'hui ?
 Qu'est-ce qui vous a touché, surpris, ému ?
 
 Cette page n'appartient qu'à vous."
-                oninput="onWriterInput()"
             ></textarea>
         </div>
     </div>
@@ -587,22 +607,29 @@ Cette page n'appartient qu'à vous."
             <span><strong id="brt">0 min</strong> de lecture</span>
             <span><strong id="bch">0</strong> caractères</span>
         </div>
-        <button class="writer-save-btn" onclick="saveEntry()">Sceller cette page ✦</button>
+        <button class="writer-save-btn" id="writerSaveBtn" onclick="saveEntry()">Sceller cette page ✦</button>
     </div>
 
     <input type="hidden" id="humeurInput" value="3">
 </div>
 
 <script>
-// ── Date heading ──
-const now = new Date();
+// ── Data ──
+const ENTRIES = JSON.parse(document.getElementById('entries-data').textContent); // p.1 = plus récente
 const JOURS = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
 const MOIS  = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
-const dateStr = JOURS[now.getDay()] + ' ' + now.getDate() + ' ' + MOIS[now.getMonth()] + ' ' + now.getFullYear();
-document.getElementById('writerDateHeading').textContent = dateStr;
+function formatDate(d) {
+    return JOURS[d.getDay()] + ' ' + d.getDate() + ' ' + MOIS[d.getMonth()] + ' ' + d.getFullYear();
+}
+// currentIndex : -1 = nouvelle page (vierge), 0..N-1 = index dans ENTRIES (0 = la plus récente)
+let currentIndex = -1;
 
 // ── Open / Close writer ──
 function openWriter() {
+    resetToNewPage();
+    showWriter();
+}
+function showWriter() {
     document.getElementById('journalWriter').classList.add('open');
     document.body.style.overflow = 'hidden';
     setTimeout(() => document.getElementById('writerTitle').focus(), 350);
@@ -617,11 +644,72 @@ document.addEventListener('keydown', e => {
     if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') saveEntry();
 });
 
+// ── Reset to a blank new page ──
+function resetToNewPage() {
+    currentIndex = -1;
+    document.getElementById('writerTitle').value = '';
+    document.getElementById('writerContent').value = '';
+    setMoodValue('3');
+    document.getElementById('writerDateHeading').textContent = formatDate(new Date());
+    document.getElementById('writerPageNum').textContent = 'p. ' + (ENTRIES.length + 1);
+    document.getElementById('writerDeleteBtn').style.display = 'none';
+    document.getElementById('writerSaveBtn').textContent = 'Sceller cette page ✦';
+    document.getElementById('statusText').textContent = 'Prêt';
+    document.getElementById('statusDot').classList.remove('saving');
+    onWriterInput();
+    updateNavButtons();
+}
+
+// ── Ouvrir une page existante pour la relire / la modifier ──
+function openReader(id) {
+    const idx = ENTRIES.findIndex(e => e.id === id);
+    if (idx === -1) return;
+    openReaderByIndex(idx);
+    showWriter();
+}
+function openReaderByIndex(idx) {
+    const entry = ENTRIES[idx];
+    currentIndex = idx;
+    document.getElementById('writerTitle').value = entry.titre || '';
+    document.getElementById('writerContent').value = entry.contenu || '';
+    setMoodValue(entry.humeur);
+    document.getElementById('writerDateHeading').textContent = formatDate(new Date(entry.date_iso));
+    document.getElementById('writerPageNum').textContent = 'p. ' + (idx + 1) + ' / ' + ENTRIES.length;
+    document.getElementById('writerDeleteBtn').style.display = 'inline-block';
+    document.getElementById('writerSaveBtn').textContent = 'Enregistrer les modifications ✦';
+    document.getElementById('statusText').textContent = 'Prêt';
+    document.getElementById('statusDot').classList.remove('saving');
+    onWriterInput();
+    updateNavButtons();
+}
+
+// ── Naviguer entre les pages, comme dans un vrai journal ──
+function goToAdjacent(delta) {
+    const target = currentIndex + delta;
+    if (target < 0) {
+        // avant p.1 : la page qui n'a pas encore été écrite
+        resetToNewPage();
+    } else if (target < ENTRIES.length) {
+        openReaderByIndex(target);
+    }
+}
+function updateNavButtons() {
+    const prevBtn = document.getElementById('prevPageBtn'); // vers une page plus ancienne
+    const nextBtn = document.getElementById('nextPageBtn'); // vers une page plus récente / nouvelle page
+    prevBtn.disabled = (currentIndex + 1 >= ENTRIES.length);
+    nextBtn.disabled = (currentIndex === -1);
+}
+
+function setMoodValue(val) {
+    document.getElementById('humeurInput').value = val;
+    document.querySelectorAll('.writer-mood-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.val === String(val));
+    });
+}
+
 // ── Mood ──
 function setMood(btn) {
-    document.querySelectorAll('.writer-mood-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('humeurInput').value = btn.dataset.val;
+    setMoodValue(btn.dataset.val);
 }
 
 // ── Live stats ──
@@ -637,8 +725,9 @@ function onWriterInput() {
     document.getElementById('bwc').textContent = words;
     document.getElementById('brt').textContent = mins + ' min';
     document.getElementById('bch').textContent = chars;
-
-    // Auto-save indicator
+}
+document.getElementById('writerContent').addEventListener('input', () => {
+    onWriterInput();
     const dot  = document.getElementById('statusDot');
     const stat = document.getElementById('statusText');
     dot.classList.add('saving'); stat.textContent = 'Modification…';
@@ -646,7 +735,7 @@ function onWriterInput() {
     saveTimer = setTimeout(() => {
         dot.classList.remove('saving'); stat.textContent = 'Prêt';
     }, 800);
-}
+});
 
 // ── Total words count on page load ──
 (function() {
@@ -656,7 +745,7 @@ function onWriterInput() {
     document.getElementById('totalWords').textContent = words.toLocaleString('fr-FR');
 })();
 
-// ── Save ──
+// ── Save (créer ou modifier selon le contexte) ──
 function saveEntry() {
     const contenu = document.getElementById('writerContent').value.trim();
     if (!contenu) { document.getElementById('writerContent').focus(); return; }
@@ -664,8 +753,10 @@ function saveEntry() {
     const stat = document.getElementById('statusText');
     dot.classList.add('saving'); stat.textContent = 'Enregistrement…';
 
+    const isEdit = currentIndex !== -1;
     const data = new FormData();
-    data.append('action', 'create');
+    data.append('action', isEdit ? 'update' : 'create');
+    if (isEdit) data.append('entry_id', ENTRIES[currentIndex].id);
     data.append('csrfmiddlewaretoken', '{{ csrf_token }}');
     data.append('humeur', document.getElementById('humeurInput').value);
     data.append('titre', document.getElementById('writerTitle').value);
@@ -678,10 +769,27 @@ function saveEntry() {
                 dot.classList.remove('saving'); stat.textContent = '✓ Enregistré';
                 closeWriter();
                 const toast = document.getElementById('jnlToast');
+                toast.textContent = isEdit ? '✓ Modifications enregistrées' : '✓ Page enregistrée';
                 toast.style.display = 'block';
-                setTimeout(() => { toast.style.display = 'none'; location.reload(); }, 1800);
+                setTimeout(() => { toast.style.display = 'none'; location.reload(); }, 1200);
+            } else {
+                dot.classList.remove('saving'); stat.textContent = 'Erreur';
+                alert(d.message || 'Une erreur est survenue.');
             }
         });
+}
+
+// ── Supprimer depuis le lecteur ──
+function deleteFromWriter() {
+    if (currentIndex === -1) return;
+    if (!confirm('Supprimer cette page définitivement ?')) return;
+    const data = new FormData();
+    data.append('action', 'delete');
+    data.append('entry_id', ENTRIES[currentIndex].id);
+    data.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+    fetch('{% url "parcours_journal" %}', { method:'POST', body:data })
+        .then(r => r.json())
+        .then(d => { if (d.success) { closeWriter(); location.reload(); } });
 }
 
 // ── Delete ──
