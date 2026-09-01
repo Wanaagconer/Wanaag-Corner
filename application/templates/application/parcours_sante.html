@@ -128,6 +128,18 @@
 .sn-cal-row .val { color:var(--text-dim); font-weight:600; }
 .sn-cal-row .val.gold { color:var(--gold); }
 
+/* Macros */
+.sn-macros { display:flex; flex-direction:column; gap:.7rem; margin-top:1.1rem; padding-top:1.1rem; border-top:1px solid rgba(190,140,60,.1); }
+.sn-macro-row { display:flex; align-items:center; gap:.7rem; }
+.sn-macro-lbl { font-size:.72rem; color:var(--text-dim); width:88px; flex-shrink:0; }
+.sn-macro-lbl strong { color:var(--text); }
+.sn-macro-bar-track { flex:1; height:7px; border-radius:4px; background:rgba(190,140,60,.1); overflow:hidden; }
+.sn-macro-bar-fill { height:100%; border-radius:4px; }
+.sn-macro-fill-protein { background:linear-gradient(90deg,#3b82f6,#60a5fa); }
+.sn-macro-fill-carbs   { background:linear-gradient(90deg,var(--gold),var(--gold-light)); }
+.sn-macro-fill-fat     { background:linear-gradient(90deg,#ef4444,#f87171); }
+.sn-macro-pct { font-size:.68rem; color:var(--text-muted); width:34px; text-align:right; flex-shrink:0; }
+
 .sn-edit-btn {
   position:absolute; top:.9rem; right:.9rem;
   background:rgba(190,140,60,.08); border:1px solid rgba(190,140,60,.15);
@@ -179,8 +191,14 @@
 .sn-meal-card {
   background:rgba(190,140,60,.04); border:1px solid rgba(190,140,60,.08);
   border-radius:14px; padding:1rem 1.2rem; transition:all .22s;
+  display:flex; gap:1rem; align-items:flex-start;
 }
 .sn-meal-card:hover { border-color:rgba(190,140,60,.22); transform:translateX(4px); box-shadow:0 4px 16px rgba(0,0,0,.3); }
+.sn-meal-photo {
+  width:64px; height:64px; border-radius:10px; object-fit:cover; flex-shrink:0;
+  box-shadow:0 4px 12px rgba(0,0,0,.35); border:1px solid rgba(190,140,60,.2);
+}
+.sn-meal-body { flex:1; min-width:0; }
 .sn-meal-hd { display:flex; align-items:center; gap:.6rem; margin-bottom:.55rem; flex-wrap:wrap; }
 .sn-meal-icon { font-size:1.15rem; }
 .sn-meal-name { font-size:.86rem; font-weight:700; color:var(--text); flex:1; }
@@ -204,11 +222,24 @@
   background:rgba(190,140,60,.05); border:1px solid rgba(190,140,60,.12);
   border-radius:14px; padding:1.2rem 1.4rem; margin-bottom:1rem;
   display:flex; align-items:center; gap:1rem;
+  position:relative; overflow:hidden; min-height:88px;
 }
+.sn-workout-head.has-photo { border-color:rgba(190,140,60,.25); padding:1.4rem; }
+.sn-wh-photo-bg {
+  position:absolute; inset:0; z-index:0;
+  background-size:cover; background-position:center;
+}
+.sn-wh-photo-bg::after {
+  content:''; position:absolute; inset:0;
+  background:linear-gradient(90deg, rgba(44,36,27,.94) 0%, rgba(44,36,27,.75) 45%, rgba(44,36,27,.35) 100%);
+}
+.sn-workout-head > .sn-wh-emoji,
+.sn-workout-head > div:not(.sn-wh-photo-bg) { position:relative; z-index:1; }
 .sn-wh-emoji { font-size:2.2rem; }
 .sn-wh-focus {
   font-family:'Fraunces',serif; font-size:1.05rem; color:var(--text);
 }
+.sn-workout-head.has-photo .sn-wh-focus { color:#fff; }
 .sn-wh-badges { display:flex; gap:.45rem; margin-top:.35rem; flex-wrap:wrap; }
 .sn-badge {
   font-size:.63rem; padding:.18rem .6rem; border-radius:20px; font-weight:600;
@@ -368,6 +399,8 @@
   .sn-hero-sub { font-size:.82rem; }
   .sn-hero-chips { gap:.5rem; }
   .sn-chip { padding:.4rem .7rem; font-size:.72rem; width:100%; box-sizing:border-box; }
+  .sn-meal-photo { width:48px; height:48px; }
+  .sn-macro-lbl { width:72px; font-size:.68rem; }
   .sn-row { grid-template-columns:1fr; gap:.9rem; }
   .sn-form-wrap { padding:1.5rem 1rem; border-radius:18px; }
   .sn-modal { padding:1.5rem 1rem; border-radius:18px; margin:0 .75rem; max-width:calc(100% - 1.5rem); }
@@ -534,6 +567,25 @@
       <div class="sn-cal-row"><span class="lbl">Dîner</span><span class="val">≈ {{ meal_plan.diner.cal }} kcal</span></div>
       {% endif %}
     </div>
+    {% if macros %}
+    <div class="sn-macros">
+      <div class="sn-macro-row">
+        <span class="sn-macro-lbl">Protéines <strong>{{ macros.protein_g }}g</strong></span>
+        <div class="sn-macro-bar-track"><div class="sn-macro-bar-fill sn-macro-fill-protein" style="width:{{ macros.protein_pct }}%;"></div></div>
+        <span class="sn-macro-pct">{{ macros.protein_pct }}%</span>
+      </div>
+      <div class="sn-macro-row">
+        <span class="sn-macro-lbl">Glucides <strong>{{ macros.carbs_g }}g</strong></span>
+        <div class="sn-macro-bar-track"><div class="sn-macro-bar-fill sn-macro-fill-carbs" style="width:{{ macros.carbs_pct }}%;"></div></div>
+        <span class="sn-macro-pct">{{ macros.carbs_pct }}%</span>
+      </div>
+      <div class="sn-macro-row">
+        <span class="sn-macro-lbl">Lipides <strong>{{ macros.fat_g }}g</strong></span>
+        <div class="sn-macro-bar-track"><div class="sn-macro-bar-fill sn-macro-fill-fat" style="width:{{ macros.fat_pct }}%;"></div></div>
+        <span class="sn-macro-pct">{{ macros.fat_pct }}%</span>
+      </div>
+    </div>
+    {% endif %}
   </div>
 </div>
 
@@ -557,13 +609,16 @@
       <div class="sn-meal-row">
         <div class="sn-meal-node">☀️</div>
         <div class="sn-meal-card">
-          <div class="sn-meal-hd">
-            <span class="sn-meal-icon">☀️</span>
-            <span class="sn-meal-name">Petit-déjeuner</span>
-            <span class="sn-meal-kcal">{{ meal_plan.petit_dejeuner.cal }} kcal</span>
+          <img class="sn-meal-photo" src="{{ meal_plan.petit_dejeuner.image }}" alt="" loading="lazy">
+          <div class="sn-meal-body">
+            <div class="sn-meal-hd">
+              <span class="sn-meal-icon">☀️</span>
+              <span class="sn-meal-name">Petit-déjeuner</span>
+              <span class="sn-meal-kcal">{{ meal_plan.petit_dejeuner.cal }} kcal</span>
+            </div>
+            <ul class="sn-meal-items">{% for item in meal_plan.petit_dejeuner.items %}<li>{{ item }}</li>{% endfor %}</ul>
+            {% if meal_plan.petit_dejeuner.conseil %}<span class="sn-meal-conseil">💡 {{ meal_plan.petit_dejeuner.conseil }}</span>{% endif %}
           </div>
-          <ul class="sn-meal-items">{% for item in meal_plan.petit_dejeuner.items %}<li>{{ item }}</li>{% endfor %}</ul>
-          {% if meal_plan.petit_dejeuner.conseil %}<span class="sn-meal-conseil">💡 {{ meal_plan.petit_dejeuner.conseil }}</span>{% endif %}
         </div>
       </div>
 
@@ -571,12 +626,15 @@
       <div class="sn-meal-row">
         <div class="sn-meal-node">🍎</div>
         <div class="sn-meal-card">
-          <div class="sn-meal-hd">
-            <span class="sn-meal-icon">🍎</span>
-            <span class="sn-meal-name">Collation matinale</span>
-            <span class="sn-meal-kcal">{{ meal_plan.collation_matin.cal }} kcal</span>
+          <img class="sn-meal-photo" src="{{ meal_plan.collation_matin.image }}" alt="" loading="lazy">
+          <div class="sn-meal-body">
+            <div class="sn-meal-hd">
+              <span class="sn-meal-icon">🍎</span>
+              <span class="sn-meal-name">Collation matinale</span>
+              <span class="sn-meal-kcal">{{ meal_plan.collation_matin.cal }} kcal</span>
+            </div>
+            <ul class="sn-meal-items">{% for item in meal_plan.collation_matin.items %}<li>{{ item }}</li>{% endfor %}</ul>
           </div>
-          <ul class="sn-meal-items">{% for item in meal_plan.collation_matin.items %}<li>{{ item }}</li>{% endfor %}</ul>
         </div>
       </div>
 
@@ -584,13 +642,16 @@
       <div class="sn-meal-row">
         <div class="sn-meal-node">🌤️</div>
         <div class="sn-meal-card">
-          <div class="sn-meal-hd">
-            <span class="sn-meal-icon">🌤️</span>
-            <span class="sn-meal-name">Déjeuner</span>
-            <span class="sn-meal-kcal">{{ meal_plan.dejeuner.cal }} kcal</span>
+          <img class="sn-meal-photo" src="{{ meal_plan.dejeuner.image }}" alt="" loading="lazy">
+          <div class="sn-meal-body">
+            <div class="sn-meal-hd">
+              <span class="sn-meal-icon">🌤️</span>
+              <span class="sn-meal-name">Déjeuner</span>
+              <span class="sn-meal-kcal">{{ meal_plan.dejeuner.cal }} kcal</span>
+            </div>
+            <ul class="sn-meal-items">{% for item in meal_plan.dejeuner.items %}<li>{{ item }}</li>{% endfor %}</ul>
+            {% if meal_plan.dejeuner.conseil %}<span class="sn-meal-conseil">💡 {{ meal_plan.dejeuner.conseil }}</span>{% endif %}
           </div>
-          <ul class="sn-meal-items">{% for item in meal_plan.dejeuner.items %}<li>{{ item }}</li>{% endfor %}</ul>
-          {% if meal_plan.dejeuner.conseil %}<span class="sn-meal-conseil">💡 {{ meal_plan.dejeuner.conseil }}</span>{% endif %}
         </div>
       </div>
 
@@ -598,12 +659,15 @@
       <div class="sn-meal-row">
         <div class="sn-meal-node">🍊</div>
         <div class="sn-meal-card">
-          <div class="sn-meal-hd">
-            <span class="sn-meal-icon">🍊</span>
-            <span class="sn-meal-name">Collation après-midi</span>
-            <span class="sn-meal-kcal">{{ meal_plan.collation_soir.cal }} kcal</span>
+          <img class="sn-meal-photo" src="{{ meal_plan.collation_soir.image }}" alt="" loading="lazy">
+          <div class="sn-meal-body">
+            <div class="sn-meal-hd">
+              <span class="sn-meal-icon">🍊</span>
+              <span class="sn-meal-name">Collation après-midi</span>
+              <span class="sn-meal-kcal">{{ meal_plan.collation_soir.cal }} kcal</span>
+            </div>
+            <ul class="sn-meal-items">{% for item in meal_plan.collation_soir.items %}<li>{{ item }}</li>{% endfor %}</ul>
           </div>
-          <ul class="sn-meal-items">{% for item in meal_plan.collation_soir.items %}<li>{{ item }}</li>{% endfor %}</ul>
         </div>
       </div>
 
@@ -611,13 +675,16 @@
       <div class="sn-meal-row">
         <div class="sn-meal-node">🌙</div>
         <div class="sn-meal-card">
-          <div class="sn-meal-hd">
-            <span class="sn-meal-icon">🌙</span>
-            <span class="sn-meal-name">Dîner</span>
-            <span class="sn-meal-kcal">{{ meal_plan.diner.cal }} kcal</span>
+          <img class="sn-meal-photo" src="{{ meal_plan.diner.image }}" alt="" loading="lazy">
+          <div class="sn-meal-body">
+            <div class="sn-meal-hd">
+              <span class="sn-meal-icon">🌙</span>
+              <span class="sn-meal-name">Dîner</span>
+              <span class="sn-meal-kcal">{{ meal_plan.diner.cal }} kcal</span>
+            </div>
+            <ul class="sn-meal-items">{% for item in meal_plan.diner.items %}<li>{{ item }}</li>{% endfor %}</ul>
+            {% if meal_plan.diner.conseil %}<span class="sn-meal-conseil">💡 {{ meal_plan.diner.conseil }}</span>{% endif %}
           </div>
-          <ul class="sn-meal-items">{% for item in meal_plan.diner.items %}<li>{{ item }}</li>{% endfor %}</ul>
-          {% if meal_plan.diner.conseil %}<span class="sn-meal-conseil">💡 {{ meal_plan.diner.conseil }}</span>{% endif %}
         </div>
       </div>
 
@@ -631,7 +698,8 @@
       <div class="sn-sec-line"></div>
     </div>
 
-    <div class="sn-workout-head">
+    <div class="sn-workout-head has-photo">
+      {% if today_workout.image %}<div class="sn-wh-photo-bg" style="background-image:url('{{ today_workout.image }}');"></div>{% endif %}
       <div class="sn-wh-emoji">{{ today_workout.emoji }}</div>
       <div>
         <div class="sn-wh-focus">{{ today_workout.focus }}</div>
@@ -698,7 +766,8 @@
   {% for jour in programme_7_jours %}
   <div class="sn-prog-day" id="snDay{{ forloop.counter0 }}">
 
-    <div class="sn-workout-head">
+    <div class="sn-workout-head has-photo">
+      {% if jour.image %}<div class="sn-wh-photo-bg" style="background-image:url('{{ jour.image }}');"></div>{% endif %}
       <div class="sn-wh-emoji">{{ jour.emoji }}</div>
       <div style="flex:1;">
         <div class="sn-wh-focus">{{ jour.focus }}</div>

@@ -624,6 +624,25 @@ class ProfilSante(models.Model):
         if v < 30:   return 'Surpoids'
         return 'Obésité'
 
+    def macros(self):
+        """Répartition protéines / glucides / lipides — repères de nutrition
+        sportive standards (g/kg de poids de corps pour les protéines,
+        pourcentage des calories pour les lipides, le reste en glucides)."""
+        cal = self.calories_jour()
+        protein_per_kg = {'perdre': 2.0, 'maintenir': 1.6, 'prendre': 1.8}.get(self.objectif, 1.6)
+        fat_pct = {'perdre': 0.30, 'maintenir': 0.28, 'prendre': 0.25}.get(self.objectif, 0.28)
+        protein_g = round(protein_per_kg * self.poids)
+        fat_g = round((cal * fat_pct) / 9)
+        protein_cal = protein_g * 4
+        fat_cal = fat_g * 9
+        carbs_cal = max(cal - protein_cal - fat_cal, 0)
+        carbs_g = round(carbs_cal / 4)
+        return {
+            'protein_g': protein_g, 'protein_pct': round(protein_cal / cal * 100),
+            'carbs_g': carbs_g, 'carbs_pct': round(carbs_cal / cal * 100),
+            'fat_g': fat_g, 'fat_pct': round(fat_cal / cal * 100),
+        }
+
     def calories_jour(self):
         if self.sexe == 'homme':
             bmr = 88.362 + (13.397 * self.poids) + (4.799 * self.taille) - (5.677 * self.age)

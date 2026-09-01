@@ -1236,6 +1236,54 @@ from .models import JournalEntry, QuoteInspirante, ProfilSante, BlogBienEtre
 import random
 from datetime import timedelta, date
 
+# ═══════════════════════════════════════════════════════════
+#  PHOTOS — Parcours Santé (Pexels, libres de droits, sans attribution requise)
+# ═══════════════════════════════════════════════════════════
+def _pexels(photo_id):
+    return f"https://images.pexels.com/photos/{photo_id}/pexels-photo-{photo_id}.jpeg?auto=compress&cs=tinysrgb&w=800"
+
+MEAL_IMAGES = {
+    'petit_dejeuner': [_pexels(4220141), _pexels(4099238), _pexels(31126255), _pexels(4601975)],
+    'dejeuner':       [_pexels(842142), _pexels(6210764), _pexels(36904790), _pexels(1373915)],
+    'diner':          [_pexels(4929690), _pexels(842142), _pexels(36904790), _pexels(6210764)],
+    'collation':      [_pexels(838846)],
+}
+
+WORKOUT_IMAGES = {
+    'jambes':    _pexels(4164850),   # squats
+    'haut_pompes': _pexels(4162491), # pompes
+    'gainage':   _pexels(6740308),   # planche / core
+    'cardio':    _pexels(3763996),   # course
+    'yoga':      _pexels(327253),    # yoga / étirement
+    'muscu':     _pexels(6455963),   # haltères
+    'etirement': _pexels(4057534),   # étirements
+    'meditation': _pexels(4498220),  # méditation
+    'corde':     _pexels(6339602),   # corde à sauter
+    'dos':       _pexels(3838290),   # traction / dos
+}
+
+def _workout_image_for_focus(focus):
+    f = focus.lower()
+    if 'repos' in f and ('complet' in f or 'récup' in f) and 'actif' not in f:
+        return WORKOUT_IMAGES['meditation']
+    if 'jambe' in f or 'fessier' in f or 'squat' in f:
+        return WORKOUT_IMAGES['jambes']
+    if 'dos' in f or 'biceps' in f or 'traction' in f:
+        return WORKOUT_IMAGES['dos']
+    if 'pectoraux' in f or 'triceps' in f or 'haut du corps' in f or 'épaule' in f or 'bras' in f:
+        return WORKOUT_IMAGES['muscu']
+    if 'cardio' in f or 'hiit' in f or 'marche' in f:
+        return WORKOUT_IMAGES['cardio']
+    if 'corde' in f:
+        return WORKOUT_IMAGES['corde']
+    if 'yoga' in f or 'méditation' in f:
+        return WORKOUT_IMAGES['yoga']
+    if 'gainage' in f or 'core' in f or 'circuit' in f or 'full body' in f:
+        return WORKOUT_IMAGES['gainage']
+    if 'récupération' in f or 'étirement' in f:
+        return WORKOUT_IMAGES['etirement']
+    return WORKOUT_IMAGES['muscu']
+
 # 50 inspirational quotes about mental health / wellness
 QUOTES_DATA = [
     ("La santé mentale est une richesse, prenez-en soin.", "Wanaag Corner", "bien-être"),
@@ -1462,11 +1510,11 @@ def _generate_meal_plan(profil, day_idx=0):
         'jour_nom': JOURS[idx],
         'numero':   idx + 1,
         'theme':    THEMES[obj][idx],
-        'petit_dejeuner':  {**petits_dej[obj][idx],  'cal': b},
-        'collation_matin': {'items': collations_matin[obj][idx], 'cal': cs},
-        'dejeuner':        {**dejeuners[obj][idx],    'cal': l},
-        'collation_soir':  {'items': collations_soir[obj][idx],  'cal': cs},
-        'diner':           {**diners[obj][idx],       'cal': d},
+        'petit_dejeuner':  {**petits_dej[obj][idx],  'cal': b, 'image': MEAL_IMAGES['petit_dejeuner'][idx % 4]},
+        'collation_matin': {'items': collations_matin[obj][idx], 'cal': cs, 'image': MEAL_IMAGES['collation'][0]},
+        'dejeuner':        {**dejeuners[obj][idx],    'cal': l, 'image': MEAL_IMAGES['dejeuner'][idx % 4]},
+        'collation_soir':  {'items': collations_soir[obj][idx],  'cal': cs, 'image': MEAL_IMAGES['collation'][0]},
+        'diner':           {**diners[obj][idx],       'cal': d, 'image': MEAL_IMAGES['diner'][idx % 4]},
     }
     return plan, cal
 
@@ -1713,6 +1761,7 @@ def _generate_activities(profil):
                 if jour.get('repos_jour'): continue
             if objectif == 'prendre':
                 ex['conseil'] = (ex['conseil'] + ' — Mangez 30g protéines post-séance' if ex['conseil'] else 'Mangez 30g protéines post-séance') if ex == jour['exercices'][-1] else ex['conseil']
+        jour['image'] = _workout_image_for_focus(jour['focus'])
 
     return programme
 
@@ -1888,12 +1937,14 @@ def parcours_sante(request):
     meal_plan = None
     programme_7_jours = None
     total_cal = None
+    macros = None
     today_day_idx = date.today().timetuple().tm_yday % 7
     today_workout = None
     if profil:
         meal_plan, total_cal = _generate_meal_plan(profil, today_day_idx)
         programme_7_jours = _generate_activities(profil)
         today_workout = programme_7_jours[today_day_idx]
+        macros = profil.macros()
 
     return render(request, 'application/parcours_sante.html', {
         'profil': profil,
@@ -1902,6 +1953,7 @@ def parcours_sante(request):
         'today_day_idx': today_day_idx,
         'today_workout': today_workout,
         'total_cal': total_cal,
+        'macros': macros,
     })
 
 
