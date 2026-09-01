@@ -1242,47 +1242,73 @@ from datetime import timedelta, date
 def _pexels(photo_id):
     return f"https://images.pexels.com/photos/{photo_id}/pexels-photo-{photo_id}.jpeg?auto=compress&cs=tinysrgb&w=800"
 
-MEAL_IMAGES = {
-    'petit_dejeuner': [_pexels(4220141), _pexels(4099238), _pexels(31126255), _pexels(4601975)],
-    'dejeuner':       [_pexels(842142), _pexels(6210764), _pexels(36904790), _pexels(1373915)],
-    'diner':          [_pexels(4929690), _pexels(842142), _pexels(36904790), _pexels(6210764)],
-    'collation':      [_pexels(838846)],
+MEAL_PHOTOS = {
+    'avoine':        _pexels(4220141),   # flocons d'avoine / porridge / pancakes / gaufres
+    'smoothie':      _pexels(4099238),   # smoothie bowl
+    'avocat_toast':  _pexels(31126255),  # avocat / toast
+    'yaourt':        _pexels(4601975),   # yaourt + fruits rouges
+    'saumon':        _pexels(4013723),   # saumon / poisson
+    'poulet_riz':    _pexels(105588),    # riz + poulet + brocoli (curry, riz, poulet)
+    'poulet_grille':  _pexels(6210764),   # poulet grillé + légumes
+    'buddha_bowl':   _pexels(36904790),  # quinoa / bowl végétarien / soupe (proxy)
+    'pates':         _pexels(1373915),   # pâtes complètes
+    'steak':         _pexels(4929690),   # viande rouge / boeuf
+    'collation':     _pexels(838846),    # fruits secs, fruits, noix
 }
 
-WORKOUT_IMAGES = {
-    'jambes':    _pexels(4164850),   # squats
-    'haut_pompes': _pexels(4162491), # pompes
-    'gainage':   _pexels(6740308),   # planche / core
-    'cardio':    _pexels(3763996),   # course
-    'yoga':      _pexels(327253),    # yoga / étirement
-    'muscu':     _pexels(6455963),   # haltères
-    'etirement': _pexels(4057534),   # étirements
-    'meditation': _pexels(4498220),  # méditation
-    'corde':     _pexels(6339602),   # corde à sauter
-    'dos':       _pexels(3838290),   # traction / dos
+# Ordre important : premier mot-clé trouvé dans le texte du repas qui gagne.
+MEAL_KEYWORDS = [
+    (['saumon', 'poisson blanc', 'crevette', 'thon'], 'saumon'),
+    (['pâtes', 'pate', 'spaghetti', 'nouilles'], 'pates'),
+    (['riz', 'curry'], 'poulet_riz'),
+    (['boeuf', 'bœuf', 'steak', 'viande rouge', 'merguez'], 'steak'),
+    (['poulet', 'volaille', 'dinde'], 'poulet_grille'),
+    (['quinoa', 'buddha', 'tofu', 'lentille', 'houmous', 'pois chiche', 'soupe', 'velouté', 'gaspacho', 'tajine', 'couscous'], 'buddha_bowl'),
+    (['smoothie'], 'smoothie'),
+    (['avocat'], 'avocat_toast'),
+    (['yaourt', 'fromage blanc'], 'yaourt'),
+    (['avoine', 'porridge', 'pancake', 'gaufre', 'oeuf', 'omelette', 'canjeero', 'skoudehkaris'], 'avoine'),
+]
+
+def _meal_image_for(items):
+    """Devine la photo la plus pertinente en scannant le texte réel du repas
+    (pas un simple cycle par index — évite les photos qui ne correspondent
+    pas du tout au plat, ex: bowl de quinoa affiché pour des pâtes)."""
+    text = ' '.join(items).lower()
+    for keywords, key in MEAL_KEYWORDS:
+        if any(kw in text for kw in keywords):
+            return MEAL_PHOTOS[key]
+    return MEAL_PHOTOS['poulet_grille']
+
+# Correspondance exacte : la liste des 21 intitulés de séance possibles
+# (3 niveaux × 7 jours) est fixe — un dictionnaire exact est plus fiable
+# qu'une détection de mots-clés approximative.
+WORKOUT_PHOTOS_BY_FOCUS = {
+    'Bas du corps — Débutant':        _pexels(4164850),   # squats poids du corps
+    'Haut du corps — Débutant':       _pexels(4162491),   # pompes
+    'Yoga & Étirements':              _pexels(327253),    # yoga
+    'Repos actif — Marche':           _pexels(3013982),   # marche
+    'Full Body Circuit':              _pexels(6740308),   # gainage / circuit
+    'Yoga & Méditation':              _pexels(4498220),   # méditation
+    'Repos Complet':                  _pexels(4498220),   # repos / méditation
+    'Pectoraux & Triceps':            _pexels(6455963),   # haltères
+    'Dos & Biceps':                   _pexels(3838290),   # traction / dos
+    'Jambes & Fessiers':              _pexels(4164850),   # squats
+    'Cardio & Core':                  _pexels(3763996),   # course
+    'Épaules & Bras':                 _pexels(6455963),   # haltères
+    'Full Body + Cardio':             _pexels(6339602),   # corde à sauter
+    'Récupération Active':            _pexels(4057534),   # étirements
+    'Pectoraux & Triceps — Force':    _pexels(6455963),   # haltères
+    'Dos & Biceps — Épaisseur':       _pexels(3838290),   # traction / dos
+    'Jambes — Squat & Deadlift':      _pexels(4853693),   # squat barre
+    'HIIT — Cardio Explosif':         _pexels(6339602),   # corde à sauter / cardio intense
+    'Épaules — Volume':               _pexels(6455963),   # haltères
+    'Full Body + Core Intensif':      _pexels(6740308),   # gainage
+    'Récupération & Mobilité':        _pexels(4057534),   # étirements
 }
 
 def _workout_image_for_focus(focus):
-    f = focus.lower()
-    if 'repos' in f and ('complet' in f or 'récup' in f) and 'actif' not in f:
-        return WORKOUT_IMAGES['meditation']
-    if 'jambe' in f or 'fessier' in f or 'squat' in f:
-        return WORKOUT_IMAGES['jambes']
-    if 'dos' in f or 'biceps' in f or 'traction' in f:
-        return WORKOUT_IMAGES['dos']
-    if 'pectoraux' in f or 'triceps' in f or 'haut du corps' in f or 'épaule' in f or 'bras' in f:
-        return WORKOUT_IMAGES['muscu']
-    if 'cardio' in f or 'hiit' in f or 'marche' in f:
-        return WORKOUT_IMAGES['cardio']
-    if 'corde' in f:
-        return WORKOUT_IMAGES['corde']
-    if 'yoga' in f or 'méditation' in f:
-        return WORKOUT_IMAGES['yoga']
-    if 'gainage' in f or 'core' in f or 'circuit' in f or 'full body' in f:
-        return WORKOUT_IMAGES['gainage']
-    if 'récupération' in f or 'étirement' in f:
-        return WORKOUT_IMAGES['etirement']
-    return WORKOUT_IMAGES['muscu']
+    return WORKOUT_PHOTOS_BY_FOCUS.get(focus, _pexels(6455963))
 
 # 50 inspirational quotes about mental health / wellness
 QUOTES_DATA = [
@@ -1506,15 +1532,20 @@ def _generate_meal_plan(profil, day_idx=0):
     }
 
     idx = day_idx % 7
+    pd_data = petits_dej[obj][idx]
+    dj_data = dejeuners[obj][idx]
+    di_data = diners[obj][idx]
+    cm_items = collations_matin[obj][idx]
+    cs_items = collations_soir[obj][idx]
     plan = {
         'jour_nom': JOURS[idx],
         'numero':   idx + 1,
         'theme':    THEMES[obj][idx],
-        'petit_dejeuner':  {**petits_dej[obj][idx],  'cal': b, 'image': MEAL_IMAGES['petit_dejeuner'][idx % 4]},
-        'collation_matin': {'items': collations_matin[obj][idx], 'cal': cs, 'image': MEAL_IMAGES['collation'][0]},
-        'dejeuner':        {**dejeuners[obj][idx],    'cal': l, 'image': MEAL_IMAGES['dejeuner'][idx % 4]},
-        'collation_soir':  {'items': collations_soir[obj][idx],  'cal': cs, 'image': MEAL_IMAGES['collation'][0]},
-        'diner':           {**diners[obj][idx],       'cal': d, 'image': MEAL_IMAGES['diner'][idx % 4]},
+        'petit_dejeuner':  {**pd_data, 'cal': b, 'image': _meal_image_for(pd_data['items'])},
+        'collation_matin': {'items': cm_items, 'cal': cs, 'image': MEAL_PHOTOS['collation']},
+        'dejeuner':        {**dj_data, 'cal': l, 'image': _meal_image_for(dj_data['items'])},
+        'collation_soir':  {'items': cs_items, 'cal': cs, 'image': MEAL_PHOTOS['collation']},
+        'diner':           {**di_data, 'cal': d, 'image': _meal_image_for(di_data['items'])},
     }
     return plan, cal
 

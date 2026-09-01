@@ -467,7 +467,7 @@
         <span class="sn-chip-icon">{{ today_workout.emoji }}</span>
         <div>
           <div class="sn-chip-label">Séance du jour</div>
-          <div class="sn-chip-val" style="font-size:.78rem;">{{ today_workout.duree }}</div>
+          <div class="sn-chip-val" style="font-size:.78rem;">{% if today_workout.repos_jour and today_workout.duree == '—' %}Repos total{% else %}{{ today_workout.duree }}{% endif %}</div>
         </div>
       </div>
       {% endif %}
@@ -704,7 +704,7 @@
       <div>
         <div class="sn-wh-focus">{{ today_workout.focus }}</div>
         <div class="sn-wh-badges">
-          <span class="sn-badge sn-badge-dur">⏱ {{ today_workout.duree }}</span>
+          {% if today_workout.duree != '—' %}<span class="sn-badge sn-badge-dur">⏱ {{ today_workout.duree }}</span>{% endif %}
           <span class="sn-badge {% if today_workout.repos_jour %}sn-badge-rest{% elif today_workout.difficulte == 'Doux' or today_workout.difficulte == 'Débutant' %}sn-badge-easy{% elif today_workout.difficulte == 'Intense' or today_workout.difficulte == 'Avancé' %}sn-badge-hard{% else %}sn-badge-mod{% endif %}">{{ today_workout.difficulte }}</span>
           <span class="sn-badge sn-badge-today">✦ Aujourd'hui</span>
         </div>
@@ -772,7 +772,7 @@
       <div style="flex:1;">
         <div class="sn-wh-focus">{{ jour.focus }}</div>
         <div class="sn-wh-badges">
-          <span class="sn-badge sn-badge-dur">⏱ {{ jour.duree }}</span>
+          {% if jour.duree != '—' %}<span class="sn-badge sn-badge-dur">⏱ {{ jour.duree }}</span>{% endif %}
           <span class="sn-badge {% if jour.repos_jour %}sn-badge-rest{% elif jour.difficulte == 'Doux' or jour.difficulte == 'Débutant' %}sn-badge-easy{% elif jour.difficulte == 'Intense' or jour.difficulte == 'Avancé' %}sn-badge-hard{% else %}sn-badge-mod{% endif %}">{{ jour.difficulte }}</span>
           {% if forloop.counter0 == today_day_idx %}<span class="sn-badge sn-badge-today">✦ Aujourd'hui</span>{% endif %}
         </div>
