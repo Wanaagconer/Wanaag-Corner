@@ -99,6 +99,40 @@
     }
     .sec-title::after { content: ''; flex: 1; height: 1px; background: rgba(42,33,27,.08); margin-left: .5rem; }
 
+    /* ===== BANDEAU D'ACCÈS RAPIDE (façon "stories") ===== */
+    .stories-strip {
+        display: flex; gap: 1.1rem; overflow-x: auto; padding: .3rem .2rem 1.1rem;
+        margin-bottom: .3rem; scrollbar-width: none;
+    }
+    .stories-strip::-webkit-scrollbar { display: none; }
+    .story-item {
+        display: flex; flex-direction: column; align-items: center; gap: .4rem;
+        text-decoration: none; flex-shrink: 0; width: 68px;
+    }
+    .story-ring {
+        width: 64px; height: 64px; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        padding: 3px;
+        background: rgba(190,140,60,.15);
+        transition: transform .2s ease;
+    }
+    .story-ring.unread {
+        background: conic-gradient(from 220deg, var(--or), var(--or-light), var(--or-dark), var(--or));
+    }
+    .story-item:hover .story-ring { transform: scale(1.06); }
+    .story-avatar {
+        width: 100%; height: 100%; border-radius: 50%;
+        background: white; display: flex; align-items: center; justify-content: center;
+        font-family: 'Fraunces', serif; font-weight: 700; font-size: 1.3rem; color: white;
+        border: 2.5px solid white;
+    }
+    .story-name {
+        font-size: .68rem; color: var(--taupe); text-align: center;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;
+    }
+    .story-item.new-group .story-ring { background: transparent; border: 2px dashed rgba(190,140,60,.4); }
+    .story-item.new-group .story-avatar { background: var(--papier); color: var(--or-dark); font-size: 1.6rem; border: none; }
+
     /* ===== LISTE DE CONVERSATIONS (façon messagerie) ===== */
     .chat-list {
         background: white;
@@ -381,6 +415,25 @@
     <button class="cat-btn" onclick="filterCategory('alimentation', this)">🥗 Alimentation</button>
     <button class="cat-btn" onclick="filterCategory('developpement', this)">🌱 Développement</button>
 </div>
+
+{% if my_groups %}
+<!-- ACCÈS RAPIDE -->
+<div class="stories-strip">
+    <a class="story-item new-group" href="#" onclick="showCreateModal(); return false;" title="Créer un groupe">
+        <div class="story-ring"><div class="story-avatar">＋</div></div>
+        <span class="story-name">Nouveau</span>
+    </a>
+    {% for item in my_groups %}
+    {% cycle '#3b82f6' '#a855f7' '#ec4899' '#10b981' '#6366f1' '#0891b2' 'var(--accent)' '#f43f5e' as avcolor2 silent %}
+    <a class="story-item" href="{% url 'group_chat' item.group.id %}" title="{{ item.group.name }}">
+        <div class="story-ring {% if item.unread > 0 %}unread{% endif %}">
+            <div class="story-avatar" style="background:{{ avcolor2 }};">{{ item.group.name|first|upper }}</div>
+        </div>
+        <span class="story-name">{{ item.group.name|truncatechars:10 }}</span>
+    </a>
+    {% endfor %}
+</div>
+{% endif %}
 
 <!-- MES GROUPES -->
 <div class="sec-title">👥 Mes groupes ({{ my_groups|length }})</div>

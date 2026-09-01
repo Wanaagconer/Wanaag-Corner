@@ -183,11 +183,11 @@
         display: flex;
         align-items: flex-end;
         gap: .6rem;
-        animation: msgIn .22s ease;
+        animation: msgIn .32s cubic-bezier(.22,1,.36,1);
     }
     @keyframes msgIn {
-        from { opacity:0; transform:translateY(6px); }
-        to   { opacity:1; transform:translateY(0); }
+        from { opacity:0; transform:translateY(10px) scale(.94); }
+        to   { opacity:1; transform:translateY(0) scale(1); }
     }
     .msg-row.own { flex-direction: row-reverse; }
 
@@ -233,7 +233,12 @@
         box-shadow: 0 1px 6px rgba(42,33,27,.08);
         word-break: break-word;
         position: relative;
+        cursor: pointer;
+        user-select: none;
+        -webkit-user-select: none;
+        transition: transform .15s ease;
     }
+    .msg-bubble:active { transform: scale(.97); }
     .msg-row.stacked .msg-bubble { border-radius: 8px 8px 8px 4px; }
     .msg-row.stacked.own .msg-bubble { border-radius: 8px 8px 4px 8px; }
     .msg-bubble-time {
@@ -244,6 +249,31 @@
         background: linear-gradient(135deg, var(--brown-dark), var(--brown));
         color: white;
         border-radius: 16px 16px 4px 16px;
+    }
+
+    /* ── Cœur façon Instagram : double-tap pour aimer un message ── */
+    .msg-like-badge {
+        position: absolute; bottom: -9px; right: 6px;
+        background: white; border-radius: 20px; padding: .1rem .4rem .1rem .3rem;
+        font-size: .68rem; font-weight: 700; color: #e0245e;
+        box-shadow: 0 1px 5px rgba(42,33,27,.18);
+        display: none; align-items: center; gap: .15rem;
+        animation: likeBadgeIn .25s cubic-bezier(.34,1.56,.64,1);
+    }
+    .msg-row.own .msg-like-badge { right: auto; left: 6px; }
+    .msg-like-badge.show { display: inline-flex; }
+    @keyframes likeBadgeIn { from{ transform:scale(0); } to{ transform:scale(1); } }
+    .msg-burst {
+        position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%) scale(0);
+        font-size: 3.4rem; pointer-events: none; z-index: 5;
+        filter: drop-shadow(0 4px 10px rgba(0,0,0,.25));
+    }
+    .msg-burst.pop { animation: burstPop .7s cubic-bezier(.22,1,.36,1) forwards; }
+    @keyframes burstPop {
+        0%   { transform:translate(-50%,-50%) scale(0);    opacity:1; }
+        35%  { transform:translate(-50%,-50%) scale(1.15); opacity:1; }
+        60%  { transform:translate(-50%,-50%) scale(1);    opacity:1; }
+        100% { transform:translate(-50%,-50%) scale(1.1);  opacity:0; }
     }
 
     /* Empty state — chaleureux plutôt que froid */
@@ -387,9 +417,11 @@
                             <span>{{ item.msg.created_at|date:"H:i" }}</span>
                         </div>
                         {% endif %}
-                        <div class="msg-bubble">
+                        <div class="msg-bubble" data-msg-id="{{ item.msg.id }}" onclick="handleBubbleTap(event, this)">
                             {{ item.msg.content }}
                             {% if not item.show_header %}<span class="msg-bubble-time">{{ item.msg.created_at|date:"H:i" }}</span>{% endif %}
+                            <span class="msg-burst">❤️</span>
+                            <span class="msg-like-badge {% if item.nb_likes %}show{% endif %}" data-liked="{% if item.liked_by_me %}1{% else %}0{% endif %}">❤️ <span class="cnt">{{ item.nb_likes|default:"" }}</span></span>
                         </div>
                     </div>
                 </div>
@@ -537,10 +569,11 @@ function appendMessage({ id, sender, content, time, own }) {
     const div = document.createElement('div');
     div.className = `msg-row ${own ? 'own' : ''} ${stacked ? 'stacked' : ''}`;
     div.dataset.id = id;
+    const heartHtml = `<span class="msg-burst">❤️</span><span class="msg-like-badge" data-liked="0"><span>❤️</span> <span class="cnt"></span></span>`;
     div.innerHTML = stacked ? `
         <div class="msg-av"></div>
         <div class="msg-body">
-            <div class="msg-bubble">${esc(content)}<span class="msg-bubble-time">${esc(time)}</span></div>
+            <div class="msg-bubble" data-msg-id="${id}" onclick="handleBubbleTap(event, this)">${esc(content)}<span class="msg-bubble-time">${esc(time)}</span>${heartHtml}</div>
         </div>` : `
         <div class="msg-av">${esc(sender).charAt(0).toUpperCase()}</div>
         <div class="msg-body">
@@ -548,7 +581,7 @@ function appendMessage({ id, sender, content, time, own }) {
                 <span class="msg-author">${esc(sender)}</span>
                 <span>${esc(time)}</span>
             </div>
-            <div class="msg-bubble">${esc(content)}</div>
+            <div class="msg-bubble" data-msg-id="${id}" onclick="handleBubbleTap(event, this)">${esc(content)}${heartHtml}</div>
         </div>`;
     zone.appendChild(div);
     lastId = id;
@@ -582,6 +615,52 @@ function esc(str) {
     const d = document.createElement('div');
     d.textContent = str;
     return d.innerHTML;
+}
+
+/* ===== CŒUR — double-tap façon Instagram pour aimer un message ===== */
+const _tapTimers = new WeakMap();
+function handleBubbleTap(event, bubbleEl) {
+    const last = _tapTimers.get(bubbleEl) || 0;
+    const now = Date.now();
+    if (now - last < 350) {
+        _tapTimers.delete(bubbleEl);
+        toggleMessageLike(bubbleEl, { forceLike: true });
+    } else {
+        _tapTimers.set(bubbleEl, now);
+    }
+}
+
+async function toggleMessageLike(bubbleEl, { forceLike = false } = {}) {
+    const msgId = bubbleEl.dataset.msgId;
+    if (!msgId) return;
+    const badge = bubbleEl.querySelector('.msg-like-badge');
+    const alreadyLiked = badge && badge.dataset.liked === '1';
+    if (forceLike && alreadyLiked) {
+        // Un double-tap sur un message déjà aimé ne fait que rejouer l'animation
+        playBurst(bubbleEl);
+        return;
+    }
+    playBurst(bubbleEl);
+    try {
+        const res = await fetch(`/forum/group/${GROUP_ID}/messages/${msgId}/like/`, {
+            method: 'POST',
+            headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+        });
+        const data = await res.json();
+        if (!data.success || !badge) return;
+        badge.dataset.liked = data.liked ? '1' : '0';
+        const cnt = badge.querySelector('.cnt');
+        if (cnt) cnt.textContent = data.nb_likes > 0 ? data.nb_likes : '';
+        badge.classList.toggle('show', data.nb_likes > 0);
+    } catch (e) {}
+}
+
+function playBurst(bubbleEl) {
+    const burst = bubbleEl.querySelector('.msg-burst');
+    if (!burst) return;
+    burst.classList.remove('pop');
+    void burst.offsetWidth; // reflow pour rejouer l'animation
+    burst.classList.add('pop');
 }
 
 /* ===== INFOS GROUPE ===== */

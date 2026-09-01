@@ -19,6 +19,7 @@ urlpatterns = [
     path('forum/group/<int:group_id>/', views.group_chat, name='group_chat'),
     path('forum/group/<int:group_id>/send/', views.send_message, name='send_message'),
     path('forum/group/<int:group_id>/messages/', views.get_messages, name='get_messages'),
+    path('forum/group/<int:group_id>/messages/<int:message_id>/like/', views.like_message, name='like_message'),
     
     # Ressources éducatives
     path('ressources/', views.ressources_home, name='ressources_home'),

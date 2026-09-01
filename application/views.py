@@ -181,7 +181,9 @@ def group_chat(request, group_id):
 
     # Récupérer tous les messages
     messages_list = list(
-        group.messages.filter(is_deleted=False).select_related('sender').order_by('created_at')
+        group.messages.filter(is_deleted=False)
+        .select_related('sender').prefetch_related('likes')
+        .order_by('created_at')
     )
 
     # Enrichir pour l'affichage façon messagerie (séparateurs de jour,
@@ -207,11 +209,14 @@ def group_chat(request, group_id):
                 date_label = None  # gabarit utilisera msg.created_at|date
         else:
             date_label = None
+        msg_likes = list(msg.likes.all())
         chat_items.append({
             'msg': msg,
             'show_header': show_header,
             'is_new_day': is_new_day,
             'date_label': date_label,
+            'nb_likes': len(msg_likes),
+            'liked_by_me': request.user in msg_likes,
         })
         prev_sender_id, prev_date, prev_time = msg.sender_id, msg_date, msg.created_at
 
@@ -284,6 +289,30 @@ def get_messages(request, group_id):
     return JsonResponse({
         'success': True,
         'messages': list(messages_list)
+    })
+
+
+@login_required
+def like_message(request, group_id, message_id):
+    """Aimer / retirer son cœur sur un message du groupe (double-tap façon Instagram)"""
+    if request.method != 'POST':
+        return JsonResponse({'success': False})
+    group = get_object_or_404(ForumGroup, id=group_id)
+    if request.user not in group.members.all():
+        return JsonResponse({'success': False})
+    message = get_object_or_404(GroupMessage, id=message_id, group=group, is_deleted=False)
+
+    if request.user in message.likes.all():
+        message.likes.remove(request.user)
+        liked = False
+    else:
+        message.likes.add(request.user)
+        liked = True
+
+    return JsonResponse({
+        'success': True,
+        'liked': liked,
+        'nb_likes': message.nb_likes(),
     })
 
 

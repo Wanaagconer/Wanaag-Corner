@@ -111,14 +111,18 @@ class GroupMessage(models.Model):
     content = models.TextField(verbose_name="Message")
     created_at = models.DateTimeField(auto_now_add=True)
     is_deleted = models.BooleanField(default=False)
-    
+    likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='liked_messages', blank=True)
+
     class Meta:
         ordering = ['created_at']
         verbose_name = "Message"
         verbose_name_plural = "Messages"
-    
+
     def __str__(self):
         return f"{self.sender.pseudonyme}: {self.content[:50]}"
+
+    def nb_likes(self):
+        return self.likes.count()
 
 
 class GroupMemberStatus(models.Model):
