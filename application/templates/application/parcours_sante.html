@@ -255,10 +255,16 @@
 .sn-ex-card {
   background:rgba(190,140,60,.03); border:1px solid rgba(190,140,60,.07);
   border-radius:12px; padding:.95rem 1.1rem; transition:all .2s;
+  display:flex; gap:.85rem; align-items:flex-start;
 }
 .sn-ex-card:hover { border-color:rgba(190,140,60,.2); transform:translateX(4px); box-shadow:0 4px 16px rgba(0,0,0,.25); }
+.sn-ex-photo {
+  width:56px; height:56px; border-radius:10px; object-fit:cover; flex-shrink:0;
+  box-shadow:0 4px 12px rgba(0,0,0,.3); border:1px solid rgba(190,140,60,.2);
+}
+.sn-ex-body { flex:1; min-width:0; }
 .sn-ex-top { display:flex; align-items:center; gap:.65rem; margin-bottom:.5rem; flex-wrap:wrap; }
-.sn-ex-emoji { font-size:1.25rem; }
+.sn-ex-emoji { font-size:1.1rem; }
 .sn-ex-name  { font-size:.86rem; font-weight:700; color:var(--text); flex:1; }
 .sn-ex-muscle {
   font-size:.6rem; padding:.14rem .55rem; border-radius:20px; font-weight:600;
@@ -302,9 +308,24 @@
   color:var(--gold-light); box-shadow:0 0 14px rgba(190,140,60,.12);
 }
 .sn-tab.repos-tab.active { background:rgba(99,102,241,.1); border-color:rgba(99,102,241,.25); color:#a5b4fc; }
+.sn-tab.week-hidden { display:none !important; }
+
+.sn-week-tabs { display:flex; gap:.5rem; margin-bottom:1rem; flex-wrap:wrap; }
+.sn-week-tab {
+  padding:.5rem 1.1rem; border-radius:50px;
+  background:rgba(190,140,60,.05); border:1px solid rgba(190,140,60,.14);
+  color:var(--taupe); font-size:.78rem; font-weight:700; cursor:pointer;
+  transition:all .2s; font-family:inherit;
+}
+.sn-week-tab:hover { background:rgba(190,140,60,.12); color:var(--encre); }
+.sn-week-tab.active {
+  background:rgba(190,140,60,.16); border-color:rgba(190,140,60,.4);
+  color:var(--gold-light); box-shadow:0 0 14px rgba(190,140,60,.14);
+}
 
 .sn-prog-day { display:none; }
 .sn-prog-day.active { display:block; }
+.sn-prog-day.week-hidden { display:none !important; }
 
 /* ══════════════════════════════════
    FORM
@@ -400,6 +421,7 @@
   .sn-hero-chips { gap:.5rem; }
   .sn-chip { padding:.4rem .7rem; font-size:.72rem; width:100%; box-sizing:border-box; }
   .sn-meal-photo { width:48px; height:48px; }
+  .sn-ex-photo { width:44px; height:44px; }
   .sn-macro-lbl { width:72px; font-size:.68rem; }
   .sn-row { grid-template-columns:1fr; gap:.9rem; }
   .sn-form-wrap { padding:1.5rem 1rem; border-radius:18px; }
@@ -721,17 +743,20 @@
     <div class="sn-ex-list">
       {% for ex in today_workout.exercices %}
       <div class="sn-ex-card">
-        <div class="sn-ex-top">
-          <span class="sn-ex-emoji">{{ ex.emoji }}</span>
-          <span class="sn-ex-name">{{ ex.nom }}</span>
-          <span class="sn-ex-muscle">{{ ex.muscle }}</span>
+        <img class="sn-ex-photo" src="{{ ex.image }}" alt="" loading="lazy">
+        <div class="sn-ex-body">
+          <div class="sn-ex-top">
+            <span class="sn-ex-emoji">{{ ex.emoji }}</span>
+            <span class="sn-ex-name">{{ ex.nom }}</span>
+            <span class="sn-ex-muscle">{{ ex.muscle }}</span>
+          </div>
+          <div class="sn-ex-stats">
+            <div class="sn-ex-stat"><div class="sn-ex-stat-val">{{ ex.series }}</div><div class="sn-ex-stat-lbl">Séries</div></div>
+            <div class="sn-ex-stat"><div class="sn-ex-stat-val">{{ ex.reps }}</div><div class="sn-ex-stat-lbl">Reps</div></div>
+            <div class="sn-ex-stat"><div class="sn-ex-stat-val">{{ ex.repos }}</div><div class="sn-ex-stat-lbl">Repos</div></div>
+          </div>
+          {% if ex.conseil %}<div class="sn-ex-conseil">💡 {{ ex.conseil }}</div>{% endif %}
         </div>
-        <div class="sn-ex-stats">
-          <div class="sn-ex-stat"><div class="sn-ex-stat-val">{{ ex.series }}</div><div class="sn-ex-stat-lbl">Séries</div></div>
-          <div class="sn-ex-stat"><div class="sn-ex-stat-val">{{ ex.reps }}</div><div class="sn-ex-stat-lbl">Reps</div></div>
-          <div class="sn-ex-stat"><div class="sn-ex-stat-val">{{ ex.repos }}</div><div class="sn-ex-stat-lbl">Repos</div></div>
-        </div>
-        {% if ex.conseil %}<div class="sn-ex-conseil">💡 {{ ex.conseil }}</div>{% endif %}
       </div>
       {% endfor %}
     </div>
@@ -744,27 +769,37 @@
 <!-- ════════════════════════════════════════
   PROGRAMME 7 JOURS
 ════════════════════════════════════════ -->
-{% if programme_7_jours %}
+{% if programme_jours %}
 <div style="margin-bottom:3rem;">
   <div class="sn-sec-head">
-    <h2>📅 Programme 7 Jours</h2>
+    <h2>📅 Programme 4 Semaines</h2>
     <div class="sn-sec-line"></div>
+  </div>
+  <p style="font-size:.78rem;color:var(--text-muted);margin:-.7rem 0 1.1rem;">28 jours de progression réelle : la charge augmente chaque semaine, avec une semaine allégée avant de relancer un nouveau cycle — comme dans les programmes des applis de fitness.</p>
+
+  <!-- Week tabs -->
+  <div class="sn-week-tabs">
+    {% regroup programme_jours by semaine as semaines_list %}
+    {% for semaine in semaines_list %}
+    <button class="sn-week-tab" id="snWeek{{ forloop.counter0 }}" onclick="showWeek({{ forloop.counter0 }}, this)">{{ semaine.grouper }}</button>
+    {% endfor %}
   </div>
 
   <!-- Day tabs -->
   <div class="sn-tabs">
-    {% for jour in programme_7_jours %}
+    {% for jour in programme_jours %}
     <button class="sn-tab {% if jour.repos_jour %}repos-tab{% endif %}"
             id="snTab{{ forloop.counter0 }}"
+            data-week="{{ jour.semaine_idx }}"
             onclick="showDay({{ forloop.counter0 }}, this)">
-      {{ jour.emoji }} {{ jour.jour }}{% if forloop.counter0 == today_day_idx %} <span style="opacity:.65;font-size:.62rem;">· auj.</span>{% endif %}
+      {{ jour.emoji }} Jour {{ forloop.counter0|add:1 }}{% if forloop.counter0 == today_prog_idx %} <span style="opacity:.65;font-size:.62rem;">· auj.</span>{% endif %}
     </button>
     {% endfor %}
   </div>
 
   <!-- Day panels -->
-  {% for jour in programme_7_jours %}
-  <div class="sn-prog-day" id="snDay{{ forloop.counter0 }}">
+  {% for jour in programme_jours %}
+  <div class="sn-prog-day" id="snDay{{ forloop.counter0 }}" data-week="{{ jour.semaine_idx }}">
 
     <div class="sn-workout-head has-photo">
       {% if jour.image %}<div class="sn-wh-photo-bg" style="background-image:url('{{ jour.image }}');"></div>{% endif %}
@@ -774,7 +809,7 @@
         <div class="sn-wh-badges">
           {% if jour.duree != '—' %}<span class="sn-badge sn-badge-dur">⏱ {{ jour.duree }}</span>{% endif %}
           <span class="sn-badge {% if jour.repos_jour %}sn-badge-rest{% elif jour.difficulte == 'Doux' or jour.difficulte == 'Débutant' %}sn-badge-easy{% elif jour.difficulte == 'Intense' or jour.difficulte == 'Avancé' %}sn-badge-hard{% else %}sn-badge-mod{% endif %}">{{ jour.difficulte }}</span>
-          {% if forloop.counter0 == today_day_idx %}<span class="sn-badge sn-badge-today">✦ Aujourd'hui</span>{% endif %}
+          {% if forloop.counter0 == today_prog_idx %}<span class="sn-badge sn-badge-today">✦ Aujourd'hui</span>{% endif %}
         </div>
       </div>
     </div>
@@ -789,17 +824,20 @@
     <div class="sn-ex-list">
       {% for ex in jour.exercices %}
       <div class="sn-ex-card">
-        <div class="sn-ex-top">
-          <span class="sn-ex-emoji">{{ ex.emoji }}</span>
-          <span class="sn-ex-name">{{ ex.nom }}</span>
-          <span class="sn-ex-muscle">{{ ex.muscle }}</span>
+        <img class="sn-ex-photo" src="{{ ex.image }}" alt="" loading="lazy">
+        <div class="sn-ex-body">
+          <div class="sn-ex-top">
+            <span class="sn-ex-emoji">{{ ex.emoji }}</span>
+            <span class="sn-ex-name">{{ ex.nom }}</span>
+            <span class="sn-ex-muscle">{{ ex.muscle }}</span>
+          </div>
+          <div class="sn-ex-stats">
+            <div class="sn-ex-stat"><div class="sn-ex-stat-val">{{ ex.series }}</div><div class="sn-ex-stat-lbl">Séries</div></div>
+            <div class="sn-ex-stat"><div class="sn-ex-stat-val">{{ ex.reps }}</div><div class="sn-ex-stat-lbl">Reps</div></div>
+            <div class="sn-ex-stat"><div class="sn-ex-stat-val">{{ ex.repos }}</div><div class="sn-ex-stat-lbl">Repos</div></div>
+          </div>
+          {% if ex.conseil %}<div class="sn-ex-conseil">💡 {{ ex.conseil }}</div>{% endif %}
         </div>
-        <div class="sn-ex-stats">
-          <div class="sn-ex-stat"><div class="sn-ex-stat-val">{{ ex.series }}</div><div class="sn-ex-stat-lbl">Séries</div></div>
-          <div class="sn-ex-stat"><div class="sn-ex-stat-val">{{ ex.reps }}</div><div class="sn-ex-stat-lbl">Reps</div></div>
-          <div class="sn-ex-stat"><div class="sn-ex-stat-val">{{ ex.repos }}</div><div class="sn-ex-stat-lbl">Repos</div></div>
-        </div>
-        {% if ex.conseil %}<div class="sn-ex-conseil">💡 {{ ex.conseil }}</div>{% endif %}
       </div>
       {% endfor %}
     </div>
@@ -875,14 +913,14 @@
   if (m) m.style.left = pct + '%';
 })();
 
-// Week tabs — initialize today's tab
+// Programme 4 semaines — initialize on today's week + day
 (function(){
-  const todayIdx = parseInt('{{ today_day_idx|default:"0" }}') || 0;
-  const tab = document.getElementById('snTab' + todayIdx);
-  const day = document.getElementById('snDay' + todayIdx);
-  if (tab)  tab.classList.add('active');
-  if (day)  day.classList.add('active');
-  if (!tab && !day) {
+  const todayIdx = parseInt('{{ today_prog_idx|default:"0" }}') || 0;
+  const weekIdx = Math.floor(todayIdx / 7);
+  const weekBtn = document.getElementById('snWeek' + weekIdx) || document.querySelector('.sn-week-tab');
+  if (weekBtn) {
+    showWeek(weekIdx, weekBtn);
+  } else {
     const t0 = document.querySelector('.sn-tab');
     const d0 = document.querySelector('.sn-prog-day');
     if (t0) t0.classList.add('active');
@@ -890,12 +928,26 @@
   }
 })();
 
+function showWeek(weekIdx, btn) {
+  document.querySelectorAll('.sn-week-tab').forEach(w => w.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  document.querySelectorAll('.sn-tab').forEach(t => t.classList.toggle('week-hidden', parseInt(t.dataset.week) !== weekIdx));
+  document.querySelectorAll('.sn-prog-day').forEach(d => d.classList.toggle('week-hidden', parseInt(d.dataset.week) !== weekIdx));
+
+  const todayIdx = parseInt('{{ today_prog_idx|default:"0" }}') || 0;
+  const todayTab = document.getElementById('snTab' + todayIdx);
+  const target = (todayTab && !todayTab.classList.contains('week-hidden'))
+    ? todayTab
+    : document.querySelector('.sn-tab[data-week="' + weekIdx + '"]');
+  if (target) showDay(parseInt(target.id.replace('snTab', '')), target);
+}
+
 function showDay(idx, btn) {
   document.querySelectorAll('.sn-prog-day').forEach(d => d.classList.remove('active'));
   document.querySelectorAll('.sn-tab').forEach(t => t.classList.remove('active'));
   const d = document.getElementById('snDay' + idx);
   if (d) d.classList.add('active');
-  btn.classList.add('active');
+  if (btn) btn.classList.add('active');
 }
 
 function openEdit(e)    { e.preventDefault(); document.getElementById('snEditModal').classList.add('open'); }

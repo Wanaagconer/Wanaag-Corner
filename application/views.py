@@ -1233,7 +1233,7 @@ def admin_update_consultation(request, consultation_id):
 # ============= PARCOURS BIEN-ÊTRE =============
 
 from .models import JournalEntry, QuoteInspirante, ProfilSante, BlogBienEtre
-import random
+import random, copy
 from datetime import timedelta, date
 
 # ═══════════════════════════════════════════════════════════
@@ -1309,6 +1309,29 @@ WORKOUT_PHOTOS_BY_FOCUS = {
 
 def _workout_image_for_focus(focus):
     return WORKOUT_PHOTOS_BY_FOCUS.get(focus, _pexels(6455963))
+
+# Photo par exercice : on réutilise le pool déjà vérifié (WORKOUT_PHOTOS_BY_FOCUS)
+# en matchant le nom + le muscle ciblé de CHAQUE exercice, plutôt que d'afficher
+# un simple émoji générique sur chaque carte.
+EXERCISE_KEYWORDS = [
+    (['soulevé de terre', 'deadlift'], 'Jambes — Squat & Deadlift'),
+    (['squat', 'fente', 'presse jambes', 'leg press', 'quadriceps', 'fessier', 'mollet', 'thruster'], 'Bas du corps — Débutant'),
+    (['traction', 'rowing', 'tirage', 'pull-over', 'dorsal', 'trapèze', 'shrug', 'biceps', 'curl', 'face pull'], 'Dos & Biceps'),
+    (['développé', 'pompe', 'dip', 'écarté', 'pectoraux', 'triceps', 'épaule', 'militaire', 'élévation', 'arnold', 'pushdown'], 'Pectoraux & Triceps'),
+    (['gainage', 'abdo', 'crunch', 'oblique', 'twist', 'ab wheel', 'dragon flag', 'planche'], 'Cardio & Core'),
+    (['sprint', 'jogging', 'vélo', 'corde à sauter', 'box jump', 'burpee', 'clean', 'man maker', 'jumping jack', 'squats sautés'], 'HIIT — Cardio Explosif'),
+    (['marche'], 'Repos actif — Marche'),
+    (['méditation', 'respiration', 'mental', 'yoga', 'salutation', 'posture', 'torsion'], 'Yoga & Méditation'),
+    (['foam roller', 'stretching', 'bain froid', 'douche froide', 'étirement'], 'Récupération & Mobilité'),
+    (['repos', 'récupération'], 'Repos Complet'),
+]
+
+def _exercise_image_for(nom, muscle):
+    text = f"{nom} {muscle}".lower()
+    for keywords, focus_key in EXERCISE_KEYWORDS:
+        if any(kw in text for kw in keywords):
+            return WORKOUT_PHOTOS_BY_FOCUS[focus_key]
+    return WORKOUT_PHOTOS_BY_FOCUS['Full Body Circuit']
 
 # 50 inspirational quotes about mental health / wellness
 QUOTES_DATA = [
@@ -1551,7 +1574,7 @@ def _generate_meal_plan(profil, day_idx=0):
 
 
 def _generate_activities(profil):
-    """Generate 7-day full body program adapted to level & goal"""
+    """Generate a 4-week (28-day) progressive program adapted to level & goal"""
     niveau = profil.niveau_activite
     objectif = profil.objectif
 
@@ -1777,22 +1800,53 @@ def _generate_activities(profil):
         },
     ]
 
-    # Choose program based on level
+    # Choose base 7-day blueprint based on level
     if niveau in ('sedentaire', 'leger'):
-        programme = debutant
+        base = debutant
     elif niveau == 'modere':
-        programme = intermediaire
+        base = intermediaire
     else:
-        programme = avance
+        base = avance
 
-    # Adjust for goal: if "perdre", add cardio notes; if "prendre", add volume notes
-    for jour in programme:
+    # Photo par exercice + conseil "prendre du poids" appliqués une fois sur la trame de base
+    for jour in base:
         for ex in jour['exercices']:
-            if objectif == 'perdre' and not ex.get('_tagged'):
-                if jour.get('repos_jour'): continue
-            if objectif == 'prendre':
-                ex['conseil'] = (ex['conseil'] + ' — Mangez 30g protéines post-séance' if ex['conseil'] else 'Mangez 30g protéines post-séance') if ex == jour['exercices'][-1] else ex['conseil']
-        jour['image'] = _workout_image_for_focus(jour['focus'])
+            ex['image'] = _exercise_image_for(ex['nom'], ex['muscle'])
+        if objectif == 'prendre' and not jour.get('repos_jour'):
+            last = jour['exercices'][-1]
+            tag = 'Mangez 30g protéines post-séance'
+            if tag not in (last.get('conseil') or ''):
+                last['conseil'] = (last['conseil'] + ' — ' + tag) if last['conseil'] else tag
+
+    # Comme dans une vraie appli de fitness : programme sur 4 semaines (28 jours),
+    # pas 7 jours qui boucleraient à l'identique. La même trame hebdo (même split
+    # musculaire par jour) se répète mais la charge progresse chaque semaine
+    # (surcharge progressive), avec une semaine allégée en fin de cycle.
+    WEEKS = [
+        {'label': 'Semaine 1 · Fondations',   'delta_series': 0,  'note': "Phase d'adaptation : concentrez-vous sur la technique avant la charge."},
+        {'label': 'Semaine 2 · Volume',       'delta_series': 1,  'note': "Une série de plus qu'en semaine 1 : votre corps est prêt pour plus de volume."},
+        {'label': 'Semaine 3 · Intensité',    'delta_series': 2,  'note': "Pic du cycle : augmentez légèrement les charges tout en gardant la forme."},
+        {'label': 'Semaine 4 · Récupération', 'delta_series': -1, 'note': "Semaine allégée avant de relancer un nouveau cycle de 4 semaines."},
+    ]
+
+    programme = []
+    for w_idx, week in enumerate(WEEKS):
+        for d_idx, base_jour in enumerate(base):
+            jour = copy.deepcopy(base_jour)
+            numero = w_idx * 7 + d_idx + 1
+            jour['numero'] = numero
+            jour['jour'] = f"Jour {numero}"
+            jour['semaine'] = week['label']
+            jour['semaine_idx'] = w_idx
+            if not jour.get('repos_jour'):
+                for ex in jour['exercices']:
+                    if isinstance(ex.get('series'), int):
+                        ex['series'] = max(1, ex['series'] + week['delta_series'])
+                if w_idx > 0:
+                    last = jour['exercices'][-1]
+                    last['conseil'] = (last['conseil'] + ' — ' + week['note']) if last.get('conseil') else week['note']
+            jour['image'] = _workout_image_for_focus(jour['focus'])
+            programme.append(jour)
 
     return programme
 
@@ -1966,22 +2020,24 @@ def parcours_sante(request):
         return redirect('parcours_sante')
 
     meal_plan = None
-    programme_7_jours = None
+    programme_jours = None
     total_cal = None
     macros = None
     today_day_idx = date.today().timetuple().tm_yday % 7
+    today_prog_idx = date.today().timetuple().tm_yday % 28
     today_workout = None
     if profil:
         meal_plan, total_cal = _generate_meal_plan(profil, today_day_idx)
-        programme_7_jours = _generate_activities(profil)
-        today_workout = programme_7_jours[today_day_idx]
+        programme_jours = _generate_activities(profil)
+        today_workout = programme_jours[today_prog_idx]
         macros = profil.macros()
 
     return render(request, 'application/parcours_sante.html', {
         'profil': profil,
         'meal_plan': meal_plan,
-        'programme_7_jours': programme_7_jours,
+        'programme_jours': programme_jours,
         'today_day_idx': today_day_idx,
+        'today_prog_idx': today_prog_idx,
         'today_workout': today_workout,
         'total_cal': total_cal,
         'macros': macros,
