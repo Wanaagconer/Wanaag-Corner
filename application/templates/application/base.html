@@ -482,6 +482,61 @@
             .halo{animation:none}
         }
 
+        /* 6. Transition de page — fondu d'entrée (toujours) + API native
+           View Transitions pour un fondu croisé entre deux pages, sans
+           JavaScript ni interception des clics (dégradation automatique et
+           sans risque sur les navigateurs qui ne la supportent pas). */
+        body{
+            animation: pageFadeIn .5s cubic-bezier(.22,1,.36,1) both;
+        }
+        @keyframes pageFadeIn{ from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);} }
+        @view-transition{ navigation: auto; }
+        ::view-transition-old(root){ animation-duration:.22s; }
+        ::view-transition-new(root){ animation-duration:.28s; }
+
+        /* 7. Bouton "shine" — reflet lumineux au survol, appliqué automatiquement
+           aux boutons dorés principaux (voir applyShine() en JS) */
+        .btn-shine{ position:relative; overflow:hidden; isolation:isolate; }
+        .btn-shine::after{
+            content:''; position:absolute; top:0; left:-60%; width:40%; height:100%;
+            background:linear-gradient(115deg, transparent, rgba(255,255,255,.4), transparent);
+            transform:skewX(-18deg); pointer-events:none; z-index:1;
+            transition:left .6s cubic-bezier(.22,1,.36,1);
+        }
+        .btn-shine:hover::after{ left:130%; }
+
+        /* 8. Ripple générique (réutilisé au-delà des .nav-item) */
+        .ripple-host{ position:relative; overflow:hidden; }
+        @keyframes rippleOutGlobal{ to{ transform:scale(2.6); opacity:0; } }
+
+        /* 9. Spinner de chargement pour boutons (formulaires) */
+        .btn.is-loading{ color:transparent !important; pointer-events:none; position:relative; }
+        .btn.is-loading::before{
+            content:''; position:absolute; inset:0; margin:auto; width:18px; height:18px;
+            border-radius:50%; border:2.5px solid rgba(255,255,255,.4); border-top-color:#fff;
+            animation:btnSpin .7s linear infinite;
+        }
+        .btn-ghost.is-loading::before, .btn-nav-outline.is-loading::before{
+            border-color:rgba(42,33,27,.25); border-top-color:var(--encre);
+        }
+        @keyframes btnSpin{ to{ transform:rotate(360deg); } }
+
+        /* 10. Scrollbar thématisée (navigateurs WebKit) */
+        ::-webkit-scrollbar{ width:10px; height:10px; }
+        ::-webkit-scrollbar-track{ background:transparent; }
+        ::-webkit-scrollbar-thumb{ background:rgba(190,140,60,.28); border-radius:20px; border:2px solid transparent; background-clip:padding-box; }
+        ::-webkit-scrollbar-thumb:hover{ background:rgba(190,140,60,.48); background-clip:padding-box; }
+
+        /* 11. Lift au survol — classe utilitaire réutilisable pour cartes */
+        .lift-hover{ transition:transform .3s cubic-bezier(.22,1,.36,1), box-shadow .3s ease; }
+        .lift-hover:hover{ transform:translateY(-6px); box-shadow:0 20px 44px -18px rgba(42,33,27,.35); }
+
+        @media (prefers-reduced-motion:reduce){
+            body{ animation:none !important; transition:none !important; }
+            .btn-shine::after{ transition:none; }
+            .lift-hover{ transition:none; }
+        }
+
     </style>
     {% block extra_css %}{% endblock %}
 </head>
@@ -768,7 +823,36 @@ function toggleSidebar(){
 }
 
 
+// ── 3. EFFET "SHINE" auto sur les boutons dorés principaux ──
+function applyShine(){
+    document.querySelectorAll('.btn-gold, .btn-nav-filled, .btn-primary, .jnl-write-btn, .writer-save-btn').forEach(el => {
+        el.classList.add('btn-shine');
+    });
+}
+
+// ── 4. SPINNER auto sur les formulaires — safe pour les formulaires AJAX
+//    (beaucoup de pages interceptent déjà le submit en fetch) : on ne bloque
+//    jamais le bouton plus de quelques secondes, pour ne jamais le laisser
+//    coincé si un formulaire est réutilisé (ex: modale rouverte).
+function wireFormSpinners(){
+    document.querySelectorAll('form').forEach(form => {
+        form.addEventListener('submit', () => {
+            const btn = form.querySelector('button[type="submit"]');
+            if (!btn || btn.classList.contains('is-loading')) return;
+            btn.classList.add('is-loading');
+            btn.disabled = true;
+            setTimeout(() => {
+                btn.classList.remove('is-loading');
+                btn.disabled = false;
+            }, 4000);
+        });
+    });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+    applyShine();
+    wireFormSpinners();
+
 
     // ── WOW SCROLL REVEAL ──
     const _seen  = new Set();
