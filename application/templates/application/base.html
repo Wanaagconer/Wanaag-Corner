@@ -487,7 +487,14 @@
            JavaScript ni interception des clics (dégradation automatique et
            sans risque sur les navigateurs qui ne la supportent pas). */
         body{
-            animation: pageFadeIn .5s cubic-bezier(.22,1,.36,1) both;
+            /* fill-mode intentionally omitted: with "both", the last keyframe's
+               transform (even translateY(0)) stays a live computed style after
+               the animation ends, which makes body a new containing block for
+               every position:fixed descendant (modals, FABs, overlays) — they'd
+               anchor to the document instead of the viewport as soon as the
+               page is scrolled. Not needed anyway: the animation starts at
+               t=0 with no delay, so there's no gap for "backwards" fill to cover. */
+            animation: pageFadeIn .5s cubic-bezier(.22,1,.36,1);
         }
         @keyframes pageFadeIn{ from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);} }
         @view-transition{ navigation: auto; }

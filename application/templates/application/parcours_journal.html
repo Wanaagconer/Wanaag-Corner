@@ -329,32 +329,78 @@
     background:rgba(180,80,60,.18); pointer-events:none;
 }
 
-/* Date heading */
-.writer-date-heading {
-    font-family:'Fraunces',serif; font-style:italic;
-    font-size:1rem; color:var(--ink3);
-    margin-bottom:.5rem; padding-left:52px; letter-spacing:.04em;
+/* Meta row: brand/page-num + weekday */
+.writer-meta-row {
+    display:flex; justify-content:space-between; align-items:baseline;
+    padding-left:52px; margin-bottom:.4rem;
+}
+.writer-meta-row .wm-brand, .writer-meta-row .wm-weekday {
+    font-size:.62rem; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--ink3); font-weight:700;
 }
 
-/* Page number top right */
-.writer-page-num {
-    position:absolute; top:2.5rem; right:2rem;
-    font-family:'Fraunces',serif; font-style:italic;
-    font-size:.75rem; color:var(--ink3);
+/* Big date treatment — the heart of the new page */
+.writer-date-big { display:flex; align-items:baseline; gap:.7rem; padding-left:52px; }
+.writer-date-num {
+    font-family:'Fraunces',serif; font-weight:800; font-style:normal;
+    font-size:clamp(2.6rem,7vw,4rem); color:var(--ink); line-height:.85;
+}
+.writer-date-month-wrap { display:flex; flex-direction:column; gap:.1rem; }
+.writer-date-month { font-family:'Fraunces',serif; font-style:italic; font-size:1.4rem; color:var(--ink); line-height:1.1; }
+.writer-date-year { font-size:.78rem; color:var(--ink3); letter-spacing:.03em; }
+.writer-date-rule { height:1.5px; background:linear-gradient(90deg,var(--gold),transparent 75%); margin:.9rem 0 1.4rem 52px; }
+
+/* Mood pills — moved up near the date, styled like a real wellness app */
+.writer-mood-pills { display:flex; align-items:center; gap:.5rem; flex-wrap:wrap; padding-left:52px; margin-bottom:1.5rem; }
+.writer-mood-pills .wm-label { font-size:.72rem; color:var(--ink3); font-style:italic; margin-right:.2rem; }
+.mood-pill {
+    border:1.5px solid rgba(171,126,54,.25); background:rgba(171,126,54,.05);
+    color:var(--ink2); font-size:.78rem; font-weight:600; padding:.4rem .9rem;
+    border-radius:50px; cursor:pointer; font-family:inherit; transition:all .2s;
+    white-space:nowrap;
+}
+.mood-pill:hover { background:rgba(171,126,54,.12); }
+.mood-pill.active {
+    background:var(--gold); border-color:var(--gold); color:#fff;
+    box-shadow:0 4px 14px rgba(190,140,60,.35);
 }
 
-/* Title input */
+/* "Intention du jour" card — repurposes the title field as a calm highlight */
+.writer-intention-card {
+    margin:0 0 1.7rem 52px; max-width:calc(100% - 52px);
+    background:linear-gradient(135deg,#3a2f22,#241c12);
+    border-radius:14px; padding:1rem 1.3rem;
+    box-shadow:0 10px 30px rgba(42,33,27,.18);
+}
+.wi-label { font-size:.62rem; letter-spacing:.14em; text-transform:uppercase; color:var(--gold-light); font-weight:700; margin-bottom:.4rem; }
+.wi-optional { text-transform:none; letter-spacing:0; opacity:.55; font-weight:400; }
 .writer-title-input {
     width:100%; background:transparent; border:none; outline:none;
-    font-family:'Fraunces',serif; font-weight:700;
-    font-size:clamp(1.6rem,3vw,2.2rem); color:var(--ink);
-    padding:0 0 .6rem 52px; box-sizing:border-box;
-    border-bottom:1.5px solid rgba(171,126,54,.2);
-    caret-color:#ab7e36; margin-bottom:1.5rem;
-    transition:border-color .2s;
+    font-family:'Fraunces',serif; font-style:italic; font-weight:700;
+    font-size:1.2rem; color:#f4eee2; caret-color:var(--gold-light);
 }
-.writer-title-input::placeholder { color:var(--ink3); font-style:italic; }
-.writer-title-input:focus { border-color:rgba(171,126,54,.45); }
+.writer-title-input::placeholder { color:rgba(244,238,226,.35); font-style:italic; }
+
+/* Gratitude checklist */
+.writer-gratitude { padding-left:52px; margin-top:.5rem; max-width:calc(100% - 52px); }
+.wg-label { font-size:.62rem; letter-spacing:.14em; text-transform:uppercase; color:var(--ink3); font-weight:700; margin-bottom:.7rem; }
+.wg-list { display:flex; flex-direction:column; gap:.5rem; margin-bottom:.6rem; }
+.wg-item {
+    display:flex; align-items:center; gap:.6rem;
+    background:rgba(171,126,54,.06); border:1px solid rgba(171,126,54,.15);
+    border-radius:10px; padding:.55rem .8rem; animation:wgIn .25s ease;
+}
+@keyframes wgIn { from{opacity:0;transform:translateY(4px);} to{opacity:1;transform:translateY(0);} }
+.wg-check { color:var(--gold); font-weight:700; }
+.wg-text { flex:1; font-family:'Caveat',cursive; font-size:1.15rem; color:var(--ink); }
+.wg-remove { background:none; border:none; color:var(--ink3); cursor:pointer; font-size:1rem; padding:0 .3rem; line-height:1; }
+.wg-remove:hover { color:#ef4444; }
+.wg-input {
+    width:100%; background:transparent; border:none; border-bottom:1.5px dashed rgba(171,126,54,.3);
+    outline:none; font-family:'Caveat',cursive; font-size:1.15rem; color:var(--ink);
+    padding:.4rem 0; caret-color:var(--gold);
+}
+.wg-input::placeholder { color:var(--ink3); font-style:italic; }
 
 /* Content textarea — the real heart of the writer */
 .writer-textarea {
@@ -379,23 +425,6 @@
     display:flex; align-items:center; justify-content:space-between; gap:1rem;
     flex-wrap:wrap;
 }
-/* Mood selector */
-.writer-moods { display:flex; gap:.5rem; align-items:center; }
-.writer-mood-label { font-size:.72rem; color:rgba(190,140,60,.4); margin-right:.3rem; font-style:italic; }
-.writer-mood-btn {
-    width:36px; height:36px; border-radius:50%;
-    border:2px solid rgba(190,140,60,.15);
-    background:rgba(190,140,60,.05);
-    cursor:pointer; font-size:1.1rem;
-    display:flex; align-items:center; justify-content:center;
-    transition:all .22s;
-}
-.writer-mood-btn:hover, .writer-mood-btn.active {
-    border-color:rgba(190,140,60,.55);
-    background:rgba(190,140,60,.15);
-    transform:scale(1.18);
-    box-shadow:0 0 12px rgba(190,140,60,.25);
-}
 /* Center stats */
 .writer-bottom-stats {
     font-family:'Fraunces',serif; font-style:italic;
@@ -413,6 +442,110 @@
     letter-spacing:.03em;
 }
 .writer-save-btn:hover { transform:translateY(-2px); box-shadow:0 8px 22px rgba(190,140,60,.5); }
+
+/* ══════════════════════════════════════════════════════════════
+   JOURNAL INTRO — the book that opens before you write
+══════════════════════════════════════════════════════════════ */
+.jnl-intro {
+    position:fixed; inset:0; z-index:5000; display:none;
+    align-items:center; justify-content:center; overflow:hidden;
+    background:radial-gradient(ellipse at center,#4a3826 0%,#1c140b 70%,#100b06 100%);
+    opacity:1!important; transform:none!important;
+}
+.jnl-intro.open { display:flex; }
+.jnl-intro-skip {
+    position:absolute; top:1.4rem; right:1.4rem; z-index:20;
+    background:rgba(190,140,60,.12); border:1px solid rgba(190,140,60,.3);
+    color:var(--gold-light); font-size:.72rem; padding:.5rem 1rem;
+    border-radius:20px; cursor:pointer; font-family:inherit; transition:all .2s;
+}
+.jnl-intro-skip:hover { background:rgba(190,140,60,.22); }
+.jnl-intro-act {
+    display:none; position:absolute; inset:0;
+    align-items:center; justify-content:center; flex-direction:column; padding:2rem;
+}
+.jnl-intro-act.active { display:flex; animation:introFade .5s ease; }
+@keyframes introFade { from{opacity:0;} to{opacity:1;} }
+
+/* Act 1 — the cover */
+.jnl-cover {
+    width:min(340px,78vw); aspect-ratio:3/4; border-radius:6px 18px 18px 6px;
+    background:linear-gradient(150deg,#4c3d2e,#241c12 60%,#1a130b);
+    border:1px solid rgba(190,140,60,.4);
+    box-shadow:0 40px 90px rgba(0,0,0,.55), inset 0 0 60px rgba(0,0,0,.35);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; position:relative; overflow:hidden;
+    animation:coverIn .9s cubic-bezier(.16,1,.3,1);
+}
+@keyframes coverIn { from{opacity:0; transform:scale(.85) translateY(30px);} to{opacity:1; transform:scale(1) translateY(0);} }
+.jnl-cover-frame { position:absolute; inset:16px; border:1px solid rgba(190,140,60,.5); border-radius:2px 12px 12px 2px; }
+.jnl-cover-frame::before { content:''; position:absolute; inset:6px; border:1px dashed rgba(190,140,60,.25); }
+.jnl-cover-badge {
+    position:absolute; top:18%; left:50%; transform:translateX(-50%);
+    width:50px; height:50px; border-radius:50%;
+    background:radial-gradient(circle,#f4eee2,#ddc092);
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.2rem; box-shadow:0 6px 18px rgba(0,0,0,.4);
+}
+.jnl-cover-eyebrow {
+    position:absolute; top:calc(18% + 62px); left:0; right:0; text-align:center;
+    font-size:.6rem; letter-spacing:.2em; text-transform:uppercase; color:rgba(221,192,146,.6); font-weight:700;
+}
+.jnl-cover-title { position:absolute; top:37%; left:0; right:0; text-align:center; font-family:'Fraunces',serif; }
+.jct-1 { display:block; font-style:italic; font-size:clamp(1.9rem,7vw,2.5rem); color:var(--gold-light); line-height:1; }
+.jct-2 { display:block; font-weight:800; font-size:clamp(1.5rem,6vw,2rem); color:#f4eee2; margin-top:.2rem; }
+.jnl-cover-sub { position:absolute; bottom:13%; left:0; right:0; text-align:center; font-size:.68rem; color:rgba(221,192,146,.5); letter-spacing:.08em; }
+.jnl-cover-pen {
+    position:absolute; bottom:9%; right:11%; width:64px; height:6px;
+    background:linear-gradient(90deg,#1a1a1a,#2c2416 55%,#ddc092 88%,#f4eee2);
+    border-radius:3px; transform:rotate(-35deg); box-shadow:0 4px 10px rgba(0,0,0,.4);
+    animation:penFloat 3s ease-in-out infinite;
+}
+@keyframes penFloat { 0%,100%{transform:rotate(-35deg) translateY(0);} 50%{transform:rotate(-33deg) translateY(-4px);} }
+.jnl-spark {
+    position:absolute; width:3px; height:3px; border-radius:50%;
+    background:var(--gold-light); opacity:0; animation:sparkTwinkle 2.4s ease-in-out infinite;
+}
+.jnl-spark.s1{ top:24%; left:18%; animation-delay:.2s;}
+.jnl-spark.s2{ top:58%; left:78%; animation-delay:.8s;}
+.jnl-spark.s3{ top:74%; left:28%; animation-delay:1.4s;}
+.jnl-spark.s4{ top:30%; left:82%; animation-delay:1.9s;}
+@keyframes sparkTwinkle { 0%,100%{opacity:0; transform:scale(.5);} 50%{opacity:1; transform:scale(1.4);} }
+
+/* Act 2 — flip through past pages */
+.jnl-flip-book { perspective:1600px; width:min(520px,88vw); }
+.jnl-flip-page {
+    background:var(--paper); border-radius:10px; padding:2.2rem 2.4rem;
+    min-height:300px; box-shadow:0 30px 70px rgba(0,0,0,.5);
+    transform-origin:left center; position:relative; overflow:hidden;
+}
+.jnl-flip-page::after {
+    content:''; position:absolute; inset:0; pointer-events:none;
+    background:repeating-linear-gradient(transparent,transparent 27px,rgba(171,126,54,.12) 27px,rgba(171,126,54,.12) 28px);
+}
+.jnl-flip-page.flipping { animation:pageFlipIn .7s cubic-bezier(.4,0,.2,1); }
+@keyframes pageFlipIn { 0%{transform:rotateY(-100deg); opacity:0;} 60%{opacity:1;} 100%{transform:rotateY(0deg); opacity:1;} }
+.jnl-flip-top { display:flex; align-items:center; gap:.6rem; margin-bottom:1rem; position:relative; z-index:2; }
+.jnl-flip-mood { font-size:1.3rem; }
+.jnl-flip-date { font-family:'Fraunces',serif; font-style:italic; font-size:.85rem; color:var(--ink3); }
+.jnl-flip-title { font-family:'Fraunces',serif; font-weight:700; font-size:1.15rem; color:var(--ink); margin-bottom:.7rem; position:relative; z-index:2; }
+.jnl-flip-text {
+    font-family:'Caveat',cursive; font-size:1.25rem; color:var(--ink2); line-height:1.7;
+    position:relative; z-index:2;
+    display:-webkit-box; -webkit-line-clamp:5; -webkit-box-orient:vertical; overflow:hidden;
+}
+
+/* Act 3 — transition line before the blank page opens */
+.jnl-new-msg {
+    font-family:'Fraunces',serif; font-style:italic; color:var(--gold-light);
+    font-size:1.3rem; text-align:center; animation:newMsgPulse 1.3s ease;
+}
+@keyframes newMsgPulse { 0%{opacity:0; transform:scale(.9);} 35%{opacity:1; transform:scale(1);} 100%{opacity:1; transform:scale(1);} }
+
+@media(max-width:480px){
+    .jnl-flip-page { padding:1.6rem 1.5rem; min-height:260px; }
+    .jnl-flip-text { -webkit-line-clamp:4; font-size:1.15rem; }
+}
 
 @media(max-width:900px){
     .jnl-pages-grid { grid-template-columns: repeat(auto-fill, minmax(220px,1fr)); }
@@ -437,12 +570,17 @@
     /* Decorative margin rule is positioned relative to a 680px page — remove it
        on mobile so it doesn't push a negative offset and cause overflow */
     .writer-page::before { display: none; }
-    .writer-page-num { top: 1.5rem; right: 1rem; }
-    .writer-date-heading { padding-left: 0; }
-    .writer-title-input { padding-left: 0; font-size: 1.5rem; }
+    .writer-meta-row { padding-left: 0; }
+    .writer-date-big { padding-left: 0; }
+    .writer-date-num { font-size: 2.4rem; }
+    .writer-date-month { font-size: 1.15rem; }
+    .writer-date-rule { margin-left: 0; }
+    .writer-mood-pills { padding-left: 0; }
+    .writer-intention-card { margin-left: 0; max-width: 100%; }
+    .writer-title-input { font-size: 1.5rem; }
     .writer-textarea { padding-left: 0; font-size: 1.15rem; min-height: 320px; }
+    .writer-gratitude { padding-left: 0; max-width: 100%; }
     .writer-bottom { padding:.75rem 1rem; flex-direction: column; align-items: stretch; gap:.7rem; }
-    .writer-moods { justify-content: center; flex-wrap: wrap; }
     .writer-bottom-stats { justify-content: center; }
     .writer-save-btn { width: 100%; box-sizing: border-box; }
 }
@@ -451,7 +589,8 @@
     .jnl-stat-pill { font-size:.68rem; padding:.4rem .7rem; }
     .jnl-pages-grid { grid-template-columns: 1fr; gap: 1.2rem; }
     .jnl-fab { width: 52px; height: 52px; right: 1.2rem; bottom: 1.5rem; font-size: 1.4rem; }
-    .writer-mood-btn { width: 34px; height: 34px; font-size: 1rem; }
+    .mood-pill { font-size: .72rem; padding: .32rem .7rem; }
+    .writer-date-num { font-size: 2.1rem; }
     .writer-title-input { font-size: 1.3rem; }
     .writer-textarea { font-size: 1.1rem; }
 }
@@ -549,6 +688,51 @@
 <div class="jnl-toast" id="jnlToast">✓ Page enregistrée</div>
 
 <!-- ═══════════════════════════════════════════════════════════════
+     JOURNAL INTRO — book opening, then past pages flip by
+═══════════════════════════════════════════════════════════════ -->
+<div class="jnl-intro" id="jnlIntro">
+    <button class="jnl-intro-skip" onclick="skipIntro()">Passer l'intro →</button>
+
+    <!-- Act 1 : the cover -->
+    <div class="jnl-intro-act active" id="actCover">
+        <div class="jnl-cover" onclick="advanceIntro()">
+            <div class="jnl-cover-frame"></div>
+            <div class="jnl-cover-badge">🧠</div>
+            <div class="jnl-cover-eyebrow">Wanaag Corner · Espace privé</div>
+            <div class="jnl-cover-title">
+                <span class="jct-1">Journal</span>
+                <span class="jct-2">Intime</span>
+            </div>
+            <div class="jnl-cover-sub">Touchez pour ouvrir</div>
+            <div class="jnl-cover-pen"></div>
+            <span class="jnl-spark s1"></span>
+            <span class="jnl-spark s2"></span>
+            <span class="jnl-spark s3"></span>
+            <span class="jnl-spark s4"></span>
+        </div>
+    </div>
+
+    <!-- Act 2 : past pages flip by -->
+    <div class="jnl-intro-act" id="actFlip">
+        <div class="jnl-flip-book">
+            <div class="jnl-flip-page" id="flipPage">
+                <div class="jnl-flip-top">
+                    <span class="jnl-flip-mood" id="flipMood">😊</span>
+                    <span class="jnl-flip-date" id="flipDate"></span>
+                </div>
+                <div class="jnl-flip-title" id="flipTitle"></div>
+                <div class="jnl-flip-text" id="flipText"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Act 3 : handoff to the blank page -->
+    <div class="jnl-intro-act" id="actNew">
+        <div class="jnl-new-msg">✦ Une nouvelle page vous attend ✦</div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
      FULL-SCREEN JOURNAL WRITER
 ═══════════════════════════════════════════════════════════════ -->
 <div class="journal-writer" id="journalWriter">
@@ -574,12 +758,36 @@
     <!-- Scrollable page area -->
     <div class="writer-scroll">
         <div class="writer-page">
-            <div class="writer-page-num" id="writerPageNum">p. {{ entries|length|add:1 }}</div>
-            <div class="writer-date-heading" id="writerDateHeading"></div>
-            <input
-                type="text" id="writerTitle" class="writer-title-input"
-                placeholder="Titre de cette page…"
-            >
+            <div class="writer-meta-row">
+                <span class="wm-brand">Wanaag Corner · <span id="writerPageNum">Page {{ entries|length|add:1 }}</span></span>
+                <span class="wm-weekday" id="writerWeekday"></span>
+            </div>
+            <div class="writer-date-big">
+                <span class="writer-date-num" id="writerDateNum">27</span>
+                <span class="writer-date-month-wrap">
+                    <span class="writer-date-month" id="writerDateMonth">septembre</span>
+                    <span class="writer-date-year" id="writerDateYear">2026</span>
+                </span>
+            </div>
+            <div class="writer-date-rule"></div>
+
+            <div class="writer-mood-pills" id="writerMoodPills">
+                <span class="wm-label">Humeur</span>
+                <button type="button" class="mood-pill" data-val="5" onclick="setMood(this)">😊 Excellent</button>
+                <button type="button" class="mood-pill" data-val="4" onclick="setMood(this)">🙂 Bien</button>
+                <button type="button" class="mood-pill active" data-val="3" onclick="setMood(this)">😐 Moyen</button>
+                <button type="button" class="mood-pill" data-val="2" onclick="setMood(this)">😔 Difficile</button>
+                <button type="button" class="mood-pill" data-val="1" onclick="setMood(this)">😢 Terrible</button>
+            </div>
+
+            <div class="writer-intention-card">
+                <div class="wi-label">✦ Intention du jour <span class="wi-optional">(facultatif)</span></div>
+                <input
+                    type="text" id="writerTitle" class="writer-title-input"
+                    placeholder="Un mot, une intention pour cette page…"
+                >
+            </div>
+
             <textarea
                 id="writerContent" class="writer-textarea"
                 placeholder="Laissez vos pensées couler librement…
@@ -589,19 +797,21 @@ Qu'est-ce qui vous a touché, surpris, ému ?
 
 Cette page n'appartient qu'à vous."
             ></textarea>
+
+            <div class="writer-gratitude">
+                <div class="wg-label">🌿 Gratitude du jour <span class="wi-optional">(facultatif)</span></div>
+                <div class="wg-list" id="gratitudeList"></div>
+                <input
+                    type="text" id="gratitudeInput" class="wg-input"
+                    placeholder="Une petite chose pour laquelle vous êtes reconnaissant(e)… puis Entrée"
+                    onkeydown="handleGratitudeKey(event)"
+                >
+            </div>
         </div>
     </div>
 
     <!-- Bottom action bar -->
     <div class="writer-bottom">
-        <div class="writer-moods">
-            <span class="writer-mood-label">Humeur</span>
-            <button type="button" class="writer-mood-btn" data-val="5" onclick="setMood(this)">😊</button>
-            <button type="button" class="writer-mood-btn" data-val="4" onclick="setMood(this)">🙂</button>
-            <button type="button" class="writer-mood-btn active" data-val="3" onclick="setMood(this)">😐</button>
-            <button type="button" class="writer-mood-btn" data-val="2" onclick="setMood(this)">😔</button>
-            <button type="button" class="writer-mood-btn" data-val="1" onclick="setMood(this)">😢</button>
-        </div>
         <div class="writer-bottom-stats">
             <span><strong id="bwc">0</strong> mots</span>
             <span><strong id="brt">0 min</strong> de lecture</span>
@@ -621,13 +831,24 @@ const MOIS  = ['janvier','février','mars','avril','mai','juin','juillet','août
 function formatDate(d) {
     return JOURS[d.getDay()] + ' ' + d.getDate() + ' ' + MOIS[d.getMonth()] + ' ' + d.getFullYear();
 }
+function setDateBlock(d) {
+    document.getElementById('writerWeekday').textContent = JOURS[d.getDay()];
+    document.getElementById('writerDateNum').textContent = d.getDate();
+    document.getElementById('writerDateMonth').textContent = MOIS[d.getMonth()];
+    document.getElementById('writerDateYear').textContent = d.getFullYear();
+}
+function moodEmoji(v) {
+    return {'5':'😊','4':'🙂','3':'😐','2':'😔','1':'😢'}[v] || '😐';
+}
 // currentIndex : -1 = nouvelle page (vierge), 0..N-1 = index dans ENTRIES (0 = la plus récente)
 let currentIndex = -1;
 
 // ── Open / Close writer ──
 function openWriter() {
-    resetToNewPage();
-    showWriter();
+    maybePlayIntro(() => {
+        resetToNewPage();
+        showWriter();
+    });
 }
 function showWriter() {
     document.getElementById('journalWriter').classList.add('open');
@@ -644,14 +865,92 @@ document.addEventListener('keydown', e => {
     if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') saveEntry();
 });
 
+// ══════════════════════════════════════════════════════
+// JOURNAL INTRO — book cover → past pages flip → blank page
+// Plays once per browser session, only for "Nouvelle page" /
+// the FAB — rereading an existing page (openReader) skips it.
+// ══════════════════════════════════════════════════════
+const INTRO_KEY = 'jnlIntroSeen';
+let introStage = 'cover';
+let introTimer = null;
+let introDone = null;
+let flipQueue = [];
+let flipIdx = 0;
+
+function maybePlayIntro(onDone) {
+    if (sessionStorage.getItem(INTRO_KEY)) { onDone(); return; }
+    playIntro(onDone);
+}
+function playIntro(onDone) {
+    sessionStorage.setItem(INTRO_KEY, '1');
+    introDone = onDone;
+    document.getElementById('jnlIntro').classList.add('open');
+    document.body.style.overflow = 'hidden';
+    showAct('cover');
+    introTimer = setTimeout(advanceIntro, 2600);
+}
+function showAct(name) {
+    introStage = name;
+    document.querySelectorAll('.jnl-intro-act').forEach(el => el.classList.remove('active'));
+    document.getElementById('act' + name.charAt(0).toUpperCase() + name.slice(1)).classList.add('active');
+}
+function advanceIntro() {
+    clearTimeout(introTimer);
+    if (introStage === 'cover') {
+        flipQueue = ENTRIES.slice(0, 3).slice().reverse(); // oldest of the recent 3 first
+        flipIdx = 0;
+        if (flipQueue.length === 0) {
+            showAct('new');
+            introTimer = setTimeout(finishIntro, 1400);
+            return;
+        }
+        showAct('flip');
+        renderFlipPage();
+        introTimer = setTimeout(advanceIntro, 1500);
+    } else if (introStage === 'flip') {
+        flipIdx++;
+        if (flipIdx < flipQueue.length) {
+            renderFlipPage();
+            introTimer = setTimeout(advanceIntro, 1500);
+        } else {
+            showAct('new');
+            introTimer = setTimeout(finishIntro, 1400);
+        }
+    } else {
+        finishIntro();
+    }
+}
+function renderFlipPage() {
+    const entry = flipQueue[flipIdx];
+    const page = document.getElementById('flipPage');
+    page.classList.remove('flipping');
+    void page.offsetWidth; // restart the flip animation
+    page.classList.add('flipping');
+    document.getElementById('flipDate').textContent = formatDate(new Date(entry.date_iso));
+    document.getElementById('flipTitle').textContent = entry.titre || '';
+    document.getElementById('flipText').textContent = entry.contenu;
+    document.getElementById('flipMood').textContent = moodEmoji(entry.humeur);
+}
+function finishIntro() {
+    document.getElementById('jnlIntro').classList.remove('open');
+    document.body.style.overflow = '';
+    const cb = introDone; introDone = null;
+    if (cb) cb();
+}
+function skipIntro() {
+    clearTimeout(introTimer);
+    finishIntro();
+}
+
 // ── Reset to a blank new page ──
 function resetToNewPage() {
     currentIndex = -1;
     document.getElementById('writerTitle').value = '';
     document.getElementById('writerContent').value = '';
     setMoodValue('3');
-    document.getElementById('writerDateHeading').textContent = formatDate(new Date());
-    document.getElementById('writerPageNum').textContent = 'p. ' + (ENTRIES.length + 1);
+    setGratitudeFromString('');
+    setDateBlock(new Date());
+    document.getElementById('writerPageNum').textContent = 'Page ' + (ENTRIES.length + 1);
     document.getElementById('writerDeleteBtn').style.display = 'none';
     document.getElementById('writerSaveBtn').textContent = 'Sceller cette page ✦';
     document.getElementById('statusText').textContent = 'Prêt';
@@ -673,8 +972,9 @@ function openReaderByIndex(idx) {
     document.getElementById('writerTitle').value = entry.titre || '';
     document.getElementById('writerContent').value = entry.contenu || '';
     setMoodValue(entry.humeur);
-    document.getElementById('writerDateHeading').textContent = formatDate(new Date(entry.date_iso));
-    document.getElementById('writerPageNum').textContent = 'p. ' + (idx + 1) + ' / ' + ENTRIES.length;
+    setGratitudeFromString(entry.gratitude || '');
+    setDateBlock(new Date(entry.date_iso));
+    document.getElementById('writerPageNum').textContent = 'Page ' + (idx + 1) + ' / ' + ENTRIES.length;
     document.getElementById('writerDeleteBtn').style.display = 'inline-block';
     document.getElementById('writerSaveBtn').textContent = 'Enregistrer les modifications ✦';
     document.getElementById('statusText').textContent = 'Prêt';
@@ -702,7 +1002,7 @@ function updateNavButtons() {
 
 function setMoodValue(val) {
     document.getElementById('humeurInput').value = val;
-    document.querySelectorAll('.writer-mood-btn').forEach(b => {
+    document.querySelectorAll('.mood-pill').forEach(b => {
         b.classList.toggle('active', b.dataset.val === String(val));
     });
 }
@@ -710,6 +1010,39 @@ function setMoodValue(val) {
 // ── Mood ──
 function setMood(btn) {
     setMoodValue(btn.dataset.val);
+}
+
+// ── Gratitude checklist ──
+let gratitudeItems = [];
+function escapeHtml(s) {
+    const d = document.createElement('div');
+    d.textContent = s;
+    return d.innerHTML;
+}
+function renderGratitudeList() {
+    const box = document.getElementById('gratitudeList');
+    box.innerHTML = gratitudeItems.map((item, i) => `
+        <div class="wg-item">
+            <span class="wg-check">✓</span>
+            <span class="wg-text">${escapeHtml(item)}</span>
+            <button type="button" class="wg-remove" onclick="removeGratitude(${i})" title="Retirer">×</button>
+        </div>
+    `).join('');
+}
+function handleGratitudeKey(e) {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        const val = e.target.value.trim();
+        if (val) { gratitudeItems.push(val); e.target.value = ''; renderGratitudeList(); }
+    }
+}
+function removeGratitude(i) {
+    gratitudeItems.splice(i, 1);
+    renderGratitudeList();
+}
+function setGratitudeFromString(str) {
+    gratitudeItems = (str || '').split('\n').map(s => s.trim()).filter(Boolean);
+    renderGratitudeList();
 }
 
 // ── Live stats ──
@@ -761,6 +1094,7 @@ function saveEntry() {
     data.append('humeur', document.getElementById('humeurInput').value);
     data.append('titre', document.getElementById('writerTitle').value);
     data.append('contenu', contenu);
+    data.append('gratitude', gratitudeItems.join('\n'));
 
     fetch('{% url "parcours_journal" %}', { method:'POST', body:data })
         .then(r => r.json())

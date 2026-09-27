@@ -1925,9 +1925,10 @@ def parcours_journal(request):
             titre = request.POST.get('titre', '').strip()
             contenu = request.POST.get('contenu', '').strip()
             humeur = request.POST.get('humeur', '3')
+            gratitude = request.POST.get('gratitude', '').strip()
             if contenu:
                 entry = JournalEntry.objects.create(
-                    utilisateur=user, titre=titre, contenu=contenu, humeur=humeur
+                    utilisateur=user, titre=titre, contenu=contenu, humeur=humeur, gratitude=gratitude
                 )
                 return JsonResponse({'success': True, 'entry_id': entry.id})
             return JsonResponse({'success': False, 'message': 'Contenu vide'})
@@ -1942,6 +1943,7 @@ def parcours_journal(request):
             entry.titre = request.POST.get('titre', '').strip()
             entry.contenu = contenu
             entry.humeur = request.POST.get('humeur', entry.humeur)
+            entry.gratitude = request.POST.get('gratitude', '').strip()
             entry.save()
             return JsonResponse({'success': True, 'entry_id': entry.id})
         elif action == 'delete':
@@ -1960,6 +1962,7 @@ def parcours_journal(request):
             'titre': e.titre,
             'contenu': e.contenu,
             'humeur': e.humeur,
+            'gratitude': e.gratitude,
             'date_iso': timezone.localtime(e.date_creation).isoformat(),
         }
         for e in entries

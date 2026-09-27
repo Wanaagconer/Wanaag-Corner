@@ -565,6 +565,7 @@ class JournalEntry(models.Model):
     titre = models.CharField(max_length=200, blank=True)
     contenu = models.TextField()
     humeur = models.CharField(max_length=2, choices=HUMEUR_CHOICES, default='3')
+    gratitude = models.TextField(blank=True, default='', help_text="Une ligne par élément de gratitude")
     date_creation = models.DateTimeField(auto_now_add=True)
     date_modification = models.DateTimeField(auto_now=True)
 
