@@ -535,16 +535,84 @@
     display:-webkit-box; -webkit-line-clamp:5; -webkit-box-orient:vertical; overflow:hidden;
 }
 
-/* Act 3 — transition line before the blank page opens */
-.jnl-new-msg {
-    font-family:'Fraunces',serif; font-style:italic; color:var(--gold-light);
-    font-size:1.3rem; text-align:center; animation:newMsgPulse 1.3s ease;
+/* Act 2b — opening burst + "ce journal appartient à" plate + first page */
+.jnl-open-spread { display:flex; position:relative; }
+.jnl-burst {
+    position:absolute; inset:-45%; z-index:0; pointer-events:none; border-radius:50%;
+    background:repeating-conic-gradient(from 0deg, rgba(255,220,150,.14) 0deg 4deg, transparent 4deg 16deg);
+    opacity:0; animation:burstFade 1.5s ease;
 }
-@keyframes newMsgPulse { 0%{opacity:0; transform:scale(.9);} 35%{opacity:1; transform:scale(1);} 100%{opacity:1; transform:scale(1);} }
+@keyframes burstFade { 0%{opacity:0; transform:scale(.6);} 30%{opacity:.9;} 100%{opacity:0; transform:scale(1.35);} }
+.jnl-inside-cover {
+    position:relative; z-index:1; width:min(220px,38vw); min-height:300px;
+    background:
+        repeating-radial-gradient(circle at 30% 35%, rgba(190,140,60,.07) 0, rgba(190,140,60,.07) 2px, transparent 2px, transparent 15px),
+        linear-gradient(150deg,#3a2f22,#1e1710);
+    border-radius:10px 0 0 10px; display:flex; align-items:center; justify-content:center; padding:1.4rem;
+    box-shadow:-10px 0 30px rgba(0,0,0,.4);
+}
+.jnl-owner-plate {
+    background:var(--paper); border:1px solid rgba(190,140,60,.4); border-radius:4px;
+    padding:1.1rem 1.3rem; text-align:center; box-shadow:0 10px 24px rgba(0,0,0,.35);
+    animation:plateIn .6s ease .15s both;
+}
+@keyframes plateIn { from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
+.jop-label { font-size:.58rem; letter-spacing:.1em; text-transform:uppercase; color:var(--ink3); margin-bottom:.45rem; }
+.jop-name { font-family:'Caveat',cursive; font-size:1.4rem; color:var(--ink); font-weight:700; line-height:1.2; }
+.jop-sub { font-family:'Caveat',cursive; font-size:1.15rem; color:var(--ink2); }
+.jnl-flip-page.attached { border-radius:0 10px 10px 0; z-index:1; }
+
+/* Act 4 — landing: brand + tagline + real CTA into the blank page */
+.jnl-landing { display:flex; align-items:center; gap:3rem; max-width:900px; width:100%; }
+.jnl-landing-left { flex:1; min-width:240px; }
+.jnl-landing-brand { display:flex; align-items:center; gap:.8rem; margin-bottom:1.6rem; }
+.jnl-landing-badge {
+    width:48px; height:48px; border-radius:50%; background:rgba(190,140,60,.15);
+    border:1px solid rgba(190,140,60,.3); display:flex; align-items:center; justify-content:center; font-size:1.3rem;
+}
+.jlb-name { font-family:'Fraunces',serif; font-weight:700; color:#f4eee2; font-size:1.05rem; }
+.jlb-sub { font-size:.72rem; color:rgba(244,238,226,.45); }
+.jnl-landing-tagline {
+    font-family:'Fraunces',serif; font-style:italic; font-size:clamp(1.4rem,4vw,2rem);
+    color:rgba(244,238,226,.9); line-height:1.25; margin-bottom:.8rem;
+}
+.jnl-landing-tagline span { color:var(--gold-light); }
+.jnl-landing-sub2 { font-size:.85rem; color:rgba(244,238,226,.5); margin-bottom:1.6rem; }
+.jnl-landing-btn {
+    background:linear-gradient(135deg,var(--gold),#594836); color:#fff; font-weight:700;
+    font-size:.9rem; border:none; padding:.8rem 1.8rem; border-radius:50px; cursor:pointer;
+    font-family:inherit; box-shadow:0 8px 24px rgba(190,140,60,.4); transition:all .25s;
+    animation:plateIn .5s ease .1s both;
+}
+.jnl-landing-btn:hover { transform:translateY(-3px); box-shadow:0 14px 32px rgba(190,140,60,.55); }
+.jnl-landing-right { flex-shrink:0; }
+.jnl-landing-preview {
+    width:210px; min-height:250px; background:var(--paper); border-radius:14px;
+    padding:1.5rem; box-shadow:0 30px 70px rgba(0,0,0,.5); position:relative; overflow:hidden;
+    animation:coverIn .7s cubic-bezier(.16,1,.3,1);
+}
+.jnl-landing-preview::after {
+    content:''; position:absolute; inset:0; pointer-events:none;
+    background:repeating-linear-gradient(transparent,transparent 27px,rgba(171,126,54,.1) 27px,rgba(171,126,54,.1) 28px);
+}
+.jnl-landing-meta { display:flex; justify-content:space-between; font-size:.55rem; letter-spacing:.1em; text-transform:uppercase; color:var(--ink3); margin-bottom:.9rem; position:relative; z-index:1; }
+.jnl-landing-date { display:flex; align-items:baseline; gap:.4rem; margin-bottom:1.3rem; position:relative; z-index:1; }
+.jnl-landing-date .ld-num { font-family:'Fraunces',serif; font-weight:800; font-size:2.3rem; color:var(--ink); }
+.jnl-landing-date .ld-month { font-family:'Fraunces',serif; font-style:italic; font-size:1.05rem; color:var(--ink); }
+.jnl-landing-hint { font-family:'Caveat',cursive; font-size:1.2rem; color:var(--ink3); position:relative; z-index:1; }
+
+@media(max-width:700px){
+    .jnl-landing { flex-direction:column; text-align:center; gap:1.6rem; }
+    .jnl-landing-brand { justify-content:center; }
+    .jnl-landing-right { order:-1; }
+    .jnl-landing-preview { width:170px; min-height:190px; padding:1.1rem; }
+}
 
 @media(max-width:480px){
     .jnl-flip-page { padding:1.6rem 1.5rem; min-height:260px; }
     .jnl-flip-text { -webkit-line-clamp:4; font-size:1.15rem; }
+    .jnl-inside-cover { width:34vw; padding:1rem; }
+    .jop-name { font-size:1.15rem; }
 }
 
 @media(max-width:900px){
@@ -712,7 +780,29 @@
         </div>
     </div>
 
-    <!-- Act 2 : past pages flip by -->
+    <!-- Act 2 : the book opens — "ce journal appartient à…" + your first page -->
+    <div class="jnl-intro-act" id="actOwnership">
+        <div class="jnl-open-spread">
+            <div class="jnl-burst"></div>
+            <div class="jnl-inside-cover">
+                <div class="jnl-owner-plate">
+                    <div class="jop-label">Ce journal appartient à</div>
+                    <div class="jop-name">{{ user.pseudonyme|default:user.username }}</div>
+                    <div class="jop-sub">et à personne d'autre.</div>
+                </div>
+            </div>
+            <div class="jnl-flip-page attached" id="ownerPage">
+                <div class="jnl-flip-top">
+                    <span class="jnl-flip-mood" id="ownerMood">😊</span>
+                    <span class="jnl-flip-date" id="ownerDate"></span>
+                </div>
+                <div class="jnl-flip-title" id="ownerTitle"></div>
+                <div class="jnl-flip-text" id="ownerText"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Act 3 : more past pages flip by -->
     <div class="jnl-intro-act" id="actFlip">
         <div class="jnl-flip-book">
             <div class="jnl-flip-page" id="flipPage">
@@ -726,9 +816,29 @@
         </div>
     </div>
 
-    <!-- Act 3 : handoff to the blank page -->
-    <div class="jnl-intro-act" id="actNew">
-        <div class="jnl-new-msg">✦ Une nouvelle page vous attend ✦</div>
+    <!-- Act 4 : landing — brand, tagline, and the real call to action -->
+    <div class="jnl-intro-act" id="actLanding">
+        <div class="jnl-landing">
+            <div class="jnl-landing-left">
+                <div class="jnl-landing-brand">
+                    <span class="jnl-landing-badge">🧠</span>
+                    <div>
+                        <div class="jlb-name">Wanaag Corner</div>
+                        <div class="jlb-sub">Santé mentale · Bien-être</div>
+                    </div>
+                </div>
+                <div class="jnl-landing-tagline">Chaque page écrite est un pas de plus vers <span>vous-même</span>.</div>
+                <div class="jnl-landing-sub2">Vos mots, votre vérité.</div>
+                <button type="button" class="jnl-landing-btn" onclick="finishIntro()">Nouvelle page ✦</button>
+            </div>
+            <div class="jnl-landing-right">
+                <div class="jnl-landing-preview">
+                    <div class="jnl-landing-meta"><span id="landPageNum"></span><span id="landWeekday"></span></div>
+                    <div class="jnl-landing-date"><span class="ld-num" id="landDateNum"></span><span class="ld-month" id="landDateMonth"></span></div>
+                    <div class="jnl-landing-hint">Une page vous attend.</div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -845,7 +955,7 @@ let currentIndex = -1;
 
 // ── Open / Close writer ──
 function openWriter() {
-    maybePlayIntro(() => {
+    playIntro('new', -1, () => {
         resetToNewPage();
         showWriter();
     });
@@ -866,59 +976,90 @@ document.addEventListener('keydown', e => {
 });
 
 // ══════════════════════════════════════════════════════
-// JOURNAL INTRO — book cover → past pages flip → blank page
-// Plays once per browser session, only for "Nouvelle page" /
-// the FAB — rereading an existing page (openReader) skips it.
+// JOURNAL INTRO — the book opens every time you enter it:
+// cover → "ce journal appartient à…" + your first page →
+// recent pages flip by → a real call-to-action into today's
+// page (or, when rereading a specific page, straight to it).
 // ══════════════════════════════════════════════════════
-const INTRO_KEY = 'jnlIntroSeen';
 let introStage = 'cover';
 let introTimer = null;
 let introDone = null;
+let introMode = 'new';     // 'new' | 'reread'
+let introTargetIdx = -1;  // for 'reread': which ENTRIES index to land on
 let flipQueue = [];
 let flipIdx = 0;
 
-function maybePlayIntro(onDone) {
-    if (sessionStorage.getItem(INTRO_KEY)) { onDone(); return; }
-    playIntro(onDone);
-}
-function playIntro(onDone) {
-    sessionStorage.setItem(INTRO_KEY, '1');
+function playIntro(mode, targetIdx, onDone) {
+    introMode = mode;
+    introTargetIdx = targetIdx;
     introDone = onDone;
     document.getElementById('jnlIntro').classList.add('open');
     document.body.style.overflow = 'hidden';
     showAct('cover');
-    introTimer = setTimeout(advanceIntro, 2600);
+    introTimer = setTimeout(advanceIntro, 2200);
 }
 function showAct(name) {
     introStage = name;
     document.querySelectorAll('.jnl-intro-act').forEach(el => el.classList.remove('active'));
     document.getElementById('act' + name.charAt(0).toUpperCase() + name.slice(1)).classList.add('active');
 }
+function renderOwnerPage(entry) {
+    document.getElementById('ownerDate').textContent = formatDate(new Date(entry.date_iso));
+    document.getElementById('ownerTitle').textContent = entry.titre || '';
+    document.getElementById('ownerText').textContent = entry.contenu;
+    document.getElementById('ownerMood').textContent = moodEmoji(entry.humeur);
+}
 function advanceIntro() {
     clearTimeout(introTimer);
     if (introStage === 'cover') {
-        flipQueue = ENTRIES.slice(0, 3).slice().reverse(); // oldest of the recent 3 first
-        flipIdx = 0;
-        if (flipQueue.length === 0) {
-            showAct('new');
-            introTimer = setTimeout(finishIntro, 1400);
-            return;
+        showAct('ownership');
+        const ownerPageEl = document.getElementById('ownerPage');
+        const insideCover = document.querySelector('.jnl-inside-cover');
+        if (ENTRIES.length > 0) {
+            ownerPageEl.style.display = '';
+            insideCover.style.borderRadius = '';
+            renderOwnerPage(ENTRIES[ENTRIES.length - 1]); // the very first page ever written
+        } else {
+            ownerPageEl.style.display = 'none';
+            insideCover.style.borderRadius = '10px';
         }
+        introTimer = setTimeout(advanceIntro, 1900);
+    } else if (introStage === 'ownership') {
+        if (introMode === 'reread') {
+            flipQueue = [ENTRIES[introTargetIdx]];
+        } else {
+            flipQueue = ENTRIES.slice(0, 3).slice().reverse();
+            // don't repeat the exact entry already shown on the "ownership" page
+            if (ENTRIES.length > 1) flipQueue = flipQueue.filter(e => e !== ENTRIES[ENTRIES.length - 1]);
+        }
+        flipIdx = 0;
+        if (flipQueue.length === 0) { landOrFinish(); return; }
         showAct('flip');
         renderFlipPage();
-        introTimer = setTimeout(advanceIntro, 1500);
+        introTimer = setTimeout(advanceIntro, 1400);
     } else if (introStage === 'flip') {
         flipIdx++;
         if (flipIdx < flipQueue.length) {
             renderFlipPage();
-            introTimer = setTimeout(advanceIntro, 1500);
+            introTimer = setTimeout(advanceIntro, 1400);
         } else {
-            showAct('new');
-            introTimer = setTimeout(finishIntro, 1400);
+            landOrFinish();
         }
     } else {
         finishIntro();
     }
+}
+function landOrFinish() {
+    if (introMode === 'reread') {
+        introTimer = setTimeout(finishIntro, 700);
+        return;
+    }
+    const d = new Date();
+    document.getElementById('landPageNum').textContent = 'Page ' + (ENTRIES.length + 1);
+    document.getElementById('landWeekday').textContent = JOURS[d.getDay()];
+    document.getElementById('landDateNum').textContent = d.getDate();
+    document.getElementById('landDateMonth').textContent = MOIS[d.getMonth()];
+    showAct('landing'); // holds here until the user taps "Nouvelle page"
 }
 function renderFlipPage() {
     const entry = flipQueue[flipIdx];
@@ -932,13 +1073,13 @@ function renderFlipPage() {
     document.getElementById('flipMood').textContent = moodEmoji(entry.humeur);
 }
 function finishIntro() {
+    clearTimeout(introTimer);
     document.getElementById('jnlIntro').classList.remove('open');
     document.body.style.overflow = '';
     const cb = introDone; introDone = null;
     if (cb) cb();
 }
 function skipIntro() {
-    clearTimeout(introTimer);
     finishIntro();
 }
 
@@ -963,8 +1104,10 @@ function resetToNewPage() {
 function openReader(id) {
     const idx = ENTRIES.findIndex(e => e.id === id);
     if (idx === -1) return;
-    openReaderByIndex(idx);
-    showWriter();
+    playIntro('reread', idx, () => {
+        openReaderByIndex(idx);
+        showWriter();
+    });
 }
 function openReaderByIndex(idx) {
     const entry = ENTRIES[idx];
