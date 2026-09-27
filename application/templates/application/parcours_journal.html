@@ -51,6 +51,17 @@
 .jnl-hero-title span { color:var(--gold-light); }
 .jnl-hero-sub { font-size:.9rem; color:rgba(244,238,226,.4); max-width:380px; line-height:1.6; }
 
+/* Weather card — "ta météo · 14 jours" mood history */
+.jnl-weather-card {
+    display:flex; flex-direction:column; gap:.7rem; padding:1rem 1.2rem;
+    border-radius:18px; background:rgba(244,238,226,.06); border:1px solid rgba(190,140,60,.18);
+    position:relative; z-index:2; flex-shrink:0;
+}
+.jnl-weather-head { display:flex; justify-content:space-between; gap:1.2rem; font-size:.6rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:rgba(244,238,226,.5); }
+.jnl-weather-head strong { color:var(--gold-light); }
+.jnl-weather-dots { display:flex; gap:.4rem; align-items:center; min-height:20px; }
+.jnl-weather-dot { border-radius:50%; flex-shrink:0; }
+
 /* Open book decoration */
 .jnl-book-deco {
     position:relative; z-index:2; flex-shrink:0;
@@ -215,6 +226,47 @@
 .jnl-empty h3 { font-family:'Fraunces',serif; font-style:italic; font-size:1.6rem; color:var(--encre); margin-bottom:.5rem; }
 .jnl-empty p { font-size:.88rem; color:var(--taupe); }
 
+/* ══════════════════════════════════════════
+   "LE COIN DES PENSÉES LOURDES" — write it, then let it go.
+   Nothing here is ever sent to the server.
+══════════════════════════════════════════ */
+.jnl-release-card {
+    position:relative; padding:2.2rem 2rem; border-radius:4px 4px 20px 4px;
+    background:var(--paper); margin-bottom:3rem; overflow:hidden;
+    box-shadow:0 20px 40px -24px rgba(42,33,27,.4);
+    opacity:1!important; transform:none!important;
+}
+.jnl-release-tab {
+    position:absolute; top:-10px; left:50%; transform:translateX(-50%) rotate(-3deg);
+    width:110px; height:26px;
+    background:repeating-linear-gradient(45deg, rgba(150,175,140,.85) 0 7px, rgba(190,210,180,.85) 7px 14px);
+}
+.jnl-release-eyebrow { font-size:.62rem; font-weight:700; letter-spacing:.16em; text-transform:uppercase; color:#607a5c; margin-bottom:.5rem; }
+.jnl-release-title { font-family:'Fraunces',serif; font-style:italic; font-size:1.4rem; color:var(--ink); margin-bottom:.5rem; }
+.jnl-release-sub { font-size:.85rem; color:var(--ink2); max-width:520px; margin-bottom:1.2rem; line-height:1.5; }
+.jnl-release-row { display:flex; flex-wrap:wrap; align-items:flex-end; gap:1rem; min-height:52px; }
+.jnl-release-input {
+    flex:1; min-width:220px; border:none; border-bottom:1.5px solid rgba(42,33,27,.2);
+    background:transparent; padding:.4rem 0; font-family:'Caveat',cursive; font-size:1.2rem;
+    color:var(--ink); outline:none; caret-color:var(--ink);
+}
+.jnl-release-input::placeholder { color:var(--ink3); font-style:italic; }
+.jnl-release-btn {
+    padding:.7rem 1.3rem; border-radius:50px; border:1.5px solid #607a5c;
+    background:rgba(143,166,138,.14); cursor:pointer; font-family:inherit; font-size:.8rem; font-weight:700; color:#3f5a3c;
+    transition:background .2s, opacity .3s;
+}
+.jnl-release-btn:hover { background:rgba(143,166,138,.28); }
+.jnl-release-flyer { font-family:'Caveat',cursive; font-size:1.25rem; color:var(--ink); }
+.jnl-release-flyer span { display:inline-block; white-space:pre; }
+@keyframes flyAway { to { transform:translate(var(--dx),var(--dy)) rotate(var(--r)); opacity:0; filter:blur(3px); } }
+.jnl-release-done { display:flex; flex-direction:column; align-items:flex-start; gap:.4rem; }
+.jnl-release-done .done-line { font-family:'Caveat',cursive; font-size:1.2rem; color:#3f5a3c; }
+.jnl-release-reset { background:none; border:none; cursor:pointer; font-family:inherit; font-size:.8rem; font-weight:600; color:#607a5c; text-decoration:underline; text-underline-offset:4px; padding:0; }
+
+.jnl-footer-tag { text-align:center; font-family:'Fraunces',serif; font-style:italic; font-size:.95rem; color:var(--taupe); margin:-1.2rem 0 2.5rem; opacity:1!important; }
+.jnl-footer-tag span { color:var(--or-dark); font-style:normal; font-weight:700; }
+
 /* FAB */
 .jnl-fab {
     position:fixed; bottom:2.5rem; right:2rem; z-index:100;
@@ -317,104 +369,152 @@
 .writer-scroll::-webkit-scrollbar-track { background:rgba(171,126,54,.05); }
 .writer-scroll::-webkit-scrollbar-thumb { background:rgba(171,126,54,.2); border-radius:3px; }
 
-/* Page container */
+/* Page container — a two-page "book spread" on wide screens */
 .writer-page {
-    max-width:680px; margin:0 auto; padding:3rem 2rem 5rem;
+    max-width:1120px; margin:0 auto; padding:2.6rem 2rem 5rem;
     position:relative;
 }
+.writer-spread { display:grid; grid-template-columns:1fr 1fr; gap:3rem; align-items:start; }
+.writer-col-left, .writer-col-right { min-width:0; }
 
-/* Left margin line */
-.writer-page::before {
-    content:''; position:absolute; left:calc(50% - 340px + 56px); top:0; bottom:0; width:1.5px;
-    background:rgba(180,80,60,.18); pointer-events:none;
-}
-
-/* Meta row: brand/page-num + weekday */
-.writer-meta-row {
-    display:flex; justify-content:space-between; align-items:baseline;
-    padding-left:52px; margin-bottom:.4rem;
-}
+/* Meta row: brand/page-num + weekday — shared by both columns */
+.writer-meta-row { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:.4rem; }
 .writer-meta-row .wm-brand, .writer-meta-row .wm-weekday {
     font-size:.62rem; letter-spacing:.14em; text-transform:uppercase;
     color:var(--ink3); font-weight:700;
 }
 
-/* Big date treatment — the heart of the new page */
-.writer-date-big { display:flex; align-items:baseline; gap:.7rem; padding-left:52px; }
+/* Big date treatment */
+.writer-date-big { display:flex; align-items:baseline; gap:.7rem; }
 .writer-date-num {
     font-family:'Fraunces',serif; font-weight:800; font-style:normal;
-    font-size:clamp(2.6rem,7vw,4rem); color:var(--ink); line-height:.85;
+    font-size:clamp(2.4rem,5vw,3.4rem); color:var(--ink); line-height:.85;
 }
 .writer-date-month-wrap { display:flex; flex-direction:column; gap:.1rem; }
-.writer-date-month { font-family:'Fraunces',serif; font-style:italic; font-size:1.4rem; color:var(--ink); line-height:1.1; }
-.writer-date-year { font-size:.78rem; color:var(--ink3); letter-spacing:.03em; }
-.writer-date-rule { height:1.5px; background:linear-gradient(90deg,var(--gold),transparent 75%); margin:.9rem 0 1.4rem 52px; }
+.writer-date-month { font-family:'Fraunces',serif; font-style:italic; font-size:1.25rem; color:var(--ink); line-height:1.1; }
+.writer-date-year { font-size:.75rem; color:var(--ink3); letter-spacing:.03em; }
+.writer-date-rule { height:1.5px; background:linear-gradient(90deg,var(--gold),transparent 75%); margin:.9rem 0 1.4rem; }
 
-/* Mood pills — moved up near the date, styled like a real wellness app */
-.writer-mood-pills { display:flex; align-items:center; gap:.5rem; flex-wrap:wrap; padding-left:52px; margin-bottom:1.5rem; }
-.writer-mood-pills .wm-label { font-size:.72rem; color:var(--ink3); font-style:italic; margin-right:.2rem; }
-.mood-pill {
-    border:1.5px solid rgba(171,126,54,.25); background:rgba(171,126,54,.05);
-    color:var(--ink2); font-size:.78rem; font-weight:600; padding:.4rem .9rem;
-    border-radius:50px; cursor:pointer; font-family:inherit; transition:all .2s;
-    white-space:nowrap;
+/* Météo intérieure — mood orb picker, replaces a plain emoji scale */
+.writer-weather-q { font-family:'Fraunces',serif; font-style:italic; font-size:1.2rem; color:var(--ink); margin-bottom:1rem; }
+.mood-orbs { display:flex; flex-wrap:wrap; gap:.9rem; margin-bottom:1.1rem; }
+.mood-orb-btn { display:flex; flex-direction:column; align-items:center; gap:.5rem; background:none; border:none; cursor:pointer; padding:0; font-family:inherit; width:60px; }
+.mood-orb { width:50px; height:50px; border-radius:50%; transition:transform .35s cubic-bezier(.3,1.5,.5,1), box-shadow .35s; box-shadow:0 4px 10px -4px rgba(58,43,32,.3); }
+.mood-orb-btn.active .mood-orb { transform:scale(1.14); }
+.mood-orb-label { font-family:'Caveat',cursive; font-size:.95rem; color:var(--ink3); transition:color .3s; line-height:1; }
+.mood-orb-btn.active .mood-orb-label { color:var(--ink); font-weight:700; }
+.mood-line { font-family:'Caveat',cursive; font-size:1.2rem; line-height:1.3; color:var(--ink2); margin-bottom:1rem; min-height:1.6rem; }
+.mood-support-box {
+    display:none; flex-wrap:wrap; align-items:center; gap:.7rem;
+    padding:.85rem 1.05rem; border-radius:14px;
+    background:rgba(111,92,150,.1); border:1px solid rgba(111,92,150,.22);
+    font-size:.82rem; line-height:1.5; color:#4d3f6a; margin-bottom:1.3rem;
 }
-.mood-pill:hover { background:rgba(171,126,54,.12); }
-.mood-pill.active {
-    background:var(--gold); border-color:var(--gold); color:#fff;
-    box-shadow:0 4px 14px rgba(190,140,60,.35);
+.mood-support-box.show { display:flex; }
+.mood-support-box a { font-weight:700; color:#4d3f6a; text-underline-offset:3px; }
+
+/* "Avant d'écrire" — guided breathing, pattern depends on the chosen mood */
+.breathing-card {
+    display:flex; align-items:center; gap:1.2rem; padding:1rem 1.2rem;
+    border-radius:18px; background:rgba(190,140,60,.05); border:1px solid rgba(190,140,60,.12);
+    margin-bottom:1.5rem;
 }
+.breathing-orb-wrap { position:relative; width:78px; height:78px; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+.breathing-halo { position:absolute; width:72px; height:72px; border-radius:50%; opacity:.35; filter:blur(10px); transition:transform 1s ease-in-out; }
+.breathing-ring { position:absolute; width:74px; height:74px; border-radius:50%; border:1px dashed rgba(171,126,54,.4); }
+.breathing-orb {
+    position:relative; width:58px; height:58px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Fraunces',serif; font-size:1.1rem; color:#fff; text-shadow:0 1px 3px rgba(0,0,0,.25);
+    box-shadow:0 8px 18px -6px rgba(58,43,32,.35), inset 0 -4px 10px rgba(0,0,0,.1);
+    transition:transform 1s ease-in-out;
+}
+.breathing-info { min-width:0; }
+.breathing-eyebrow { font-size:.58rem; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:#607a5c; margin-bottom:.3rem; }
+.breathing-label { font-family:'Caveat',cursive; font-size:1.1rem; color:var(--ink); line-height:1.1; }
+.breathing-name { font-size:.75rem; color:var(--ink3); margin-top:.2rem; }
+
+/* Question du jour */
+.prompt-card { margin-bottom:1.5rem; }
+.prompt-head { display:flex; justify-content:space-between; align-items:center; gap:.8rem; margin-bottom:.5rem; }
+.prompt-eyebrow { font-size:.6rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--gold); }
+.prompt-shuffle { background:none; border:none; cursor:pointer; font-family:inherit; font-size:.72rem; font-weight:600; color:var(--gold); text-decoration:underline; text-underline-offset:3px; }
+.prompt-text { font-family:'Fraunces',serif; font-size:1.1rem; line-height:1.35; color:var(--ink); margin-bottom:.6rem; }
+.prompt-answer-btn {
+    display:inline-flex; align-items:center; gap:.4rem; padding:.5rem 1rem;
+    border-radius:50px; border:1px solid rgba(190,140,60,.4); background:rgba(255,255,255,.4);
+    cursor:pointer; font-family:inherit; font-size:.72rem; font-weight:700; color:var(--gold); transition:background .2s;
+}
+.prompt-answer-btn:hover { background:rgba(255,255,255,.75); }
+
+/* "Trois douceurs d'aujourd'hui" — 3 fixed gratitude lines */
+.writer-gratitude { margin-top:1.4rem; }
+.wg-label { font-size:.6rem; letter-spacing:.14em; text-transform:uppercase; color:var(--ink3); font-weight:700; margin-bottom:.7rem; }
+.wg-row { display:flex; align-items:flex-end; gap:.8rem; border-bottom:1px solid rgba(171,126,54,.2); padding-bottom:.4rem; margin-bottom:.7rem; }
+.wg-num { font-family:'Fraunces',serif; font-style:italic; font-size:1rem; color:var(--gold); }
+.wg-input { flex:1; min-width:0; border:none; background:transparent; outline:none; font-family:'Caveat',cursive; font-size:1.1rem; color:var(--ink); padding:.2rem 0; caret-color:var(--gold); }
+.wg-input::placeholder { color:var(--ink3); font-style:italic; }
 
 /* "Intention du jour" card — repurposes the title field as a calm highlight */
 .writer-intention-card {
-    margin:0 0 1.7rem 52px; max-width:calc(100% - 52px);
-    background:linear-gradient(135deg,#3a2f22,#241c12);
+    margin:0 0 1.5rem; background:linear-gradient(135deg,#3a2f22,#241c12);
     border-radius:14px; padding:1rem 1.3rem;
     box-shadow:0 10px 30px rgba(42,33,27,.18);
 }
-.wi-label { font-size:.62rem; letter-spacing:.14em; text-transform:uppercase; color:var(--gold-light); font-weight:700; margin-bottom:.4rem; }
+.wi-label { font-size:.6rem; letter-spacing:.14em; text-transform:uppercase; color:var(--gold-light); font-weight:700; margin-bottom:.4rem; }
 .wi-optional { text-transform:none; letter-spacing:0; opacity:.55; font-weight:400; }
 .writer-title-input {
     width:100%; background:transparent; border:none; outline:none;
     font-family:'Fraunces',serif; font-style:italic; font-weight:700;
-    font-size:1.2rem; color:#f4eee2; caret-color:var(--gold-light);
+    font-size:1.15rem; color:#f4eee2; caret-color:var(--gold-light);
 }
 .writer-title-input::placeholder { color:rgba(244,238,226,.35); font-style:italic; }
 
-/* Gratitude checklist */
-.writer-gratitude { padding-left:52px; margin-top:.5rem; max-width:calc(100% - 52px); }
-.wg-label { font-size:.62rem; letter-spacing:.14em; text-transform:uppercase; color:var(--ink3); font-weight:700; margin-bottom:.7rem; }
-.wg-list { display:flex; flex-direction:column; gap:.5rem; margin-bottom:.6rem; }
-.wg-item {
-    display:flex; align-items:center; gap:.6rem;
-    background:rgba(171,126,54,.06); border:1px solid rgba(171,126,54,.15);
-    border-radius:10px; padding:.55rem .8rem; animation:wgIn .25s ease;
-}
-@keyframes wgIn { from{opacity:0;transform:translateY(4px);} to{opacity:1;transform:translateY(0);} }
-.wg-check { color:var(--gold); font-weight:700; }
-.wg-text { flex:1; font-family:'Caveat',cursive; font-size:1.15rem; color:var(--ink); }
-.wg-remove { background:none; border:none; color:var(--ink3); cursor:pointer; font-size:1rem; padding:0 .3rem; line-height:1; }
-.wg-remove:hover { color:#ef4444; }
-.wg-input {
-    width:100%; background:transparent; border:none; border-bottom:1.5px dashed rgba(171,126,54,.3);
-    outline:none; font-family:'Caveat',cursive; font-size:1.15rem; color:var(--ink);
-    padding:.4rem 0; caret-color:var(--gold);
-}
-.wg-input::placeholder { color:var(--ink3); font-style:italic; }
+/* Right column — "Mes mots", the actual writing surface */
+.writer-mots-head { display:flex; justify-content:space-between; align-items:baseline; gap:.8rem; margin-bottom:1rem; }
+.writer-mots-title { font-family:'Fraunces',serif; font-style:italic; font-size:1rem; color:var(--gold); }
+.writer-mots-private { font-size:.7rem; color:var(--ink3); }
+.writer-ta-wrap { position:relative; }
 
-/* Content textarea — the real heart of the writer */
+/* Content textarea — text is transparent; a mirror div behind it renders the
+   visible ink, so freshly-typed words can glow and "dry" into place. */
 .writer-textarea {
     width:100%; background:transparent; border:none; outline:none; resize:none;
-    font-family:'Caveat',cursive; font-size:1.42rem;
-    color:var(--ink); line-height:2;
-    padding:0 0 2rem 52px; box-sizing:border-box;
-    caret-color:#ab7e36; min-height:500px;
-    letter-spacing:.01em;
+    font-family:'Caveat',cursive; font-size:1.35rem;
+    color:transparent; line-height:2;
+    padding:0; box-sizing:border-box;
+    caret-color:#ab7e36; min-height:460px;
+    letter-spacing:.01em; position:relative; z-index:1;
 }
 .writer-textarea::placeholder { color:var(--ink3); font-style:italic; line-height:2; }
+.writer-mirror {
+    position:absolute; inset:0; pointer-events:none; margin:0; z-index:0;
+    font-family:'Caveat',cursive; font-size:1.35rem; line-height:2; color:var(--ink);
+    white-space:pre-wrap; overflow-wrap:break-word; letter-spacing:.01em;
+}
+.writer-mirror .drying { animation:inkDry 1.5s ease-out forwards; }
+@keyframes inkDry {
+    from { text-shadow:0 0 6px currentColor, 0 0 1px currentColor; filter:saturate(1.7) brightness(1.15); }
+    to   { text-shadow:0 0 .5px currentColor; filter:none; }
+}
 
-/* Horizontal rules between paragraphs — visual enhancement */
-.writer-textarea:focus { color:#2a211b; }
+/* A gentle self-compassion nudge when harsh self-talk is detected */
+.compassion-note {
+    display:none; margin-top:1.2rem; padding:1.1rem 1.2rem; border-radius:4px 4px 16px 4px;
+    background:linear-gradient(#fff6cc,#fbeeb2); box-shadow:0 10px 20px -10px rgba(90,70,20,.4);
+    transform:rotate(-1deg);
+}
+.compassion-note.show { display:block; animation:plateIn .4s ease; }
+.compassion-eyebrow { font-size:.6rem; font-weight:700; letter-spacing:.16em; text-transform:uppercase; color:#9a7a2e; margin-bottom:.5rem; }
+.compassion-line { font-family:'Caveat',cursive; font-size:1.15rem; color:#4a3a1c; line-height:1.25; margin-bottom:.3rem; }
+.compassion-line.kind { color:var(--ink); }
+.compassion-actions { display:flex; gap:1rem; margin-top:.6rem; flex-wrap:wrap; }
+.compassion-add { padding:.5rem .9rem; border-radius:50px; border:none; cursor:pointer; background:#4a3a1c; color:#fff6cc; font-family:inherit; font-size:.7rem; font-weight:700; }
+.compassion-dismiss { background:none; border:none; cursor:pointer; font-family:inherit; font-size:.7rem; font-weight:600; color:#7a6630; text-decoration:underline; text-underline-offset:3px; }
+
+@media(max-width:900px){
+    .writer-spread { grid-template-columns:1fr; gap:2.2rem; }
+}
 
 /* ── Bottom action bar ── */
 .writer-bottom {
@@ -635,19 +735,11 @@
     .writer-word-stat { display: none; }
     .writer-nav-btn { font-size: .7rem; padding: .3rem .65rem; }
     .writer-page { padding: 2rem 1rem 5rem; max-width: 100%; }
-    /* Decorative margin rule is positioned relative to a 680px page — remove it
-       on mobile so it doesn't push a negative offset and cause overflow */
-    .writer-page::before { display: none; }
-    .writer-meta-row { padding-left: 0; }
-    .writer-date-big { padding-left: 0; }
     .writer-date-num { font-size: 2.4rem; }
     .writer-date-month { font-size: 1.15rem; }
-    .writer-date-rule { margin-left: 0; }
-    .writer-mood-pills { padding-left: 0; }
-    .writer-intention-card { margin-left: 0; max-width: 100%; }
     .writer-title-input { font-size: 1.5rem; }
-    .writer-textarea { padding-left: 0; font-size: 1.15rem; min-height: 320px; }
-    .writer-gratitude { padding-left: 0; max-width: 100%; }
+    .writer-textarea, .writer-mirror { font-size: 1.15rem; }
+    .writer-textarea { min-height: 320px; }
     .writer-bottom { padding:.75rem 1rem; flex-direction: column; align-items: stretch; gap:.7rem; }
     .writer-bottom-stats { justify-content: center; }
     .writer-save-btn { width: 100%; box-sizing: border-box; }
@@ -657,10 +749,11 @@
     .jnl-stat-pill { font-size:.68rem; padding:.4rem .7rem; }
     .jnl-pages-grid { grid-template-columns: 1fr; gap: 1.2rem; }
     .jnl-fab { width: 52px; height: 52px; right: 1.2rem; bottom: 1.5rem; font-size: 1.4rem; }
-    .mood-pill { font-size: .72rem; padding: .32rem .7rem; }
+    .mood-orb { width: 44px; height: 44px; }
+    .mood-orb-btn { width: 52px; }
     .writer-date-num { font-size: 2.1rem; }
     .writer-title-input { font-size: 1.3rem; }
-    .writer-textarea { font-size: 1.1rem; }
+    .writer-textarea, .writer-mirror { font-size: 1.1rem; }
 }
 </style>
 
@@ -670,6 +763,10 @@
         <div class="jnl-hero-eyebrow">Wanaag Corner · Espace privé</div>
         <h1 class="jnl-hero-title"><span>Journal</span><br>Intime</h1>
         <p class="jnl-hero-sub">Chaque page écrite est un pas de plus vers vous-même. Vos mots, votre vérité.</p>
+    </div>
+    <div class="jnl-weather-card">
+        <div class="jnl-weather-head"><span>Ta météo · 14 jours</span><strong>{{ entries|length }} page{% if entries|length > 1 %}s{% endif %}</strong></div>
+        <div class="jnl-weather-dots" id="weatherDots"></div>
     </div>
     <svg class="jnl-book-svg" width="140" height="100" viewBox="0 0 140 100" fill="none" xmlns="http://www.w3.org/2000/svg">
         <!-- Open book -->
@@ -705,8 +802,8 @@
     {% for humeur, count in mood_stats.items %}
     {% if forloop.first %}
     <div class="jnl-stat-pill">
-        ✨ Humeur dominante :&nbsp;
-        <strong>{% if humeur == '5' %}😊 Super{% elif humeur == '4' %}🙂 Bien{% elif humeur == '3' %}😐 Moyen{% elif humeur == '2' %}😔 Difficile{% else %}😢 Mal{% endif %}</strong>
+        ✨ Météo dominante :&nbsp;
+        <strong>{% if humeur == '5' %}☀️ Soleil{% elif humeur == '4' %}🌤️ Éclaircies{% elif humeur == '3' %}☁️ Nuageux{% elif humeur == '2' %}🌧️ Pluie{% else %}⛈️ Orage{% endif %}</strong>
     </div>
     {% endif %}
     {% endfor %}
@@ -728,7 +825,7 @@
             <div class="jnl-page-date">{{ entry.date_creation|date:"l d M Y · H\hi" }}</div>
             <div class="jnl-page-mood-row">
                 <span class="jnl-page-mood-emoji">
-                    {% if entry.humeur == '5' %}😊{% elif entry.humeur == '4' %}🙂{% elif entry.humeur == '3' %}😐{% elif entry.humeur == '2' %}😔{% else %}😢{% endif %}
+                    {% if entry.humeur == '5' %}☀️{% elif entry.humeur == '4' %}🌤️{% elif entry.humeur == '3' %}☁️{% elif entry.humeur == '2' %}🌧️{% else %}⛈️{% endif %}
                 </span>
                 <span class="jnl-page-mood-label jnl-ml-{{ entry.humeur }}">{{ entry.get_humeur_display }}</span>
             </div>
@@ -751,6 +848,28 @@
     </div>
 </div>
 {% endif %}
+
+<!-- ═══ LE COIN DES PENSÉES LOURDES — ephemeral, never saved ═══ -->
+<div class="jnl-release-card">
+    <div class="jnl-release-tab"></div>
+    <div class="jnl-release-eyebrow">Le coin des pensées lourdes</div>
+    <div class="jnl-release-title">Écris ce qui pèse, puis laisse-le partir.</div>
+    <div class="jnl-release-sub">Ces mots ne sont jamais enregistrés. Les écrire, puis les voir s'envoler, aide à prendre un peu de distance.</div>
+    <div id="releaseIdle" class="jnl-release-row">
+        <input type="text" id="releaseInput" class="jnl-release-input" placeholder="J'ai peur que…" oninput="onReleaseInput()">
+        <button type="button" class="jnl-release-btn" id="releaseBtn" onclick="releaseWorry()" style="opacity:.45;">Laisser partir</button>
+    </div>
+    <div id="releaseFlying" class="jnl-release-row" style="display:none;">
+        <div class="jnl-release-flyer" id="releaseFlyer"></div>
+    </div>
+    <div id="releaseDone" class="jnl-release-done" style="display:none;">
+        <div class="done-line">C'est déposé.</div>
+        <div style="font-size:.85rem;color:var(--ink2);">Respire. Tu n'as plus à le porter pour l'instant.</div>
+        <button type="button" class="jnl-release-reset" onclick="resetRelease()">Déposer autre chose</button>
+    </div>
+</div>
+
+<div class="jnl-footer-tag"><span>Wanaag</span> : « le bien-être », en somali.</div>
 
 <button class="jnl-fab" onclick="openWriter()" title="Nouvelle page">+</button>
 <div class="jnl-toast" id="jnlToast">✓ Page enregistrée</div>
@@ -868,54 +987,94 @@
     <!-- Scrollable page area -->
     <div class="writer-scroll">
         <div class="writer-page">
-            <div class="writer-meta-row">
-                <span class="wm-brand">Wanaag Corner · <span id="writerPageNum">Page {{ entries|length|add:1 }}</span></span>
-                <span class="wm-weekday" id="writerWeekday"></span>
-            </div>
-            <div class="writer-date-big">
-                <span class="writer-date-num" id="writerDateNum">27</span>
-                <span class="writer-date-month-wrap">
-                    <span class="writer-date-month" id="writerDateMonth">septembre</span>
-                    <span class="writer-date-year" id="writerDateYear">2026</span>
-                </span>
-            </div>
-            <div class="writer-date-rule"></div>
+            <div class="writer-spread">
 
-            <div class="writer-mood-pills" id="writerMoodPills">
-                <span class="wm-label">Humeur</span>
-                <button type="button" class="mood-pill" data-val="5" onclick="setMood(this)">😊 Excellent</button>
-                <button type="button" class="mood-pill" data-val="4" onclick="setMood(this)">🙂 Bien</button>
-                <button type="button" class="mood-pill active" data-val="3" onclick="setMood(this)">😐 Moyen</button>
-                <button type="button" class="mood-pill" data-val="2" onclick="setMood(this)">😔 Difficile</button>
-                <button type="button" class="mood-pill" data-val="1" onclick="setMood(this)">😢 Terrible</button>
-            </div>
+                <!-- ═══ LEFT PAGE — mood, breathing, prompt, gratitude ═══ -->
+                <div class="writer-col-left">
+                    <div class="writer-meta-row">
+                        <span class="wm-brand"><span id="writerPageNum">Page {{ entries|length|add:1 }}</span></span>
+                        <span class="wm-weekday" id="writerWeekday"></span>
+                    </div>
+                    <div class="writer-date-big">
+                        <span class="writer-date-num" id="writerDateNum">27</span>
+                        <span class="writer-date-month-wrap">
+                            <span class="writer-date-month" id="writerDateMonth">septembre</span>
+                            <span class="writer-date-year" id="writerDateYear">2026</span>
+                        </span>
+                    </div>
+                    <div class="writer-date-rule"></div>
 
-            <div class="writer-intention-card">
-                <div class="wi-label">✦ Intention du jour <span class="wi-optional">(facultatif)</span></div>
-                <input
-                    type="text" id="writerTitle" class="writer-title-input"
-                    placeholder="Un mot, une intention pour cette page…"
-                >
-            </div>
+                    <div class="writer-weather-q">Quelle est ta météo intérieure ?</div>
+                    <div class="mood-orbs" id="moodOrbs"></div>
+                    <div class="mood-line" id="moodLine"></div>
+                    <div class="mood-support-box" id="moodSupport">
+                        <span style="flex:1;min-width:200px;">Si c'est trop lourd, tu n'as pas à rester seul·e avec ça. Les psychologues Wanaag Corner peuvent t'écouter.</span>
+                        <a href="{% url 'psychologues_list' %}">Parler à quelqu'un →</a>
+                    </div>
 
-            <textarea
-                id="writerContent" class="writer-textarea"
-                placeholder="Laissez vos pensées couler librement…
+                    <div class="breathing-card">
+                        <div class="breathing-orb-wrap">
+                            <div class="breathing-halo" id="breathHalo"></div>
+                            <div class="breathing-ring"></div>
+                            <div class="breathing-orb" id="breathOrb"><span id="breathLeft"></span></div>
+                        </div>
+                        <div class="breathing-info">
+                            <div class="breathing-eyebrow">Avant d'écrire</div>
+                            <div class="breathing-label" id="breathLabel">Installe-toi…</div>
+                            <div class="breathing-name" id="breathName"></div>
+                        </div>
+                    </div>
 
-Qu'est-ce qui a traversé votre esprit aujourd'hui ?
-Qu'est-ce qui vous a touché, surpris, ému ?
+                    <div class="prompt-card">
+                        <div class="prompt-head">
+                            <span class="prompt-eyebrow">Question du jour</span>
+                            <button type="button" class="prompt-shuffle" onclick="nextPrompt()">Une autre ?</button>
+                        </div>
+                        <div class="prompt-text" id="promptText"></div>
+                        <button type="button" class="prompt-answer-btn" onclick="answerPrompt()">Y répondre sur ma page →</button>
+                    </div>
 
-Cette page n'appartient qu'à vous."
-            ></textarea>
+                    <div class="writer-intention-card">
+                        <div class="wi-label">✦ Intention du jour <span class="wi-optional">(facultatif)</span></div>
+                        <input
+                            type="text" id="writerTitle" class="writer-title-input"
+                            placeholder="Un mot, une intention pour cette page…"
+                        >
+                    </div>
 
-            <div class="writer-gratitude">
-                <div class="wg-label">🌿 Gratitude du jour <span class="wi-optional">(facultatif)</span></div>
-                <div class="wg-list" id="gratitudeList"></div>
-                <input
-                    type="text" id="gratitudeInput" class="wg-input"
-                    placeholder="Une petite chose pour laquelle vous êtes reconnaissant(e)… puis Entrée"
-                    onkeydown="handleGratitudeKey(event)"
-                >
+                    <div class="writer-gratitude">
+                        <div class="wg-label">Trois douceurs d'aujourd'hui <span class="wi-optional">(facultatif)</span></div>
+                        <div class="wg-row"><span class="wg-num">1</span><input type="text" class="wg-input gratitude-slot" placeholder="…"></div>
+                        <div class="wg-row"><span class="wg-num">2</span><input type="text" class="wg-input gratitude-slot" placeholder="…"></div>
+                        <div class="wg-row"><span class="wg-num">3</span><input type="text" class="wg-input gratitude-slot" placeholder="…"></div>
+                    </div>
+                </div>
+
+                <!-- ═══ RIGHT PAGE — "Mes mots", the actual writing ═══ -->
+                <div class="writer-col-right">
+                    <div class="writer-mots-head">
+                        <span class="writer-mots-title">Mes mots</span>
+                        <span class="writer-mots-private">Page privée · visible par toi seul·e</span>
+                    </div>
+                    <div class="writer-ta-wrap">
+                        <div class="writer-mirror" id="writerMirror" aria-hidden="true"></div>
+                        <textarea
+                            id="writerContent" class="writer-textarea"
+                            placeholder="Écris librement. Ici, tu n'as rien à prouver…"
+                            spellcheck="false"
+                        ></textarea>
+                    </div>
+                    <div class="compassion-note" id="compassionNote">
+                        <div class="compassion-eyebrow">Un mot pour toi</div>
+                        <div class="compassion-line" id="compassionHarsh"></div>
+                        <div class="compassion-line kind" id="compassionKind"></div>
+                        <div class="compassion-actions">
+                            <button type="button" class="compassion-add" onclick="addKindWords()">L'ajouter à ma page</button>
+                            <button type="button" class="compassion-dismiss" onclick="dismissCompassion()">Plus tard</button>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
@@ -948,8 +1107,108 @@ function setDateBlock(d) {
     document.getElementById('writerDateYear').textContent = d.getFullYear();
 }
 function moodEmoji(v) {
-    return {'5':'😊','4':'🙂','3':'😐','2':'😔','1':'😢'}[v] || '😐';
+    return {'5':'☀️','4':'🌤️','3':'☁️','2':'🌧️','1':'⛈️'}[v] || '☁️';
 }
+function escapeHtml(s) {
+    const d = document.createElement('div');
+    d.textContent = s;
+    return d.innerHTML;
+}
+
+// ══════════════════════════════════════════════════════
+// MÉTÉO INTÉRIEURE — mood, ambient line, breathing pattern
+// and writing prompts, all keyed by the humeur value ('5'
+// meilleure météo → '1' la plus intense).
+// ══════════════════════════════════════════════════════
+const MOOD_ORDER = ['5', '4', '3', '2', '1'];
+const MOODS = {
+    '5': { key: 'Soleil', orb: 'radial-gradient(circle at 35% 30%, #fff6d8, #f2c870 55%, #d8963a)',
+        breath: { name: 'Cohérence cardiaque 5 · 5', phases: [['Inspire…', 5, 1], ['Expire…', 5, .58]] },
+        line: "Belle lumière aujourd'hui. Note ce qui t'a fait du bien, pour pouvoir y revenir les jours plus gris.",
+        prompts: ["Qu'est-ce qui t'a fait sourire aujourd'hui ?", "Quelle force as-tu utilisée cette semaine ?", "À qui aimerais-tu dire merci, et pourquoi ?"] },
+    '4': { key: 'Éclaircies', orb: 'radial-gradient(circle at 35% 30%, #fff0e2, #f1b894 50%, #a9c0cf)',
+        breath: { name: 'Cohérence cardiaque 5 · 5', phases: [['Inspire…', 5, 1], ['Expire…', 5, .58]] },
+        line: "Un peu de soleil entre les nuages. Tu as le droit de te sentir entre les deux.",
+        prompts: ["Qu'est-ce qui t'a apporté un peu de douceur aujourd'hui ?", "Qu'est-ce qui va mieux qu'hier, même un tout petit peu ?", "Quel petit pas as-tu fait cette semaine ?"] },
+    '3': { key: 'Nuageux', orb: 'radial-gradient(circle at 35% 30%, #f4f1ea, #c9c2b3 55%, #9d9585)',
+        breath: { name: 'Respiration carrée 4 · 4 · 4 · 4', phases: [['Inspire…', 4, 1], ['Retiens…', 4, 1], ['Expire…', 4, .58], ['Pause…', 4, .58]] },
+        line: "Journée grise ? Elle n'a pas besoin d'être parfaite pour compter.",
+        prompts: ["De quoi ton corps a-t-il besoin, là, tout de suite ?", "Qu'est-ce qui pèse le plus en ce moment ?", "Quelle petite chose pourrait alléger ta soirée ?"] },
+    '2': { key: 'Pluie', orb: 'radial-gradient(circle at 35% 30%, #eef3f7, #9fb6c8 55%, #6d879d)',
+        breath: { name: 'Expiration longue 4 · 2 · 6', phases: [['Inspire…', 4, 1], ['Retiens…', 2, 1], ['Expire…', 6, .58]] },
+        line: "Il pleut dedans. On y va doucement, sans rien forcer.",
+        prompts: ["Qu'est-ce que tu dirais à une amie qui vit ce que tu vis ?", "Qu'est-ce que tu ressens, sans chercher à le juger ?", "Qui pourrait t'écouter aujourd'hui ?"] },
+    '1': { key: 'Orage', orb: 'radial-gradient(circle at 35% 30%, #efe8f5, #a795c4 50%, #5d4d7d)', help: true,
+        breath: { name: 'Respiration 4 · 7 · 8', phases: [['Inspire…', 4, 1], ['Retiens…', 7, 1], ['Expire…', 8, .58]] },
+        line: "C'est intense. On ralentit ensemble, une respiration à la fois.",
+        prompts: ["Qu'est-ce qui se passe en toi, là, maintenant ?", "Nomme cinq choses que tu vois autour de toi.", "Quelle pensée aimerais-tu déposer ici pour ne plus la porter ?"] },
+};
+function renderMoodOrbs() {
+    const box = document.getElementById('moodOrbs');
+    if (!box) return;
+    box.innerHTML = MOOD_ORDER.map(v => `
+        <button type="button" class="mood-orb-btn" data-val="${v}" onclick="pickMood('${v}')">
+            <span class="mood-orb" style="background:${MOODS[v].orb}"></span>
+            <span class="mood-orb-label">${MOODS[v].key}</span>
+        </button>
+    `).join('');
+}
+let currentPromptIdx = 0;
+function pickMood(val) {
+    document.getElementById('humeurInput').value = val;
+    document.querySelectorAll('.mood-orb-btn').forEach(b => b.classList.toggle('active', b.dataset.val === val));
+    const m = MOODS[val];
+    document.getElementById('moodLine').textContent = m.line;
+    document.getElementById('moodSupport').classList.toggle('show', !!m.help);
+    currentPromptIdx = 0;
+    renderPrompt();
+    startBreathing(val);
+}
+function renderPrompt() {
+    const m = MOODS[document.getElementById('humeurInput').value];
+    document.getElementById('promptText').textContent = m.prompts[currentPromptIdx % m.prompts.length];
+}
+function nextPrompt() { currentPromptIdx++; renderPrompt(); }
+function answerPrompt() {
+    const m = MOODS[document.getElementById('humeurInput').value];
+    const q = m.prompts[currentPromptIdx % m.prompts.length];
+    const ta = document.getElementById('writerContent');
+    ta.value = (ta.value.trim() ? ta.value.replace(/\s*$/, '') + '\n\n' : '') + q + '\n';
+    dryLen = ta.value.length; wetKey++;
+    onWriterInput(); syncMirror();
+    ta.focus(); ta.selectionStart = ta.selectionEnd = ta.value.length;
+}
+
+// ── Respiration guidée, dont le rythme dépend de la météo choisie ──
+let breathTimer = null, breathInterval = null;
+function startBreathing(val) {
+    clearTimeout(breathTimer); clearInterval(breathInterval);
+    const b = MOODS[val].breath;
+    document.getElementById('breathName').textContent = b.name;
+    let i = 0;
+    const step = () => {
+        const [label, secs, scale] = b.phases[i % b.phases.length];
+        let left = secs;
+        document.getElementById('breathLabel').textContent = label;
+        document.getElementById('breathLeft').textContent = left;
+        const orb = document.getElementById('breathOrb'), halo = document.getElementById('breathHalo');
+        orb.style.transitionDuration = halo.style.transitionDuration = secs + 's';
+        orb.style.transform = `scale(${scale})`; halo.style.transform = `scale(${scale * 1.25})`;
+        orb.style.background = halo.style.background = MOODS[val].orb;
+        clearInterval(breathInterval);
+        breathInterval = setInterval(() => {
+            left = Math.max(1, left - 1);
+            document.getElementById('breathLeft').textContent = left;
+        }, 1000);
+        breathTimer = setTimeout(() => { i++; step(); }, secs * 1000);
+    };
+    step();
+}
+function stopBreathing() {
+    clearTimeout(breathTimer); clearInterval(breathInterval);
+}
+renderMoodOrbs();
+
 // currentIndex : -1 = nouvelle page (vierge), 0..N-1 = index dans ENTRIES (0 = la plus récente)
 let currentIndex = -1;
 
@@ -968,6 +1227,7 @@ function showWriter() {
 function closeWriter() {
     document.getElementById('journalWriter').classList.remove('open');
     document.body.style.overflow = '';
+    stopBreathing();
 }
 // ESC to close
 document.addEventListener('keydown', e => {
@@ -1088,7 +1348,9 @@ function resetToNewPage() {
     currentIndex = -1;
     document.getElementById('writerTitle').value = '';
     document.getElementById('writerContent').value = '';
-    setMoodValue('3');
+    dryLen = 0; wetKey++; dismissedHarsh = null;
+    syncMirror(); checkCompassion();
+    pickMood('3');
     setGratitudeFromString('');
     setDateBlock(new Date());
     document.getElementById('writerPageNum').textContent = 'Page ' + (ENTRIES.length + 1);
@@ -1114,7 +1376,9 @@ function openReaderByIndex(idx) {
     currentIndex = idx;
     document.getElementById('writerTitle').value = entry.titre || '';
     document.getElementById('writerContent').value = entry.contenu || '';
-    setMoodValue(entry.humeur);
+    dryLen = (entry.contenu || '').length; wetKey++; dismissedHarsh = null;
+    syncMirror(); checkCompassion();
+    pickMood(entry.humeur);
     setGratitudeFromString(entry.gratitude || '');
     setDateBlock(new Date(entry.date_iso));
     document.getElementById('writerPageNum').textContent = 'Page ' + (idx + 1) + ' / ' + ENTRIES.length;
@@ -1143,49 +1407,65 @@ function updateNavButtons() {
     nextBtn.disabled = (currentIndex === -1);
 }
 
-function setMoodValue(val) {
-    document.getElementById('humeurInput').value = val;
-    document.querySelectorAll('.mood-pill').forEach(b => {
-        b.classList.toggle('active', b.dataset.val === String(val));
-    });
-}
-
-// ── Mood ──
-function setMood(btn) {
-    setMoodValue(btn.dataset.val);
-}
-
-// ── Gratitude checklist ──
-let gratitudeItems = [];
-function escapeHtml(s) {
-    const d = document.createElement('div');
-    d.textContent = s;
-    return d.innerHTML;
-}
-function renderGratitudeList() {
-    const box = document.getElementById('gratitudeList');
-    box.innerHTML = gratitudeItems.map((item, i) => `
-        <div class="wg-item">
-            <span class="wg-check">✓</span>
-            <span class="wg-text">${escapeHtml(item)}</span>
-            <button type="button" class="wg-remove" onclick="removeGratitude(${i})" title="Retirer">×</button>
-        </div>
-    `).join('');
-}
-function handleGratitudeKey(e) {
-    if (e.key === 'Enter') {
-        e.preventDefault();
-        const val = e.target.value.trim();
-        if (val) { gratitudeItems.push(val); e.target.value = ''; renderGratitudeList(); }
-    }
-}
-function removeGratitude(i) {
-    gratitudeItems.splice(i, 1);
-    renderGratitudeList();
-}
+// ── "Trois douceurs d'aujourd'hui" — 3 champs fixes ──
 function setGratitudeFromString(str) {
-    gratitudeItems = (str || '').split('\n').map(s => s.trim()).filter(Boolean);
-    renderGratitudeList();
+    const items = (str || '').split('\n').map(s => s.trim());
+    document.querySelectorAll('.gratitude-slot').forEach((el, i) => { el.value = items[i] || ''; });
+}
+function getGratitudeString() {
+    return Array.from(document.querySelectorAll('.gratitude-slot')).map(el => el.value.trim()).filter(Boolean).join('\n');
+}
+
+// ── Encre fraîche : le texte tout juste tapé "sèche" après un instant ──
+let dryLen = 0, dryTimer = null, wetKey = 0;
+function syncMirror() {
+    const ta = document.getElementById('writerContent');
+    const mirror = document.getElementById('writerMirror');
+    if (!ta || !mirror) return;
+    const text = ta.value;
+    dryLen = Math.min(dryLen, text.length);
+    const dry = text.slice(0, dryLen), wet = text.slice(dryLen);
+    mirror.innerHTML = escapeHtml(dry) + (wet ? `<span class="drying">${escapeHtml(wet)}</span>` : '') + '​';
+    clearTimeout(dryTimer);
+    dryTimer = setTimeout(() => {
+        dryLen = document.getElementById('writerContent').value.length;
+        syncMirror();
+    }, 1700);
+}
+
+// ── Un mot pour toi : détection douce des phrases trop dures envers soi ──
+const HARSH_RE = /(je suis (?:vraiment |tellement |trop )?(?:nulle?|bête|stupide|incapable|un échec|une ratée|un raté)|je n['’]y arrive (?:jamais|pas)|je ne vaux rien|c['’]est (?:de )?ma faute|je gâche tout|personne ne m['’]aime)/i;
+let dismissedHarsh = null;
+function checkCompassion() {
+    const text = document.getElementById('writerContent').value;
+    const note = document.getElementById('compassionNote');
+    const m = text.match(HARSH_RE);
+    const harsh = m ? m[0] : '';
+    const low = harsh.toLowerCase();
+    if (!harsh || low === dismissedHarsh) { note.classList.remove('show'); return; }
+    const kindText = /arrive/.test(low) ? "Je n'y arrive pas encore, et j'apprends."
+        : /faute/.test(low) ? "Je prends ma part, sans porter tout le poids."
+        : /vaux|personne/.test(low) ? "Ma valeur ne dépend pas de cette journée."
+        : "J'apprends, et j'ai le droit de me tromper.";
+    document.getElementById('compassionHarsh').textContent = `Tu as écrit « ${harsh} ». Si une amie te disait ça, que lui répondrais-tu ?`;
+    document.getElementById('compassionKind').textContent = `Essaie : « ${kindText} »`;
+    note.dataset.kind = kindText;
+    note.classList.add('show');
+}
+function addKindWords() {
+    const note = document.getElementById('compassionNote');
+    const ta = document.getElementById('writerContent');
+    ta.value = ta.value.replace(/\s*$/, '') + '\n' + (note.dataset.kind || '');
+    const m = ta.value.match(HARSH_RE);
+    dismissedHarsh = m ? m[0].toLowerCase() : dismissedHarsh;
+    wetKey++;
+    onWriterInput(); syncMirror();
+    note.classList.remove('show');
+}
+function dismissCompassion() {
+    const m = document.getElementById('writerContent').value.match(HARSH_RE);
+    if (m) dismissedHarsh = m[0].toLowerCase();
+    document.getElementById('compassionNote').classList.remove('show');
 }
 
 // ── Live stats ──
@@ -1203,6 +1483,9 @@ function onWriterInput() {
     document.getElementById('bch').textContent = chars;
 }
 document.getElementById('writerContent').addEventListener('input', () => {
+    wetKey++;
+    syncMirror();
+    checkCompassion();
     onWriterInput();
     const dot  = document.getElementById('statusDot');
     const stat = document.getElementById('statusText');
@@ -1213,13 +1496,56 @@ document.getElementById('writerContent').addEventListener('input', () => {
     }, 800);
 });
 
-// ── Total words count on page load ──
+// ── Total words count + weather-history dots on page load ──
 (function() {
     const allText = Array.from(document.querySelectorAll('.jnl-page-text'))
         .map(el => el.textContent).join(' ');
     const words = allText.trim().split(/\s+/).filter(w => w).length;
     document.getElementById('totalWords').textContent = words.toLocaleString('fr-FR');
+
+    const box = document.getElementById('weatherDots');
+    if (box) {
+        const last14 = ENTRIES.slice(0, 14).slice().reverse();
+        box.innerHTML = last14.map((e, i) => {
+            const m = MOODS[e.humeur] || MOODS['3'];
+            const isLast = i === last14.length - 1;
+            const size = isLast ? 18 : 13;
+            const ring = isLast ? 'box-shadow:0 0 0 2px #2c241b, 0 0 0 3.5px var(--gold);' : '';
+            return `<div class="jnl-weather-dot" title="${m.key}" style="width:${size}px;height:${size}px;background:${m.orb};${ring}"></div>`;
+        }).join('') || '<span style="font-size:.72rem;color:rgba(244,238,226,.35);">Vos premières pages dessineront votre météo ici.</span>';
+    }
 })();
+
+// ── Le coin des pensées lourdes — jamais envoyé au serveur ──
+function onReleaseInput() {
+    const val = document.getElementById('releaseInput').value.trim();
+    document.getElementById('releaseBtn').style.opacity = val ? '1' : '.45';
+}
+function releaseWorry() {
+    const input = document.getElementById('releaseInput');
+    const text = input.value.trim();
+    if (!text) return;
+    document.getElementById('releaseIdle').style.display = 'none';
+    const flying = document.getElementById('releaseFlying');
+    flying.style.display = 'flex';
+    let seed = 3;
+    const rnd = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
+    document.getElementById('releaseFlyer').innerHTML = [...text].map((c, i) => {
+        const q = rnd();
+        const dx = Math.round(q * 160 - 80), dy = -Math.round(90 + q * 160), r = Math.round(q * 120 - 60);
+        return `<span style="--dx:${dx}px;--dy:${dy}px;--r:${r}deg;animation:flyAway 2.4s cubic-bezier(.3,.5,.3,1) ${i * 25}ms forwards;">${c === ' ' ? '&nbsp;' : escapeHtml(c)}</span>`;
+    }).join('');
+    input.value = '';
+    setTimeout(() => {
+        flying.style.display = 'none';
+        document.getElementById('releaseDone').style.display = 'flex';
+    }, 2600 + text.length * 25);
+}
+function resetRelease() {
+    document.getElementById('releaseDone').style.display = 'none';
+    document.getElementById('releaseIdle').style.display = 'flex';
+    document.getElementById('releaseBtn').style.opacity = '.45';
+}
 
 // ── Save (créer ou modifier selon le contexte) ──
 function saveEntry() {
@@ -1237,7 +1563,7 @@ function saveEntry() {
     data.append('humeur', document.getElementById('humeurInput').value);
     data.append('titre', document.getElementById('writerTitle').value);
     data.append('contenu', contenu);
-    data.append('gratitude', gratitudeItems.join('\n'));
+    data.append('gratitude', getGratitudeString());
 
     fetch('{% url "parcours_journal" %}', { method:'POST', body:data })
         .then(r => r.json())

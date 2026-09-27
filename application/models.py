@@ -555,11 +555,11 @@ class CommentairePost(models.Model):
 
 class JournalEntry(models.Model):
     HUMEUR_CHOICES = [
-        ('5', 'Excellent'),
-        ('4', 'Bien'),
-        ('3', 'Moyen'),
-        ('2', 'Difficile'),
-        ('1', 'Terrible'),
+        ('5', 'Soleil'),
+        ('4', 'Éclaircies'),
+        ('3', 'Nuageux'),
+        ('2', 'Pluie'),
+        ('1', 'Orage'),
     ]
     utilisateur = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='journal_entries')
     titre = models.CharField(max_length=200, blank=True)

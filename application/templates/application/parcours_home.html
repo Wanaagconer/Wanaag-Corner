@@ -436,7 +436,7 @@
     {% for entry in journal_recent %}
     <div class="pb-journal-card pb-mood-{{ entry.humeur }} wow">
         <div class="pb-journal-mood">
-            {% if entry.humeur == '5' %}😊{% elif entry.humeur == '4' %}🙂{% elif entry.humeur == '3' %}😐{% elif entry.humeur == '2' %}😔{% else %}😢{% endif %}
+            {% if entry.humeur == '5' %}☀️{% elif entry.humeur == '4' %}🌤️{% elif entry.humeur == '3' %}☁️{% elif entry.humeur == '2' %}🌧️{% else %}⛈️{% endif %}
         </div>
         <div class="pb-journal-titre">{{ entry.titre|default:"Sans titre" }}</div>
         <div class="pb-journal-date">{{ entry.date_creation|date:"d M Y" }}</div>
