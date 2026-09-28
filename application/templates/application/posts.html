@@ -37,6 +37,7 @@
     width: 280px; height: 280px; border-radius: 50%;
     background: radial-gradient(circle, rgba(190,140,60,.14) 0%, transparent 65%);
 }
+.posts-hero::before, .posts-hero::after { pointer-events: none; }
 .hero-inner { position: relative; z-index: 1; display: flex; align-items: center; gap: 1.1rem; padding: 1.4rem 1.6rem 1rem; }
 .hero-av {
     width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0;
@@ -70,6 +71,22 @@
 .hero-action-btn:nth-child(1) { color: #5dade2; }
 .hero-action-btn:nth-child(2) { color: #a569bd; }
 .hero-action-btn:nth-child(3) { color: var(--gold); }
+.hero-action-btn:nth-child(4) { color: #e0a458; }
+.hero-action-btn:nth-child(5) { color: #7fb98a; }
+a.hero-action-btn { text-decoration: none; font-family: inherit; }
+.hero-action-btn svg.stroke { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ===== ONGLETS Tout / Posts / Blogs / Articles ===== */
+.feed-tabs { display: flex; gap: .15rem; margin: 0 0 1.3rem; border-bottom: 1px solid rgba(58,42,29,.1); overflow-x: auto; scrollbar-width: none; }
+.feed-tabs::-webkit-scrollbar { display: none; }
+.feed-tab { flex: none; padding: .8rem 1.05rem; font-size: .88rem; font-weight: 700; color: #9b8b7e; text-decoration: none; border-bottom: 2.5px solid transparent; margin-bottom: -1px; transition: color .15s, border-color .15s; white-space: nowrap; }
+.feed-tab:hover { color: var(--brown-dark); }
+.feed-tab.active { color: var(--brown-dark); border-bottom-color: var(--gold); }
+.feed-tab small { font-weight: 700; font-size: .72rem; color: #b1a59a; margin-left: .3rem; }
+.tag-banner { display: flex; align-items: center; gap: .6rem; margin: -.3rem 0 1.2rem; font-size: .86rem; color: var(--brown-dark); }
+.tag-banner .chip { font-weight: 700; padding: .25rem .8rem; border-radius: 50px; background: rgba(190,140,60,.14); color: #7a5218; }
+.tag-banner a { color: #9b8b7e; text-decoration: none; font-weight: 700; }
+.tag-banner a:hover { color: var(--brown-dark); }
 
 /* ===== AVATAR ===== */
 .av { border-radius: 50%; background: linear-gradient(135deg,var(--gold),var(--brown-dark)); display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; flex-shrink: 0; }
@@ -150,6 +167,24 @@
 
 /* Body */
 .post-body { padding: .85rem 1.3rem .3rem; font-size: .94rem; color: var(--brown-dark); line-height: 1.72; white-space: pre-wrap; }
+
+/* Blog / article : carte éditoriale (titre, sous-titre, couverture) */
+.art-body { display: grid; grid-template-columns: 1fr 190px; gap: 1.4rem; padding: .3rem 1.3rem 1rem; align-items: start; }
+.art-body.no-cover { grid-template-columns: 1fr; }
+.art-link { display: block; text-decoration: none; color: inherit; }
+.art-type { display: inline-block; font-size: .64rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; padding: .2rem .6rem; border-radius: 50px; margin-bottom: .6rem; }
+.art-type-blog { background: rgba(190,140,60,.14); color: #8a622a; }
+.art-type-article { background: rgba(96,122,92,.16); color: #3f5a3c; }
+.art-title { font-family: 'Fraunces', serif; font-weight: 800; font-size: 1.55rem; line-height: 1.2; letter-spacing: -.01em; color: var(--brown-dark); margin: 0 0 .5rem; text-wrap: balance; transition: color .15s; }
+.art-link:hover .art-title { color: #9c6f2f; }
+.art-sub { font-size: .95rem; line-height: 1.55; color: #7a6856; margin: 0 0 .8rem; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.art-info { display: flex; flex-wrap: wrap; align-items: center; gap: .45rem; font-size: .76rem; color: #9b8b7e; }
+.art-tag { text-decoration: none; padding: .14rem .6rem; border-radius: 50px; background: rgba(58,42,29,.06); color: #7a6856; font-weight: 600; transition: all .15s; }
+.art-tag:hover { background: rgba(190,140,60,.18); color: #7a5218; }
+.art-cover { display: block; border-radius: 14px; overflow: hidden; aspect-ratio: 4 / 3; background: #231c16; }
+.art-cover img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .5s ease; }
+.post-card:hover .art-cover img { transform: scale(1.04); }
+a.react-btn { text-decoration: none; }
 
 /* ===== REACTIONS BAR ===== */
 .post-reactions-bar {
@@ -343,7 +378,12 @@
     .hero-inner { padding:1.1rem 1.1rem .8rem; gap:.8rem; }
     .hero-av { width:40px; height:40px; font-size:.85rem; }
     .hero-input { padding:.7rem 1.1rem; font-size:.85rem; }
-    .hero-action-btn { font-size:.72rem; padding:.8rem .5rem; gap:.3rem; }
+    .hero-action-btn { font-size:.66rem; padding:.75rem .2rem; gap:.25rem; flex-direction:column; }
+    .hero-action-btn svg { width:18px; height:18px; }
+    .art-body { grid-template-columns: 1fr 96px; gap: .9rem; padding: .2rem 1rem .8rem; }
+    .art-title { font-size: 1.22rem; }
+    .art-sub { font-size: .86rem; -webkit-line-clamp: 2; }
+    .art-cover { aspect-ratio: 1; }
     .post-header { padding:1rem 1rem .6rem; flex-wrap:wrap; gap:.5rem; }
     .post-body { padding:.75rem 1rem .3rem; font-size:.9rem; }
     .post-reactions-bar { padding:.1rem .5rem; }
@@ -399,8 +439,27 @@
           <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
           Texte
         </button>
+        <a class="hero-action-btn" href="{% url 'post_write' %}?type=blog">
+          <svg class="stroke" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          Blog
+        </a>
+        <a class="hero-action-btn" href="{% url 'post_write' %}?type=article">
+          <svg class="stroke" viewBox="0 0 24 24"><path d="M4 22h14a2 2 0 0 0 2-2V7l-5-5H6a2 2 0 0 0-2 2v4"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M3 15h6"/><path d="M3 18h6"/><path d="M3 12h6"/></svg>
+          Article
+        </a>
       </div>
     </div>
+
+    <!-- ONGLETS -->
+    <nav class="feed-tabs">
+      <a class="feed-tab {% if not active_type %}active{% endif %}" href="{% url 'posts_feed' %}{% if active_tag %}?tag={{ active_tag|urlencode }}{% endif %}">Tout<small>{{ type_counts.all }}</small></a>
+      <a class="feed-tab {% if active_type == 'post' %}active{% endif %}" href="?type=post{% if active_tag %}&tag={{ active_tag|urlencode }}{% endif %}">Posts<small>{{ type_counts.post }}</small></a>
+      <a class="feed-tab {% if active_type == 'blog' %}active{% endif %}" href="?type=blog{% if active_tag %}&tag={{ active_tag|urlencode }}{% endif %}">Blogs<small>{{ type_counts.blog }}</small></a>
+      <a class="feed-tab {% if active_type == 'article' %}active{% endif %}" href="?type=article{% if active_tag %}&tag={{ active_tag|urlencode }}{% endif %}">Articles<small>{{ type_counts.article }}</small></a>
+    </nav>
+    {% if active_tag %}
+    <div class="tag-banner">Sujet : <span class="chip">{{ active_tag }}</span> <a href="{% url 'posts_feed' %}{% if active_type %}?type={{ active_type }}{% endif %}">✕ Retirer le filtre</a></div>
+    {% endif %}
 
     <!-- POSTS FEED -->
     {% if posts %}
@@ -428,7 +487,7 @@
             </div>
             <div class="post-date">
               {{ post.date_creation|date:"d M Y à H:i" }}
-              {% if post.date_modification and post.date_modification != post.date_creation %}<span class="post-edited-badge">· modifié</span>{% endif %}
+              {% if post.est_modifie %}<span class="post-edited-badge">· modifié</span>{% endif %}
             </div>
           </div>
         </div>
@@ -447,13 +506,20 @@
               <svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/></svg>
             </button>
             <div class="post-dropdown" id="dropdown-{{ post.id }}">
+              {% if post.est_long_format %}
+              <a class="dropdown-item" href="{% url 'post_rewrite' post.id %}" style="text-decoration:none;">
+                <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+                Modifier
+              </a>
+              {% else %}
               <button class="dropdown-item" onclick="openEditModal({{ post.id }}, `{{ post.contenu|escapejs }}`)">
                 <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
                 Modifier le post
               </button>
+              {% endif %}
               <button class="dropdown-item danger" onclick="confirmDelete({{ post.id }})">
                 <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
-                Supprimer le post
+                Supprimer
               </button>
             </div>
           </div>
@@ -461,6 +527,25 @@
         </div>
       </div>
 
+      {% if post.est_long_format %}
+      <!-- Blog / article : carte éditoriale -->
+      <div class="art-body {% if not post.image %}no-cover{% endif %}">
+        <div>
+          <a class="art-link" href="{% url 'post_detail' post.id %}">
+            <span class="art-type art-type-{{ post.type }}">{{ post.get_type_display }}</span>
+            <h2 class="art-title">{{ post.titre }}</h2>
+            <p class="art-sub">{% if post.sous_titre %}{{ post.sous_titre }}{% else %}{{ post.extrait }}{% endif %}</p>
+          </a>
+          <div class="art-info">
+            <span>{{ post.temps_lecture }} min de lecture</span>
+            {% for tag in post.liste_tags %}<a class="art-tag" href="?tag={{ tag|urlencode }}{% if active_type %}&type={{ active_type }}{% endif %}">{{ tag }}</a>{% endfor %}
+          </div>
+        </div>
+        {% if post.image %}
+        <a class="art-cover" href="{% url 'post_detail' post.id %}"><img src="{{ post.image.url }}" alt="" loading="lazy"></a>
+        {% endif %}
+      </div>
+      {% else %}
       <!-- Media -->
       {% if post.image %}
       <div class="post-img-wrap"><img src="{{ post.image.url }}" alt=""></div>
@@ -470,6 +555,7 @@
         <video controls preload="metadata" playsinline><source src="{{ post.video.url }}">Votre navigateur ne supporte pas la vidéo.</video>
       </div>
       {% endif %}
+      {% endif %}
 
       <!-- Likes count -->
       <div class="post-likes" id="like-count-{{ post.id }}" {% if not post.nb_likes %}style="display:none"{% endif %}>
@@ -477,7 +563,7 @@
       </div>
 
       <!-- Text -->
-      {% if post.contenu %}
+      {% if not post.est_long_format and post.contenu %}
       <div class="post-body" id="post-body-{{ post.id }}"><strong>{{ post.auteur.pseudonyme }}</strong> {{ post.contenu }}</div>
       {% endif %}
 
@@ -487,16 +573,24 @@
           <svg class="heart-icon" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
           J'aime
         </button>
+        {% if post.est_long_format %}
+        <a class="react-btn" href="{% url 'post_detail' post.id %}#commentaires">
+          <svg class="comment-icon" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          {% if post.nb_commentaires %}{{ post.nb_commentaires }} commentaire{{ post.nb_commentaires|pluralize }}{% else %}Commenter{% endif %}
+        </a>
+        {% else %}
         <button class="react-btn" onclick="toggleComments({{ post.id }})">
           <svg class="comment-icon" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
           Commenter
         </button>
-        <button class="react-btn" onclick="sharePost({{ post.id }})">
+        {% endif %}
+        <button class="react-btn" onclick="sharePost({{ post.id }}{% if post.est_long_format %}, '{% url 'post_detail' post.id %}'{% endif %})">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
           Partager
         </button>
       </div>
 
+      {% if not post.est_long_format %}
       <!-- See comments -->
       {% if post.nb_commentaires > 0 %}
       <button class="see-comments-btn" onclick="toggleComments({{ post.id }})">
@@ -526,6 +620,7 @@
           </button>
         </div>
       </div>
+      {% endif %}
 
     </div>
     {% endfor %}
@@ -533,8 +628,13 @@
     {% else %}
     <div class="empty-feed">
       <div class="empty-feed-icon"><svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg></div>
-      <h3>Aucun post pour l'instant</h3>
+      {% if active_type or active_tag %}
+      <h3>Rien à afficher ici pour l'instant</h3>
+      <p>Aucune publication ne correspond à ce filtre. <a href="{% url 'posts_feed' %}" style="color:#9c6f2f;font-weight:700;">Voir toutes les publications</a></p>
+      {% else %}
+      <h3>Aucune publication pour l'instant</h3>
       <p>Soyez le premier à partager quelque chose avec la communauté !</p>
+      {% endif %}
     </div>
     {% endif %}
   </div>
@@ -557,13 +657,29 @@
         </div>
       </div>
       <div class="stats-grid">
-        <div class="stats-item"><div class="n">{{ user.posts.count }}</div><div class="l">Posts</div></div>
+        <div class="stats-item"><div class="n">{{ user.posts.count }}</div><div class="l">Publications</div></div>
         <div class="stats-item"><div class="n">{{ user.nb_abonnes }}</div><div class="l">Abonnés</div></div>
         <div class="stats-item"><div class="n">{{ user.nb_abonnements }}</div><div class="l">Abonnements</div></div>
         <div class="stats-item"><div class="n">{{ user.posts_aimes.count }}</div><div class="l">J'aime</div></div>
       </div>
       <a href="{% url 'profile' %}" style="display:block;margin-top:1rem;text-align:center;padding:.6rem;background:rgba(190,140,60,.1);border:1px solid rgba(190,140,60,.2);border-radius:12px;color:var(--brown-dark);font-size:.82rem;font-weight:700;text-decoration:none;transition:all .18s;" onmouseover="this.style.background='rgba(190,140,60,.18)'" onmouseout="this.style.background='rgba(190,140,60,.1)'">Voir mon profil →</a>
     </div>
+    <div class="side-card">
+      <div class="side-section-title">Écrire</div>
+      <p style="font-size:.82rem;color:#7a6856;line-height:1.5;margin:0 0 .9rem;">Racontez votre histoire ou partagez votre expertise avec toute la communauté.</p>
+      <div style="display:flex;flex-direction:column;gap:.5rem;">
+        <a href="{% url 'post_write' %}?type=blog" style="display:block;text-align:center;padding:.65rem;border-radius:12px;background:linear-gradient(135deg,#c79a52,#9c6f2f);color:#fff;font-size:.84rem;font-weight:800;text-decoration:none;">✍️ Écrire un blog</a>
+        <a href="{% url 'post_write' %}?type=article" style="display:block;text-align:center;padding:.65rem;border-radius:12px;border:1.5px solid rgba(96,122,92,.45);background:rgba(96,122,92,.08);color:#3f5a3c;font-size:.84rem;font-weight:800;text-decoration:none;">📰 Écrire un article</a>
+      </div>
+    </div>
+    {% if popular_tags %}
+    <div class="side-card">
+      <div class="side-section-title">Sujets populaires</div>
+      <div style="display:flex;flex-wrap:wrap;gap:.45rem;">
+        {% for tag in popular_tags %}<a href="?tag={{ tag|urlencode }}" class="art-tag" style="font-size:.78rem;padding:.3rem .8rem;{% if tag == active_tag %}background:rgba(190,140,60,.22);color:#7a5218;{% endif %}">{{ tag }}</a>{% endfor %}
+      </div>
+    </div>
+    {% endif %}
     <div class="side-card">
       <div class="side-section-title">Navigation</div>
       <div style="display:flex;flex-direction:column;gap:.25rem;">
@@ -842,8 +958,8 @@ function submitComment(id) {
 }
 
 /* ===== SHARE ===== */
-function sharePost(id) {
-    const url = window.location.origin + '/posts/#post-' + id;
+function sharePost(id, path) {
+    const url = window.location.origin + (path || '/posts/#post-' + id);
     if (navigator.share) {
         navigator.share({ title: 'Wanaag Corner', url });
     } else {

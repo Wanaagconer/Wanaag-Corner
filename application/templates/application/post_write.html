@@ -1,0 +1,521 @@
+{% extends 'application/base.html' %}
+{% load static %}
+
+{% block title %}{% if post %}Modifier « {{ post.titre }} »{% else %}Écrire{% endif %} — Wanaag Corner{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/prose.css' %}">
+<style>
+.wr-shell {
+    position: fixed; inset: 0; z-index: 2000; display: flex; flex-direction: column;
+    background: #fbf8f2; opacity: 1 !important; transform: none !important;
+}
+
+/* ── Barre du haut ── */
+.wr-top {
+    flex: none; height: 58px; padding: 0 1.2rem; display: flex; align-items: center;
+    justify-content: space-between; gap: 1rem;
+    background: rgba(251,248,242,.94); backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(58,42,29,.08);
+}
+.wr-back { color: #5e5044; font-size: .86rem; font-weight: 700; text-decoration: none; display: flex; align-items: center; gap: .4rem; white-space: nowrap; }
+.wr-back:hover { color: #2a211b; }
+.wr-status { flex: 1; text-align: center; font-size: .76rem; color: #9b8b7e; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wr-top-right { display: flex; align-items: center; gap: .8rem; }
+.wr-seg { display: flex; background: rgba(58,42,29,.06); border-radius: 50px; padding: 3px; }
+.wr-seg button {
+    border: none; background: transparent; padding: .38rem .95rem; border-radius: 50px;
+    font-family: inherit; font-size: .78rem; font-weight: 700; color: #7a6856; cursor: pointer; transition: all .18s;
+}
+.wr-seg button.active { background: #fff; color: #2a211b; box-shadow: 0 1px 6px rgba(42,33,27,.15); }
+.wr-publish {
+    border: none; cursor: pointer; padding: .55rem 1.4rem; border-radius: 50px; color: #fff;
+    font-family: inherit; font-size: .84rem; font-weight: 800; letter-spacing: .01em;
+    background: linear-gradient(135deg, #c79a52, #9c6f2f); box-shadow: 0 6px 18px -6px rgba(156,111,47,.7);
+    transition: transform .18s, filter .18s;
+}
+.wr-publish:hover:not(:disabled) { transform: translateY(-1px); filter: brightness(1.06); }
+.wr-publish:disabled { opacity: .55; cursor: default; }
+
+/* ── Barre d'outils ── */
+.wr-toolbar {
+    flex: none; position: relative; display: flex; align-items: center; gap: .15rem; flex-wrap: nowrap;
+    overflow-x: auto; padding: .45rem 1.2rem; scrollbar-width: none;
+    background: #fbf8f2; border-bottom: 1px solid rgba(58,42,29,.06); justify-content: center;
+}
+.wr-toolbar::-webkit-scrollbar { display: none; }
+.wr-tb {
+    flex: none; min-width: 34px; height: 34px; padding: 0 .55rem; border: none; border-radius: 9px;
+    background: transparent; color: #5e5044; cursor: pointer; font-family: inherit;
+    font-size: .88rem; font-weight: 800; display: flex; align-items: center; justify-content: center; transition: background .15s, color .15s;
+}
+.wr-tb:hover { background: rgba(190,140,60,.12); color: #2a211b; }
+.wr-tb.on { background: rgba(190,140,60,.2); color: #7a5218; }
+.wr-tb svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.wr-tb.i { font-style: italic; font-family: 'Source Serif 4', serif; }
+.wr-tb.u { text-decoration: underline; }
+.wr-sep { flex: none; width: 1px; height: 20px; background: rgba(58,42,29,.12); margin: 0 .35rem; }
+.wr-linkbox {
+    position: fixed; z-index: 2100; display: none; gap: .4rem; align-items: center;
+    background: #fff; padding: .5rem; border-radius: 14px; box-shadow: 0 16px 40px rgba(42,33,27,.22); border: 1px solid rgba(58,42,29,.1);
+}
+.wr-linkbox.show { display: flex; }
+.wr-linkbox input { width: 230px; border: 1.5px solid rgba(58,42,29,.15); border-radius: 9px; padding: .45rem .7rem; font-family: inherit; font-size: .84rem; outline: none; }
+.wr-linkbox input:focus { border-color: #be8c3c; }
+.wr-linkbox button { border: none; border-radius: 9px; padding: .45rem .8rem; cursor: pointer; font-family: inherit; font-size: .8rem; font-weight: 700; }
+.wr-linkbox .ok { background: #be8c3c; color: #fff; }
+.wr-linkbox .no { background: transparent; color: #7a6856; }
+
+/* ── Page d'écriture ── */
+.wr-scroll { flex: 1; overflow-y: auto; scroll-behavior: smooth; }
+.wr-page { max-width: 720px; margin: 0 auto; padding: 2.4rem 1.4rem 8rem; }
+
+.wr-cover { position: relative; margin-bottom: 1.6rem; }
+.wr-cover-add {
+    width: 100%; padding: 1.1rem; border: 1.5px dashed rgba(58,42,29,.22); border-radius: 14px;
+    background: transparent; color: #9b8b7e; font-family: inherit; font-size: .86rem; font-weight: 600; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: .5rem; transition: all .18s;
+}
+.wr-cover-add:hover { border-color: #be8c3c; color: #7a5218; background: rgba(190,140,60,.05); }
+.wr-cover-preview { display: none; position: relative; }
+.wr-cover-preview img { width: 100%; max-height: 380px; object-fit: cover; border-radius: 14px; display: block; }
+.wr-cover-actions { position: absolute; top: 10px; right: 10px; display: flex; gap: .4rem; }
+.wr-cover-actions button {
+    border: none; background: rgba(20,14,8,.68); color: #fff; padding: .4rem .8rem; border-radius: 50px;
+    font-family: inherit; font-size: .74rem; font-weight: 700; cursor: pointer; backdrop-filter: blur(6px);
+}
+.wr-cover-actions button:hover { background: rgba(20,14,8,.85); }
+
+.wr-title {
+    display: block; width: 100%; border: none; outline: none; resize: none; overflow: hidden; background: transparent;
+    font-family: 'Fraunces', serif; font-weight: 800; font-size: 2.7rem; line-height: 1.15; color: #2a211b;
+    padding: 0; margin: 0 0 .5rem; letter-spacing: -.01em;
+}
+.wr-subtitle {
+    display: block; width: 100%; border: none; outline: none; background: transparent; resize: none; overflow: hidden;
+    font-family: 'Source Serif 4', Georgia, serif; font-size: 1.3rem; line-height: 1.4; color: #7a6856;
+    padding: 0; margin: 0 0 1.4rem;
+}
+.wr-title::placeholder, .wr-subtitle::placeholder { color: rgba(58,42,29,.28); }
+.wr-byline { display: flex; align-items: center; gap: .7rem; padding-bottom: 1.3rem; margin-bottom: 1.6rem; border-bottom: 1px solid rgba(58,42,29,.1); font-size: .84rem; color: #7a6856; }
+.wr-byline .av { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, #be8c3c, #594836); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: .8rem; flex: none; }
+.wr-byline b { color: #2a211b; }
+
+.wr-body { min-height: 380px; outline: none; }
+.wr-body.is-empty::before { content: attr(data-placeholder); color: rgba(58,42,29,.3); pointer-events: none; position: absolute; }
+.wr-body-wrap { position: relative; }
+.wr-body img, .wr-body video { cursor: default; }
+.wr-body figure.uploading { opacity: .5; }
+
+.wr-meta { margin-top: 2.4rem; padding-top: 1.4rem; border-top: 1px solid rgba(58,42,29,.1); }
+.wr-meta label { display: block; font-size: .68rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: #9b8b7e; margin-bottom: .5rem; }
+.wr-tags {
+    width: 100%; border: 1.5px solid rgba(58,42,29,.14); border-radius: 12px; padding: .7rem .95rem;
+    font-family: inherit; font-size: .92rem; background: #fff; outline: none; color: #2a211b;
+}
+.wr-tags:focus { border-color: #be8c3c; box-shadow: 0 0 0 3px rgba(190,140,60,.12); }
+.wr-hint { margin-top: .9rem; font-size: .8rem; line-height: 1.55; color: #9b8b7e; }
+.wr-hint b { color: #5e5044; }
+
+.wr-toast {
+    position: fixed; left: 50%; bottom: 1.6rem; transform: translate(-50%, 90px); z-index: 2200;
+    background: #2a211b; color: #f3e6c8; padding: .75rem 1.4rem; border-radius: 50px; font-size: .86rem; font-weight: 600;
+    box-shadow: 0 10px 34px rgba(0,0,0,.35); transition: transform .3s cubic-bezier(.34,1.4,.64,1); max-width: 92vw; text-align: center;
+}
+.wr-toast.show { transform: translate(-50%, 0); }
+.wr-toast.err { background: #8a2f27; color: #fff; }
+
+@media (max-width: 700px) {
+    .wr-top { padding: 0 .8rem; height: 54px; gap: .5rem; }
+    .wr-back span { display: none; }
+    .wr-status { display: none; }
+    .wr-top-right { gap: .5rem; margin-left: auto; }
+    .wr-seg button { padding: .34rem .7rem; font-size: .74rem; }
+    .wr-publish { padding: .5rem 1rem; font-size: .8rem; }
+    .wr-toolbar { justify-content: flex-start; padding: .4rem .7rem; }
+    .wr-page { padding: 1.5rem 1.05rem 7rem; }
+    .wr-title { font-size: 2rem; }
+    .wr-subtitle { font-size: 1.1rem; }
+    .wr-linkbox input { width: 170px; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="wr-shell" id="wrShell">
+  <header class="wr-top">
+    <a class="wr-back" href="{% if post %}{% url 'post_detail' post.id %}{% else %}{% url 'posts_feed' %}{% endif %}">← <span>Retour</span></a>
+    <div class="wr-status" id="wrStatus"></div>
+    <div class="wr-top-right">
+      <div class="wr-seg" id="wrType" title="Blog : un récit personnel, libre. Article : un sujet documenté, informatif.">
+        <button type="button" data-type="blog">Blog</button>
+        <button type="button" data-type="article">Article</button>
+      </div>
+      <button type="button" class="wr-publish" id="wrPublish">{% if post %}Mettre à jour{% else %}Publier{% endif %}</button>
+    </div>
+  </header>
+
+  <div class="wr-toolbar" id="wrToolbar">
+    <button type="button" class="wr-tb" data-block="h2" title="Grand titre">H2</button>
+    <button type="button" class="wr-tb" data-block="h3" title="Sous-titre">H3</button>
+    <span class="wr-sep"></span>
+    <button type="button" class="wr-tb" data-cmd="bold" title="Gras (Ctrl+B)">B</button>
+    <button type="button" class="wr-tb i" data-cmd="italic" title="Italique (Ctrl+I)">I</button>
+    <button type="button" class="wr-tb u" data-cmd="underline" title="Souligné (Ctrl+U)">U</button>
+    <span class="wr-sep"></span>
+    <button type="button" class="wr-tb" data-block="blockquote" title="Citation"><svg viewBox="0 0 24 24"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.76-2-2-2H4c-1.25 0-2 .75-2 2v6c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .01-1 1v2c0 1 0 1 1 1z"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.76-2-2-2h-4c-1.25 0-2 .75-2 2v6c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"/></svg></button>
+    <button type="button" class="wr-tb" data-list="ul" title="Liste à puces"><svg viewBox="0 0 24 24"><line x1="9" y1="6" x2="20" y2="6"/><line x1="9" y1="12" x2="20" y2="12"/><line x1="9" y1="18" x2="20" y2="18"/><circle cx="4.5" cy="6" r="1"/><circle cx="4.5" cy="12" r="1"/><circle cx="4.5" cy="18" r="1"/></svg></button>
+    <button type="button" class="wr-tb" data-list="ol" title="Liste numérotée"><svg viewBox="0 0 24 24"><line x1="10" y1="6" x2="21" y2="6"/><line x1="10" y1="12" x2="21" y2="12"/><line x1="10" y1="18" x2="21" y2="18"/><path d="M4 6h1v4M4 10h2M4 14h2l-2 2.5h2"/></svg></button>
+    <button type="button" class="wr-tb" id="wrLinkBtn" title="Lien (Ctrl+K)"><svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></button>
+    <span class="wr-sep"></span>
+    <button type="button" class="wr-tb" id="wrImageBtn" title="Insérer une image"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></button>
+    <button type="button" class="wr-tb" id="wrVideoBtn" title="Insérer une vidéo"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="14" height="14" rx="2"/><path d="M16 10l6-3v10l-6-3z"/></svg></button>
+    <button type="button" class="wr-tb" id="wrHrBtn" title="Séparateur"><svg viewBox="0 0 24 24"><line x1="4" y1="12" x2="20" y2="12"/></svg></button>
+    <span class="wr-sep"></span>
+    <button type="button" class="wr-tb" data-cmd="undo" title="Annuler"><svg viewBox="0 0 24 24"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-15-6.7L3 13"/></svg></button>
+    <button type="button" class="wr-tb" data-cmd="redo" title="Rétablir"><svg viewBox="0 0 24 24"><path d="M21 7v6h-6"/><path d="M3 17a9 9 0 0 1 15-6.7L21 13"/></svg></button>
+  </div>
+  <div class="wr-linkbox" id="wrLinkBox">
+    <input type="text" id="wrLinkInput" placeholder="https://…" autocomplete="off">
+    <button type="button" class="ok" id="wrLinkOk">OK</button>
+    <button type="button" class="no" id="wrLinkNo">✕</button>
+  </div>
+  <input type="file" id="wrImageFile" accept="image/jpeg,image/png,image/gif,image/webp" hidden>
+  <input type="file" id="wrVideoFile" accept="video/mp4,video/webm,video/quicktime" hidden>
+  <input type="file" id="wrCoverFile" accept="image/jpeg,image/png,image/gif,image/webp" hidden>
+
+  <div class="wr-scroll" id="wrScroll">
+    <main class="wr-page">
+      <div class="wr-cover">
+        <button type="button" class="wr-cover-add" id="wrCoverAdd">＋ Ajouter une image de couverture</button>
+        <div class="wr-cover-preview" id="wrCoverPreview">
+          <img id="wrCoverImg" src="" alt="">
+          <div class="wr-cover-actions">
+            <button type="button" id="wrCoverChange">Changer</button>
+            <button type="button" id="wrCoverRemove">Retirer</button>
+          </div>
+        </div>
+      </div>
+
+      <textarea class="wr-title" id="wrTitle" rows="1" maxlength="200" placeholder="Titre"></textarea>
+      <textarea class="wr-subtitle" id="wrSubtitle" rows="1" maxlength="300" placeholder="Ajoutez un sous-titre…"></textarea>
+      <div class="wr-byline"><span class="av">{{ user.pseudonyme|first|upper }}</span><span>Par <b>{{ user.pseudonyme }}</b> · <span id="wrReading">0 min de lecture</span></span></div>
+
+      <div class="wr-body-wrap">
+        <div class="wr-body prose is-empty" id="wrBody" contenteditable="true" spellcheck="true" data-placeholder="Commencez à écrire… Sélectionnez du texte pour le mettre en forme."></div>
+      </div>
+
+      <div class="wr-meta">
+        <label for="wrTags">Sujets</label>
+        <input class="wr-tags" id="wrTags" type="text" maxlength="200" placeholder="ex : sommeil, anxiété, gratitude (séparés par des virgules, 6 maximum)">
+        <p class="wr-hint"><b>Blog</b> : un récit personnel, dans votre voix. <b>Article</b> : un sujet documenté et informatif. Vos publications sont visibles par toute la communauté.</p>
+      </div>
+    </main>
+  </div>
+</div>
+<div class="wr-toast" id="wrToast"></div>
+
+{{ initial|json_script:"wrInitial" }}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+  const CSRF = '{{ csrf_token }}';
+  const POST_ID = {% if post %}{{ post.id }}{% else %}null{% endif %};
+  const DRAFT_KEY = 'wanaag-write-draft-' + (POST_ID || 'new');
+  const initial = JSON.parse(document.getElementById('wrInitial').textContent || 'null');
+
+  const $ = id => document.getElementById(id);
+  const body = $('wrBody'), title = $('wrTitle'), subtitle = $('wrSubtitle'), tags = $('wrTags');
+  const statusEl = $('wrStatus'), publishBtn = $('wrPublish');
+  let type = '{{ type_initial }}' === 'article' ? 'article' : 'blog';
+  let coverFile = null, coverUrl = '', removeCover = false;
+  let dirty = false, published = false, savedRange = null;
+
+  document.body.style.overflow = 'hidden';
+  document.execCommand('defaultParagraphSeparator', false, 'p');
+
+  /* ── utilitaires ── */
+  function toast(msg, isErr) {
+    const t = $('wrToast'); t.textContent = msg; t.className = 'wr-toast show' + (isErr ? ' err' : '');
+    clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove('show'), 3200);
+  }
+  const esc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  function autosize(el) { el.style.height = 'auto'; el.style.height = el.scrollHeight + 'px'; }
+  function hasMedia() { return !!body.querySelector('img, video'); }
+  function isEmpty() { return !body.innerText.trim() && !hasMedia(); }
+
+  /* ── type Blog / Article ── */
+  function setType(t) {
+    type = t;
+    document.querySelectorAll('#wrType button').forEach(b => b.classList.toggle('active', b.dataset.type === t));
+  }
+  document.querySelectorAll('#wrType button').forEach(b => b.addEventListener('click', () => { setType(b.dataset.type); markDirty(); }));
+  setType(type);
+
+  /* ── métriques + brouillon ── */
+  function refreshMeta() {
+    body.classList.toggle('is-empty', isEmpty());
+    const words = (body.innerText.trim().match(/\S+/g) || []).length;
+    $('wrReading').textContent = Math.max(1, Math.round(words / 200)) + ' min de lecture · ' + words + ' mot' + (words > 1 ? 's' : '');
+  }
+  let draftTimer = null;
+  function markDirty() {
+    dirty = true; refreshMeta();
+    if (POST_ID) { statusEl.textContent = 'Modifications non publiées'; return; }
+    statusEl.textContent = 'Écriture…';
+    clearTimeout(draftTimer);
+    draftTimer = setTimeout(saveDraft, 800);
+  }
+  function saveDraft() {
+    try {
+      if (!title.value.trim() && isEmpty()) { localStorage.removeItem(DRAFT_KEY); statusEl.textContent = ''; return; }
+      localStorage.setItem(DRAFT_KEY, JSON.stringify({ t: title.value, s: subtitle.value, b: body.innerHTML, g: tags.value, ty: type }));
+      statusEl.textContent = 'Brouillon enregistré sur cet appareil';
+    } catch (e) { statusEl.textContent = ''; }
+  }
+
+  /* ── contenu initial : édition d'une publication, ou brouillon local ── */
+  if (initial) {
+    title.value = initial.titre; subtitle.value = initial.sous_titre; tags.value = initial.tags;
+    body.innerHTML = initial.corps; setType(initial.type);
+    if (initial.cover) { coverUrl = initial.cover; showCover(coverUrl); }
+  } else {
+    try {
+      const d = JSON.parse(localStorage.getItem(DRAFT_KEY) || 'null');
+      if (d && (d.t || (d.b && d.b.replace(/<[^>]*>/g, '').trim()))) {
+        title.value = d.t || ''; subtitle.value = d.s || ''; body.innerHTML = d.b || ''; tags.value = d.g || '';
+        setType(d.ty === 'article' ? 'article' : 'blog');
+        statusEl.textContent = 'Brouillon restauré';
+      }
+    } catch (e) {}
+  }
+  if (!body.firstChild) body.innerHTML = '<p><br></p>';
+  autosize(title); autosize(subtitle); refreshMeta();
+  if (!title.value) title.focus();
+
+  title.addEventListener('input', () => { autosize(title); markDirty(); });
+  title.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); subtitle.focus(); } });
+  subtitle.addEventListener('input', () => { autosize(subtitle); markDirty(); });
+  subtitle.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); body.focus(); } });
+  tags.addEventListener('input', markDirty);
+  body.addEventListener('input', () => { normalizeBody(); markDirty(); });
+  body.addEventListener('focus', normalizeBody);
+
+  /* ── collage : texte brut → paragraphes ── */
+  body.addEventListener('paste', e => {
+    e.preventDefault();
+    const text = (e.clipboardData || window.clipboardData).getData('text/plain').replace(/\r/g, '');
+    const html = text.split(/\n{2,}/).filter(p => p.trim())
+      .map(p => '<p>' + esc(p.trim()).replace(/\n/g, '<br>') + '</p>').join('');
+    if (html) document.execCommand('insertHTML', false, html);
+  });
+
+  /* ── sélection ── */
+  function saveSel() {
+    const s = getSelection();
+    if (s.rangeCount && body.contains(s.anchorNode)) savedRange = s.getRangeAt(0).cloneRange();
+  }
+  function restoreSel() {
+    body.focus();
+    if (savedRange) { const s = getSelection(); s.removeAllRanges(); s.addRange(savedRange); }
+  }
+  /* Les boutons ne volent pas la sélection (mousedown annulé) : on ne la restaure que si elle a quitté le corps */
+  function ensureSel() {
+    const s = getSelection();
+    if (!(s.rangeCount && body.contains(s.anchorNode))) restoreSel();
+  }
+  /* Le corps commence toujours par un vrai paragraphe (jamais du texte brut) */
+  function normalizeBody() {
+    if (!body.firstChild) body.innerHTML = '<p><br></p>';
+    else if (body.firstChild.nodeType === 3 && body.firstChild.textContent.trim()) document.execCommand('formatBlock', false, 'p');
+  }
+  document.addEventListener('selectionchange', () => {
+    saveSel();
+    const s = getSelection();
+    const inBody = s.rangeCount && body.contains(s.anchorNode);
+    document.querySelectorAll('.wr-tb[data-cmd]').forEach(b => {
+      let on = false;
+      try { on = inBody && ['bold', 'italic', 'underline'].includes(b.dataset.cmd) && document.queryCommandState(b.dataset.cmd); } catch (e) {}
+      b.classList.toggle('on', on);
+    });
+    const tb = inBody ? topBlock() : null;
+    document.querySelectorAll('.wr-tb[data-list]').forEach(b => b.classList.toggle('on', !!tb && tb.nodeName.toLowerCase() === b.dataset.list));
+    let block = '';
+    try { block = inBody ? (document.queryCommandValue('formatBlock') || '').toLowerCase() : ''; } catch (e) {}
+    document.querySelectorAll('.wr-tb[data-block]').forEach(b => b.classList.toggle('on', block === b.dataset.block));
+  });
+
+  /* Un bloc « parent » direct du corps qui contient le curseur */
+  function topBlock() {
+    const s = getSelection();
+    let node = s.rangeCount ? s.anchorNode : null;
+    if (!node || !body.contains(node)) return null;
+    while (node && node.parentNode !== body) node = node.parentNode;
+    return node && node !== body ? node : null;
+  }
+  /* Insère du HTML (image, vidéo, séparateur) APRÈS le bloc courant, jamais à l'intérieur d'une liste ou d'une citation */
+  function insertBlockAfterCaret(html) {
+    restoreSel();
+    const top = topBlock();
+    const tpl = document.createElement('template'); tpl.innerHTML = html;
+    const frag = tpl.content, last = frag.lastElementChild;
+    const blank = top && /^(P|DIV)$/.test(top.nodeName) && !top.textContent.trim() && !top.querySelector('img, video');
+    if (!top) body.appendChild(frag);
+    else if (blank) top.replaceWith(frag);
+    else top.after(frag);
+    const r = document.createRange(); r.setStart(last, 0); r.collapse(true);
+    const s = getSelection(); s.removeAllRanges(); s.addRange(r);
+    markDirty();
+  }
+  /* Listes : conversion faite à la main (execCommand place mal le curseur dans les navigateurs récents) */
+  function toggleList(kind) {
+    ensureSel();
+    const top = topBlock();
+    if (!top) return;
+    const tag = kind.toUpperCase();
+    let caretTarget;
+    if (top.nodeName === tag) {                       // retirer la liste -> paragraphes
+      const frag = document.createDocumentFragment();
+      top.querySelectorAll(':scope > li').forEach(li => {
+        const par = document.createElement('p'); par.innerHTML = li.innerHTML || '<br>'; frag.appendChild(par);
+      });
+      caretTarget = frag.lastElementChild; top.replaceWith(frag);
+    } else if (top.nodeName === 'UL' || top.nodeName === 'OL') {   // changer de type de liste
+      const list = document.createElement(kind); list.innerHTML = top.innerHTML;
+      caretTarget = list.lastElementChild; top.replaceWith(list);
+    } else if (/^(P|DIV|H2|H3|BLOCKQUOTE)$/.test(top.nodeName)) {  // bloc courant -> liste d'un élément
+      const list = document.createElement(kind), li = document.createElement('li');
+      li.innerHTML = top.innerHTML || '<br>'; list.appendChild(li);
+      caretTarget = li; top.replaceWith(list);
+    } else return;
+    const r = document.createRange(); r.selectNodeContents(caretTarget); r.collapse(false);
+    const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r);
+    markDirty();
+  }
+  document.querySelectorAll('.wr-tb[data-list]').forEach(b => b.addEventListener('click', () => toggleList(b.dataset.list)));
+
+  /* Entrée sur une citation vide = on en sort (comme dans les éditeurs modernes) */
+  body.addEventListener('keydown', e => {
+    if (e.key !== 'Enter' || e.shiftKey) return;
+    const top = topBlock();
+    if (top && top.nodeName === 'BLOCKQUOTE' && !top.textContent.trim()) {
+      e.preventDefault(); document.execCommand('formatBlock', false, 'p'); markDirty();
+    }
+  });
+
+  /* ── barre d'outils ── */
+  document.querySelectorAll('.wr-tb').forEach(b => b.addEventListener('mousedown', e => e.preventDefault()));
+  document.querySelectorAll('.wr-tb[data-cmd]').forEach(b => b.addEventListener('click', () => {
+    ensureSel(); document.execCommand(b.dataset.cmd, false, null); markDirty();
+  }));
+  document.querySelectorAll('.wr-tb[data-block]').forEach(b => b.addEventListener('click', () => {
+    ensureSel();
+    const current = (document.queryCommandValue('formatBlock') || '').toLowerCase();
+    document.execCommand('formatBlock', false, current === b.dataset.block ? 'p' : b.dataset.block);
+    markDirty();
+  }));
+
+  /* ── lien ── */
+  const linkBox = $('wrLinkBox'), linkInput = $('wrLinkInput');
+  function openLink() {
+    saveSel();
+    const a = savedRange && (savedRange.startContainer.nodeType === 3 ? savedRange.startContainer.parentElement : savedRange.startContainer).closest('a');
+    if (a) { restoreSel(); document.execCommand('unlink'); markDirty(); return; }
+    const r = $('wrLinkBtn').getBoundingClientRect();
+    linkBox.style.top = (r.bottom + 8) + 'px';
+    linkBox.style.left = Math.max(8, Math.min(r.left - 90, window.innerWidth - 340)) + 'px';
+    linkBox.classList.add('show'); linkInput.value = ''; linkInput.focus();
+  }
+  function applyLink() {
+    let url = linkInput.value.trim(); linkBox.classList.remove('show');
+    if (!url) { restoreSel(); return; }
+    if (!/^(https?:\/\/|mailto:)/i.test(url)) url = 'https://' + url;
+    restoreSel();
+    if (savedRange && savedRange.collapsed) document.execCommand('insertHTML', false, '<a href="' + esc(url) + '">' + esc(url) + '</a>');
+    else document.execCommand('createLink', false, url);
+    markDirty();
+  }
+  $('wrLinkBtn').addEventListener('click', openLink);
+  $('wrLinkOk').addEventListener('click', applyLink);
+  $('wrLinkNo').addEventListener('click', () => { linkBox.classList.remove('show'); restoreSel(); });
+  linkInput.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); applyLink(); } if (e.key === 'Escape') { linkBox.classList.remove('show'); restoreSel(); } });
+  body.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); openLink(); } });
+
+  /* ── images & vidéos dans le corps ── */
+  function insertMedia(kind, file) {
+    if (!file) return;
+    const fd = new FormData(); fd.append('file', file); fd.append('csrfmiddlewaretoken', CSRF);
+    statusEl.textContent = 'Envoi du fichier…';
+    fetch('{% url "post_upload_media" %}', { method: 'POST', body: fd })
+      .then(r => r.json()).then(d => {
+        if (!d.success) { toast(d.message || 'Envoi impossible.', true); statusEl.textContent = ''; return; }
+        const tag = d.kind === 'video' ? '<video src="' + esc(d.url) + '" controls></video>' : '<img src="' + esc(d.url) + '" alt="">';
+        insertBlockAfterCaret('<figure>' + tag + '</figure><p><br></p>');
+        statusEl.textContent = '';
+      }).catch(() => { toast('Envoi impossible : vérifiez votre connexion.', true); statusEl.textContent = ''; });
+  }
+  $('wrHrBtn').addEventListener('click', () => insertBlockAfterCaret('<hr><p><br></p>'));
+  $('wrImageBtn').addEventListener('click', () => { saveSel(); $('wrImageFile').click(); });
+  $('wrVideoBtn').addEventListener('click', () => { saveSel(); $('wrVideoFile').click(); });
+  $('wrImageFile').addEventListener('change', e => { insertMedia('image', e.target.files[0]); e.target.value = ''; });
+  $('wrVideoFile').addEventListener('change', e => { insertMedia('video', e.target.files[0]); e.target.value = ''; });
+
+  /* ── couverture ── */
+  function showCover(src) {
+    $('wrCoverImg').src = src; $('wrCoverPreview').style.display = 'block'; $('wrCoverAdd').style.display = 'none';
+  }
+  function clearCover() {
+    coverFile = null; $('wrCoverImg').src = ''; $('wrCoverPreview').style.display = 'none'; $('wrCoverAdd').style.display = '';
+    if (coverUrl) removeCover = true; coverUrl = '';
+  }
+  $('wrCoverAdd').addEventListener('click', () => $('wrCoverFile').click());
+  $('wrCoverChange').addEventListener('click', () => $('wrCoverFile').click());
+  $('wrCoverRemove').addEventListener('click', () => { clearCover(); markDirty(); });
+  $('wrCoverFile').addEventListener('change', e => {
+    const f = e.target.files[0]; if (!f) return;
+    if (f.size > 8 * 1024 * 1024) { toast('Image trop lourde (8 Mo maximum).', true); e.target.value = ''; return; }
+    coverFile = f; removeCover = false;
+    const r = new FileReader(); r.onload = ev => showCover(ev.target.result); r.readAsDataURL(f);
+    e.target.value = ''; markDirty();
+  });
+
+  /* ── publication ── */
+  function publish() {
+    if (!title.value.trim()) { toast('Donnez un titre à votre publication.', true); title.focus(); return; }
+    if (isEmpty()) { toast('Écrivez au moins quelques phrases avant de publier.', true); body.focus(); return; }
+    const fd = new FormData();
+    fd.append('csrfmiddlewaretoken', CSRF);
+    fd.append('titre', title.value.trim());
+    fd.append('sous_titre', subtitle.value.trim());
+    fd.append('corps', body.innerHTML);
+    fd.append('tags', tags.value);
+    fd.append('type', type);
+    if (coverFile) fd.append('image', coverFile);
+    if (removeCover) fd.append('supprimer_couverture', '1');
+    publishBtn.disabled = true; publishBtn.textContent = 'Publication…';
+    fetch(location.pathname, { method: 'POST', body: fd })
+      .then(r => r.json().then(d => ({ ok: r.ok, d })))
+      .then(({ ok, d }) => {
+        if (ok && d.success) {
+          published = true;
+          try { localStorage.removeItem(DRAFT_KEY); } catch (e) {}
+          location.href = d.url;
+        } else {
+          toast(d.message || 'Publication impossible.', true);
+          publishBtn.disabled = false; publishBtn.textContent = POST_ID ? 'Mettre à jour' : 'Publier';
+        }
+      }).catch(() => {
+        toast('Publication impossible : vérifiez votre connexion.', true);
+        publishBtn.disabled = false; publishBtn.textContent = POST_ID ? 'Mettre à jour' : 'Publier';
+      });
+  }
+  publishBtn.addEventListener('click', publish);
+
+  window.addEventListener('beforeunload', e => {
+    if (dirty && !published && POST_ID) { e.preventDefault(); e.returnValue = ''; }
+  });
+})();
+</script>
+{% endblock %}

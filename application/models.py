@@ -1,7 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.conf import settings
-from django.utils.text import slugify
+from django.utils.text import slugify, Truncator
 
 class CustomUser(AbstractUser):
     pseudonyme = models.CharField(max_length=50, unique=True)
@@ -483,21 +483,42 @@ class MessageConsultation(models.Model):
 # ============= MODÈLES DES POSTS (STYLE INSTAGRAM) =============
 
 class Post(models.Model):
-    """Post publié par un utilisateur ou un psychologue"""
+    """Publication d'un utilisateur ou d'un psychologue : post court
+    (texte / photo / vidéo), blog ou article."""
+    TYPE_POST = 'post'
+    TYPE_BLOG = 'blog'
+    TYPE_ARTICLE = 'article'
+    TYPE_CHOICES = [
+        (TYPE_POST, 'Post'),
+        (TYPE_BLOG, 'Blog'),
+        (TYPE_ARTICLE, 'Article'),
+    ]
+    LONG_TYPES = (TYPE_BLOG, TYPE_ARTICLE)
+
     auteur = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name='posts'
     )
+    type = models.CharField(
+        max_length=10, choices=TYPE_CHOICES, default=TYPE_POST, db_index=True
+    )
+    titre = models.CharField(max_length=200, blank=True)
+    sous_titre = models.CharField(max_length=300, blank=True)
     contenu = models.TextField(
         blank=True,
         verbose_name="Texte du post"
     )
+    corps = models.TextField(
+        blank=True,
+        verbose_name="Corps riche (HTML nettoyé, blog/article)"
+    )
+    tags = models.CharField(max_length=200, blank=True)
     image = models.ImageField(
         upload_to='posts/',
         blank=True,
         null=True,
-        verbose_name="Image"
+        verbose_name="Image (couverture pour un blog/article)"
     )
     video = models.FileField(
         upload_to='posts/videos/',
@@ -519,7 +540,25 @@ class Post(models.Model):
         verbose_name_plural = "Posts"
 
     def __str__(self):
+        if self.titre:
+            return f"{self.get_type_display()} « {self.titre} » de {self.auteur.pseudonyme}"
         return f"Post de {self.auteur.pseudonyme} - {self.date_creation.strftime('%d/%m/%Y')}"
+
+    @property
+    def est_long_format(self):
+        return self.type in self.LONG_TYPES
+
+    def liste_tags(self):
+        return [t.strip() for t in self.tags.split(',') if t.strip()]
+
+    def est_modifie(self):
+        return (self.date_modification - self.date_creation).total_seconds() > 300
+
+    def temps_lecture(self):
+        return max(1, round(len((self.contenu or '').split()) / 200))
+
+    def extrait(self, longueur=200):
+        return Truncator(' '.join((self.contenu or '').split())).chars(longueur)
 
     def nb_likes(self):
         return self.likes.count()
@@ -664,6 +703,8 @@ class ProfilSante(models.Model):
 
 
 class BlogBienEtre(models.Model):
+    # Legacy : les blogs vivent désormais dans Post (type='blog'). Table gardée
+    # après la copie des données ; à supprimer une fois la migration vérifiée en prod.
     utilisateur = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='blogs_bien_etre')
     titre = models.CharField(max_length=200)
     contenu = models.TextField()

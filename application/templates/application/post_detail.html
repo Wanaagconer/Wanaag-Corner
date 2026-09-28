@@ -1,0 +1,248 @@
+{% extends 'application/base.html' %}
+{% load static %}
+
+{% block title %}{{ post.titre }} — Wanaag Corner{% endblock %}
+{% block page_title %}{{ post.get_type_display }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/prose.css' %}">
+<style>
+.rd { max-width: 740px; margin: 0 auto; padding-bottom: 4rem; opacity: 1 !important; transform: none !important; }
+.rd-back { display: inline-flex; align-items: center; gap: .4rem; font-size: .84rem; font-weight: 700; color: #7a6856; text-decoration: none; margin-bottom: 1.6rem; }
+.rd-back:hover { color: #2a211b; }
+
+.art-type { display: inline-block; font-size: .66rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; padding: .22rem .65rem; border-radius: 50px; }
+.art-type-blog { background: rgba(190,140,60,.14); color: #8a622a; }
+.art-type-article { background: rgba(96,122,92,.16); color: #3f5a3c; }
+.rd-kicker { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; margin-bottom: 1rem; }
+.rd-tag { font-size: .78rem; font-weight: 600; color: #7a6856; text-decoration: none; padding: .2rem .7rem; border-radius: 50px; background: rgba(58,42,29,.06); transition: all .15s; }
+.rd-tag:hover { background: rgba(190,140,60,.18); color: #7a5218; }
+
+.rd-title { font-family: 'Fraunces', serif; font-weight: 800; font-size: 2.9rem; line-height: 1.12; letter-spacing: -.015em; color: #2a211b; margin: 0 0 .7rem; text-wrap: balance; }
+.rd-subtitle { font-family: 'Source Serif 4', Georgia, serif; font-size: 1.35rem; line-height: 1.45; color: #7a6856; margin: 0 0 1.6rem; text-wrap: pretty; }
+
+.rd-byline { display: flex; align-items: center; gap: .9rem; padding: 1.1rem 0; border-top: 1px solid rgba(58,42,29,.1); border-bottom: 1px solid rgba(58,42,29,.1); margin-bottom: 2rem; flex-wrap: wrap; }
+.rd-av { width: 46px; height: 46px; border-radius: 50%; flex: none; overflow: hidden; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #be8c3c, #594836); color: #fff; font-weight: 800; text-decoration: none; }
+.rd-av.psy { background: linear-gradient(135deg, #2e86c1, #1a5276); }
+.rd-av img { width: 100%; height: 100%; object-fit: cover; }
+.rd-by-text { flex: 1; min-width: 160px; }
+.rd-by-name { font-weight: 800; font-size: .95rem; color: #2a211b; text-decoration: none; }
+.rd-by-name:hover { color: #9c6f2f; }
+.rd-role { display: inline-block; margin-left: .4rem; font-size: .64rem; font-weight: 700; padding: .12rem .5rem; border-radius: 20px; background: rgba(41,128,185,.12); color: #1a6fa8; vertical-align: 1px; }
+.rd-date { font-size: .8rem; color: #9b8b7e; margin-top: .1rem; }
+.rd-by-actions { display: flex; gap: .5rem; align-items: center; }
+.rd-btn { border: 1.5px solid rgba(190,140,60,.4); background: transparent; color: #7a5218; padding: .42rem 1rem; border-radius: 50px; font-family: inherit; font-size: .8rem; font-weight: 700; cursor: pointer; text-decoration: none; transition: all .16s; }
+.rd-btn:hover { background: rgba(190,140,60,.12); }
+.rd-btn.on { background: rgba(190,140,60,.14); }
+.rd-btn.danger { border-color: rgba(200,60,50,.35); color: #b03a2e; }
+.rd-btn.danger:hover { background: rgba(200,60,50,.08); }
+
+.rd-cover { margin: 0 0 2.2rem; }
+.rd-cover img { width: 100%; max-height: 460px; object-fit: cover; border-radius: 16px; display: block; box-shadow: 0 16px 50px -20px rgba(42,33,27,.5); }
+
+.rd-actions { display: flex; align-items: center; gap: .3rem; padding: .9rem 0; margin-top: 2.6rem; border-top: 1px solid rgba(58,42,29,.1); border-bottom: 1px solid rgba(58,42,29,.1); }
+.rd-act { display: inline-flex; align-items: center; gap: .5rem; padding: .55rem .9rem; border: none; border-radius: 50px; background: transparent; cursor: pointer; font-family: inherit; font-size: .88rem; font-weight: 700; color: #7a6856; text-decoration: none; transition: background .15s, color .15s; }
+.rd-act:hover { background: rgba(190,140,60,.1); color: #2a211b; }
+.rd-act svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform .2s; }
+.rd-act.liked { color: #e74c3c; }
+.rd-act.liked svg { fill: #e74c3c; stroke: #e74c3c; }
+.rd-act.pop svg { animation: rdPop .32s ease; }
+@keyframes rdPop { 0% { transform: scale(1); } 35% { transform: scale(1.5); } 100% { transform: scale(1); } }
+.rd-act.right { margin-left: auto; }
+
+.rd-comments { margin-top: 2.4rem; }
+.rd-comments h3, .rd-more h3 { font-family: 'Fraunces', serif; font-size: 1.3rem; margin: 0 0 1.2rem; color: #2a211b; }
+.rd-com-form { display: flex; gap: .7rem; align-items: center; margin-bottom: 1.6rem; }
+.rd-com-form input { flex: 1; border: 1.5px solid rgba(58,42,29,.14); border-radius: 50px; padding: .7rem 1.2rem; font-family: inherit; font-size: .92rem; background: #fff; outline: none; color: #2a211b; }
+.rd-com-form input:focus { border-color: #be8c3c; box-shadow: 0 0 0 3px rgba(190,140,60,.12); }
+.rd-com-send { border: none; padding: .7rem 1.4rem; border-radius: 50px; cursor: pointer; font-family: inherit; font-weight: 800; font-size: .84rem; color: #fff; background: linear-gradient(135deg, #c79a52, #9c6f2f); }
+.rd-com { display: flex; gap: .8rem; margin-bottom: 1.2rem; }
+.rd-com-av { width: 36px; height: 36px; border-radius: 50%; flex: none; background: linear-gradient(135deg, #be8c3c, #594836); color: #fff; font-size: .8rem; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+.rd-com-av.psy { background: linear-gradient(135deg, #2e86c1, #1a5276); }
+.rd-com-bubble { flex: 1; background: #fff; border: 1px solid rgba(58,42,29,.08); border-radius: 4px 16px 16px 16px; padding: .7rem 1rem; }
+.rd-com-name { font-weight: 800; font-size: .84rem; color: #2a211b; }
+.rd-com-text { font-size: .92rem; line-height: 1.55; color: #3a2a1d; margin-top: .15rem; white-space: pre-wrap; overflow-wrap: anywhere; }
+.rd-com-time { font-size: .72rem; color: #9b8b7e; margin-top: .25rem; }
+.rd-empty { color: #9b8b7e; font-size: .9rem; }
+
+.rd-more { margin-top: 3rem; padding-top: 2rem; border-top: 1px solid rgba(58,42,29,.1); }
+.rd-more-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.1rem; }
+.rd-more-card { display: block; text-decoration: none; color: inherit; background: #fff; border: 1px solid rgba(58,42,29,.08); border-radius: 14px; overflow: hidden; transition: transform .2s, box-shadow .2s; }
+.rd-more-card:hover { transform: translateY(-3px); box-shadow: 0 14px 30px -14px rgba(42,33,27,.35); }
+.rd-more-img { height: 110px; background: linear-gradient(135deg, #594836, #2c241b); }
+.rd-more-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.rd-more-body { padding: .85rem 1rem 1rem; }
+.rd-more-title { font-family: 'Fraunces', serif; font-weight: 700; font-size: 1rem; line-height: 1.3; color: #2a211b; margin-bottom: .4rem; }
+.rd-more-meta { font-size: .74rem; color: #9b8b7e; }
+
+.rd-toast { position: fixed; left: 50%; bottom: 1.6rem; transform: translate(-50%, 90px); z-index: 3000; background: #2a211b; color: #f3e6c8; padding: .7rem 1.4rem; border-radius: 50px; font-size: .86rem; font-weight: 600; box-shadow: 0 10px 34px rgba(0,0,0,.35); transition: transform .3s cubic-bezier(.34,1.4,.64,1); }
+.rd-toast.show { transform: translate(-50%, 0); }
+
+@media (max-width: 760px) {
+    .rd-title { font-size: 2.1rem; }
+    .rd-subtitle { font-size: 1.15rem; }
+    .rd-more-grid { grid-template-columns: 1fr; }
+    .rd-by-actions { width: 100%; }
+    .rd-com-form { flex-direction: column; align-items: stretch; }
+    .rd-com-send { width: 100%; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<article class="rd" id="post-{{ post.id }}">
+  <a class="rd-back" href="{% url 'posts_feed' %}">← Toutes les publications</a>
+
+  <header>
+    <div class="rd-kicker">
+      <span class="art-type art-type-{{ post.type }}">{{ post.get_type_display }}</span>
+      {% for tag in post.liste_tags %}<a class="rd-tag" href="{% url 'posts_feed' %}?tag={{ tag|urlencode }}">{{ tag }}</a>{% endfor %}
+    </div>
+    <h1 class="rd-title">{{ post.titre }}</h1>
+    {% if post.sous_titre %}<p class="rd-subtitle">{{ post.sous_titre }}</p>{% endif %}
+
+    <div class="rd-byline">
+      <a class="rd-av {% if post.auteur.psychologue_profile %}psy{% endif %}" href="{% url 'user_profile' post.auteur.id %}">
+        {% if post.auteur.photo %}<img src="{{ post.auteur.photo.url }}" alt="">{% else %}{{ post.auteur.pseudonyme|first|upper }}{% endif %}
+      </a>
+      <div class="rd-by-text">
+        <a class="rd-by-name" href="{% url 'user_profile' post.auteur.id %}">{{ post.auteur.pseudonyme }}</a>{% if post.auteur.psychologue_profile %}<span class="rd-role">Psychologue</span>{% endif %}
+        <div class="rd-date">{{ post.date_creation|date:"j F Y" }} · {{ post.temps_lecture }} min de lecture{% if post.est_modifie %} · modifié{% endif %}</div>
+      </div>
+      <div class="rd-by-actions">
+        {% if post.auteur == user %}
+          <a class="rd-btn" href="{% url 'post_rewrite' post.id %}">Modifier</a>
+          <button type="button" class="rd-btn danger" id="rdDelete">Supprimer</button>
+        {% else %}
+          <button type="button" class="rd-btn {% if is_following %}on{% endif %}" id="rdFollow" data-user="{{ post.auteur.id }}">{% if is_following %}✓ Abonné{% else %}+ Suivre{% endif %}</button>
+        {% endif %}
+      </div>
+    </div>
+  </header>
+
+  {% if post.image %}<figure class="rd-cover"><img src="{{ post.image.url }}" alt=""></figure>{% endif %}
+
+  <div class="rd-body prose">{{ post.corps|safe }}</div>
+
+  <div class="rd-actions">
+    <button type="button" class="rd-act {% if is_liked %}liked{% endif %}" id="rdLike">
+      <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      <span id="rdLikeCount">{{ post.nb_likes }}</span>
+    </button>
+    <a class="rd-act" href="#commentaires">
+      <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      <span id="rdComCount">{{ post.nb_commentaires }}</span>
+    </a>
+    <button type="button" class="rd-act right" id="rdShare">
+      <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+      Partager
+    </button>
+  </div>
+
+  <section class="rd-comments" id="commentaires">
+    <h3>Discussion</h3>
+    <div class="rd-com-form">
+      <input type="text" id="rdComInput" maxlength="500" placeholder="Partagez votre réaction, avec bienveillance…">
+      <button type="button" class="rd-com-send" id="rdComSend">Commenter</button>
+    </div>
+    <div id="rdComList">
+      {% for com in post.commentaires_post.all %}
+      <div class="rd-com">
+        <div class="rd-com-av {% if com.auteur.psychologue_profile %}psy{% endif %}">{{ com.auteur.pseudonyme|first|upper }}</div>
+        <div class="rd-com-bubble">
+          <div class="rd-com-name">{{ com.auteur.pseudonyme }}</div>
+          <div class="rd-com-text">{{ com.contenu }}</div>
+          <div class="rd-com-time">{{ com.date_creation|date:"d/m/Y H:i" }}</div>
+        </div>
+      </div>
+      {% empty %}
+      <p class="rd-empty" id="rdComEmpty">Aucun commentaire pour l'instant — lancez la conversation.</p>
+      {% endfor %}
+    </div>
+  </section>
+
+  {% if lire_aussi %}
+  <section class="rd-more">
+    <h3>À lire aussi</h3>
+    <div class="rd-more-grid">
+      {% for autre in lire_aussi %}
+      <a class="rd-more-card" href="{% url 'post_detail' autre.id %}">
+        <div class="rd-more-img">{% if autre.image %}<img src="{{ autre.image.url }}" alt="" loading="lazy">{% endif %}</div>
+        <div class="rd-more-body">
+          <div class="rd-more-title">{{ autre.titre }}</div>
+          <div class="rd-more-meta">{{ autre.auteur.pseudonyme }} · {{ autre.temps_lecture }} min</div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+</article>
+<div class="rd-toast" id="rdToast"></div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+  const CSRF = '{{ csrf_token }}';
+  const ID = {{ post.id }};
+  const $ = id => document.getElementById(id);
+  function toast(msg) { const t = $('rdToast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove('show'), 2600); }
+  const post = (url, body) => fetch(url, { method: 'POST', headers: { 'X-CSRFToken': CSRF }, body }).then(r => r.json());
+
+  /* liens externes dans l'article : nouvel onglet */
+  document.querySelectorAll('.rd-body a[href^="http"]').forEach(a => { a.target = '_blank'; });
+
+  $('rdLike').addEventListener('click', () => {
+    post('/posts/' + ID + '/like/').then(d => {
+      if (!d.success) return;
+      const b = $('rdLike'); b.classList.toggle('liked', d.liked);
+      if (d.liked) { b.classList.add('pop'); setTimeout(() => b.classList.remove('pop'), 340); }
+      $('rdLikeCount').textContent = d.nb_likes;
+    });
+  });
+
+  $('rdShare').addEventListener('click', () => {
+    const url = location.href.split('#')[0];
+    if (navigator.share) { navigator.share({ title: document.title, url }).catch(() => {}); }
+    else if (navigator.clipboard) { navigator.clipboard.writeText(url).then(() => toast('🔗 Lien copié')); }
+  });
+
+  const follow = $('rdFollow');
+  if (follow) follow.addEventListener('click', () => {
+    post('/follow/' + follow.dataset.user + '/').then(d => {
+      if (!d.success) return;
+      follow.classList.toggle('on', d.following);
+      follow.textContent = d.following ? '✓ Abonné' : '+ Suivre';
+    });
+  });
+
+  const del = $('rdDelete');
+  if (del) del.addEventListener('click', () => {
+    if (!confirm('Supprimer définitivement cette publication ?')) return;
+    post('/posts/' + ID + '/delete/').then(d => { if (d.success) location.href = '{% url "posts_feed" %}'; });
+  });
+
+  function sendComment() {
+    const input = $('rdComInput'), text = input.value.trim();
+    if (!text) return;
+    const fd = new FormData(); fd.append('contenu', text);
+    post('/posts/' + ID + '/commenter/', fd).then(d => {
+      if (!d.success) return;
+      input.value = '';
+      const empty = $('rdComEmpty'); if (empty) empty.remove();
+      const el = document.createElement('div'); el.className = 'rd-com';
+      const av = document.createElement('div'); av.className = 'rd-com-av'; av.textContent = d.auteur.charAt(0).toUpperCase();
+      const bubble = document.createElement('div'); bubble.className = 'rd-com-bubble';
+      [['rd-com-name', d.auteur], ['rd-com-text', d.contenu], ['rd-com-time', d.date]].forEach(([cls, val]) => {
+        const n = document.createElement('div'); n.className = cls; n.textContent = val; bubble.appendChild(n);
+      });
+      el.append(av, bubble); $('rdComList').appendChild(el);
+      $('rdComCount').textContent = d.nb_commentaires;
+    });
+  }
+  $('rdComSend').addEventListener('click', sendComment);
+  $('rdComInput').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); sendComment(); } });
+})();
+</script>
+{% endblock %}

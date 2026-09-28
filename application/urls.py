@@ -74,6 +74,10 @@ urlpatterns = [
     # ============= ROUTES POSTS =============
     path('posts/', views.posts_feed, name='posts_feed'),
     path('posts/create/', views.create_post, name='create_post'),
+    path('posts/write/', views.post_write, name='post_write'),
+    path('posts/upload-media/', views.post_upload_media, name='post_upload_media'),
+    path('posts/<int:post_id>/', views.post_detail, name='post_detail'),
+    path('posts/<int:post_id>/modifier/', views.post_write, name='post_rewrite'),
     path('posts/<int:post_id>/delete/', views.delete_post, name='delete_post'),
     path('posts/<int:post_id>/edit/', views.edit_post, name='edit_post'),
     path('posts/<int:post_id>/like/', views.like_post, name='like_post'),
@@ -114,7 +118,4 @@ urlpatterns = [
     path('parcours/journal/', views.parcours_journal, name='parcours_journal'),
     path('parcours/inspiration/', views.parcours_inspiration, name='parcours_inspiration'),
     path('parcours/sante/', views.parcours_sante, name='parcours_sante'),
-    path('parcours/blog/', views.parcours_blog, name='parcours_blog'),
-    path('parcours/blog/create/', views.parcours_blog_create, name='parcours_blog_create'),
-    path('parcours/blog/<int:blog_id>/', views.parcours_blog_detail, name='parcours_blog_detail'),
 ]

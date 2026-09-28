@@ -338,7 +338,7 @@
     {% if posts %}
     <div class="posts-grid">
       {% for post in posts %}
-      <a href="{% url 'posts_feed' %}" class="post-thumb">
+      <a href="{% if post.est_long_format %}{% url 'post_detail' post.id %}{% else %}{% url 'posts_feed' %}#post-{{ post.id }}{% endif %}" class="post-thumb">
         {% if post.image %}
           <img src="{{ post.image.url }}" alt="" class="post-thumb-img">
         {% elif post.video %}
@@ -351,7 +351,9 @@
           </div>
         {% endif %}
         <div class="post-thumb-body">
-          {% if post.contenu %}
+          {% if post.est_long_format %}
+          <div class="post-thumb-text"><strong>{{ post.titre }}</strong>{% if post.sous_titre %} — {{ post.sous_titre }}{% endif %}</div>
+          {% elif post.contenu %}
           <div class="post-thumb-text">{{ post.contenu }}</div>
           {% else %}
           <div class="post-thumb-text" style="color:#b1a59a;">Post sans texte</div>

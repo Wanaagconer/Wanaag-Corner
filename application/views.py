@@ -12,7 +12,12 @@ from .models import (
     Post, CommentairePost, Follow,
     ChatSession, ChatMessage,
 )
-import uuid, json
+import uuid, json, os, re
+from collections import Counter
+from django.core.files.storage import default_storage
+from django.urls import reverse
+from PIL import Image, UnidentifiedImageError
+from .richtext import sanitize_html, html_to_text
 
 
 def admin_required(view_func):
@@ -733,19 +738,53 @@ def consultation_respond(request, consultation_id):
 
 # ============= VUES DES POSTS =============
 
+def _clean_tags(raw):
+    """« #Sommeil, calme , sommeil » -> « sommeil, calme » (6 tags max, 30 caractères chacun)."""
+    seen, out = set(), []
+    for tag in (raw or '').split(','):
+        tag = re.sub(r"[^\w\s'-]", '', tag)
+        tag = re.sub(r'\s+', ' ', tag).strip().lower()[:30]
+        if tag and tag not in seen:
+            seen.add(tag)
+            out.append(tag)
+    return ', '.join(out[:6])
+
+
 @login_required
 def posts_feed(request):
-    """Feed principal - tous les posts de tous les utilisateurs"""
-    posts = Post.objects.select_related('auteur').prefetch_related('likes', 'commentaires_post__auteur').all()
+    """Feed principal : posts courts, blogs et articles de toute la communauté"""
+    posts = Post.objects.select_related('auteur').prefetch_related('likes', 'commentaires_post__auteur')
 
-    # IDs des posts aimés par l'utilisateur courant
-    liked_ids = set(request.user.posts_aimes.values_list('id', flat=True))
-    following_ids = set(Follow.objects.filter(follower=request.user).values_list('following_id', flat=True))
+    active_type = request.GET.get('type', '')
+    if active_type in dict(Post.TYPE_CHOICES):
+        posts = posts.filter(type=active_type)
+    else:
+        active_type = ''
+
+    active_tag = request.GET.get('tag', '').strip().lower()[:30]
+    if active_tag:
+        posts = posts.filter(tags__iregex=r'(^|,)\s*' + re.escape(active_tag) + r'\s*(,|$)')
+
+    # Compteurs des onglets + sujets les plus utilisés dans les blogs/articles
+    counts = dict(Post.objects.values_list('type').annotate(n=Count('id')))
+    type_counts = {
+        'all': sum(counts.values()),
+        'post': counts.get(Post.TYPE_POST, 0),
+        'blog': counts.get(Post.TYPE_BLOG, 0),
+        'article': counts.get(Post.TYPE_ARTICLE, 0),
+    }
+    tag_counter = Counter()
+    for raw in Post.objects.filter(type__in=Post.LONG_TYPES).exclude(tags='').values_list('tags', flat=True)[:300]:
+        tag_counter.update(t.strip() for t in raw.split(',') if t.strip())
 
     context = {
         'posts': posts,
-        'liked_ids': liked_ids,
-        'following_ids': following_ids,
+        'liked_ids': set(request.user.posts_aimes.values_list('id', flat=True)),
+        'following_ids': set(Follow.objects.filter(follower=request.user).values_list('following_id', flat=True)),
+        'active_type': active_type,
+        'active_tag': active_tag,
+        'type_counts': type_counts,
+        'popular_tags': [t for t, _ in tag_counter.most_common(8)],
     }
     return render(request, 'application/posts.html', context)
 
@@ -787,8 +826,8 @@ def delete_post(request, post_id):
 
 @login_required
 def edit_post(request, post_id):
-    """Modifier le contenu d'un post"""
-    post = get_object_or_404(Post, id=post_id, auteur=request.user)
+    """Modifier le texte d'un post court (les blogs/articles passent par l'éditeur)"""
+    post = get_object_or_404(Post, id=post_id, auteur=request.user, type=Post.TYPE_POST)
     if request.method == 'POST':
         data = json.loads(request.body)
         contenu = data.get('contenu', '').strip()
@@ -843,6 +882,129 @@ def commenter_post(request, post_id):
         })
 
     return JsonResponse({'success': False})
+
+
+# ============= BLOGS & ARTICLES (éditeur riche, façon Substack) =============
+
+_IMAGE_EXT = {'.jpg', '.jpeg', '.png', '.gif', '.webp'}
+_VIDEO_EXT = {'.mp4', '.webm', '.mov'}
+_MAX_IMAGE = 8 * 1024 * 1024
+_MAX_VIDEO = 60 * 1024 * 1024
+
+
+def _check_image(upload):
+    """Message d'erreur, ou None si le fichier est bien une image acceptable."""
+    if os.path.splitext(upload.name)[1].lower() not in _IMAGE_EXT:
+        return "Format d'image non pris en charge (JPG, PNG, GIF ou WebP)."
+    if upload.size > _MAX_IMAGE:
+        return f"Image trop lourde (maximum {_MAX_IMAGE // (1024 * 1024)} Mo)."
+    try:
+        Image.open(upload).verify()
+    except Exception:
+        return "Ce fichier n'est pas une image valide."
+    upload.seek(0)
+    return None
+
+
+@login_required
+def post_write(request, post_id=None):
+    """Éditeur plein écran pour écrire (ou modifier) un blog ou un article"""
+    post = None
+    if post_id is not None:
+        post = get_object_or_404(Post, id=post_id, auteur=request.user, type__in=Post.LONG_TYPES)
+
+    if request.method == 'POST':
+        def refuse(message):
+            return JsonResponse({'success': False, 'message': message}, status=400)
+
+        titre = request.POST.get('titre', '').strip()[:200]
+        corps = sanitize_html(request.POST.get('corps', ''))
+        texte = html_to_text(corps)
+        type_pub = request.POST.get('type', Post.TYPE_BLOG)
+        if type_pub not in Post.LONG_TYPES:
+            type_pub = Post.TYPE_BLOG
+
+        if not titre:
+            return refuse('Donnez un titre à votre publication.')
+        if not texte and '<img' not in corps and '<video' not in corps:
+            return refuse("Votre publication est vide : écrivez au moins quelques phrases.")
+
+        couverture = request.FILES.get('image')
+        if couverture:
+            erreur = _check_image(couverture)
+            if erreur:
+                return refuse(erreur)
+
+        if post is None:
+            post = Post(auteur=request.user)
+        post.type = type_pub
+        post.titre = titre
+        post.sous_titre = request.POST.get('sous_titre', '').strip()[:300]
+        post.corps = corps
+        post.contenu = texte
+        post.tags = _clean_tags(request.POST.get('tags', ''))
+        if couverture:
+            post.image = couverture
+        elif request.POST.get('supprimer_couverture') == '1':
+            post.image = None
+        post.save()
+        return JsonResponse({'success': True, 'url': reverse('post_detail', args=[post.id])})
+
+    initial = None
+    if post:
+        initial = {
+            'titre': post.titre, 'sous_titre': post.sous_titre, 'corps': post.corps,
+            'tags': post.tags, 'type': post.type, 'cover': post.image.url if post.image else '',
+        }
+    return render(request, 'application/post_write.html', {
+        'post': post,
+        'initial': initial,
+        'type_initial': post.type if post else request.GET.get('type', Post.TYPE_BLOG),
+    })
+
+
+@login_required
+def post_upload_media(request):
+    """Upload d'une image ou d'une vidéo à insérer dans le corps d'un blog/article"""
+    upload = request.FILES.get('file')
+    if request.method != 'POST' or not upload:
+        return JsonResponse({'success': False, 'message': 'Aucun fichier reçu.'}, status=400)
+
+    extension = os.path.splitext(upload.name)[1].lower()
+    if extension in _IMAGE_EXT:
+        kind, erreur = 'image', _check_image(upload)
+    elif extension in _VIDEO_EXT:
+        kind = 'video'
+        erreur = None if upload.size <= _MAX_VIDEO else f"Vidéo trop lourde (maximum {_MAX_VIDEO // (1024 * 1024)} Mo)."
+    else:
+        return JsonResponse({'success': False, 'message': 'Format non pris en charge.'}, status=400)
+    if erreur:
+        return JsonResponse({'success': False, 'message': erreur}, status=400)
+
+    name = default_storage.save(f'posts/inline/{uuid.uuid4().hex}{extension}', upload)
+    return JsonResponse({'success': True, 'kind': kind, 'url': default_storage.url(name)})
+
+
+@login_required
+def post_detail(request, post_id):
+    """Page de lecture d'un blog ou d'un article"""
+    post = get_object_or_404(
+        Post.objects.select_related('auteur').prefetch_related('commentaires_post__auteur'), id=post_id
+    )
+    if not post.est_long_format:
+        return redirect(f"{reverse('posts_feed')}#post-{post.id}")
+
+    # « À lire aussi » : d'abord les publications qui partagent des tags
+    tags = set(post.liste_tags())
+    candidats = Post.objects.filter(type__in=Post.LONG_TYPES).exclude(id=post.id).select_related('auteur')[:30]
+    lire_aussi = sorted(candidats, key=lambda p: -len(tags & set(p.liste_tags())))[:3]
+
+    return render(request, 'application/post_detail.html', {
+        'post': post,
+        'is_liked': post.likes.filter(id=request.user.id).exists(),
+        'is_following': Follow.objects.filter(follower=request.user, following=post.auteur).exists(),
+        'lire_aussi': lire_aussi,
+    })
 
 
 @login_required
@@ -1232,7 +1394,7 @@ def admin_update_consultation(request, consultation_id):
 
 # ============= PARCOURS BIEN-ÊTRE =============
 
-from .models import JournalEntry, QuoteInspirante, ProfilSante, BlogBienEtre
+from .models import JournalEntry, QuoteInspirante, ProfilSante
 import random, copy
 from datetime import timedelta, date
 
@@ -1865,9 +2027,6 @@ def parcours_home(request):
     # Recent journal entries
     journal_recent = JournalEntry.objects.filter(utilisateur=user)[:3]
 
-    # Recent blogs
-    blogs_recent = BlogBienEtre.objects.filter(est_publie=True)[:3]
-
     # Health profile
     profil_sante = getattr(user, 'profil_sante', None)
 
@@ -1891,8 +2050,8 @@ def parcours_home(request):
     # Profil santé rempli : +10 pts
     score += 10 if profil_sante else 0
 
-    # Blog bien-être : +3 par article publié, max 15 pts (besoin de 5 articles)
-    score += min(BlogBienEtre.objects.filter(utilisateur=user, est_publie=True).count() * 3, 15)
+    # Blogs & articles publiés : +3 par publication, max 15 pts (besoin de 5 publications)
+    score += min(Post.objects.filter(auteur=user, type__in=Post.LONG_TYPES).count() * 3, 15)
 
     # Sessions Wana (chatbot) : +3 par session, max 15 pts (besoin de 5 sessions)
     score += min(ChatSession.objects.filter(utilisateur=user).count() * 3, 15)
@@ -1900,7 +2059,7 @@ def parcours_home(request):
     # Stats
     stats = {
         'journal_count': JournalEntry.objects.filter(utilisateur=user).count(),
-        'blog_count': BlogBienEtre.objects.filter(utilisateur=user).count(),
+        'chat_count': ChatSession.objects.filter(utilisateur=user).count(),
         'ressources_count': ProgressionUtilisateur.objects.filter(utilisateur=user, est_complete=True).count(),
         'consultations_count': ConsultationRequest.objects.filter(utilisateur=user).count(),
     }
@@ -1908,7 +2067,6 @@ def parcours_home(request):
     return render(request, 'application/parcours_home.html', {
         'quote_du_jour': quote_du_jour,
         'journal_recent': journal_recent,
-        'blogs_recent': blogs_recent,
         'profil_sante': profil_sante,
         'wellness_score': score,
         'stats': stats,
@@ -2044,63 +2202,6 @@ def parcours_sante(request):
         'today_workout': today_workout,
         'total_cal': total_cal,
         'macros': macros,
-    })
-
-
-@login_required
-def parcours_blog(request):
-    """Blog bien-être list"""
-    blogs = BlogBienEtre.objects.filter(est_publie=True).select_related('utilisateur')
-    liked_ids = set(request.user.blogs_aimes.values_list('id', flat=True))
-    return render(request, 'application/parcours_blog.html', {
-        'blogs': blogs,
-        'liked_ids': liked_ids,
-    })
-
-
-@login_required
-def parcours_blog_create(request):
-    """Create a blog post"""
-    if request.method == 'POST':
-        titre = request.POST.get('titre', '').strip()
-        contenu = request.POST.get('contenu', '').strip()
-        tags = request.POST.get('tags', '').strip()
-        image = request.FILES.get('image')
-        if titre and contenu:
-            blog = BlogBienEtre.objects.create(
-                utilisateur=request.user,
-                titre=titre, contenu=contenu,
-                tags=tags, image=image,
-            )
-            return redirect('parcours_blog_detail', blog_id=blog.id)
-    return render(request, 'application/parcours_blog_create.html', {})
-
-
-@login_required
-def parcours_blog_detail(request, blog_id):
-    """Blog post detail"""
-    blog = get_object_or_404(BlogBienEtre, id=blog_id, est_publie=True)
-    is_liked = request.user in blog.likes.all()
-
-    if request.method == 'POST':
-        action = request.POST.get('action')
-        if action == 'like':
-            if is_liked:
-                blog.likes.remove(request.user)
-                is_liked = False
-            else:
-                blog.likes.add(request.user)
-                is_liked = True
-            return JsonResponse({'success': True, 'is_liked': is_liked, 'nb_likes': blog.nb_likes()})
-        elif action == 'delete' and blog.utilisateur == request.user:
-            blog.delete()
-            return redirect('parcours_blog')
-
-    related = BlogBienEtre.objects.filter(est_publie=True).exclude(id=blog.id)[:3]
-    return render(request, 'application/parcours_blog_detail.html', {
-        'blog': blog,
-        'is_liked': is_liked,
-        'related': related,
     })
 
 
