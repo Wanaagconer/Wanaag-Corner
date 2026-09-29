@@ -1045,7 +1045,7 @@ document.head.appendChild(s);
 {% url 'chatbot' as chatbot_url %}
 <div id="chatWidget">
     <!-- Bouton bulle -->
-    <button class="wgt-bubble" id="wgtBubble" onclick="wgtToggle()" title="Parler à Wana">
+    <button class="wgt-bubble" id="wgtBubble" onclick="wgtToggle()" title="Wana — l'assistant Wanaag Corner">
         <span id="wgtIconOpen">🤖</span>
         <span id="wgtIconClose" style="display:none;font-size:1.2rem;font-weight:300;">✕</span>
         <span class="wgt-pulse-ring"></span>
@@ -1066,7 +1066,12 @@ document.head.appendChild(s);
         <div class="wgt-body" id="wgtBody">
             <div class="wgt-welcome">
                 Bonjour <strong>{{ user.pseudonyme }}</strong> 💛<br>
-                Je suis là pour vous écouter. Comment vous sentez-vous ?
+                Je suis Wana, l'assistant de Wanaag Corner. Je peux vous aider à trouver votre chemin sur le site, ou simplement vous écouter.
+            </div>
+            <div class="wgt-suggestions" id="wgtSuggestions">
+                <button type="button" class="wgt-chip" data-q="Comment fonctionne Wanaag Corner ? Que puis-je faire sur le site ?">🧭 Découvrir le site</button>
+                <button type="button" class="wgt-chip" data-q="J'ai besoin de parler de comment je me sens.">💛 J'ai besoin de parler</button>
+                <button type="button" class="wgt-chip" data-q="Comment prendre rendez-vous avec un psychologue ?">🩺 Trouver un psychologue</button>
             </div>
         </div>
         <div class="wgt-typing" id="wgtTyping" style="display:none;">
@@ -1143,6 +1148,13 @@ document.head.appendChild(s);
     padding:.65rem .8rem; border-radius:0 10px 10px 10px;
     font-size:.8rem; color:var(--encre); line-height:1.55;
 }
+.wgt-suggestions { display:flex; flex-direction:column; gap:.4rem; margin-top:.15rem; }
+.wgt-chip {
+    text-align:left; background:var(--papier); border:1px solid var(--trait);
+    color:var(--encre); font-size:.74rem; padding:.5rem .7rem; border-radius:10px;
+    cursor:pointer; transition:all .18s; font-family:inherit;
+}
+.wgt-chip:hover { border-color:var(--or); background:var(--sable); transform:translateX(2px); }
 .wgt-msg-user {
     background:linear-gradient(135deg,var(--or),var(--or-dark));
     color:var(--papier); padding:.5rem .75rem;
@@ -1241,7 +1253,28 @@ async function wgtSend() {
         add('wgt-msg-bot', 'Connexion perdue. Réessayez.');
     }
 }
+
+document.querySelectorAll('.wgt-chip').forEach(function(btn){
+    btn.addEventListener('click', function(){
+        var suggestions = document.getElementById('wgtSuggestions');
+        if (suggestions) suggestions.style.display = 'none';
+        document.getElementById('wgtInput').value = btn.dataset.q;
+        wgtSend();
+    });
+});
 </script>
+{% if request.resolver_match.url_name == 'dashboard' %}
+<script>
+(function(){
+    var key = 'wanaag_wana_autoopen_{{ user.pseudonyme }}';
+    if (sessionStorage.getItem(key)) return;
+    sessionStorage.setItem(key, '1');
+    setTimeout(function(){
+        if (!wgtOpen) wgtToggle();
+    }, 1100);
+})();
+</script>
+{% endif %}
 {% endif %}
 
 {% if user.is_authenticated %}

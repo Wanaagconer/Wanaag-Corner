@@ -337,8 +337,8 @@
                 <span class="cb-bot-online"></span>
             </div>
             <div class="cb-bot-name">Wana</div>
-            <span class="cb-bot-tag">IA d'écoute</span>
-            <p class="cb-bot-desc">Je suis ici pour vous écouter sans jugement, 24h/24 et 7j/7.</p>
+            <span class="cb-bot-tag">Guide & écoute</span>
+            <p class="cb-bot-desc">Je vous aide à utiliser Wanaag Corner et je suis là pour vous écouter, sans jugement, 24h/24 et 7j/7.</p>
         </div>
 
         <!-- Session info -->
@@ -399,8 +399,9 @@
             <div class="cb-welcome" id="cbWelcome">
                 <div class="cb-welcome-avatar">🤖</div>
                 <h2>Bonjour, {{ request.user.pseudonyme }} 👋</h2>
-                <p>Je suis Wanaag, votre assistant d'écoute. Je suis là pour vous accompagner — partagez ce que vous ressentez, posez vos questions ou parlez-moi de votre journée.</p>
+                <p>Je suis Wana, l'assistant de Wanaag Corner. Je peux vous aider à découvrir et utiliser le site, ou simplement vous écouter — partagez ce que vous ressentez, posez vos questions ou parlez-moi de votre journée.</p>
                 <div class="cb-starter-chips">
+                    <div class="cb-starter-chip" onclick="sendStarter(this)">🧭 Comment fonctionne le site ?</div>
                     <div class="cb-starter-chip" onclick="sendStarter(this)">😔 Je me sens triste</div>
                     <div class="cb-starter-chip" onclick="sendStarter(this)">😰 Je suis anxieux·se</div>
                     <div class="cb-starter-chip" onclick="sendStarter(this)">💬 J'ai besoin de parler</div>
