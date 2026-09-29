@@ -96,6 +96,68 @@
     .dash-quote-icon{font-size:1.6rem;flex-shrink:0;}
     .dash-quote-text{font-size:.9rem;font-style:italic;color:var(--brown);line-height:1.7;font-weight:400;}
 
+    /* ===== ANNONCES WANAAG CORNER ===== */
+    .annonces-wrap{
+        margin-bottom:2.2rem;
+    }
+    .annonces-row{
+        display:flex;gap:1.1rem;overflow-x:auto;padding-bottom:.4rem;
+        scroll-snap-type:x proximity;
+    }
+    .annonces-row::-webkit-scrollbar{height:6px;}
+    .annonces-row::-webkit-scrollbar-thumb{background:rgba(190,140,60,.3);border-radius:10px;}
+    .ann-card{
+        scroll-snap-align:start;
+        flex:0 0 320px;
+        background:white;
+        border-radius:20px;
+        padding:1.3rem 1.4rem;
+        box-shadow:0 4px 20px rgba(42,33,27,.08);
+        border:1px solid rgba(171,126,54,.13);
+        position:relative;overflow:hidden;
+        display:flex;flex-direction:column;gap:.6rem;
+    }
+    .ann-card.pinned{
+        border:1.5px solid rgba(190,140,60,.45);
+        background:linear-gradient(160deg,#fffaf0 0%,white 60%);
+    }
+    .ann-pin-tag{
+        position:absolute;top:.9rem;right:.9rem;
+        font-size:.62rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;
+        color:var(--accent-dark);background:rgba(190,140,60,.14);
+        padding:.22rem .6rem;border-radius:20px;
+    }
+    .ann-card-img{
+        width:100%;height:130px;border-radius:14px;overflow:hidden;margin-bottom:.2rem;
+    }
+    .ann-card-img img{width:100%;height:100%;object-fit:cover;display:block;}
+    .ann-type-badge{
+        display:inline-flex;align-items:center;gap:.4rem;
+        font-size:.68rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
+        color:var(--accent-dark);
+    }
+    .ann-card-title{
+        font-family:'Fraunces',serif;font-size:1.02rem;font-weight:700;
+        color:var(--brown-dark);line-height:1.35;
+    }
+    .ann-card-text{
+        font-size:.83rem;color:var(--brown-light);line-height:1.6;
+        flex:1;
+    }
+    .ann-card-foot{
+        display:flex;align-items:center;justify-content:space-between;gap:.6rem;
+        margin-top:.2rem;
+    }
+    .ann-card-date{font-size:.72rem;color:var(--brown-light);opacity:.75;}
+    .ann-card-link{
+        font-size:.78rem;font-weight:700;color:var(--accent-dark);text-decoration:none;
+        display:inline-flex;align-items:center;gap:.3rem;
+    }
+    .ann-card-link:hover{text-decoration:underline;}
+    @media(max-width:600px){
+        .ann-card{flex:0 0 82vw;}
+    }
+
     /* ===== SECTION TITLE ===== */
     .sec-title{
         font-family:'Fraunces',serif;
@@ -303,6 +365,32 @@
         "Votre santé mentale est importante. Chaque petit pas vers le mieux-être est une victoire."
     </div>
 </div>
+
+<!-- ANNONCES WANAAG CORNER -->
+{% if annonces %}
+<div class="annonces-wrap">
+    <div class="sec-title">📣 Annonces Wanaag Corner</div>
+    <div class="annonces-row">
+        {% for a in annonces %}
+        <div class="ann-card {% if a.est_epinglee %}pinned{% endif %}">
+            {% if a.est_epinglee %}<span class="ann-pin-tag">📌 À la une</span>{% endif %}
+            {% if a.image %}
+            <div class="ann-card-img"><img src="{{ a.image.url }}" alt=""></div>
+            {% endif %}
+            <span class="ann-type-badge">{{ a.icone }} {{ a.get_type_annonce_display }}</span>
+            <div class="ann-card-title">{{ a.titre }}</div>
+            <div class="ann-card-text">{{ a.contenu|truncatewords:28 }}</div>
+            <div class="ann-card-foot">
+                <span class="ann-card-date">{{ a.date_creation|date:"d M Y" }}</span>
+                {% if a.lien_externe %}
+                <a href="{{ a.lien_externe }}" target="_blank" rel="noopener noreferrer" class="ann-card-link">En savoir plus →</a>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
 
 <!-- PSY BLOCK (only for psychologists) -->
 {% if user.psychologue_profile %}

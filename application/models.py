@@ -2,6 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.conf import settings
 from django.utils.text import slugify, Truncator
+from django.utils import timezone
 
 class CustomUser(AbstractUser):
     pseudonyme = models.CharField(max_length=50, unique=True)
@@ -781,6 +782,64 @@ class ChatMessage(models.Model):
         ordering = ['sent_at']
         verbose_name = "Message chatbot IA"
         verbose_name_plural = "Messages chatbot IA"
+
+
+# ═══════════════════════════════════════════════════════════
+#  ANNONCES — Actualités officielles de l'équipe Wanaag Corner
+# ═══════════════════════════════════════════════════════════
+
+class Annonce(models.Model):
+    """Annonce officielle publiée par l'équipe Wanaag Corner, affichée sur le tableau de bord."""
+    TYPE_INFO = 'info'
+    TYPE_ATELIER = 'atelier'
+    TYPE_ALERTE = 'alerte'
+    TYPE_PSY = 'psy'
+    TYPE_CHOICES = [
+        (TYPE_INFO, 'Nouveauté'),
+        (TYPE_ATELIER, 'Atelier / Événement'),
+        (TYPE_ALERTE, 'Information importante'),
+        (TYPE_PSY, 'Disponibilité psychologue'),
+    ]
+    TYPE_ICONS = {
+        TYPE_INFO: '✨',
+        TYPE_ATELIER: '📅',
+        TYPE_ALERTE: '📣',
+        TYPE_PSY: '🩺',
+    }
+
+    titre = models.CharField(max_length=200, verbose_name="Titre")
+    contenu = models.TextField(verbose_name="Contenu")
+    type_annonce = models.CharField(max_length=10, choices=TYPE_CHOICES, default=TYPE_INFO)
+    image = models.ImageField(upload_to='annonces/', blank=True, null=True)
+    lien_externe = models.URLField(blank=True, null=True, verbose_name="Lien (inscription, détails...)")
+    est_publiee = models.BooleanField(default=True, verbose_name="Publiée")
+    est_epinglee = models.BooleanField(default=False, verbose_name="Épinglée en tête")
+    date_creation = models.DateTimeField(auto_now_add=True)
+    date_expiration = models.DateTimeField(blank=True, null=True, verbose_name="Expire le")
+    auteur = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True,
+        related_name='annonces_publiees'
+    )
+
+    class Meta:
+        ordering = ['-est_epinglee', '-date_creation']
+        verbose_name = "Annonce"
+        verbose_name_plural = "Annonces"
+
+    def __str__(self):
+        return self.titre
+
+    @property
+    def icone(self):
+        return self.TYPE_ICONS.get(self.type_annonce, '✨')
+
+    @property
+    def est_active(self):
+        if not self.est_publiee:
+            return False
+        if self.date_expiration and self.date_expiration < timezone.now():
+            return False
+        return True
 
     def __str__(self):
         return f"[{self.role}] {self.content[:60]}"

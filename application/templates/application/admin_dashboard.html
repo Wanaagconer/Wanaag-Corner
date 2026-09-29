@@ -313,6 +313,7 @@
   <!-- ===== TAB BAR ===== -->
   <div class="adm-tabs" id="admTabs">
     <button class="adm-tab active" onclick="admTab('overview',this)">Vue d'ensemble</button>
+    <button class="adm-tab" onclick="admTab('annonces',this)">Annonces <span class="tab-badge">{{ stats.total_annonces }}</span></button>
     <button class="adm-tab" onclick="admTab('ressources',this)">Ressources <span class="tab-badge">{{ stats.total_ressources }}</span></button>
     <button class="adm-tab" onclick="admTab('categories',this)">Catégories <span class="tab-badge">{{ stats.total_categories }}</span></button>
     <button class="adm-tab" onclick="admTab('users',this)">Utilisateurs <span class="tab-badge">{{ stats.total_users }}</span></button>
@@ -330,6 +331,11 @@
         <span class="stat-icon">👥</span>
         <div class="stat-value">{{ stats.total_users }}</div>
         <div class="stat-label">Utilisateurs</div>
+      </div>
+      <div class="stat-card orange">
+        <span class="stat-icon">📣</span>
+        <div class="stat-value">{{ stats.total_annonces }}</div>
+        <div class="stat-label">Annonces</div>
       </div>
       <div class="stat-card green">
         <span class="stat-icon">📝</span>
@@ -409,6 +415,56 @@
           </table>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SECTION: ANNONCES ===== -->
+  <div class="adm-section" id="sec-annonces">
+    <div class="adm-table-wrap">
+      <div class="adm-table-head">
+        <div style="display:flex;align-items:center;gap:.6rem;">
+          <h3>Annonces officielles</h3>
+          <span class="count-badge">{{ annonces|length }}</span>
+        </div>
+        <div style="display:flex;gap:.7rem;align-items:center;">
+          <input class="adm-search" placeholder="Rechercher..." oninput="filterTable('ann-table',this.value)">
+          <button class="btn-adm btn-adm-primary" onclick="openModal('modal-add-annonce')">+ Publier une annonce</button>
+        </div>
+      </div>
+      <div class="adm-table-scroll">
+        <table class="adm-table" id="ann-table">
+          <thead>
+            <tr>
+              <th>Titre</th><th>Type</th><th>Épinglée</th><th>Statut</th><th>Expire le</th><th>Date</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for a in annonces %}
+            <tr id="ann-row-{{ a.id }}">
+              <td><strong>{{ a.titre|truncatechars:40 }}</strong></td>
+              <td>
+                <span style="display:inline-flex;align-items:center;gap:.4rem;padding:.25rem .7rem;border-radius:20px;background:rgba(244,238,226,.8);border:1px solid rgba(190,140,60,.2);font-size:.78rem;font-weight:600;color:var(--brown);">
+                  {{ a.icone }} {{ a.get_type_annonce_display }}
+                </span>
+              </td>
+              <td class="muted">{% if a.est_epinglee %}📌 Oui{% else %}—{% endif %}</td>
+              <td>
+                {% if a.est_publiee %}<span class="status-badge status-publie">Publiée</span>
+                {% else %}<span class="status-badge status-brouillon">Brouillon</span>{% endif %}
+              </td>
+              <td class="muted">{{ a.date_expiration|date:"d/m/Y H:i"|default:"—" }}</td>
+              <td class="muted">{{ a.date_creation|date:"d/m/Y" }}</td>
+              <td>
+                <button class="btn-adm btn-adm-blue" onclick="editAnnonce({{ a.id }})">Modifier</button>
+                <button class="btn-adm btn-adm-red" onclick="confirmDelete('Supprimer cette annonce ?','{% url 'admin_delete_annonce' a.id %}','ann-row-{{ a.id }}')">Supprimer</button>
+              </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--brown-light);">Aucune annonce publiée pour le moment</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
@@ -736,6 +792,72 @@
 <!-- ========== MODALS ========== -->
 
 <!-- ADD RESSOURCE -->
+<!-- ADD ANNONCE -->
+<div class="adm-modal-overlay" id="modal-add-annonce">
+  <div class="adm-modal">
+    <div class="adm-modal-header">
+      <h4 id="ann-modal-title">Publier une annonce</h4>
+      <button class="adm-modal-close" onclick="closeModal('modal-add-annonce')">✕</button>
+    </div>
+    <form id="ann-form" enctype="multipart/form-data">
+      {% csrf_token %}
+      <input type="hidden" id="ann-edit-id" value="">
+      <div class="adm-modal-body">
+        <div class="adm-form-grid">
+
+          <div class="adm-form-row full">
+            <label>Titre *</label>
+            <input type="text" name="titre" id="ann-titre" placeholder="Ex : Nouvel atelier de méditation" required>
+          </div>
+
+          <div class="adm-form-row">
+            <label>Type</label>
+            <select name="type_annonce" id="ann-type">
+              {% for val, label in annonce_type_choices %}
+              <option value="{{ val }}">{{ label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="adm-form-row">
+            <label>Expire le (optionnel)</label>
+            <input type="datetime-local" name="date_expiration" id="ann-expiration">
+          </div>
+
+          <div class="adm-form-row full">
+            <label>Contenu *</label>
+            <textarea name="contenu" id="ann-contenu" rows="4" placeholder="Détails de l'annonce..." required></textarea>
+          </div>
+
+          <div class="adm-form-row">
+            <label>Lien (inscription, détails...)</label>
+            <input type="url" name="lien_externe" id="ann-lien" placeholder="https://...">
+          </div>
+          <div class="adm-form-row">
+            <label>Image (optionnel)</label>
+            <input type="file" name="image" id="ann-img" accept="image/*">
+          </div>
+
+          <div class="adm-form-row full" style="display:flex;gap:1.6rem;flex-wrap:wrap;">
+            <label style="display:flex;align-items:center;gap:.6rem;cursor:pointer;">
+              <input type="checkbox" name="est_publiee" id="ann-publiee" checked style="width:auto;accent-color:var(--accent);">
+              Publier immédiatement
+            </label>
+            <label style="display:flex;align-items:center;gap:.6rem;cursor:pointer;">
+              <input type="checkbox" name="est_epinglee" id="ann-epinglee" style="width:auto;accent-color:var(--accent);">
+              📌 Épingler en tête du tableau de bord
+            </label>
+          </div>
+
+        </div>
+      </div>
+      <div class="adm-modal-footer">
+        <button type="button" class="btn-adm btn-adm-outline" onclick="closeModal('modal-add-annonce')">Annuler</button>
+        <button type="submit" class="btn-adm btn-adm-primary" id="ann-submit-btn">Publier</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <div class="adm-modal-overlay" id="modal-add-ressource">
   <div class="adm-modal">
     <div class="adm-modal-header">
@@ -1045,6 +1167,44 @@ document.getElementById('confirm-btn').addEventListener('click', () => {
         pendingDelete = null;
     });
 });
+
+/* ===== ANNONCES CRUD ===== */
+const annForm = document.getElementById('ann-form');
+annForm.addEventListener('submit', async e => {
+    e.preventDefault();
+    const editId = document.getElementById('ann-edit-id').value;
+    const fd = new FormData(annForm);
+    fd.set('est_publiee', document.getElementById('ann-publiee').checked ? 'true' : 'false');
+    fd.set('est_epinglee', document.getElementById('ann-epinglee').checked ? 'true' : 'false');
+    const url = editId
+        ? '/admin-panel/annonces/' + editId + '/update/'
+        : '/admin-panel/annonces/create/';
+    const r = await fetch(url, { method: 'POST', headers: { 'X-CSRFToken': CSRF }, body: fd });
+    const data = await r.json();
+    if (data.success) {
+        showToast(editId ? 'Annonce modifiée' : 'Annonce publiée');
+        closeModal('modal-add-annonce');
+        setTimeout(() => location.reload(), 800);
+    } else { showToast(data.message || 'Erreur', 'error'); }
+});
+
+function editAnnonce(id) {
+    fetch('/admin-panel/annonces/' + id + '/')
+        .then(r => r.json()).then(d => {
+            if (!d.success) return;
+            document.getElementById('ann-edit-id').value = d.id;
+            document.getElementById('ann-modal-title').textContent = 'Modifier l\'annonce';
+            document.getElementById('ann-submit-btn').textContent = 'Enregistrer';
+            document.getElementById('ann-titre').value = d.titre;
+            document.getElementById('ann-contenu').value = d.contenu;
+            document.getElementById('ann-type').value = d.type_annonce;
+            document.getElementById('ann-lien').value = d.lien_externe || '';
+            document.getElementById('ann-publiee').checked = d.est_publiee;
+            document.getElementById('ann-epinglee').checked = d.est_epinglee;
+            document.getElementById('ann-expiration').value = d.date_expiration ? d.date_expiration.slice(0,16) : '';
+            openModal('modal-add-annonce');
+        });
+}
 
 /* ===== RESSOURCES — affichage dynamique selon type ===== */
 function resTypeChanged(type) {

@@ -85,6 +85,11 @@ urlpatterns = [
 
     # ============= ADMIN PANEL =============
     path('admin-panel/', views.admin_panel, name='admin_panel'),
+    # Annonces CRUD
+    path('admin-panel/annonces/create/', views.admin_create_annonce, name='admin_create_annonce'),
+    path('admin-panel/annonces/<int:annonce_id>/', views.admin_get_annonce, name='admin_get_annonce'),
+    path('admin-panel/annonces/<int:annonce_id>/update/', views.admin_update_annonce, name='admin_update_annonce'),
+    path('admin-panel/annonces/<int:annonce_id>/delete/', views.admin_delete_annonce, name='admin_delete_annonce'),
     # Ressources CRUD
     path('admin-panel/ressources/create/', views.admin_create_ressource, name='admin_create_ressource'),
     path('admin-panel/ressources/<int:ressource_id>/', views.admin_get_ressource, name='admin_get_ressource'),

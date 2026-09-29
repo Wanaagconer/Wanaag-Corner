@@ -10,7 +10,7 @@ from .models import (
     ForumGroup, GroupMessage, GroupMemberStatus,
     CategorieRessource, Ressource, CommentaireRessource, ProgressionUtilisateur,
     Post, CommentairePost, Follow,
-    ChatSession, ChatMessage,
+    ChatSession, ChatMessage, Annonce,
 )
 import uuid, json, os, re
 from collections import Counter
@@ -77,7 +77,8 @@ def user_login(request):
 @login_required
 def dashboard(request):
     """Page après connexion"""
-    return render(request, 'application/dashboard.html')
+    annonces = [a for a in Annonce.objects.filter(est_publiee=True).order_by('-est_epinglee', '-date_creation')[:10] if a.est_active]
+    return render(request, 'application/dashboard.html', {'annonces': annonces})
 
 def about(request):
     """Page à propos de nous"""
@@ -1128,8 +1129,10 @@ def admin_panel(request):
         'total_psychologues': Psychologue.objects.count(),
         'total_categories': CategorieRessource.objects.count(),
         'total_vues': Ressource.objects.aggregate(t=Sum('vues'))['t'] or 0,
+        'total_annonces': Annonce.objects.count(),
     }
 
+    annonces = Annonce.objects.select_related('auteur').order_by('-est_epinglee', '-date_creation')
     ressources = Ressource.objects.select_related('categorie', 'auteur').order_by('-date_creation')
     categories = CategorieRessource.objects.all()
     users = User.objects.order_by('-date_joined')
@@ -1148,6 +1151,7 @@ def admin_panel(request):
 
     context = {
         'stats': stats,
+        'annonces': annonces,
         'ressources': ressources,
         'categories': categories,
         'users': users,
@@ -1157,6 +1161,7 @@ def admin_panel(request):
         'groups': groups,
         'type_choices': Ressource.TYPE_CHOICES,
         'niveau_choices': Ressource.NIVEAU_CHOICES,
+        'annonce_type_choices': Annonce.TYPE_CHOICES,
     }
     return render(request, 'application/admin_dashboard.html', context)
 
@@ -1233,6 +1238,70 @@ def admin_delete_ressource(request, ressource_id):
     if request.method != 'POST':
         return JsonResponse({'success': False})
     get_object_or_404(Ressource, id=ressource_id).delete()
+    return JsonResponse({'success': True})
+
+
+@admin_required
+def admin_create_annonce(request):
+    if request.method != 'POST':
+        return JsonResponse({'success': False})
+    titre = request.POST.get('titre', '').strip()
+    contenu = request.POST.get('contenu', '').strip()
+    if not titre or not contenu:
+        return JsonResponse({'success': False, 'message': 'Titre et contenu requis'})
+    date_expiration = request.POST.get('date_expiration') or None
+    annonce = Annonce.objects.create(
+        titre=titre,
+        contenu=contenu,
+        type_annonce=request.POST.get('type_annonce', Annonce.TYPE_INFO),
+        lien_externe=request.POST.get('lien_externe', '').strip() or None,
+        est_publiee=request.POST.get('est_publiee') == 'true',
+        est_epinglee=request.POST.get('est_epinglee') == 'true',
+        date_expiration=date_expiration,
+        image=request.FILES.get('image'),
+        auteur=request.user,
+    )
+    return JsonResponse({
+        'success': True, 'id': annonce.id, 'titre': annonce.titre,
+        'type': annonce.get_type_annonce_display(), 'publiee': annonce.est_publiee,
+    })
+
+
+@admin_required
+def admin_get_annonce(request, annonce_id):
+    a = get_object_or_404(Annonce, id=annonce_id)
+    return JsonResponse({
+        'success': True,
+        'id': a.id, 'titre': a.titre, 'contenu': a.contenu,
+        'type_annonce': a.type_annonce, 'lien_externe': a.lien_externe or '',
+        'est_publiee': a.est_publiee, 'est_epinglee': a.est_epinglee,
+        'date_expiration': a.date_expiration.isoformat() if a.date_expiration else '',
+    })
+
+
+@admin_required
+def admin_update_annonce(request, annonce_id):
+    if request.method != 'POST':
+        return JsonResponse({'success': False})
+    a = get_object_or_404(Annonce, id=annonce_id)
+    a.titre = request.POST.get('titre', a.titre).strip()
+    a.contenu = request.POST.get('contenu', a.contenu).strip()
+    a.type_annonce = request.POST.get('type_annonce', a.type_annonce)
+    a.lien_externe = request.POST.get('lien_externe', '').strip() or None
+    a.est_publiee = request.POST.get('est_publiee') == 'true'
+    a.est_epinglee = request.POST.get('est_epinglee') == 'true'
+    a.date_expiration = request.POST.get('date_expiration') or None
+    if request.FILES.get('image'):
+        a.image = request.FILES['image']
+    a.save()
+    return JsonResponse({'success': True, 'titre': a.titre, 'publiee': a.est_publiee})
+
+
+@admin_required
+def admin_delete_annonce(request, annonce_id):
+    if request.method != 'POST':
+        return JsonResponse({'success': False})
+    get_object_or_404(Annonce, id=annonce_id).delete()
     return JsonResponse({'success': True})
 
 
