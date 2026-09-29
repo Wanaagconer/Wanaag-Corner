@@ -67,6 +67,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'storages',  # django-storages : stockage S3-compatible (Supabase) pour les médias
     'application',  # CORRIGÉ ICI - juste 'application' pas 'application.CustomUser'
 ]
 
@@ -187,18 +188,59 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Whitenoise : sert les fichiers statiques directement depuis le service web
 # (compressés + hashés, sans serveur/CDN séparé) — nécessaire sur Render.
-STORAGES = {
-    "default": {
-        "BACKEND": "django.core.files.storage.FileSystemStorage",
-    },
-    "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
-    },
-}
+#
+# Fichiers media (images/vidéos uploadées par les utilisateurs) :
+# ⚠️ Sur Render (plan Free), le disque local n'est PAS persistant : tout
+# fichier uploadé sur le disque du service est perdu au prochain déploiement
+# ou redémarrage. Pour régler ça, on peut brancher Supabase Storage (S3-
+# compatible) : tant que les variables SUPABASE_STORAGE_* ci-dessous ne sont
+# pas toutes définies, l'app continue de stocker les fichiers localement
+# (comportement actuel, inchangé). Dès qu'elles sont renseignées (sur Render
+# par ex.), le stockage bascule automatiquement vers Supabase — voir
+# SUPABASE_STORAGE.md pour la procédure complète.
+SUPABASE_STORAGE_PROJECT_REF = os.environ.get('SUPABASE_STORAGE_PROJECT_REF', '')
+SUPABASE_STORAGE_BUCKET = os.environ.get('SUPABASE_STORAGE_BUCKET', '')
+SUPABASE_STORAGE_ACCESS_KEY_ID = os.environ.get('SUPABASE_STORAGE_ACCESS_KEY_ID', '')
+SUPABASE_STORAGE_SECRET_ACCESS_KEY = os.environ.get('SUPABASE_STORAGE_SECRET_ACCESS_KEY', '')
+SUPABASE_STORAGE_REGION = os.environ.get('SUPABASE_STORAGE_REGION', 'us-east-1')
 
-# Fichiers media (images uploadées par les utilisateurs)
-# ⚠️ Sur Render (plan Free), ce dossier n'est PAS persistant : tout fichier
-# uploadé est perdu au prochain déploiement/redémarrage du service.
+USE_SUPABASE_STORAGE = all([
+    SUPABASE_STORAGE_PROJECT_REF, SUPABASE_STORAGE_BUCKET,
+    SUPABASE_STORAGE_ACCESS_KEY_ID, SUPABASE_STORAGE_SECRET_ACCESS_KEY,
+])
+
+if USE_SUPABASE_STORAGE:
+    STORAGES = {
+        "default": {
+            "BACKEND": "storages.backends.s3.S3Storage",
+        },
+        "staticfiles": {
+            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        },
+    }
+    AWS_STORAGE_BUCKET_NAME = SUPABASE_STORAGE_BUCKET
+    AWS_ACCESS_KEY_ID = SUPABASE_STORAGE_ACCESS_KEY_ID
+    AWS_SECRET_ACCESS_KEY = SUPABASE_STORAGE_SECRET_ACCESS_KEY
+    AWS_S3_REGION_NAME = SUPABASE_STORAGE_REGION
+    # Endpoint S3-compatible utilisé pour les opérations (upload/delete)
+    AWS_S3_ENDPOINT_URL = f"https://{SUPABASE_STORAGE_PROJECT_REF}.supabase.co/storage/v1/s3"
+    # Domaine utilisé pour générer les URLs publiques des fichiers (bucket "Public")
+    AWS_S3_CUSTOM_DOMAIN = f"{SUPABASE_STORAGE_PROJECT_REF}.supabase.co/storage/v1/object/public"
+    AWS_S3_ADDRESSING_STYLE = 'path'
+    AWS_S3_SIGNATURE_VERSION = 's3v4'
+    AWS_QUERYSTRING_AUTH = False
+    AWS_DEFAULT_ACL = None
+    AWS_S3_FILE_OVERWRITE = False
+else:
+    STORAGES = {
+        "default": {
+            "BACKEND": "django.core.files.storage.FileSystemStorage",
+        },
+        "staticfiles": {
+            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        },
+    }
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
