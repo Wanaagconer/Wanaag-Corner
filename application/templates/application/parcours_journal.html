@@ -582,11 +582,12 @@
 .jnl-cover-frame::before { content:''; position:absolute; inset:6px; border:1px dashed rgba(190,140,60,.25); }
 .jnl-cover-badge {
     position:absolute; top:18%; left:50%; transform:translateX(-50%);
-    width:50px; height:50px; border-radius:50%;
+    width:50px; height:50px; border-radius:50%; overflow:hidden;
     background:radial-gradient(circle,#f4eee2,#ddc092);
     display:flex; align-items:center; justify-content:center;
-    font-size:1.2rem; box-shadow:0 6px 18px rgba(0,0,0,.4);
+    font-size:1.2rem; box-shadow:0 6px 18px rgba(0,0,0,.4), 0 0 0 2px rgba(190,140,60,.4);
 }
+.jnl-cover-badge img { width:100%; height:100%; object-fit:cover; display:block; }
 .jnl-cover-eyebrow {
     position:absolute; top:calc(18% + 62px); left:0; right:0; text-align:center;
     font-size:.6rem; letter-spacing:.2em; text-transform:uppercase; color:rgba(221,192,146,.6); font-weight:700;
@@ -669,7 +670,9 @@
 .jnl-landing-badge {
     width:48px; height:48px; border-radius:50%; background:rgba(190,140,60,.15);
     border:1px solid rgba(190,140,60,.3); display:flex; align-items:center; justify-content:center; font-size:1.3rem;
+    overflow:hidden;
 }
+.jnl-landing-badge img { width:100%; height:100%; object-fit:cover; display:block; }
 .jlb-name { font-family:'Fraunces',serif; font-weight:700; color:#f4eee2; font-size:1.05rem; }
 .jlb-sub { font-size:.72rem; color:rgba(244,238,226,.45); }
 .jnl-landing-tagline {
@@ -884,7 +887,7 @@
     <div class="jnl-intro-act active" id="actCover">
         <div class="jnl-cover" onclick="advanceIntro()">
             <div class="jnl-cover-frame"></div>
-            <div class="jnl-cover-badge">🧠</div>
+            <div class="jnl-cover-badge"><img src="{% static 'images/logo.jpg' %}" alt="Wanaag Corner"></div>
             <div class="jnl-cover-eyebrow">Wanaag Corner · Espace privé</div>
             <div class="jnl-cover-title">
                 <span class="jct-1">Journal</span>
@@ -940,7 +943,7 @@
         <div class="jnl-landing">
             <div class="jnl-landing-left">
                 <div class="jnl-landing-brand">
-                    <span class="jnl-landing-badge">🧠</span>
+                    <span class="jnl-landing-badge"><img src="{% static 'images/logo.jpg' %}" alt="Wanaag Corner"></span>
                     <div>
                         <div class="jlb-name">Wanaag Corner</div>
                         <div class="jlb-sub">Santé mentale · Bien-être</div>

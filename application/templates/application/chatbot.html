@@ -38,10 +38,11 @@
     width:64px; height:64px; border-radius:50%; margin:0 auto 1rem;
     background:linear-gradient(135deg,var(--gold),#ab7e36);
     display:flex; align-items:center; justify-content:center;
-    font-size:1.8rem;
+    font-size:1.8rem; overflow:hidden;
     box-shadow:0 0 0 3px rgba(190,140,60,.25), 0 0 0 6px rgba(190,140,60,.08);
     position:relative;
 }
+.cb-bot-avatar img { width:100%; height:100%; object-fit:cover; display:block; }
 .cb-bot-online {
     position:absolute; bottom:3px; right:3px;
     width:14px; height:14px; border-radius:50%;
@@ -163,9 +164,10 @@
     width:80px; height:80px; border-radius:50%; margin:0 auto 1.5rem;
     background:linear-gradient(135deg,var(--gold),#ab7e36);
     display:flex; align-items:center; justify-content:center;
-    font-size:2.2rem;
+    font-size:2.2rem; overflow:hidden;
     box-shadow:0 0 0 4px rgba(190,140,60,.2), 0 0 40px rgba(190,140,60,.15);
 }
+.cb-welcome-avatar img { width:100%; height:100%; object-fit:cover; display:block; }
 .cb-welcome h2 {
     font-family:'Fraunces',serif; font-size:1.6rem; font-weight:800;
     color:var(--text); margin-bottom:.5rem;
@@ -208,9 +210,10 @@
 }
 .cb-msg.assistant .cb-msg-av {
     background:linear-gradient(135deg,var(--gold),#ab7e36);
-    color:white; font-size:1rem;
+    color:white; font-size:1rem; overflow:hidden;
     box-shadow:0 0 0 2px rgba(190,140,60,.2);
 }
+.cb-msg-av img { width:100%; height:100%; object-fit:cover; display:block; }
 
 .cb-bubble {
     padding:.85rem 1.15rem; border-radius:18px; font-size:.9rem; line-height:1.7;
@@ -333,12 +336,12 @@
         <!-- Bot identity -->
         <div class="cb-bot-identity">
             <div class="cb-bot-avatar">
-                🤖
+                <img src="{% static 'images/logo.jpg' %}" alt="Wana">
                 <span class="cb-bot-online"></span>
             </div>
             <div class="cb-bot-name">Wana</div>
-            <span class="cb-bot-tag">Guide & écoute</span>
-            <p class="cb-bot-desc">Je vous aide à utiliser Wanaag Corner et je suis là pour vous écouter, sans jugement, 24h/24 et 7j/7.</p>
+            <span class="cb-bot-tag">Expert bien-être & guide</span>
+            <p class="cb-bot-desc">Je m'appuie sur les principes de l'écoute active pour vous accompagner, et je connais Wanaag Corner sur le bout des doigts pour vous guider. Sans jugement, 24h/24 et 7j/7.</p>
         </div>
 
         <!-- Session info -->
@@ -397,9 +400,9 @@
             {% if not messages_history %}
             <!-- Welcome -->
             <div class="cb-welcome" id="cbWelcome">
-                <div class="cb-welcome-avatar">🤖</div>
+                <div class="cb-welcome-avatar"><img src="{% static 'images/logo.jpg' %}" alt="Wana"></div>
                 <h2>Bonjour, {{ request.user.pseudonyme }} 👋</h2>
-                <p>Je suis Wana, l'assistant de Wanaag Corner. Je peux vous aider à découvrir et utiliser le site, ou simplement vous écouter — partagez ce que vous ressentez, posez vos questions ou parlez-moi de votre journée.</p>
+                <p>Je suis Wana, l'assistant expert de Wanaag Corner. Je m'appuie sur les principes de l'écoute active pour vous accompagner, et je connais le site sur le bout des doigts pour vous guider — partagez ce que vous ressentez, posez vos questions ou parlez-moi de votre journée.</p>
                 <div class="cb-starter-chips">
                     <div class="cb-starter-chip" onclick="sendStarter(this)">🧭 Comment fonctionne le site ?</div>
                     <div class="cb-starter-chip" onclick="sendStarter(this)">😔 Je me sens triste</div>
@@ -415,7 +418,7 @@
             {% for msg in messages_history %}
             <div class="cb-msg {{ msg.role }}">
                 <div class="cb-msg-av">
-                    {% if msg.role == 'assistant' %}🤖{% else %}{{ request.user.pseudonyme|first|upper }}{% endif %}
+                    {% if msg.role == 'assistant' %}<img src="{% static 'images/logo.jpg' %}" alt="Wana">{% else %}{{ request.user.pseudonyme|first|upper }}{% endif %}
                 </div>
                 <div>
                     <div class="cb-bubble {% if msg.crisis_flag and msg.role == 'assistant' %}crisis-reply{% endif %}">
@@ -501,7 +504,8 @@ function appendBubble(role, text, isCrisis=false) {
 
     const av = document.createElement('div');
     av.className = 'cb-msg-av';
-    av.textContent = role === 'assistant' ? '🤖' : '{{ request.user.pseudonyme|first|upper }}';
+    if (role === 'assistant') av.innerHTML = '<img src="{% static "images/logo.jpg" %}" alt="Wana">';
+    else av.textContent = '{{ request.user.pseudonyme|first|upper }}';
 
     const inner = document.createElement('div');
 

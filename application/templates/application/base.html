@@ -544,6 +544,157 @@
             .lift-hover{ transition:none; }
         }
 
+        /* ══════════════════════════════════════════════════════
+           WIDGET WANA — partagé entre la version connectée et la
+           version publique (avant connexion), pour une identité
+           visuelle strictement identique partout.
+        ══════════════════════════════════════════════════════ */
+        #chatWidget, #pubChatWidget {
+            position:fixed; bottom:24px; right:24px; z-index:8888;
+            font-family:'Instrument Sans',sans-serif;
+        }
+        .wgt-bubble {
+            width:62px; height:62px; border-radius:50%;
+            background:linear-gradient(135deg,var(--or),var(--or-dark));
+            border:none; cursor:pointer; padding:0; position:relative;
+            display:flex; align-items:center; justify-content:center;
+            box-shadow:0 8px 28px rgba(190,140,60,.5), 0 0 0 3px rgba(190,140,60,.16);
+            transition:transform .22s, box-shadow .22s;
+        }
+        .wgt-bubble:hover { transform:scale(1.08) translateY(-2px); box-shadow:0 12px 38px rgba(190,140,60,.62), 0 0 0 4px rgba(190,140,60,.22); }
+        .wgt-bubble-logo { width:40px; height:40px; border-radius:50%; object-fit:cover; box-shadow:0 0 0 2px rgba(255,255,255,.4); }
+        .wgt-bubble-close { display:none; font-size:1.25rem; font-weight:300; color:#fff; }
+        .wgt-online-dot {
+            position:absolute; bottom:1px; right:1px; width:15px; height:15px; border-radius:50%;
+            background:#10b981; border:2.5px solid var(--papier);
+        }
+        .wgt-pulse-ring {
+            position:absolute; inset:-6px; border-radius:50%; pointer-events:none;
+            border:2px solid rgba(190,140,60,.35);
+            animation:wgtPulse 2.5s ease-in-out infinite;
+        }
+        @keyframes wgtPulse { 0%,100%{transform:scale(1);opacity:.6} 50%{transform:scale(1.18);opacity:0} }
+
+        .wgt-panel {
+            position:absolute; bottom:78px; right:0; width:380px; max-width:calc(100vw - 32px);
+            background:var(--papier); border-radius:24px;
+            box-shadow:0 28px 80px rgba(42,33,27,.28), 0 0 0 1px var(--trait);
+            overflow:hidden; flex-direction:column;
+            animation:wgtPop .3s cubic-bezier(.34,1.56,.64,1);
+        }
+        @keyframes wgtPop { from{opacity:0;transform:scale(.88) translateY(14px)} to{opacity:1;transform:scale(1) translateY(0)} }
+
+        .wgt-head {
+            background:linear-gradient(150deg,var(--foret) 0%,var(--encre) 65%,#1a1410 100%);
+            padding:1.05rem 1.1rem; display:flex; align-items:center; gap:.75rem;
+            position:relative; overflow:hidden;
+        }
+        .wgt-head::before {
+            content:''; position:absolute; top:0; left:0; right:0; height:2px;
+            background:linear-gradient(90deg,transparent,var(--or),var(--or-light),var(--or),transparent);
+        }
+        .wgt-av-wrap { position:relative; flex-shrink:0; width:44px; height:44px; }
+        .wgt-av-ring {
+            position:absolute; inset:-3px; border-radius:50%; z-index:0;
+            background:conic-gradient(var(--or),var(--or-light),transparent 60%,var(--or));
+            animation:wgtSpinRing 6s linear infinite;
+        }
+        @keyframes wgtSpinRing { to { transform:rotate(360deg); } }
+        .wgt-av {
+            position:relative; z-index:1; width:44px; height:44px; border-radius:50%;
+            overflow:hidden; box-shadow:0 0 0 2px var(--encre);
+        }
+        .wgt-av img { width:100%; height:100%; object-fit:cover; display:block; }
+        .wgt-head-text { min-width:0; flex:1; }
+        .wgt-name-row { display:flex; align-items:center; gap:.4rem; flex-wrap:wrap; }
+        .wgt-name { font-weight:800; color:var(--or-light); font-size:.96rem; font-family:'Fraunces',serif; }
+        .wgt-credential {
+            font-size:.54rem; font-weight:700; letter-spacing:.05em; text-transform:uppercase;
+            color:rgba(221,192,146,.9); background:rgba(190,140,60,.18);
+            border:1px solid rgba(190,140,60,.32); border-radius:20px; padding:.08rem .48rem;
+            white-space:nowrap;
+        }
+        .wgt-status { font-size:.66rem; color:rgba(255,255,255,.5); display:flex; align-items:center; gap:.32rem; margin-top:.2rem; }
+        .wgt-dot { width:6px; height:6px; border-radius:50%; background:#10b981; flex-shrink:0; box-shadow:0 0 6px #10b981; }
+        .wgt-expand, .wgt-signup-link {
+            margin-left:auto; flex-shrink:0; color:rgba(255,255,255,.55); text-decoration:none; transition:color .2s;
+        }
+        .wgt-expand:hover, .wgt-signup-link:hover { color:var(--or-light); }
+        .wgt-signup-link { font-size:.68rem; font-weight:700; border:1px solid rgba(255,255,255,.2); border-radius:20px; padding:.28rem .6rem; white-space:nowrap; }
+
+        .wgt-body {
+            height:300px; overflow-y:auto; padding:1rem 1rem .6rem;
+            display:flex; flex-direction:column; gap:.7rem;
+            scrollbar-width:thin; scrollbar-color:rgba(190,140,60,.18) transparent;
+            background:radial-gradient(circle at 15% 0%, rgba(190,140,60,.06), transparent 45%), var(--papier);
+        }
+        .wgt-body::-webkit-scrollbar { width:4px; }
+        .wgt-body::-webkit-scrollbar-thumb { background:rgba(190,140,60,.2); border-radius:4px; }
+
+        .wgt-welcome-row { display:flex; gap:.55rem; align-items:flex-start; }
+        .wgt-welcome-av { width:26px; height:26px; border-radius:50%; overflow:hidden; flex-shrink:0; margin-top:2px; box-shadow:0 0 0 1.5px rgba(190,140,60,.3); }
+        .wgt-welcome-av img { width:100%; height:100%; object-fit:cover; display:block; }
+        .wgt-welcome-col { flex:1; min-width:0; }
+        .wgt-welcome {
+            background:#fff; border:1px solid var(--trait); border-left:3px solid var(--or);
+            padding:.7rem .85rem; border-radius:4px 14px 14px 14px;
+            font-size:.8rem; color:var(--encre); line-height:1.6;
+        }
+        .wgt-suggestions { display:flex; flex-direction:column; gap:.4rem; margin-top:.5rem; }
+        .wgt-chip {
+            text-align:left; background:#fff; border:1px solid var(--trait);
+            color:var(--encre); font-size:.76rem; padding:.55rem .75rem; border-radius:12px;
+            cursor:pointer; transition:all .18s; font-family:inherit; font-weight:600;
+        }
+        .wgt-chip:hover { border-color:var(--or); background:var(--sable); transform:translateX(3px); box-shadow:0 4px 14px rgba(190,140,60,.15); }
+
+        .wgt-msg-row { display:flex; gap:.5rem; align-items:flex-end; animation:wgtMsgIn .25s ease; }
+        @keyframes wgtMsgIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+        .wgt-msg-row.bot { align-self:flex-start; max-width:92%; }
+        .wgt-msg-row.user { align-self:flex-end; flex-direction:row-reverse; max-width:88%; }
+        .wgt-msg-av-sm { width:24px; height:24px; border-radius:50%; overflow:hidden; flex-shrink:0; box-shadow:0 0 0 1.5px rgba(190,140,60,.3); }
+        .wgt-msg-av-sm img { width:100%; height:100%; object-fit:cover; display:block; }
+        .wgt-msg-user {
+            background:linear-gradient(135deg,var(--or),var(--or-dark)); color:#fff;
+            padding:.55rem .8rem; border-radius:14px 14px 4px 14px; font-size:.82rem; line-height:1.5;
+        }
+        .wgt-msg-bot {
+            background:#fff; border:1px solid var(--trait); border-left:2.5px solid rgba(190,140,60,.45);
+            color:var(--encre); padding:.55rem .8rem; border-radius:4px 14px 14px 14px; font-size:.82rem; line-height:1.5;
+        }
+        .wgt-typing {
+            padding:.5rem .9rem; display:flex; gap:4px; align-items:center;
+            background:var(--papier); border-top:1px solid var(--trait);
+        }
+        .wgt-typing span { width:6px; height:6px; border-radius:50%; background:var(--or); animation:wgtBounce 1.3s infinite; }
+        .wgt-typing span:nth-child(2){animation-delay:.18s}
+        .wgt-typing span:nth-child(3){animation-delay:.36s}
+        @keyframes wgtBounce { 0%,100%{transform:translateY(0);opacity:.3} 50%{transform:translateY(-5px);opacity:1} }
+
+        .wgt-input-row { border-top:1px solid var(--trait); padding:.7rem .85rem; display:flex; gap:.5rem; background:var(--papier); }
+        .wgt-input {
+            flex:1; border:1.5px solid var(--trait); border-radius:12px;
+            padding:.55rem .8rem; font-size:.82rem; outline:none;
+            color:var(--encre); background:#fff; transition:border-color .2s, box-shadow .2s;
+        }
+        .wgt-input:focus { border-color:var(--or); box-shadow:0 0 0 3px rgba(190,140,60,.12); }
+        .wgt-send {
+            width:38px; height:38px; border-radius:11px; flex-shrink:0;
+            background:linear-gradient(135deg,var(--or),var(--or-dark));
+            border:none; color:#fff; cursor:pointer;
+            display:flex; align-items:center; justify-content:center;
+            transition:transform .15s, box-shadow .15s; box-shadow:0 4px 14px rgba(190,140,60,.35);
+        }
+        .wgt-send:hover { transform:scale(1.08); box-shadow:0 6px 18px rgba(190,140,60,.5); }
+        .wgt-disclaimer { padding:.15rem .85rem .7rem; font-size:.6rem; color:var(--taupe); text-align:center; line-height:1.4; background:var(--papier); }
+        .wgt-disclaimer strong { color:var(--or-dark); }
+
+        @media(max-width:480px) {
+            .wgt-panel { width:calc(100vw - 24px); right:-16px; bottom:74px; }
+            #chatWidget, #pubChatWidget { bottom:16px; right:14px; }
+            .wgt-body { height:50vh; max-height:360px; }
+        }
+
     </style>
     {% block extra_css %}{% endblock %}
 </head>
@@ -585,7 +736,7 @@
             <span class="nav-icon" style="background:linear-gradient(135deg,rgba(190,140,60,.22),rgba(190,140,60,.06));border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:.9rem;">🌿</span> Parcours Bien-être
         </a>
         <a href="{% url 'chatbot' %}" class="nav-item {% if request.resolver_match.url_name == 'chatbot' %}active{% endif %}" style="position:relative;">
-            <span class="nav-icon" style="background:linear-gradient(135deg,rgba(190,140,60,.22),rgba(190,140,60,.06));border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:.9rem;">🤖</span>
+            <span class="nav-icon"><img src="{% static 'images/logo.jpg' %}" alt=""></span>
             Wana
         </a>
         {% if not user.psychologue_profile %}
@@ -818,6 +969,149 @@
 </footer>
 {% endif %}
 
+{% if not user.is_authenticated %}
+<!-- ═══════════════════════════════════════════════
+     WIDGET FLOTTANT PUBLIC — WANA, avant connexion
+     (mêmes classes visuelles que le widget connecté, défini dans le
+     <style> partagé de <head> ; endpoint et copie adaptés à un visiteur
+     qui n'a pas encore de compte)
+═══════════════════════════════════════════════ -->
+<div id="pubChatWidget">
+    <button class="wgt-bubble" id="pwgtBubble" onclick="pwgtToggle()" title="Wana — l'assistant Wanaag Corner">
+        <img src="{% static 'images/logo.jpg' %}" alt="Wana" class="wgt-bubble-logo" id="pwgtBubbleLogo">
+        <span class="wgt-bubble-close" id="pwgtIconClose">✕</span>
+        <span class="wgt-online-dot"></span>
+        <span class="wgt-pulse-ring"></span>
+    </button>
+
+    <div class="wgt-panel" id="pwgtPanel" style="display:none;">
+        <div class="wgt-head">
+            <div class="wgt-av-wrap">
+                <div class="wgt-av-ring"></div>
+                <div class="wgt-av"><img src="{% static 'images/logo.jpg' %}" alt="Wana"></div>
+            </div>
+            <div class="wgt-head-text">
+                <div class="wgt-name-row">
+                    <span class="wgt-name">Wana</span>
+                    <span class="wgt-credential">Expert bien-être</span>
+                </div>
+                <div class="wgt-status"><span class="wgt-dot"></span> En ligne · toujours disponible</div>
+            </div>
+            <a href="{% url 'register' %}" class="wgt-signup-link">S'inscrire</a>
+        </div>
+        <div class="wgt-body" id="pwgtBody">
+            <div class="wgt-welcome-row">
+                <div class="wgt-welcome-av"><img src="{% static 'images/logo.jpg' %}" alt=""></div>
+                <div class="wgt-welcome-col">
+                    <div class="wgt-welcome">
+                        Bonjour 👋 Je suis Wana, l'assistant expert de Wanaag Corner. Je peux vous présenter le site, répondre à vos questions, ou simplement vous écouter — même sans compte.
+                    </div>
+                    <div class="wgt-suggestions" id="pwgtSuggestions">
+                        <button type="button" class="wgt-chip" data-q="Que propose Wanaag Corner ? À quoi ça sert ?">🧭 Découvrir Wanaag Corner</button>
+                        <button type="button" class="wgt-chip" data-q="J'ai besoin de parler de comment je me sens.">💛 J'ai besoin de parler</button>
+                        <button type="button" class="wgt-chip" data-q="Comment créer un compte et qu'est-ce que ça change ?">📝 Comment créer un compte ?</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="wgt-typing" id="pwgtTyping" style="display:none;">
+            <span></span><span></span><span></span>
+        </div>
+        <div class="wgt-input-row">
+            <input type="text" id="pwgtInput" class="wgt-input"
+                   placeholder="Écrivez ici…"
+                   onkeydown="if(event.key==='Enter') pwgtSend()">
+            <button class="wgt-send" onclick="pwgtSend()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                </svg>
+            </button>
+        </div>
+        <div class="wgt-disclaimer">Wana ne remplace pas un avis médical. En urgence, appelez le <strong>15</strong>.</div>
+    </div>
+</div>
+
+<script>
+const PWGT_SEND_URL = '{% url "public_chatbot_send" %}';
+const PWGT_CSRF     = document.cookie.match(/csrftoken=([^;]+)/)?.[1] || '{{ csrf_token }}';
+const PWGT_LOGO_URL = '{% static "images/logo.jpg" %}';
+let pwgtOpen = false;
+let pwgtHistory = [];
+
+function pwgtToggle() {
+    pwgtOpen = !pwgtOpen;
+    const panel = document.getElementById('pwgtPanel');
+    const logo  = document.getElementById('pwgtBubbleLogo');
+    const close = document.getElementById('pwgtIconClose');
+    panel.style.display = pwgtOpen ? 'flex' : 'none';
+    logo.style.display  = pwgtOpen ? 'none' : '';
+    close.style.display = pwgtOpen ? 'inline' : 'none';
+    if (pwgtOpen) document.getElementById('pwgtInput').focus();
+}
+
+function pwgtAddMsg(bodyEl, role, txt) {
+    const row = document.createElement('div');
+    row.className = 'wgt-msg-row ' + role;
+    if (role === 'bot') {
+        const av = document.createElement('div');
+        av.className = 'wgt-msg-av-sm';
+        av.innerHTML = '<img src="' + PWGT_LOGO_URL + '" alt="">';
+        row.appendChild(av);
+    }
+    const bubble = document.createElement('div');
+    bubble.className = role === 'user' ? 'wgt-msg-user' : 'wgt-msg-bot';
+    bubble.textContent = txt;
+    row.appendChild(bubble);
+    bodyEl.appendChild(row);
+    bodyEl.scrollTop = bodyEl.scrollHeight;
+}
+
+async function pwgtSend() {
+    const input = document.getElementById('pwgtInput');
+    const text  = input.value.trim();
+    if (!text) return;
+    input.value = '';
+
+    const body = document.getElementById('pwgtBody');
+    pwgtAddMsg(body, 'user', text);
+
+    const typing = document.getElementById('pwgtTyping');
+    typing.style.display = 'flex';
+    body.scrollTop = body.scrollHeight;
+
+    try {
+        const r = await fetch(PWGT_SEND_URL, {
+            method:'POST',
+            headers:{'Content-Type':'application/json','X-CSRFToken':PWGT_CSRF},
+            body: JSON.stringify({message: text, history: pwgtHistory}),
+        });
+        const d = await r.json();
+        typing.style.display = 'none';
+        if (d.reply) {
+            pwgtAddMsg(body, 'bot', d.reply);
+            pwgtHistory.push({role:'user', content:text});
+            pwgtHistory.push({role:'assistant', content:d.reply});
+            if (pwgtHistory.length > 12) pwgtHistory = pwgtHistory.slice(-12);
+        } else {
+            pwgtAddMsg(body, 'bot', d.error || 'Erreur…');
+        }
+    } catch {
+        typing.style.display = 'none';
+        pwgtAddMsg(body, 'bot', 'Connexion perdue. Réessayez.');
+    }
+}
+
+document.querySelectorAll('#pubChatWidget .wgt-chip').forEach(function(btn){
+    btn.addEventListener('click', function(){
+        var suggestions = document.getElementById('pwgtSuggestions');
+        if (suggestions) suggestions.style.display = 'none';
+        document.getElementById('pwgtInput').value = btn.dataset.q;
+        pwgtSend();
+    });
+});
+</script>
+{% endif %}
+
 <script>
 /* =============================================
    WANAAG CORNER — WOW ANIMATIONS ENGINE
@@ -1046,17 +1340,24 @@ document.head.appendChild(s);
 <div id="chatWidget">
     <!-- Bouton bulle -->
     <button class="wgt-bubble" id="wgtBubble" onclick="wgtToggle()" title="Wana — l'assistant Wanaag Corner">
-        <span id="wgtIconOpen">🤖</span>
-        <span id="wgtIconClose" style="display:none;font-size:1.2rem;font-weight:300;">✕</span>
+        <img src="{% static 'images/logo.jpg' %}" alt="Wana" class="wgt-bubble-logo" id="wgtBubbleLogo">
+        <span class="wgt-bubble-close" id="wgtIconClose">✕</span>
+        <span class="wgt-online-dot"></span>
         <span class="wgt-pulse-ring"></span>
     </button>
 
     <!-- Panneau mini-chat -->
     <div class="wgt-panel" id="wgtPanel" style="display:none;">
         <div class="wgt-head">
-            <div class="wgt-av">🤖</div>
-            <div>
-                <div class="wgt-name">Wana</div>
+            <div class="wgt-av-wrap">
+                <div class="wgt-av-ring"></div>
+                <div class="wgt-av"><img src="{% static 'images/logo.jpg' %}" alt="Wana"></div>
+            </div>
+            <div class="wgt-head-text">
+                <div class="wgt-name-row">
+                    <span class="wgt-name">Wana</span>
+                    <span class="wgt-credential">Expert bien-être</span>
+                </div>
                 <div class="wgt-status"><span class="wgt-dot"></span> En ligne · toujours disponible</div>
             </div>
             <a href="{{ chatbot_url }}" class="wgt-expand" title="Ouvrir en plein écran">
@@ -1064,14 +1365,19 @@ document.head.appendChild(s);
             </a>
         </div>
         <div class="wgt-body" id="wgtBody">
-            <div class="wgt-welcome">
-                Bonjour <strong>{{ user.pseudonyme }}</strong> 💛<br>
-                Je suis Wana, l'assistant de Wanaag Corner. Je peux vous aider à trouver votre chemin sur le site, ou simplement vous écouter.
-            </div>
-            <div class="wgt-suggestions" id="wgtSuggestions">
-                <button type="button" class="wgt-chip" data-q="Comment fonctionne Wanaag Corner ? Que puis-je faire sur le site ?">🧭 Découvrir le site</button>
-                <button type="button" class="wgt-chip" data-q="J'ai besoin de parler de comment je me sens.">💛 J'ai besoin de parler</button>
-                <button type="button" class="wgt-chip" data-q="Comment prendre rendez-vous avec un psychologue ?">🩺 Trouver un psychologue</button>
+            <div class="wgt-welcome-row">
+                <div class="wgt-welcome-av"><img src="{% static 'images/logo.jpg' %}" alt=""></div>
+                <div class="wgt-welcome-col">
+                    <div class="wgt-welcome">
+                        Bonjour <strong>{{ user.pseudonyme }}</strong> 💛<br>
+                        Je suis Wana, l'assistant expert de Wanaag Corner. Je peux vous aider à trouver votre chemin sur le site, ou simplement vous écouter.
+                    </div>
+                    <div class="wgt-suggestions" id="wgtSuggestions">
+                        <button type="button" class="wgt-chip" data-q="Comment fonctionne Wanaag Corner ? Que puis-je faire sur le site ?">🧭 Découvrir le site</button>
+                        <button type="button" class="wgt-chip" data-q="J'ai besoin de parler de comment je me sens.">💛 J'ai besoin de parler</button>
+                        <button type="button" class="wgt-chip" data-q="Comment prendre rendez-vous avec un psychologue ?">🩺 Trouver un psychologue</button>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="wgt-typing" id="wgtTyping" style="display:none;">
@@ -1087,135 +1393,42 @@ document.head.appendChild(s);
                 </svg>
             </button>
         </div>
+        <div class="wgt-disclaimer">Wana ne remplace pas un avis médical. En urgence, appelez le <strong>15</strong>.</div>
     </div>
 </div>
-
-<style>
-#chatWidget {
-    position:fixed; bottom:24px; right:24px; z-index:8888;
-    font-family:'Instrument Sans',sans-serif;
-}
-.wgt-bubble {
-    width:56px; height:56px; border-radius:50%;
-    background:linear-gradient(135deg,var(--or),var(--or-dark));
-    border:none; cursor:pointer; font-size:1.5rem;
-    display:flex; align-items:center; justify-content:center;
-    box-shadow:0 6px 24px rgba(190,140,60,.45), 0 0 0 3px rgba(190,140,60,.14);
-    transition:transform .22s, box-shadow .22s;
-    position:relative;
-}
-.wgt-bubble:hover { transform:scale(1.1) translateY(-2px); box-shadow:0 10px 36px rgba(190,140,60,.6), 0 0 0 4px rgba(190,140,60,.2); }
-.wgt-pulse-ring {
-    position:absolute; inset:-5px; border-radius:50%;
-    border:2px solid rgba(190,140,60,.35);
-    animation:wgtPulse 2.5s ease-in-out infinite;
-}
-@keyframes wgtPulse {
-    0%,100%{transform:scale(1);opacity:.6}
-    50%{transform:scale(1.18);opacity:0}
-}
-.wgt-panel {
-    position:absolute; bottom:68px; right:0; width:320px;
-    background:var(--papier); border-radius:20px;
-    box-shadow:0 20px 60px rgba(42,33,27,.18), 0 0 0 1px var(--trait);
-    overflow:hidden; flex-direction:column;
-    animation:wgtPop .25s cubic-bezier(.34,1.56,.64,1);
-}
-@keyframes wgtPop { from{opacity:0;transform:scale(.85) translateY(10px)} to{opacity:1;transform:scale(1) translateY(0)} }
-.wgt-head {
-    background:linear-gradient(135deg,var(--foret),var(--encre));
-    padding:.85rem 1rem; display:flex; align-items:center; gap:.65rem;
-}
-.wgt-av {
-    width:36px; height:36px; border-radius:50%;
-    background:linear-gradient(135deg,var(--or),var(--or-dark));
-    display:flex; align-items:center; justify-content:center;
-    font-size:1rem; flex-shrink:0;
-    box-shadow:0 0 0 2px rgba(190,140,60,.25);
-}
-.wgt-name { font-weight:700; color:var(--or-light); font-size:.88rem; }
-.wgt-status { font-size:.65rem; color:rgba(255,255,255,.5); display:flex; align-items:center; gap:.3rem; margin-top:.1rem; }
-.wgt-dot { width:6px; height:6px; border-radius:50%; background:#10b981; flex-shrink:0; }
-.wgt-expand { margin-left:auto; color:rgba(255,255,255,.55); text-decoration:none; transition:color .2s; }
-.wgt-expand:hover { color:var(--or-light); }
-.wgt-body {
-    height:220px; overflow-y:auto; padding:.9rem;
-    display:flex; flex-direction:column; gap:.55rem;
-    scrollbar-width:thin; scrollbar-color:rgba(190,140,60,.15) transparent;
-}
-.wgt-welcome {
-    background:var(--sable); border-left:3px solid var(--or);
-    padding:.65rem .8rem; border-radius:0 10px 10px 10px;
-    font-size:.8rem; color:var(--encre); line-height:1.55;
-}
-.wgt-suggestions { display:flex; flex-direction:column; gap:.4rem; margin-top:.15rem; }
-.wgt-chip {
-    text-align:left; background:var(--papier); border:1px solid var(--trait);
-    color:var(--encre); font-size:.74rem; padding:.5rem .7rem; border-radius:10px;
-    cursor:pointer; transition:all .18s; font-family:inherit;
-}
-.wgt-chip:hover { border-color:var(--or); background:var(--sable); transform:translateX(2px); }
-.wgt-msg-user {
-    background:linear-gradient(135deg,var(--or),var(--or-dark));
-    color:var(--papier); padding:.5rem .75rem;
-    border-radius:14px 14px 4px 14px;
-    font-size:.8rem; align-self:flex-end; max-width:86%;
-}
-.wgt-msg-bot {
-    background:var(--sable); border-left:2px solid rgba(190,140,60,.4);
-    color:var(--encre); padding:.5rem .75rem;
-    border-radius:14px 14px 14px 4px;
-    font-size:.8rem; align-self:flex-start; max-width:86%;
-}
-.wgt-typing {
-    padding:.5rem .9rem; display:flex; gap:4px; align-items:center;
-    background:var(--papier); border-top:1px solid var(--trait);
-}
-.wgt-typing span {
-    width:6px; height:6px; border-radius:50%; background:var(--or);
-    animation:wgtBounce 1.3s infinite;
-}
-.wgt-typing span:nth-child(2){animation-delay:.18s}
-.wgt-typing span:nth-child(3){animation-delay:.36s}
-@keyframes wgtBounce { 0%,100%{transform:translateY(0);opacity:.3} 50%{transform:translateY(-5px);opacity:1} }
-.wgt-input-row {
-    border-top:1px solid var(--trait);
-    padding:.65rem .75rem; display:flex; gap:.5rem; background:var(--papier);
-}
-.wgt-input {
-    flex:1; border:1px solid var(--trait); border-radius:10px;
-    padding:.45rem .75rem; font-size:.8rem; outline:none;
-    color:var(--encre); background:var(--sable); transition:border-color .2s;
-}
-.wgt-input:focus { border-color:var(--or); }
-.wgt-send {
-    width:32px; height:32px; border-radius:9px;
-    background:linear-gradient(135deg,var(--or),var(--or-dark));
-    border:none; color:var(--papier); cursor:pointer;
-    display:flex; align-items:center; justify-content:center;
-    transition:transform .15s;
-}
-.wgt-send:hover { transform:scale(1.1); }
-@media(max-width:480px) {
-    .wgt-panel { width:calc(100vw - 32px); right:-12px; }
-    #chatWidget { bottom:16px; right:14px; }
-}
-</style>
 
 <script>
 const WGT_SEND_URL = '{{ chatbot_send_url }}';
 const WGT_CSRF     = document.cookie.match(/csrftoken=([^;]+)/)?.[1] || '{{ csrf_token }}';
+const WGT_LOGO_URL = '{% static "images/logo.jpg" %}';
 let wgtOpen = false;
 
 function wgtToggle() {
     wgtOpen = !wgtOpen;
     const panel = document.getElementById('wgtPanel');
-    const iconO = document.getElementById('wgtIconOpen');
-    const iconC = document.getElementById('wgtIconClose');
+    const logo  = document.getElementById('wgtBubbleLogo');
+    const close = document.getElementById('wgtIconClose');
     panel.style.display = wgtOpen ? 'flex' : 'none';
-    iconO.style.display  = wgtOpen ? 'none' : '';
-    iconC.style.display  = wgtOpen ? '' : 'none';
+    logo.style.display  = wgtOpen ? 'none' : '';
+    close.style.display = wgtOpen ? 'inline' : 'none';
     if (wgtOpen) document.getElementById('wgtInput').focus();
+}
+
+function wgtAddMsg(bodyEl, role, txt) {
+    const row = document.createElement('div');
+    row.className = 'wgt-msg-row ' + role;
+    if (role === 'bot') {
+        const av = document.createElement('div');
+        av.className = 'wgt-msg-av-sm';
+        av.innerHTML = '<img src="' + WGT_LOGO_URL + '" alt="">';
+        row.appendChild(av);
+    }
+    const bubble = document.createElement('div');
+    bubble.className = role === 'user' ? 'wgt-msg-user' : 'wgt-msg-bot';
+    bubble.textContent = txt;
+    row.appendChild(bubble);
+    bodyEl.appendChild(row);
+    bodyEl.scrollTop = bodyEl.scrollHeight;
 }
 
 async function wgtSend() {
@@ -1225,15 +1438,7 @@ async function wgtSend() {
     input.value = '';
 
     const body = document.getElementById('wgtBody');
-    const add = (cls, txt) => {
-        const d = document.createElement('div');
-        d.className = cls;
-        d.textContent = txt;
-        body.appendChild(d);
-        body.scrollTop = body.scrollHeight;
-    };
-
-    add('wgt-msg-user', text);
+    wgtAddMsg(body, 'user', text);
 
     const typing = document.getElementById('wgtTyping');
     typing.style.display = 'flex';
@@ -1247,14 +1452,14 @@ async function wgtSend() {
         });
         const d = await r.json();
         typing.style.display = 'none';
-        add('wgt-msg-bot', d.reply || d.error || 'Erreur…');
+        wgtAddMsg(body, 'bot', d.reply || d.error || 'Erreur…');
     } catch {
         typing.style.display = 'none';
-        add('wgt-msg-bot', 'Connexion perdue. Réessayez.');
+        wgtAddMsg(body, 'bot', 'Connexion perdue. Réessayez.');
     }
 }
 
-document.querySelectorAll('.wgt-chip').forEach(function(btn){
+document.querySelectorAll('#chatWidget .wgt-chip').forEach(function(btn){
     btn.addEventListener('click', function(){
         var suggestions = document.getElementById('wgtSuggestions');
         if (suggestions) suggestions.style.display = 'none';

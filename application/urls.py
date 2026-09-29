@@ -112,6 +112,7 @@ urlpatterns = [
     path('chatbot/', views.chatbot_page, name='chatbot'),
     path('chatbot/send/', views.chatbot_send, name='chatbot_send'),
     path('chatbot/new-session/', views.chatbot_new_session, name='chatbot_new_session'),
+    path('chatbot/public-send/', views.public_chatbot_send, name='public_chatbot_send'),
 
     # ============= PARCOURS BIEN-ÊTRE =============
     path('parcours/', views.parcours_home, name='parcours_home'),
