@@ -34,11 +34,6 @@
     box-shadow: 0 8px 24px rgba(0,0,0,.4); overflow: hidden;
 }
 .psy-hero-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.psy-hero-img-badge {
-    position: absolute; bottom: -6px; right: -6px; z-index: 1;
-    width: 28px; height: 28px; border-radius: 9px; display: flex; align-items: center; justify-content: center;
-    font-size: .85rem; background: white; box-shadow: 0 2px 8px rgba(0,0,0,.3);
-}
 .psy-hero-text h1 {
     font-size: 1.9rem; font-weight: 800; color: white; margin: 0 0 .4rem;
     font-family: 'Fraunces', serif;
@@ -182,7 +177,6 @@
     <div class="psy-hero-inner">
         <div class="psy-hero-img">
             <img src="{% static 'images/' %}{{ categorie.value|specialiste_img }}" alt="{{ categorie.label }}">
-            <span class="psy-hero-img-badge">{{ categorie.icone }}</span>
         </div>
         <div class="psy-hero-text">
             <h1>{{ categorie.label }}</h1>
