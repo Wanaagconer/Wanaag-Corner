@@ -25,3 +25,20 @@ def type_img(value):
         'conference': 'Conference.jpg',
     }
     return mapping.get(str(value).lower(), '')
+
+@register.filter
+def specialiste_img(value):
+    """Return the image path (under static/) for a specialist category."""
+    mapping = {
+        'psychologue':       'specialistes/Psychologue.jpg',
+        'psychiatre':        'specialistes/Psychiatre.jpg',
+        'psychotherapeute':  'specialistes/Psychotherapeute.jpg',
+        'medecin_sport':     'specialistes/MedecinSport.jpg',
+        'kinesitherapeute':  'specialistes/Kinesitherapeute.jpg',
+        'osteopathe':        'specialistes/Osteopathe.jpg',
+        'psychomotricien':   'specialistes/Psychomotricien.jpg',
+        'ergotherapeute':    'specialistes/Ergotherapeute.jpg',
+        'dieteticien':       'specialistes/Dieteticien.jpg',
+        'coach_sportif':     'specialistes/CoachSportif.jpg',
+    }
+    return mapping.get(str(value).lower(), '')
