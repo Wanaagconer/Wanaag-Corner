@@ -241,8 +241,8 @@
                     <div class="mc-psy">
                         <div class="mc-psy-avatar">{{ consultation.psychologue.user.pseudonyme|first|upper }}</div>
                         <div>
-                            <div class="mc-psy-name">Dr. {{ consultation.psychologue.user.pseudonyme }}</div>
-                            <div class="mc-psy-spec">{{ consultation.psychologue.specialites|default:"Psychologue certifié" }}</div>
+                            <div class="mc-psy-name">{{ consultation.psychologue.titre_nom }}</div>
+                            <div class="mc-psy-spec">{{ consultation.psychologue.specialites|default:consultation.psychologue.get_type_specialiste_display }}</div>
                         </div>
                     </div>
                     <span class="mc-badge {{ consultation.statut }}">

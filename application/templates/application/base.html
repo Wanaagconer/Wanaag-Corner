@@ -741,15 +741,15 @@
         </a>
         {% if not user.psychologue_profile %}
         <div class="nav-label">Santé</div>
-        <a href="{% url 'psychologues_list' %}" class="nav-item {% if request.resolver_match.url_name == 'psychologues_list' %}active{% endif %}">
-            <span class="nav-icon"><img src="{% static 'images/psychologue.jpg' %}" alt=""></span> Psychologues
+        <a href="{% url 'psychologues_list' %}" class="nav-item {% if request.resolver_match.url_name == 'psychologues_list' or request.resolver_match.url_name == 'specialistes_categorie' %}active{% endif %}">
+            <span class="nav-icon"><img src="{% static 'images/psychologue.jpg' %}" alt=""></span> Spécialistes
         </a>
         <a href="{% url 'mes_consultations' %}" class="nav-item {% if 'consultation' in request.resolver_match.url_name %}active{% endif %}">
             <span class="nav-icon"><img src="{% static 'images/consultation.jpg' %}" alt=""></span> Mes consultations
         </a>
         {% endif %}
         {% if user.psychologue_profile %}
-        <div class="nav-label">Espace Psy</div>
+        <div class="nav-label">Espace Pro</div>
         <a href="{% url 'psychologue_dashboard' %}" class="nav-item {% if request.resolver_match.url_name == 'psychologue_dashboard' %}active{% endif %}">
             <span class="nav-icon"><img src="{% static 'images/psychologue.jpg' %}" alt=""></span> Mon dashboard
         </a>
@@ -781,7 +781,7 @@
         <div class="avatar-sidebar">{{ user.pseudonyme|first|upper }}</div>
         <div class="sidebar-user-info">
             <div class="sidebar-user-name">{{ user.pseudonyme }}</div>
-            <div class="sidebar-user-role">{% if user.psychologue_profile %}🩺 Psychologue{% else %}Membre{% endif %}</div>
+            <div class="sidebar-user-role">{% if user.psychologue_profile %}{{ user.psychologue_profile.icone_specialite }} {{ user.psychologue_profile.get_type_specialiste_display }}{% else %}Membre{% endif %}</div>
         </div>
         <form method="post" action="{% url 'logout' %}" style="margin:0;">
             {% csrf_token %}
@@ -1375,7 +1375,7 @@ document.head.appendChild(s);
                     <div class="wgt-suggestions" id="wgtSuggestions">
                         <button type="button" class="wgt-chip" data-q="Comment fonctionne Wanaag Corner ? Que puis-je faire sur le site ?">🧭 Découvrir le site</button>
                         <button type="button" class="wgt-chip" data-q="J'ai besoin de parler de comment je me sens.">💛 J'ai besoin de parler</button>
-                        <button type="button" class="wgt-chip" data-q="Comment prendre rendez-vous avec un psychologue ?">🩺 Trouver un psychologue</button>
+                        <button type="button" class="wgt-chip" data-q="Comment prendre rendez-vous avec un spécialiste ?">🩺 Trouver un spécialiste</button>
                     </div>
                 </div>
             </div>

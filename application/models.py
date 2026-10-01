@@ -375,14 +375,50 @@ class ProgressionUtilisateur(models.Model):
         return f"{self.utilisateur.pseudonyme} - {self.ressource.titre} ({status})"
 
 
-# ============= MODÈLES PSYCHOLOGUES ET CONSULTATIONS =============
+# ============= MODÈLES SPÉCIALISTES ET CONSULTATIONS =============
 
 class Psychologue(models.Model):
-    """Profil psychologue créé par l'admin"""
+    """Profil spécialiste (santé mentale ou physique) créé par l'admin"""
+
+    # Catégories de spécialistes — ordre d'affichage dans "Les spécialistes"
+    SPEC_PSYCHOLOGUE = 'psychologue'
+    SPEC_PSYCHIATRE = 'psychiatre'
+    SPEC_PSYCHOTHERAPEUTE = 'psychotherapeute'
+    SPEC_MEDECIN_SPORT = 'medecin_sport'
+    SPEC_KINESITHERAPEUTE = 'kinesitherapeute'
+    SPEC_OSTEOPATHE = 'osteopathe'
+    SPEC_PSYCHOMOTRICIEN = 'psychomotricien'
+    SPEC_ERGOTHERAPEUTE = 'ergotherapeute'
+    SPEC_DIETETICIEN = 'dieteticien'
+    SPEC_COACH_SPORTIF = 'coach_sportif'
+
+    # (valeur, libellé, icône, description courte de la catégorie)
+    SPECIALITE_INFO = {
+        SPEC_PSYCHOLOGUE: ("Psychologue", "🧠", "Écoute, évalue et accompagne le bien-être mental au quotidien."),
+        SPEC_PSYCHIATRE: ("Psychiatre", "💊", "Diagnostique et traite les troubles psychiques, peut prescrire un traitement médical."),
+        SPEC_PSYCHOTHERAPEUTE: ("Psychothérapeute", "🗣️", "Accompagne par la parole pour mieux comprendre et dépasser ses difficultés."),
+        SPEC_MEDECIN_SPORT: ("Médecin du sport", "🏅", "Suit la santé et les blessures des sportifs."),
+        SPEC_KINESITHERAPEUTE: ("Kinésithérapeute", "🦴", "Rééducation après une blessure ou une opération."),
+        SPEC_OSTEOPATHE: ("Ostéopathe", "🖐️", "Soulage les douleurs musculaires et articulaires."),
+        SPEC_PSYCHOMOTRICIEN: ("Psychomotricien", "🤸", "Travaille le lien entre le corps et le psychisme."),
+        SPEC_ERGOTHERAPEUTE: ("Ergothérapeute", "🧩", "Aide à retrouver de l'autonomie dans la vie quotidienne."),
+        SPEC_DIETETICIEN: ("Diététicien / Nutritionniste", "🥗", "Accompagne l'alimentation, la perte ou la prise de poids, la performance."),
+        SPEC_COACH_SPORTIF: ("Coach sportif", "💪", "Construit un programme d'entraînement adapté à vos objectifs."),
+    }
+    SPECIALITE_CHOICES = [(k, v[0]) for k, v in SPECIALITE_INFO.items()]
+    # Catégories dont le titre d'usage est "Dr." (professions médicales)
+    TITRES_MEDICAUX = {SPEC_PSYCHIATRE, SPEC_MEDECIN_SPORT}
+
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name='psychologue_profile'
+    )
+    type_specialiste = models.CharField(
+        max_length=30,
+        choices=SPECIALITE_CHOICES,
+        default=SPEC_PSYCHOLOGUE,
+        verbose_name="Catégorie de spécialiste",
     )
     specialites = models.CharField(
         max_length=200,
@@ -399,13 +435,27 @@ class Psychologue(models.Model):
     est_actif = models.BooleanField(default=True)
     taux_reponse_moyen = models.FloatField(default=0.0)
     date_creation = models.DateTimeField(auto_now_add=True)
-    
+
     class Meta:
-        verbose_name = "Psychologue"
-        verbose_name_plural = "Psychologues"
-    
+        verbose_name = "Spécialiste"
+        verbose_name_plural = "Spécialistes"
+
+    @property
+    def icone_specialite(self):
+        return self.SPECIALITE_INFO.get(self.type_specialiste, (None, '🧠', None))[1]
+
+    @property
+    def description_specialite(self):
+        return self.SPECIALITE_INFO.get(self.type_specialiste, (None, None, ''))[2]
+
+    @property
+    def titre_nom(self):
+        """Nom d'affichage : 'Dr. X' pour les professions médicales, 'X' sinon."""
+        prefix = "Dr. " if self.type_specialiste in self.TITRES_MEDICAUX else ""
+        return f"{prefix}{self.user.pseudonyme}"
+
     def __str__(self):
-        return f"Dr. {self.user.pseudonyme}"
+        return self.titre_nom
 
 
 class ConsultationRequest(models.Model):

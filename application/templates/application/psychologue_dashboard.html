@@ -149,8 +149,8 @@
 <!-- HERO -->
 <div class="psy-hero">
     <div class="psy-hero-left">
-        <div class="psy-hero-eyebrow">🩺 Tableau de bord Psychologue</div>
-        <div class="psy-hero-title">Dr. {{ psychologue.user.pseudonyme }}</div>
+        <div class="psy-hero-eyebrow">{{ psychologue.icone_specialite }} Tableau de bord {{ psychologue.get_type_specialiste_display }}</div>
+        <div class="psy-hero-title">{{ psychologue.titre_nom }}</div>
         <div class="psy-hero-sub">
             Bienvenue dans votre espace professionnel. Gérez vos consultations
             et accompagnez vos patients.

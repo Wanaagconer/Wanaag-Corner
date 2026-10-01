@@ -106,7 +106,7 @@
         {% if post.auteur.photo %}<img src="{{ post.auteur.photo.url }}" alt="">{% else %}{{ post.auteur.pseudonyme|first|upper }}{% endif %}
       </a>
       <div class="rd-by-text">
-        <a class="rd-by-name" href="{% url 'user_profile' post.auteur.id %}">{{ post.auteur.pseudonyme }}</a>{% if post.auteur.psychologue_profile %}<span class="rd-role">Psychologue</span>{% endif %}
+        <a class="rd-by-name" href="{% url 'user_profile' post.auteur.id %}">{{ post.auteur.pseudonyme }}</a>{% if post.auteur.psychologue_profile %}<span class="rd-role">{{ post.auteur.psychologue_profile.get_type_specialiste_display }}</span>{% endif %}
         <div class="rd-date">{{ post.date_creation|date:"j F Y" }} · {{ post.temps_lecture }} min de lecture{% if post.est_modifie %} · modifié{% endif %}</div>
       </div>
       <div class="rd-by-actions">

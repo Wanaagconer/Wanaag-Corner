@@ -317,7 +317,7 @@
     <button class="adm-tab" onclick="admTab('ressources',this)">Ressources <span class="tab-badge">{{ stats.total_ressources }}</span></button>
     <button class="adm-tab" onclick="admTab('categories',this)">Catégories <span class="tab-badge">{{ stats.total_categories }}</span></button>
     <button class="adm-tab" onclick="admTab('users',this)">Utilisateurs <span class="tab-badge">{{ stats.total_users }}</span></button>
-    <button class="adm-tab" onclick="admTab('psychologues',this)">Psychologues <span class="tab-badge">{{ stats.total_psychologues }}</span></button>
+    <button class="adm-tab" onclick="admTab('psychologues',this)">Spécialistes <span class="tab-badge">{{ stats.total_psychologues }}</span></button>
     <button class="adm-tab" onclick="admTab('consultations',this)">Consultations {% if stats.consultations_en_attente %}<span class="tab-badge">{{ stats.consultations_en_attente }}</span>{% endif %}</button>
     <button class="adm-tab" onclick="admTab('posts',this)">Posts <span class="tab-badge">{{ stats.total_posts }}</span></button>
     <button class="adm-tab" onclick="admTab('forum',this)">Forum <span class="tab-badge">{{ stats.total_groups }}</span></button>
@@ -355,7 +355,7 @@
       <div class="stat-card">
         <span class="stat-icon">🩺</span>
         <div class="stat-value">{{ stats.total_psychologues }}</div>
-        <div class="stat-label">Psychologues</div>
+        <div class="stat-label">Spécialistes</div>
       </div>
       <div class="stat-card red">
         <span class="stat-icon">⏳</span>
@@ -595,7 +595,7 @@
               <td>
                 {% if u.is_superuser %}<span class="status-badge status-admin">Super Admin</span>
                 {% elif u.is_staff %}<span class="status-badge status-admin">Admin</span>
-                {% elif u.psychologue_profile %}<span class="status-badge status-psy">Psychologue</span>
+                {% elif u.psychologue_profile %}<span class="status-badge status-psy">{{ u.psychologue_profile.get_type_specialiste_display }}</span>
                 {% else %}<span class="status-badge status-active">Membre</span>{% endif %}
               </td>
               <td>
@@ -630,20 +630,21 @@
     <div class="adm-table-wrap">
       <div class="adm-table-head">
         <div style="display:flex;align-items:center;gap:.6rem;">
-          <h3>Psychologues</h3>
+          <h3>Spécialistes</h3>
           <span class="count-badge">{{ psychologues|length }}</span>
         </div>
-        <button class="btn-adm btn-adm-primary" onclick="openModal('modal-add-psy')">+ Ajouter un psychologue</button>
+        <button class="btn-adm btn-adm-primary" onclick="openModal('modal-add-psy')">+ Ajouter un spécialiste</button>
       </div>
       <div class="adm-table-scroll">
         <table class="adm-table" id="psy-table">
           <thead>
-            <tr><th>Nom</th><th>Email</th><th>Spécialités</th><th>Expérience</th><th>Statut</th><th>Actions</th></tr>
+            <tr><th>Nom</th><th>Catégorie</th><th>Email</th><th>Spécialités</th><th>Expérience</th><th>Statut</th><th>Actions</th></tr>
           </thead>
           <tbody>
             {% for psy in psychologues %}
             <tr id="psy-row-{{ psy.id }}">
-              <td><strong>Dr. {{ psy.user.pseudonyme }}</strong></td>
+              <td><strong>{{ psy.titre_nom }}</strong></td>
+              <td class="muted">{{ psy.icone_specialite }} {{ psy.get_type_specialiste_display }}</td>
               <td class="muted">{{ psy.user.email }}</td>
               <td class="muted">{{ psy.specialites|truncatechars:40 }}</td>
               <td class="muted">{{ psy.experience_ans }} ans</td>
@@ -654,11 +655,11 @@
               </td>
               <td>
                 <button class="btn-adm btn-adm-blue" onclick="editPsychologue({{ psy.id }})">Modifier</button>
-                <button class="btn-adm btn-adm-red" onclick="confirmDelete('Retirer Dr. {{ psy.user.pseudonyme }} comme psychologue ?','{% url 'admin_delete_psychologue' psy.id %}','psy-row-{{ psy.id }}')">Supprimer</button>
+                <button class="btn-adm btn-adm-red" onclick="confirmDelete('Retirer {{ psy.titre_nom }} de la liste des spécialistes ?','{% url 'admin_delete_psychologue' psy.id %}','psy-row-{{ psy.id }}')">Supprimer</button>
               </td>
             </tr>
             {% empty %}
-            <tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--brown-light);">Aucun psychologue</td></tr>
+            <tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--brown-light);">Aucun spécialiste</td></tr>
             {% endfor %}
           </tbody>
         </table>
@@ -679,13 +680,13 @@
       <div class="adm-table-scroll">
         <table class="adm-table" id="cons-table">
           <thead>
-            <tr><th>Utilisateur</th><th>Psychologue</th><th>Sujet</th><th>Statut</th><th>Date</th><th>Actions</th></tr>
+            <tr><th>Utilisateur</th><th>Spécialiste</th><th>Sujet</th><th>Statut</th><th>Date</th><th>Actions</th></tr>
           </thead>
           <tbody>
             {% for c in consultations %}
             <tr id="cons-row-{{ c.id }}">
               <td><strong>{{ c.utilisateur.pseudonyme }}</strong></td>
-              <td class="muted">Dr. {{ c.psychologue.user.pseudonyme }}</td>
+              <td class="muted">{{ c.psychologue.titre_nom }}</td>
               <td class="muted">{{ c.sujet|truncatechars:35 }}</td>
               <td>
                 <span class="status-badge status-{{ c.statut }}" id="cons-status-{{ c.id }}">{{ c.get_statut_display }}</span>
@@ -1039,7 +1040,7 @@
 <div class="adm-modal-overlay" id="modal-add-psy">
   <div class="adm-modal">
     <div class="adm-modal-header">
-      <h4 id="psy-modal-title">Ajouter un psychologue</h4>
+      <h4 id="psy-modal-title">Ajouter un spécialiste</h4>
       <button class="adm-modal-close" onclick="closeModal('modal-add-psy')">✕</button>
     </div>
     <form id="psy-form">
@@ -1055,6 +1056,14 @@
               {% if not u.psychologue_profile and not u.is_staff %}
               <option value="{{ u.id }}">{{ u.pseudonyme }} ({{ u.email }})</option>
               {% endif %}
+              {% endfor %}
+            </select>
+          </div>
+          <div class="adm-form-row full">
+            <label>Catégorie de spécialiste *</label>
+            <select name="type_specialiste" id="psy-type" required>
+              {% for val, label in specialiste_type_choices %}
+              <option value="{{ val }}">{{ label }}</option>
               {% endfor %}
             </select>
           </div>
@@ -1351,7 +1360,7 @@ psyForm.addEventListener('submit', async e => {
     const r = await fetch(url, { method: 'POST', headers: { 'X-CSRFToken': CSRF }, body: fd });
     const data = await r.json();
     if (data.success) {
-        showToast(editId ? 'Psychologue modifié' : 'Psychologue créé');
+        showToast(editId ? 'Spécialiste modifié' : 'Spécialiste créé');
         closeModal('modal-add-psy');
         setTimeout(() => location.reload(), 800);
     } else { showToast(data.message || 'Erreur', 'error'); }
@@ -1362,8 +1371,9 @@ function editPsychologue(id) {
         .then(r => r.json()).then(d => {
             if (!d.success) return;
             document.getElementById('psy-edit-id').value = d.id;
-            document.getElementById('psy-modal-title').textContent = 'Modifier Dr. ' + d.nom;
+            document.getElementById('psy-modal-title').textContent = 'Modifier le profil de ' + d.nom;
             document.getElementById('psy-submit-btn').textContent = 'Enregistrer';
+            document.getElementById('psy-type').value = d.type_specialiste;
             document.getElementById('psy-spec').value = d.specialites;
             document.getElementById('psy-bio').value = d.biographie;
             document.getElementById('psy-exp').value = d.experience_ans;

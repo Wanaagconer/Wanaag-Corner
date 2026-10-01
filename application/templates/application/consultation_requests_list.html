@@ -1,7 +1,7 @@
 {% extends 'application/base.html' %}
 {% load static %}
 
-{% block title %}Demandes de consultation — Dr. {{ request.user.pseudonyme }}{% endblock %}
+{% block title %}Demandes de consultation — {{ request.user.psychologue_profile.titre_nom }}{% endblock %}
 {% block page_title %}Demandes reçues{% endblock %}
 
 {% block extra_css %}

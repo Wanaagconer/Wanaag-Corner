@@ -267,7 +267,7 @@
         </div>
         <div class="cd-hero-text">
             <div class="cd-hero-badge">Consultation</div>
-            <div class="cd-hero-title">{{ consultation.utilisateur.pseudonyme }} · Dr. {{ consultation.psychologue.user.pseudonyme }}</div>
+            <div class="cd-hero-title">{{ consultation.utilisateur.pseudonyme }} · {{ consultation.psychologue.titre_nom }}</div>
             <div class="cd-hero-sub">{{ consultation.sujet }}</div>
         </div>
         <div class="cd-status-pill {{ consultation.statut }}">
@@ -298,8 +298,8 @@
                 <div class="cd-field-val">{{ consultation.utilisateur.pseudonyme }}</div>
             </div>
             <div class="cd-field">
-                <div class="cd-field-lbl">Psychologue</div>
-                <div class="cd-field-val">Dr. {{ consultation.psychologue.user.pseudonyme }}</div>
+                <div class="cd-field-lbl">{{ consultation.psychologue.get_type_specialiste_display }}</div>
+                <div class="cd-field-val">{{ consultation.psychologue.titre_nom }}</div>
             </div>
             <div class="cd-field">
                 <div class="cd-field-lbl">Type de séance</div>

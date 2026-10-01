@@ -324,12 +324,12 @@
     <div class="dash-hero-text">
         {% if user.psychologue_profile %}
         <div class="dash-hero-eyebrow">Espace Professionnel</div>
-        <div class="dash-hero-title">Bienvenue, Dr. <span>{{ user.pseudonyme }}</span></div>
+        <div class="dash-hero-title">Bienvenue, <span>{{ user.psychologue_profile.titre_nom }}</span></div>
         <div class="dash-hero-subtitle">
             Votre expertise fait la différence. Accompagnez vos patients avec bienveillance
             et guidez-les vers le bien-être qu'ils méritent.
         </div>
-        <div class="dash-hero-badge">🩺 Psychologue certifié · Wanaag Corner</div>
+        <div class="dash-hero-badge">{{ user.psychologue_profile.icone_specialite }} {{ user.psychologue_profile.get_type_specialiste_display }} certifié · Wanaag Corner</div>
         {% else %}
         <div class="dash-hero-eyebrow">Votre espace personnel</div>
         <div class="dash-hero-title">Bonjour, <span>{{ user.pseudonyme }}</span></div>
@@ -396,7 +396,7 @@
 {% if user.psychologue_profile %}
 <div class="psy-hero">
     <div class="psy-hero-text">
-        <div class="eyebrow">🩺 Espace Psychologue</div>
+        <div class="eyebrow">{{ user.psychologue_profile.icone_specialite }} Espace {{ user.psychologue_profile.get_type_specialiste_display }}</div>
         <h2>Mon espace professionnel</h2>
         <p>Gérez vos consultations, répondez aux patients et suivez votre activité depuis votre dashboard dédié.</p>
     </div>
@@ -448,16 +448,16 @@
     </a>
 
     {% if not user.psychologue_profile %}
-    <!-- Psychologues -->
+    <!-- Spécialistes -->
     <a href="{% url 'psychologues_list' %}" class="module-card">
         <div class="module-bg">
-            <img src="{% static 'images/psychologue.jpg' %}" alt="Psychologues">
+            <img src="{% static 'images/psychologue.jpg' %}" alt="Spécialistes">
             <span class="module-bg-label">Professionnels</span>
         </div>
         <div class="module-body">
-            <div class="module-title">Psychologues</div>
-            <div class="module-desc">Consultez un professionnel pour un accompagnement personnalisé.</div>
-            <div class="module-cta">Voir les profils →</div>
+            <div class="module-title">Spécialistes</div>
+            <div class="module-desc">Psychologue, kiné, nutritionniste... trouvez le bon professionnel et réservez.</div>
+            <div class="module-cta">Voir les catégories →</div>
         </div>
     </a>
 

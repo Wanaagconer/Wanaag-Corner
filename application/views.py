@@ -504,12 +504,51 @@ from django.utils import timezone
 
 @login_required
 def psychologues_list(request):
-    """Liste de tous les psychologues disponibles"""
-    psychologues = Psychologue.objects.filter(est_actif=True).select_related('user')
+    """Les spécialistes, organisés par catégorie (médecin du sport, kiné,
+    psychologue, etc.) — on choisit d'abord une catégorie, puis on voit les
+    profils disponibles dans cette catégorie."""
+    counts = dict(
+        Psychologue.objects.filter(est_actif=True)
+        .values_list('type_specialiste')
+        .annotate(n=Count('id'))
+    )
+    categories = []
+    for value, label in Psychologue.SPECIALITE_CHOICES:
+        icone, description = Psychologue.SPECIALITE_INFO[value][1], Psychologue.SPECIALITE_INFO[value][2]
+        categories.append({
+            'value': value,
+            'label': label,
+            'icone': icone,
+            'description': description,
+            'count': counts.get(value, 0),
+        })
     context = {
-        'psychologues': psychologues,
+        'categories': categories,
+        'total_specialistes': sum(c['count'] for c in categories),
     }
     return render(request, 'application/psychologues_list.html', context)
+
+
+@login_required
+def specialistes_categorie(request, type_specialiste):
+    """Liste des spécialistes disponibles dans une catégorie donnée"""
+    if type_specialiste not in dict(Psychologue.SPECIALITE_CHOICES):
+        from django.http import Http404
+        raise Http404("Catégorie inconnue")
+    label, icone, description = Psychologue.SPECIALITE_INFO[type_specialiste]
+    psychologues = Psychologue.objects.filter(
+        est_actif=True, type_specialiste=type_specialiste
+    ).select_related('user')
+    context = {
+        'psychologues': psychologues,
+        'categorie': {
+            'value': type_specialiste,
+            'label': label,
+            'icone': icone,
+            'description': description,
+        },
+    }
+    return render(request, 'application/specialistes_categorie.html', context)
 
 
 @login_required
@@ -1162,6 +1201,7 @@ def admin_panel(request):
         'type_choices': Ressource.TYPE_CHOICES,
         'niveau_choices': Ressource.NIVEAU_CHOICES,
         'annonce_type_choices': Annonce.TYPE_CHOICES,
+        'specialiste_type_choices': Psychologue.SPECIALITE_CHOICES,
     }
     return render(request, 'application/admin_dashboard.html', context)
 
@@ -1388,9 +1428,13 @@ def admin_create_psychologue(request):
     user_id = request.POST.get('user_id')
     user = get_object_or_404(User, id=user_id)
     if hasattr(user, 'psychologue_profile'):
-        return JsonResponse({'success': False, 'message': 'Déjà psychologue'})
+        return JsonResponse({'success': False, 'message': 'Déjà spécialiste'})
+    type_specialiste = request.POST.get('type_specialiste', Psychologue.SPEC_PSYCHOLOGUE)
+    if type_specialiste not in dict(Psychologue.SPECIALITE_CHOICES):
+        type_specialiste = Psychologue.SPEC_PSYCHOLOGUE
     psychologue = Psychologue.objects.create(
         user=user,
+        type_specialiste=type_specialiste,
         specialites=request.POST.get('specialites', ''),
         biographie=request.POST.get('biographie', ''),
         experience_ans=int(request.POST.get('experience_ans', 0) or 0),
@@ -1409,9 +1453,13 @@ def admin_update_psychologue(request, psychologue_id):
         return JsonResponse({
             'success': True, 'id': psychologue.id,
             'user_id': psychologue.user.id, 'nom': psychologue.user.pseudonyme,
+            'type_specialiste': psychologue.type_specialiste,
             'specialites': psychologue.specialites, 'biographie': psychologue.biographie,
             'experience_ans': psychologue.experience_ans, 'est_actif': psychologue.est_actif,
         })
+    type_specialiste = request.POST.get('type_specialiste', psychologue.type_specialiste)
+    if type_specialiste in dict(Psychologue.SPECIALITE_CHOICES):
+        psychologue.type_specialiste = type_specialiste
     psychologue.specialites = request.POST.get('specialites', psychologue.specialites)
     psychologue.biographie = request.POST.get('biographie', psychologue.biographie)
     psychologue.experience_ans = int(request.POST.get('experience_ans', psychologue.experience_ans) or 0)
@@ -2362,7 +2410,10 @@ besoin — elle peut vouloir l'un, l'autre, ou passer de l'un à l'autre :
      (écriture guidée, météo intérieure, respiration), les citations
      d'Inspiration, et Santé & Nutrition (profil santé, IMC, plan de
      repas, programme d'activité physique sur 4 semaines).
-   - Psychologues : pour consulter la liste des psychologues et prendre
+   - Spécialistes : les professionnels classés par catégorie (psychologue,
+     psychiatre, psychothérapeute, médecin du sport, kinésithérapeute,
+     ostéopathe, psychomotricien, ergothérapeute, diététicien/nutritionniste,
+     coach sportif) — on choisit une catégorie, puis un profil, pour prendre
      rendez-vous (en ligne ou en visio) ; le suivi se fait ensuite dans
      "Mes consultations".
    - Mon profil : les informations personnelles et les publications de la
@@ -2395,8 +2446,9 @@ besoin :
      communauté.
    - Des Ressources : articles et guides pratiques sur la santé mentale.
    - Un Parcours Bien-être complet (journal, inspiration, santé & nutrition).
-   - Des Psychologues professionnels, pour prendre rendez-vous en ligne ou
-     en visio.
+   - Des Spécialistes professionnels (psychologue, psychiatre, kiné,
+     nutritionniste, coach sportif...), classés par catégorie, pour prendre
+     rendez-vous en ligne ou en visio.
    La plupart de ces espaces demandent un compte gratuit ("S'inscrire" en
    haut de la page) pour en profiter pleinement et garder son historique en
    sécurité. Encourage l'inscription avec douceur quand c'est pertinent,

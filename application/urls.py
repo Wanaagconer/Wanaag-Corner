@@ -33,9 +33,10 @@ urlpatterns = [
       
     # ============= ROUTES UTILISATEUR =============
     
-    # 1. Liste des psychologues disponibles
+    # 1. Les spécialistes, par catégorie
     path('psychologues/', views.psychologues_list, name='psychologues_list'),
-    
+    path('psychologues/categorie/<str:type_specialiste>/', views.specialistes_categorie, name='specialistes_categorie'),
+
     # 2. Formulaire pour demander une consultation
     path('psychologues/<int:psychologue_id>/consultation/', 
          views.consultation_request_form, name='consultation_request_form'),

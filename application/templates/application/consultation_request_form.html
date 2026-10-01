@@ -1,7 +1,7 @@
 {% extends 'application/base.html' %}
 {% load static %}
 
-{% block title %}Consultation — Dr. {{ psychologue.user.pseudonyme }}{% endblock %}
+{% block title %}Consultation — {{ psychologue.titre_nom }}{% endblock %}
 {% block page_title %}Consultation{% endblock %}
 
 {% block extra_css %}
@@ -225,7 +225,7 @@
 {% block content %}
 <div class="crf-wrap">
 
-    <!-- HERO: Psychologue profile -->
+    <!-- HERO: profil du spécialiste -->
     <div class="crf-hero">
         <div class="crf-hero-bg"></div>
         <div class="crf-hero-inner">
@@ -234,7 +234,7 @@
                 <div class="crf-av-ring"></div>
                 <div class="crf-av">
                     {% if psychologue.photo %}
-                        <img src="{{ psychologue.photo.url }}" alt="Dr. {{ psychologue.user.pseudonyme }}">
+                        <img src="{{ psychologue.photo.url }}" alt="{{ psychologue.titre_nom }}">
                     {% else %}
                         <span class="crf-av-initials">{{ psychologue.user.pseudonyme|first|upper }}</span>
                     {% endif %}
@@ -243,9 +243,9 @@
 
             <!-- Text -->
             <div class="crf-hero-text">
-                <div class="crf-hero-badge">Psychologue certifié</div>
-                <div class="crf-hero-name">Dr. {{ psychologue.user.pseudonyme }}</div>
-                <div class="crf-hero-sub">Professionnel de santé mentale</div>
+                <div class="crf-hero-badge">{{ psychologue.icone_specialite }} {{ psychologue.get_type_specialiste_display }}</div>
+                <div class="crf-hero-name">{{ psychologue.titre_nom }}</div>
+                <div class="crf-hero-sub">{{ psychologue.description_specialite }}</div>
                 {% if psychologue.specialites %}
                 <div class="crf-specs">
                     {% for spec in psychologue.specialites|split:',' %}
@@ -263,6 +263,26 @@
         </div>
     </div>
 
+    {% if psychologue.biographie %}
+    <!-- BIO -->
+    <div class="crf-card">
+        <div class="crf-card-header">
+            <div class="crf-card-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#be8c3c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2a10 10 0 100 20 10 10 0 000-20z"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
+                </svg>
+            </div>
+            <div>
+                <div class="crf-card-title">À propos de {{ psychologue.titre_nom }}</div>
+                <div class="crf-card-sub">Présentation du profil</div>
+            </div>
+        </div>
+        <div class="crf-card-body">
+            <p style="margin:0;font-size:.92rem;line-height:1.75;color:var(--brown);white-space:pre-line;">{{ psychologue.biographie }}</p>
+        </div>
+    </div>
+    {% endif %}
+
     <!-- TIP -->
     <div class="crf-tip">
         <div class="crf-tip-icon">
@@ -270,7 +290,7 @@
                 <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
             </svg>
         </div>
-        <p><strong>Confidentialité garantie.</strong> Votre message est strictement confidentiel et ne sera visible que par Dr. {{ psychologue.user.pseudonyme }}. Décrivez votre situation librement.</p>
+        <p><strong>Confidentialité garantie.</strong> Votre message est strictement confidentiel et ne sera visible que par {{ psychologue.titre_nom }}. Décrivez votre situation librement.</p>
     </div>
 
     <!-- FORM -->

@@ -161,7 +161,7 @@
             <strong>Consultation en visioconférence</strong>
             <span>
                 {% if is_patient %}
-                    Vous parlez avec Dr. {{ consultation.psychologue.user.pseudonyme }}
+                    Vous parlez avec {{ consultation.psychologue.titre_nom }}
                 {% else %}
                     Vous parlez avec {{ consultation.utilisateur.pseudonyme }}
                 {% endif %}
@@ -195,8 +195,8 @@
         </div>
         <div class="vr-info-item">
             <div class="vr-info-dot"></div>
-            <span>Psychologue :</span>
-            <strong>Dr. {{ consultation.psychologue.user.pseudonyme }}</strong>
+            <span>{{ consultation.psychologue.get_type_specialiste_display }} :</span>
+            <strong>{{ consultation.psychologue.titre_nom }}</strong>
         </div>
         <div class="vr-info-item">
             <div class="vr-info-dot"></div>

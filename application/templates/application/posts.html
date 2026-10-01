@@ -482,7 +482,7 @@ a.react-btn { text-decoration: none; }
           <div>
             <div>
               <a href="{% url 'user_profile' post.auteur.id %}" class="author-name" style="text-decoration:none;color:inherit;">{{ post.auteur.pseudonyme }}</a>
-              {% if post.auteur.psychologue_profile %}<span class="author-role role-psy">Psychologue</span>
+              {% if post.auteur.psychologue_profile %}<span class="author-role role-psy">{{ post.auteur.psychologue_profile.get_type_specialiste_display }}</span>
               {% else %}<span class="author-role role-membre">Membre</span>{% endif %}
             </div>
             <div class="post-date">
@@ -689,7 +689,7 @@ a.react-btn { text-decoration: none; }
         {% if user.psychologue_profile %}
         <a href="{% url 'psychologue_dashboard' %}" class="side-nav-link"><div class="nav-img-icon"><img src="{% static 'images/psychologue.jpg' %}" alt=""></div>Dashboard Psy</a>
         {% else %}
-        <a href="{% url 'psychologues_list' %}" class="side-nav-link"><div class="nav-img-icon"><img src="{% static 'images/psychologue.jpg' %}" alt=""></div>Psychologues</a>
+        <a href="{% url 'psychologues_list' %}" class="side-nav-link"><div class="nav-img-icon"><img src="{% static 'images/psychologue.jpg' %}" alt=""></div>Spécialistes</a>
         {% endif %}
       </div>
     </div>
@@ -707,7 +707,7 @@ a.react-btn { text-decoration: none; }
       <div class="av av-md {% if user.psychologue_profile %}av-psy{% endif %}">{{ user.pseudonyme|first|upper }}</div>
       <div>
         <div class="m-name">{{ user.pseudonyme }}</div>
-        <div class="m-sub">{% if user.psychologue_profile %}Psychologue{% else %}Membre{% endif %} · Public</div>
+        <div class="m-sub">{% if user.psychologue_profile %}{{ user.psychologue_profile.get_type_specialiste_display }}{% else %}Membre{% endif %} · Public</div>
       </div>
     </div>
     <textarea class="modal-textarea" id="postContent"
