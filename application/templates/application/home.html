@@ -1,224 +1,94 @@
 {% extends 'application/base.html' %}
 {% load static %}
 
-{% block title %}Wanaag Corner — Respirez. Vous êtes au bon endroit.{% endblock %}
+{% block title %}Wanaag Corner — Votre santé mentale mérite une place{% endblock %}
 
 {% block extra_css %}
 <style>
     .home-wrap{max-width:1180px;margin:0 auto;padding:0 28px;}
-    .serif{font-family:'Instrument Serif',serif;}
 
-    /* ============================================================
-       HERO — pas de photo de banc d'essai : un exercice de respiration
-       réel, utilisable avant même de créer un compte.
-       ============================================================ */
-    .hero{position:relative;padding:86px 0 70px;overflow:hidden;isolation:isolate;}
-    .hero::before{
-        content:'';position:absolute;inset:-25% -15%;z-index:-2;
-        background:
-            radial-gradient(36% 32% at 8% 10%, rgba(122,138,102,.17), transparent 70%),
-            radial-gradient(34% 30% at 94% 6%, rgba(190,140,60,.13), transparent 72%);
-        filter:blur(8px);
-        animation:meshDrift 26s ease-in-out infinite alternate;
-    }
-    @keyframes meshDrift{0%{transform:translate3d(0,0,0) scale(1);}100%{transform:translate3d(-2%,1.5%,0) scale(1.05);}}
-    @media(prefers-reduced-motion:reduce){.hero::before{animation:none;}}
-
-    .hero-head{
-        max-width:980px;margin-bottom:54px;
-        opacity:0;transform:translateY(18px);
-        animation:heroIn .9s cubic-bezier(.16,1,.3,1) .05s forwards;
-    }
-    @keyframes heroIn{to{opacity:1;transform:translateY(0);}}
-    .hero-head h1{
-        font-weight:400;font-size:clamp(46px,7.4vw,96px);
-        line-height:.98;letter-spacing:-.02em;color:var(--encre);
-    }
-    .hero-head h1 em{font-style:italic;color:var(--or-dark);}
-    .hero-head .line2{display:block;margin-top:2px;}
-
-    .hero-cols{display:grid;grid-template-columns:1.1fr .9fr;gap:60px;align-items:start;}
-    .hero-copy{
-        padding-top:6px;
-        opacity:0;transform:translateY(18px);
-        animation:heroIn .9s cubic-bezier(.16,1,.3,1) .22s forwards;
-    }
-    .lede{font-size:19px;color:var(--taupe);max-width:30em;margin-bottom:32px;line-height:1.68;}
-    .hero-cta{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:26px;}
-    .btn{
+    /* ---------- Hero ---------- */
+    .hero{padding:76px 0 64px;}
+    .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:64px;align-items:center;}
+    .eyebrow{
         display:inline-flex;align-items:center;gap:9px;
-        padding:14px 26px;border-radius:100px;font-weight:600;font-size:15.5px;
-        text-decoration:none;transition:transform .25s cubic-bezier(.34,1.56,.64,1), box-shadow .3s, background .2s, border-color .2s;
+        font-size:13px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;
+        color:var(--foret);margin-bottom:26px;
     }
-    .btn svg{width:17px;height:17px;transition:transform .3s;}
-    .btn:hover svg{transform:translateX(3px);}
-    .trust-line{display:flex;flex-wrap:wrap;gap:18px 26px;margin-top:8px;}
-    .trust-line span{
-        display:inline-flex;align-items:center;gap:7px;font-size:13.5px;color:var(--taupe);font-weight:500;
+    .eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--sauge);}
+    .hero h1{
+        font-family:'Fraunces',serif;font-weight:400;font-size:clamp(44px,6vw,72px);
+        line-height:1.04;letter-spacing:-.01em;margin-bottom:26px;
     }
-    .trust-line svg{width:15px;height:15px;color:var(--sauge);flex-shrink:0;}
+    .hero h1 em{font-style:italic;color:var(--or);}
+    .lede{font-size:19px;color:var(--taupe);max-width:30em;margin-bottom:34px;}
+    .hero-cta{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:30px;}
+    .ground{
+        font-family:'Fraunces',serif;font-style:italic;font-size:17px;color:var(--taupe);
+        padding-left:16px;border-left:2px solid var(--sauge);
+    }
+    .ground b{font-style:normal;font-weight:500;color:var(--foret);}
 
-    /* ---- L'orbe de respiration ---- */
-    .breathe-wrap{
-        position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;
-        padding-top:10px;
-        opacity:0;transform:translateY(18px) scale(.97);
-        animation:heroIn2 1s cubic-bezier(.16,1,.3,1) .36s forwards;
+    /* Visuel du hero + halo qui respire */
+    .hero-media{position:relative;display:grid;place-items:center;}
+    .hero-media .halo{width:112%;aspect-ratio:1;left:50%;top:45%;transform:translate(-50%,-50%);z-index:0;}
+    .hero-ph{
+        position:relative;z-index:1;width:100%;aspect-ratio:4/5;border-radius:20px;overflow:hidden;
+        border:1px solid var(--trait);
+        box-shadow:0 24px 60px -34px rgba(42,33,27,.5);
     }
-    @keyframes heroIn2{to{opacity:1;transform:translateY(0) scale(1);}}
-    .breathe-orb-wrap{position:relative;width:300px;height:300px;}
-    .breathe-ring{position:absolute;inset:0;transform:rotate(-90deg);}
-    .breathe-ring-bg{fill:none;stroke:var(--trait);stroke-width:1.5;}
-    .breathe-ring-fg{
-        fill:none;stroke:var(--or);stroke-width:1.5;stroke-linecap:round;
-        stroke-dasharray:578;stroke-dashoffset:578;
-        animation:ringFill 16s linear infinite;
+    .hero-ph img{width:100%;height:100%;object-fit:cover;display:block;}
+
+    /* ---------- Section offre ---------- */
+    section.offre{padding:20px 0 40px;}
+    .sec-head{margin-bottom:36px;}
+    .sec-eye{font-size:13px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;color:var(--foret);margin-bottom:12px;}
+    .sec-title{font-family:'Fraunces',serif;font-weight:400;font-size:clamp(30px,3.6vw,40px);letter-spacing:-.01em;}
+    .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+    .card{
+        background:var(--papier);border:1px solid var(--trait);border-radius:16px;overflow:hidden;
+        transition:transform .2s ease, box-shadow .2s ease;text-decoration:none;display:block;color:inherit;
     }
-    @keyframes ringFill{to{stroke-dashoffset:0;}}
-    .breathe-orb{
-        position:absolute;inset:34px;border-radius:50%;
-        background:radial-gradient(circle at 38% 32%, rgba(255,255,255,.55), transparent 45%),
-                   radial-gradient(circle at 50% 50%, rgba(190,140,60,.5), rgba(122,138,102,.42) 68%, transparent 100%);
-        display:flex;align-items:center;justify-content:center;
-        box-shadow:0 20px 60px -24px rgba(42,33,27,.38), inset 0 0 0 1px rgba(255,255,255,.3);
-        animation:breatheCycle 16s ease-in-out infinite;
-        transform-origin:center;
+    .card:hover{transform:translateY(-4px);box-shadow:0 26px 50px -30px rgba(42,33,27,.4);}
+    .card-ph{aspect-ratio:3/2;overflow:hidden;}
+    .card-ph img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s ease;}
+    .card:hover .card-ph img{transform:scale(1.06);}
+    .card-body{padding:22px 22px 26px;}
+    .card h3{font-family:'Fraunces',serif;font-weight:500;font-size:22px;margin-bottom:7px;}
+    .card p{font-size:15.5px;color:var(--taupe);}
+    .card .tag{display:inline-block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--foret);font-weight:600;margin-top:16px;}
+
+    /* Bandeau bien-être */
+    .feature{
+        margin:44px 0 8px;background:var(--papier);border:1px solid var(--trait);border-radius:22px;
+        display:grid;grid-template-columns:.9fr 1.1fr;gap:0;overflow:hidden;
     }
-    @keyframes breatheCycle{
-        0%{transform:scale(.62);}
-        25%{transform:scale(1);}
-        50%{transform:scale(1);}
-        75%{transform:scale(.62);}
-        100%{transform:scale(.62);}
-    }
-    @media(prefers-reduced-motion:reduce){
-        .breathe-orb{animation:none;transform:scale(.85);}
-        .breathe-ring-fg{animation:none;stroke-dashoffset:140;}
-    }
-    .breathe-word{
-        font-family:'Instrument Serif',serif;font-style:italic;font-size:21px;color:#fff;
-        text-shadow:0 2px 10px rgba(42,33,27,.25);letter-spacing:.01em;
-    }
-    .breathe-note{
-        position:absolute;top:-6px;right:-26px;
-        font-size:19px;color:var(--foret);line-height:1.25;text-align:left;
-        transform:rotate(4deg);pointer-events:none;
-    }
-    .breathe-note svg{width:30px;height:30px;color:var(--sauge);margin-top:2px;}
-    .breathe-caption{margin-top:22px;font-size:13px;color:var(--taupe);text-align:center;max-width:220px;}
-    @media(max-width:1100px){.breathe-note{display:none;}}
+    .feature-ph{height:100%;min-height:280px;overflow:hidden;border-right:1px solid var(--trait);}
+    .feature-ph img{width:100%;height:100%;object-fit:cover;display:block;}
+    .feature-txt{padding:44px 46px;align-self:center;}
+    .feature-txt h3{font-family:'Fraunces',serif;font-weight:400;font-size:clamp(26px,3vw,34px);margin-bottom:14px;line-height:1.1;}
+    .feature-txt p{color:var(--taupe);max-width:34em;margin-bottom:22px;}
+
+    /* ---------- Bandeau final ---------- */
+    .closing{margin:70px 0 40px;text-align:center;padding:64px 28px;
+        background:linear-gradient(160deg,#EDE5D4, #E7E4D2);border-radius:26px;border:1px solid var(--trait);}
+    .closing h2{font-family:'Fraunces',serif;font-weight:400;font-size:clamp(30px,4vw,46px);line-height:1.08;margin-bottom:16px;}
+    .closing p{color:var(--taupe);font-size:18px;max-width:34em;margin:0 auto 30px;}
+    .closing-actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
 
     @media(max-width:900px){
-        .hero-cols{grid-template-columns:1fr;gap:44px;}
-        .breathe-wrap{order:-1;}
+        .hero-grid{grid-template-columns:1fr;gap:40px;}
+        .hero-media{order:-1;max-width:440px;margin:0 auto;}
+        .cards{grid-template-columns:1fr;}
+        .feature{grid-template-columns:1fr;}
+        .feature-ph{border-right:none;border-bottom:1px solid var(--trait);min-height:220px;}
     }
     @media(max-width:520px){
         .home-wrap{padding:0 20px;}
-        .hero{padding:52px 0 44px;}
-        .breathe-orb-wrap{width:240px;height:240px;}
-        .breathe-ring-fg{stroke-dasharray:578;}
+        .hero{padding:48px 0 40px;}
+        .closing{padding:48px 22px;}
+        .hero-media .halo{width:100%;}
     }
-
-    /* ============================================================
-       ESPACES — rangées éditoriales en alternance, pas une grille
-       de cartes identiques.
-       ============================================================ */
-    .espaces-sec{padding:14px 0 10px;}
-    .sec-tag{
-        font-family:'Caveat',cursive;font-weight:600;font-size:24px;color:var(--or-dark);
-        display:inline-block;margin-bottom:2px;transform:rotate(-2deg);
-    }
-    .sec-title{font-size:clamp(30px,3.8vw,42px);font-weight:400;letter-spacing:-.01em;margin-bottom:54px;max-width:16em;}
-
-    .espace-row{
-        display:grid;grid-template-columns:.85fr 1.15fr;gap:56px;align-items:center;
-        padding:46px 0;border-top:1px solid var(--trait);
-    }
-    .espace-row:last-child{border-bottom:1px solid var(--trait);}
-    .espace-row:nth-child(even) .espace-media{order:2;}
-    .espace-num{
-        font-family:'Instrument Serif',serif;font-style:italic;font-size:17px;color:var(--or-dark);
-        display:block;margin-bottom:10px;
-    }
-    .espace-row h3{font-size:clamp(26px,3vw,36px);font-weight:400;margin-bottom:14px;line-height:1.12;}
-    .espace-row p{font-size:16px;color:var(--taupe);line-height:1.7;max-width:30em;margin-bottom:20px;}
-    .espace-link{
-        display:inline-flex;align-items:center;gap:8px;text-decoration:none;
-        font-size:14px;font-weight:600;color:var(--encre);
-        border-bottom:1.5px solid var(--or);padding-bottom:3px;
-        transition:gap .25s, color .2s;
-    }
-    .espace-link:hover{gap:13px;color:var(--or-dark);}
-    .espace-link svg{width:15px;height:15px;}
-    .espace-media{
-        position:relative;border-radius:20px;overflow:hidden;aspect-ratio:5/4;
-        box-shadow:0 30px 60px -32px rgba(42,33,27,.4);
-    }
-    .espace-media img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .7s cubic-bezier(.16,1,.3,1);}
-    .espace-row:hover .espace-media img{transform:scale(1.045);}
-    @media(max-width:820px){
-        .espace-row,.espace-row:nth-child(even){grid-template-columns:1fr;gap:26px;}
-        .espace-row:nth-child(even) .espace-media{order:0;}
-    }
-
-    /* ============================================================
-       COMMENT ÇA MARCHE — liste éditoriale, grands chiffres fantômes
-       ============================================================ */
-    .comment-sec{padding:84px 0 70px;display:grid;grid-template-columns:.75fr 1.25fr;gap:60px;}
-    .comment-head{position:sticky;top:110px;align-self:start;}
-    .comment-head p{font-size:15.5px;color:var(--taupe);line-height:1.7;max-width:22em;margin-top:14px;}
-    .comment-list{display:flex;flex-direction:column;}
-    .comment-item{
-        display:grid;grid-template-columns:86px 1fr;gap:24px;
-        padding:30px 0;border-top:1px solid var(--trait);
-    }
-    .comment-item:last-child{border-bottom:1px solid var(--trait);}
-    .comment-ghost{
-        font-family:'Instrument Serif',serif;font-size:58px;line-height:1;color:transparent;
-        -webkit-text-stroke:1.3px var(--or-light);
-    }
-    .comment-item h4{font-size:21px;font-weight:400;margin-bottom:8px;}
-    .comment-item p{font-size:15px;color:var(--taupe);line-height:1.65;max-width:30em;}
-    @media(max-width:860px){
-        .comment-sec{grid-template-columns:1fr;gap:30px;}
-        .comment-head{position:static;}
-    }
-
-    /* ============================================================
-       RESSENTI — cartes décalées, pas une grille plate
-       ============================================================ */
-    .quote-sec{padding:60px 0 20px;}
-    .quote-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:40px;}
-    .quote-card{
-        background:var(--papier);border:1px solid var(--trait);border-radius:4px 20px 20px 20px;
-        padding:30px 26px;transition:box-shadow .3s, border-color .3s;
-    }
-    /* décalage statique : margin, pas transform — le système d'apparition au
-       scroll force transform:none !important une fois la carte révélée */
-    .quote-card:nth-child(2){margin-top:26px;}
-    .quote-card:hover{box-shadow:0 22px 44px -28px rgba(42,33,27,.35);border-color:var(--or-light);}
-    .quote-mark{font-family:'Instrument Serif',serif;font-size:52px;line-height:1;color:var(--or-light);margin-bottom:2px;display:block;}
-    .quote-card p{font-family:'Instrument Serif',serif;font-style:italic;font-size:18px;color:var(--encre);line-height:1.5;margin-bottom:18px;}
-    .quote-tag{display:flex;align-items:center;gap:9px;font-size:12.5px;color:var(--taupe);font-weight:500;}
-    .quote-tag svg{width:15px;height:15px;color:var(--sauge);}
-    @media(max-width:860px){.quote-grid{grid-template-columns:1fr;}.quote-card:nth-child(2){transform:none;}.quote-card:nth-child(2):hover{transform:translateY(-4px);}}
-
-    /* ---------- Bandeau final ---------- */
-    .closing{
-        margin:78px 0 40px;text-align:center;padding:72px 28px;
-        background:linear-gradient(160deg,#EDE5D4, #E7E4D2);border-radius:28px;border:1px solid var(--trait);
-        position:relative;overflow:hidden;isolation:isolate;
-    }
-    .closing::before{
-        content:'';position:absolute;z-index:-1;width:58%;aspect-ratio:1;left:50%;top:50%;transform:translate(-50%,-50%);
-        background:radial-gradient(circle,rgba(122,138,102,.22),transparent 68%);filter:blur(10px);
-        animation:breathe 8s ease-in-out infinite;
-    }
-    .closing h2{font-size:clamp(30px,4.2vw,48px);font-weight:400;line-height:1.08;margin-bottom:16px;}
-    .closing p{color:var(--taupe);font-size:18px;max-width:32em;margin:0 auto 30px;}
-    .closing-actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
-
-    @media(max-width:520px){.closing{padding:48px 22px;}}
 </style>
 {% endblock %}
 
@@ -226,135 +96,72 @@
 
 <!-- HERO -->
 <section class="hero">
-    <div class="home-wrap">
-        <div class="hero-head">
-            <h1>Respirez. <em>Vous êtes</em><span class="line2">au bon endroit.</span></h1>
+    <div class="home-wrap hero-grid">
+        <div class="hero-text">
+            <span class="eyebrow"><span class="dot"></span> Espace sûr · Djibouti</span>
+            <h1>Votre santé mentale mérite une <em>place</em></h1>
+            <p class="lede">Un espace bienveillant pour parler librement, trouver du soutien et accéder à des ressources fiables — pensé pour Djibouti.</p>
+            <div class="hero-cta">
+                <a class="btn btn-primary" href="{% url 'register' %}">Rejoindre la communauté</a>
+                <a class="btn btn-secondary" href="#offre">Découvrir nos espaces →</a>
+            </div>
+            <p class="ground"><b>Wanaag</b> — « le bien-être », en somali.</p>
         </div>
 
-        <div class="hero-cols">
-            <div class="hero-copy">
-                <p class="lede">Pas de rendez-vous à prendre pour commencer. Juste vous, un espace calme pensé pour Djibouti, et autant de temps qu'il vous faut pour poser ce que vous portez.</p>
-                <div class="hero-cta">
-                    <a class="btn btn-primary" href="{% url 'register' %}">
-                        Rejoindre la communauté
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-                    </a>
-                    <a class="btn btn-secondary" href="#espaces">Découvrir nos espaces</a>
-                </div>
-                <div class="trust-line">
-                    <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg> Anonyme &amp; confidentiel</span>
-                    <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6z"/><polyline points="9 12 11 14 15 10"/></svg> Professionnels certifiés</span>
-                    <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 000-7.78z"/></svg> Wanaag, « le bien-être »</span>
-                </div>
-            </div>
-
-            <div class="breathe-wrap">
-                <div class="breathe-orb-wrap">
-                    <svg class="breathe-ring" viewBox="0 0 200 200">
-                        <circle class="breathe-ring-bg" cx="100" cy="100" r="92"/>
-                        <circle class="breathe-ring-fg" cx="100" cy="100" r="92"/>
-                    </svg>
-                    <div class="breathe-orb">
-                        <span class="breathe-word" id="breatheWord">Inspirez</span>
-                    </div>
-                    <span class="breathe-note hand" aria-hidden="true">
-                        essayez,<br>16 secondes
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8c-4 0-9 2-9 8M4 12l4 4-4 4"/></svg>
-                    </span>
-                </div>
-                <p class="breathe-caption">Un exercice simple, à votre rythme — pas besoin de compte pour essayer.</p>
+        <div class="hero-media">
+            <div class="halo" aria-hidden="true"></div>
+            <div class="hero-ph">
+                <img src="{% static 'images/espace-bien-etre.jpg' %}" alt="Espace de bien-être Wanaag Corner">
             </div>
         </div>
     </div>
 </section>
 
-<!-- ESPACES -->
-<section class="espaces-sec home-wrap" id="espaces">
-    <span class="sec-tag hand">ce que vous trouverez ici</span>
-    <h2 class="sec-title">Trois espaces pensés pour avancer sans vous presser.</h2>
-
-    <div class="espace-row">
-        <div class="espace-media"><img src="{% static 'images/forum.jpg' %}" alt="Forum"></div>
-        <div>
-            <span class="espace-num">01</span>
-            <h3>Forum</h3>
-            <p>Une communauté qui écoute, sans jugement, à toute heure du jour ou de la nuit. Parlez quand vous en avez besoin, lisez quand vous préférez juste vous sentir moins seul·e.</p>
-            <a class="espace-link" href="{% url 'register' %}">Communauté bienveillante <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
-        </div>
+<!-- OFFRE -->
+<section class="offre home-wrap" id="offre">
+    <div class="sec-head">
+        <div class="sec-eye">Ce que vous trouverez ici</div>
+        <h2 class="sec-title">Trois espaces, un même soin</h2>
     </div>
 
-    <div class="espace-row">
-        <div class="espace-media"><img src="{% static 'images/psychologue.jpg' %}" alt="Spécialistes"></div>
-        <div>
-            <span class="espace-num">02</span>
-            <h3>Spécialistes</h3>
-            <p>Psychologue, kinésithérapeute, nutritionniste, coach sportif — des professionnels certifiés, joignables près de chez vous, pour quand vous êtes prêt·e à aller plus loin.</p>
-            <a class="espace-link" href="{% url 'register' %}">Professionnels certifiés <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
-        </div>
-    </div>
-
-    <div class="espace-row">
-        <div class="espace-media"><img src="{% static 'images/ressources.jpg' %}" alt="Ressources"></div>
-        <div>
-            <span class="espace-num">03</span>
-            <h3>Ressources</h3>
-            <p>Des articles et des guides écrits et vérifiés en français — pour comprendre ce que vous ressentez, sans jargon, sans jugement, à votre propre rythme de lecture.</p>
-            <a class="espace-link" href="{% url 'register' %}">Articles &amp; guides <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
-        </div>
-    </div>
-</section>
-
-<!-- COMMENT ÇA MARCHE -->
-<section class="comment-sec home-wrap">
-    <div class="comment-head">
-        <span class="sec-tag hand">simple, à votre allure</span>
-        <h2 class="sec-title" style="margin-bottom:0;">Comment ça marche</h2>
-        <p>Aucune étape n'est obligatoire. Beaucoup de membres s'arrêtent après la première — et c'est très bien ainsi.</p>
-    </div>
-    <div class="comment-list">
-        <div class="comment-item">
-            <span class="comment-ghost">01</span>
-            <div>
-                <h4>Créez votre espace</h4>
-                <p>Une inscription gratuite et anonyme, en moins d'une minute. Aucune information superflue, aucun engagement.</p>
+    <div class="cards">
+        <a class="card" href="{% url 'register' %}">
+            <div class="card-ph"><img src="{% static 'images/forum.jpg' %}" alt="Forum"></div>
+            <div class="card-body">
+                <h3>Forum</h3>
+                <p>Une communauté qui écoute, sans jugement, à toute heure.</p>
+                <span class="tag">Communauté bienveillante</span>
             </div>
-        </div>
-        <div class="comment-item">
-            <span class="comment-ghost">02</span>
-            <div>
-                <h4>Explorez librement</h4>
-                <p>Forum, journal intime, ressources — avancez à votre rythme, sans pression ni obligation d'aller plus loin.</p>
-            </div>
-        </div>
-        <div class="comment-item">
-            <span class="comment-ghost">03</span>
-            <div>
-                <h4>Parlez, si vous le souhaitez</h4>
-                <p>Échangez avec la communauté ou prenez rendez-vous avec un professionnel certifié, le jour où vous êtes prêt·e.</p>
-            </div>
-        </div>
-    </div>
-</section>
+        </a>
 
-<!-- CE QUE NOUS VOULONS POUR VOUS -->
-<section class="quote-sec home-wrap">
-    <span class="sec-tag hand">ce que nous voulons pour vous</span>
-    <h2 class="sec-title">Un espace pensé pour vous apaiser.</h2>
-    <div class="quote-grid">
-        <div class="quote-card">
-            <span class="quote-mark">"</span>
-            <p>Être écouté·e sans avoir à tout justifier, sans crainte du jugement.</p>
-            <div class="quote-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 000-7.78z"/></svg> Zéro jugement</div>
+        <a class="card" href="{% url 'register' %}">
+            <div class="card-ph"><img src="{% static 'images/psychologue.jpg' %}" alt="Spécialistes"></div>
+            <div class="card-body">
+                <h3>Spécialistes</h3>
+                <p>Psychologue, kiné, nutritionniste, coach sportif... des professionnels certifiés, joignables près de chez vous.</p>
+                <span class="tag">Professionnels certifiés</span>
+            </div>
+        </a>
+
+        <a class="card" href="{% url 'register' %}">
+            <div class="card-ph"><img src="{% static 'images/ressources.jpg' %}" alt="Ressources"></div>
+            <div class="card-body">
+                <h3>Ressources</h3>
+                <p>Des articles et des guides fiables, écrits et vérifiés en français.</p>
+                <span class="tag">Articles &amp; guides</span>
+            </div>
+        </a>
+    </div>
+
+    <!-- Bandeau bien-être -->
+    <div class="feature">
+        <div class="feature-ph">
+            <img src="{% static 'images/bienveillance.jpg' %}" alt="Parcours bien-être">
         </div>
-        <div class="quote-card">
-            <span class="quote-mark">"</span>
-            <p>Avancer à son propre rythme, sans se sentir forcé·e d'aller plus vite que soi.</p>
-            <div class="quote-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 16 14"/></svg> Votre rythme</div>
-        </div>
-        <div class="quote-card">
-            <span class="quote-mark">"</span>
-            <p>Savoir qu'un vrai professionnel est là, si et quand on en a besoin.</p>
-            <div class="quote-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6z"/><polyline points="9 12 11 14 15 10"/></svg> Un vrai soutien</div>
+        <div class="feature-txt">
+            <h3>Un espace de bien-être, à votre rythme</h3>
+            <p>Un journal intime, des citations inspirantes, un suivi santé personnalisé et un blog bien-être — quelques minutes suffisent. Rien à prouver, personne à impressionner.</p>
+            <a class="btn btn-secondary" href="{% url 'register' %}">Découvrir le Parcours Bien-être</a>
         </div>
     </div>
 </section>
@@ -371,22 +178,4 @@
     </div>
 </div>
 
-{% endblock %}
-
-{% block extra_js %}
-<script>
-(function(){
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const wordEl = document.getElementById('breatheWord');
-    if (wordEl) {
-        if (reduceMotion) {
-            wordEl.textContent = 'Respirez';
-        } else {
-            const words = ['Inspirez', 'Retenez', 'Expirez', 'Retenez'];
-            let i = 0;
-            setInterval(() => { i = (i + 1) % words.length; wordEl.textContent = words[i]; }, 4000);
-        }
-    }
-})();
-</script>
 {% endblock %}
