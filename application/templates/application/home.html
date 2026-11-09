@@ -7,71 +7,294 @@
 <style>
     .home-wrap{max-width:1180px;margin:0 auto;padding:0 28px;}
 
-    /* ---------- Hero ---------- */
-    .hero{padding:76px 0 64px;}
+    /* ============================================================
+       HERO
+       ============================================================ */
+    .hero{
+        padding:92px 0 56px;
+        position:relative;
+        overflow:hidden;
+        isolation:isolate;
+    }
+    /* Nappe de dégradé en fond — mouvement lent, respire avec la page */
+    .hero::before{
+        content:'';
+        position:absolute; inset:-20% -10%; z-index:-2;
+        background:
+            radial-gradient(42% 38% at 14% 18%, rgba(122,138,102,.20), transparent 70%),
+            radial-gradient(38% 34% at 86% 12%, rgba(190,140,60,.16), transparent 72%),
+            radial-gradient(50% 44% at 50% 100%, rgba(190,140,60,.08), transparent 70%);
+        filter:blur(6px);
+        animation:meshDrift 22s ease-in-out infinite alternate;
+    }
+    @keyframes meshDrift{
+        0%{transform:translate3d(0,0,0) scale(1);}
+        100%{transform:translate3d(-1.5%,1.5%,0) scale(1.04);}
+    }
     .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:64px;align-items:center;}
+
+    /* Entrée au chargement : les éléments du texte héro s'enchaînent */
+    .hero-text > *{
+        opacity:0; transform:translateY(22px);
+        animation:heroIn .85s cubic-bezier(.16,1,.3,1) forwards;
+    }
+    .hero-text > *:nth-child(1){animation-delay:.05s;}
+    .hero-text > *:nth-child(2){animation-delay:.16s;}
+    .hero-text > *:nth-child(3){animation-delay:.28s;}
+    .hero-text > *:nth-child(4){animation-delay:.40s;}
+    .hero-text > *:nth-child(5){animation-delay:.52s;}
+    @keyframes heroIn{to{opacity:1;transform:translateY(0);}}
+
     .eyebrow{
         display:inline-flex;align-items:center;gap:9px;
         font-size:13px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;
         color:var(--foret);margin-bottom:26px;
+        padding:7px 14px 7px 10px;border-radius:100px;
+        background:rgba(122,138,102,.1);border:1px solid rgba(122,138,102,.22);
     }
-    .eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--sauge);}
+    .eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--sauge);position:relative;flex-shrink:0;}
+    .eyebrow .dot::after{
+        content:'';position:absolute;inset:-4px;border-radius:50%;
+        border:1.5px solid var(--sauge);animation:pulseRing 2.6s ease-out infinite;
+    }
+    @keyframes pulseRing{0%{transform:scale(.6);opacity:.9;}100%{transform:scale(2.1);opacity:0;}}
+
     .hero h1{
-        font-family:'Fraunces',serif;font-weight:400;font-size:clamp(44px,6vw,72px);
-        line-height:1.04;letter-spacing:-.01em;margin-bottom:26px;
+        font-family:'Fraunces',serif;font-weight:400;font-size:clamp(44px,6vw,74px);
+        line-height:1.03;letter-spacing:-.015em;margin-bottom:26px;
     }
-    .hero h1 em{font-style:italic;color:var(--or);}
-    .lede{font-size:19px;color:var(--taupe);max-width:30em;margin-bottom:34px;}
+    .hero h1 em{font-style:italic;color:var(--or);position:relative;}
+    .lede{font-size:19px;color:var(--taupe);max-width:30em;margin-bottom:34px;line-height:1.65;}
     .hero-cta{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:30px;}
+    .btn{
+        display:inline-flex;align-items:center;gap:9px;
+        padding:14px 26px;border-radius:100px;font-weight:600;font-size:15.5px;
+        text-decoration:none;transition:transform .25s cubic-bezier(.34,1.56,.64,1), box-shadow .3s, background .2s, border-color .2s;
+    }
+    .btn svg{width:17px;height:17px;transition:transform .3s;}
+    .btn:hover svg{transform:translateX(3px);}
     .ground{
         font-family:'Fraunces',serif;font-style:italic;font-size:17px;color:var(--taupe);
         padding-left:16px;border-left:2px solid var(--sauge);
     }
     .ground b{font-style:normal;font-weight:500;color:var(--foret);}
 
-    /* Visuel du hero + halo qui respire */
-    .hero-media{position:relative;display:grid;place-items:center;}
-    .hero-media .halo{width:112%;aspect-ratio:1;left:50%;top:45%;transform:translate(-50%,-50%);z-index:0;}
-    .hero-ph{
-        position:relative;z-index:1;width:100%;aspect-ratio:4/5;border-radius:20px;overflow:hidden;
-        border:1px solid var(--trait);
-        box-shadow:0 24px 60px -34px rgba(42,33,27,.5);
+    /* Visuel du hero + halo qui respire (double nappe, vitesses différentes) */
+    .hero-media{
+        position:relative;display:grid;place-items:center;
+        opacity:0;animation:heroIn 1s cubic-bezier(.16,1,.3,1) .22s forwards;
     }
+    .hero-media .halo{width:112%;aspect-ratio:1;left:50%;top:45%;transform:translate(-50%,-50%);z-index:0;}
+    .hero-media .halo-2{
+        width:78%;aspect-ratio:1;left:38%;top:62%;transform:translate(-50%,-50%);z-index:0;
+        background:radial-gradient(circle at 50% 45%, rgba(190,140,60,.4), rgba(122,138,102,.1) 55%, transparent 72%);
+        animation-duration:9.5s; animation-delay:-3s;
+    }
+    .hero-ph{
+        position:relative;z-index:1;width:100%;aspect-ratio:4/5;border-radius:22px;overflow:hidden;
+        border:1px solid var(--trait);
+        box-shadow:0 28px 70px -32px rgba(42,33,27,.48);
+        animation:floatY 7s ease-in-out infinite;
+    }
+    @keyframes floatY{0%,100%{transform:translateY(0);}50%{transform:translateY(-12px);}}
+    @media(prefers-reduced-motion:reduce){.hero-ph{animation:none;}}
     .hero-ph img{width:100%;height:100%;object-fit:cover;display:block;}
+    .hero-ph::after{
+        content:'';position:absolute;inset:0;
+        background:linear-gradient(200deg,rgba(42,33,27,0) 55%,rgba(42,33,27,.28) 100%);
+        pointer-events:none;
+    }
 
-    /* ---------- Section offre ---------- */
+    /* Badge flottant sur l'image : "souffle" littéral */
+    .hero-badge{
+        position:absolute; z-index:2; left:-22px; bottom:34px;
+        display:flex; align-items:center; gap:12px;
+        background:color-mix(in srgb, var(--papier) 88%, transparent);
+        backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+        border:1px solid var(--trait); border-radius:18px;
+        padding:14px 18px 14px 14px;
+        box-shadow:0 18px 40px -20px rgba(42,33,27,.4);
+        animation:badgeFloat 6s ease-in-out infinite;
+    }
+    @media(prefers-reduced-motion:reduce){.hero-badge{animation:none;}}
+    @keyframes badgeFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+    .hero-badge-ring{
+        width:38px;height:38px;border-radius:50%;flex-shrink:0;position:relative;
+        display:flex;align-items:center;justify-content:center;
+        background:radial-gradient(circle,rgba(122,138,102,.22),transparent 72%);
+    }
+    .hero-badge-ring::before{
+        content:'';position:absolute;inset:0;border-radius:50%;
+        border:1.5px solid var(--sauge);animation:breathe 5s ease-in-out infinite;
+    }
+    .hero-badge-ring svg{width:17px;height:17px;color:var(--foret);position:relative;z-index:1;}
+    .hero-badge-txt strong{display:block;font-size:13px;font-weight:700;color:var(--encre);line-height:1.3;}
+    .hero-badge-txt span{display:block;font-size:11.5px;color:var(--taupe);margin-top:1px;}
+
+    /* Repère de défilement */
+    .scroll-cue{
+        display:flex;flex-direction:column;align-items:center;gap:8px;
+        position:relative;width:fit-content;margin:54px auto 0;
+        color:var(--taupe);text-decoration:none;font-size:11.5px;
+        letter-spacing:.12em;text-transform:uppercase;font-weight:600;
+        opacity:0;animation:heroIn .8s cubic-bezier(.16,1,.3,1) .7s forwards;
+    }
+    .scroll-cue svg{width:15px;height:15px;animation:cueBounce 2s ease-in-out infinite;}
+    @keyframes cueBounce{0%,100%{transform:translateY(0);opacity:.55;}50%{transform:translateY(6px);opacity:1;}}
+    @media(prefers-reduced-motion:reduce){.scroll-cue svg{animation:none;}}
+
+    /* ============================================================
+       TRUST STRIP
+       ============================================================ */
+    .trust-strip{
+        display:grid;grid-template-columns:repeat(4,1fr);gap:1px;
+        background:var(--trait);border:1px solid var(--trait);border-radius:20px;
+        overflow:hidden;margin:8px 0 72px;
+    }
+    .trust-item{
+        background:var(--papier);padding:26px 22px;
+        display:flex;align-items:center;gap:14px;
+    }
+    .trust-ic{
+        width:42px;height:42px;border-radius:12px;flex-shrink:0;
+        display:flex;align-items:center;justify-content:center;
+        background:rgba(190,140,60,.12);color:var(--or-dark);
+    }
+    .trust-ic svg{width:20px;height:20px;}
+    .trust-num{font-family:'Fraunces',serif;font-size:21px;font-weight:600;color:var(--encre);line-height:1.2;}
+    .trust-lbl{font-size:12.5px;color:var(--taupe);line-height:1.35;margin-top:1px;}
+    @media(max-width:860px){.trust-strip{grid-template-columns:repeat(2,1fr);}}
+    @media(max-width:520px){.trust-strip{grid-template-columns:1fr;}}
+
+    /* ============================================================
+       SECTION OFFRE (cartes)
+       ============================================================ */
     section.offre{padding:20px 0 40px;}
     .sec-head{margin-bottom:36px;}
     .sec-eye{font-size:13px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;color:var(--foret);margin-bottom:12px;}
     .sec-title{font-family:'Fraunces',serif;font-weight:400;font-size:clamp(30px,3.6vw,40px);letter-spacing:-.01em;}
     .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
     .card{
-        background:var(--papier);border:1px solid var(--trait);border-radius:16px;overflow:hidden;
-        transition:transform .2s ease, box-shadow .2s ease;text-decoration:none;display:block;color:inherit;
+        position:relative;
+        background:var(--papier);border:1px solid var(--trait);border-radius:18px;overflow:hidden;
+        transition:transform .35s cubic-bezier(.16,1,.3,1), box-shadow .35s, border-color .3s;
+        text-decoration:none;display:block;color:inherit;
     }
-    .card:hover{transform:translateY(-4px);box-shadow:0 26px 50px -30px rgba(42,33,27,.4);}
-    .card-ph{aspect-ratio:3/2;overflow:hidden;}
-    .card-ph img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s ease;}
-    .card:hover .card-ph img{transform:scale(1.06);}
+    .card:hover{transform:translateY(-6px);box-shadow:0 30px 56px -30px rgba(42,33,27,.42);border-color:transparent;}
+    .card-num{
+        position:absolute;top:16px;right:16px;z-index:2;
+        width:30px;height:30px;border-radius:50%;
+        background:color-mix(in srgb, var(--papier) 82%, transparent);
+        backdrop-filter:blur(8px);
+        display:flex;align-items:center;justify-content:center;
+        font-family:'Fraunces',serif;font-size:12.5px;font-weight:600;color:var(--or-dark);
+        border:1px solid var(--trait);
+    }
+    .card-ph{aspect-ratio:3/2;overflow:hidden;position:relative;}
+    .card-ph img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s cubic-bezier(.16,1,.3,1);}
+    .card:hover .card-ph img{transform:scale(1.08);}
+    .card-ph::after{
+        content:'';position:absolute;inset:0;
+        background:linear-gradient(200deg,rgba(42,33,27,0) 60%,rgba(42,33,27,.16) 100%);
+        opacity:0;transition:opacity .35s;
+    }
+    .card:hover .card-ph::after{opacity:1;}
     .card-body{padding:22px 22px 26px;}
     .card h3{font-family:'Fraunces',serif;font-weight:500;font-size:22px;margin-bottom:7px;}
-    .card p{font-size:15.5px;color:var(--taupe);}
-    .card .tag{display:inline-block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--foret);font-weight:600;margin-top:16px;}
+    .card p{font-size:15.5px;color:var(--taupe);line-height:1.55;}
+    .card .tag{
+        display:inline-flex;align-items:center;gap:6px;
+        font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--foret);font-weight:600;margin-top:16px;
+    }
+    .card .tag svg{width:13px;height:13px;transition:transform .3s;}
+    .card:hover .tag svg{transform:translateX(3px);}
 
     /* Bandeau bien-être */
     .feature{
-        margin:44px 0 8px;background:var(--papier);border:1px solid var(--trait);border-radius:22px;
-        display:grid;grid-template-columns:.9fr 1.1fr;gap:0;overflow:hidden;
+        margin:44px 0 8px;background:var(--papier);border:1px solid var(--trait);border-radius:24px;
+        display:grid;grid-template-columns:.9fr 1.1fr;gap:0;overflow:hidden;position:relative;
     }
-    .feature-ph{height:100%;min-height:280px;overflow:hidden;border-right:1px solid var(--trait);}
+    .feature-ph{height:100%;min-height:300px;overflow:hidden;border-right:1px solid var(--trait);position:relative;}
     .feature-ph img{width:100%;height:100%;object-fit:cover;display:block;}
-    .feature-txt{padding:44px 46px;align-self:center;}
-    .feature-txt h3{font-family:'Fraunces',serif;font-weight:400;font-size:clamp(26px,3vw,34px);margin-bottom:14px;line-height:1.1;}
-    .feature-txt p{color:var(--taupe);max-width:34em;margin-bottom:22px;}
+    .feature-txt{padding:48px 50px;align-self:center;position:relative;}
+    .feature-badge{
+        display:inline-flex;align-items:center;gap:8px;margin-bottom:16px;
+        font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--sauge);
+    }
+    .feature-badge svg{width:15px;height:15px;animation:breathe 5s ease-in-out infinite;}
+    .feature-txt h3{font-family:'Fraunces',serif;font-weight:400;font-size:clamp(26px,3vw,34px);margin-bottom:14px;line-height:1.14;}
+    .feature-txt p{color:var(--taupe);max-width:34em;margin-bottom:26px;line-height:1.6;}
+
+    /* ============================================================
+       COMMENT ÇA MARCHE
+       ============================================================ */
+    .steps-sec{padding:76px 0 60px;}
+    .steps-row{
+        display:grid;grid-template-columns:repeat(3,1fr);gap:0;position:relative;margin-top:44px;
+    }
+    .steps-line{
+        position:absolute;top:34px;left:calc(100%/6); right:calc(100%/6);
+        height:1.5px;background:var(--trait);z-index:0;
+        overflow:hidden;
+    }
+    .steps-line::after{
+        content:'';position:absolute;inset:0;
+        background:linear-gradient(90deg,var(--sauge),var(--or));
+        transform:scaleX(0);transform-origin:left;
+        transition:transform 1.4s cubic-bezier(.16,1,.3,1);
+    }
+    .steps-sec.in-view .steps-line::after{transform:scaleX(1);}
+    .step{position:relative;z-index:1;padding:0 24px;text-align:center;}
+    .step-num{
+        width:68px;height:68px;border-radius:50%;margin:0 auto 22px;
+        display:flex;align-items:center;justify-content:center;
+        background:var(--papier);border:1.5px solid var(--trait);
+        font-family:'Fraunces',serif;font-size:22px;color:var(--or-dark);
+        box-shadow:0 10px 26px -14px rgba(42,33,27,.3);
+        transition:border-color .3s, transform .3s;
+    }
+    .step:hover .step-num{border-color:var(--or);transform:scale(1.06);}
+    .step h4{font-family:'Fraunces',serif;font-weight:500;font-size:19px;margin-bottom:10px;}
+    .step p{font-size:14.5px;color:var(--taupe);line-height:1.6;max-width:26em;margin:0 auto;}
+    @media(max-width:860px){
+        .steps-row{grid-template-columns:1fr;gap:38px;}
+        .steps-line{display:none;}
+    }
+
+    /* ============================================================
+       RESSENTI (sans faux témoignages attribués)
+       ============================================================ */
+    .quote-sec{padding:70px 0 10px;}
+    .quote-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:40px;}
+    .quote-card{
+        background:var(--papier);border:1px solid var(--trait);border-radius:18px;
+        padding:30px 26px;position:relative;transition:transform .3s, box-shadow .3s;
+    }
+    .quote-card:hover{transform:translateY(-4px);box-shadow:0 22px 44px -28px rgba(42,33,27,.35);}
+    .quote-mark{
+        font-family:'Fraunces',serif;font-size:52px;line-height:1;color:var(--or-light);
+        margin-bottom:4px;display:block;
+    }
+    .quote-card p{
+        font-family:'Fraunces',serif;font-style:italic;font-size:17px;color:var(--encre);
+        line-height:1.55;margin-bottom:18px;
+    }
+    .quote-tag{display:flex;align-items:center;gap:9px;font-size:12.5px;color:var(--taupe);font-weight:500;}
+    .quote-tag svg{width:15px;height:15px;color:var(--sauge);}
+    @media(max-width:860px){.quote-grid{grid-template-columns:1fr;}}
 
     /* ---------- Bandeau final ---------- */
-    .closing{margin:70px 0 40px;text-align:center;padding:64px 28px;
-        background:linear-gradient(160deg,#EDE5D4, #E7E4D2);border-radius:26px;border:1px solid var(--trait);}
+    .closing{
+        margin:76px 0 40px;text-align:center;padding:70px 28px;
+        background:linear-gradient(160deg,#EDE5D4, #E7E4D2);border-radius:28px;border:1px solid var(--trait);
+        position:relative;overflow:hidden;isolation:isolate;
+    }
+    .closing::before{
+        content:'';position:absolute;z-index:-1;
+        width:60%;aspect-ratio:1;left:50%;top:50%;transform:translate(-50%,-50%);
+        background:radial-gradient(circle,rgba(122,138,102,.22),transparent 68%);
+        filter:blur(10px);animation:breathe 8s ease-in-out infinite;
+    }
     .closing h2{font-family:'Fraunces',serif;font-weight:400;font-size:clamp(30px,4vw,46px);line-height:1.08;margin-bottom:16px;}
     .closing p{color:var(--taupe);font-size:18px;max-width:34em;margin:0 auto 30px;}
     .closing-actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
@@ -79,15 +302,17 @@
     @media(max-width:900px){
         .hero-grid{grid-template-columns:1fr;gap:40px;}
         .hero-media{order:-1;max-width:440px;margin:0 auto;}
+        .hero-badge{left:8px;}
         .cards{grid-template-columns:1fr;}
         .feature{grid-template-columns:1fr;}
         .feature-ph{border-right:none;border-bottom:1px solid var(--trait);min-height:220px;}
     }
     @media(max-width:520px){
         .home-wrap{padding:0 20px;}
-        .hero{padding:48px 0 40px;}
+        .hero{padding:56px 0 40px;}
         .closing{padding:48px 22px;}
         .hero-media .halo{width:100%;}
+        .feature-txt{padding:34px 26px;}
     }
 </style>
 {% endblock %}
@@ -102,20 +327,60 @@
             <h1>Votre santé mentale mérite une <em>place</em></h1>
             <p class="lede">Un espace bienveillant pour parler librement, trouver du soutien et accéder à des ressources fiables — pensé pour Djibouti.</p>
             <div class="hero-cta">
-                <a class="btn btn-primary" href="{% url 'register' %}">Rejoindre la communauté</a>
-                <a class="btn btn-secondary" href="#offre">Découvrir nos espaces →</a>
+                <a class="btn btn-primary" href="{% url 'register' %}">
+                    Rejoindre la communauté
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </a>
+                <a class="btn btn-secondary" href="#offre">Découvrir nos espaces</a>
             </div>
             <p class="ground"><b>Wanaag</b> — « le bien-être », en somali.</p>
         </div>
 
         <div class="hero-media">
             <div class="halo" aria-hidden="true"></div>
+            <div class="halo halo-2" aria-hidden="true"></div>
             <div class="hero-ph">
                 <img src="{% static 'images/espace-bien-etre.jpg' %}" alt="Espace de bien-être Wanaag Corner">
             </div>
+            <div class="hero-badge">
+                <span class="hero-badge-ring">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.5-9.5-9A5.5 5.5 0 0112 5.5 5.5 5.5 0 0121.5 12c-2.5 4.5-9.5 9-9.5 9z"/></svg>
+                </span>
+                <span class="hero-badge-txt">
+                    <strong>Respirez.</strong>
+                    <span>Vous êtes en sécurité ici.</span>
+                </span>
+            </div>
         </div>
     </div>
+
+    <a href="#offre" class="scroll-cue">
+        Explorer
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </a>
 </section>
+
+<div class="home-wrap">
+    <!-- TRUST STRIP -->
+    <div class="trust-strip">
+        <div class="trust-item">
+            <span class="trust-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></span>
+            <span><span class="trust-num" data-count="100" data-suffix="%">0%</span><span class="trust-lbl">Anonyme &amp; confidentiel</span></span>
+        </div>
+        <div class="trust-item">
+            <span class="trust-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6z"/><polyline points="9 12 11 14 15 10"/></svg></span>
+            <span><span class="trust-num">Certifiés</span><span class="trust-lbl">Psychologues &amp; spécialistes</span></span>
+        </div>
+        <div class="trust-item">
+            <span class="trust-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 16 14"/></svg></span>
+            <span><span class="trust-num" data-count="24" data-suffix="/7">0</span><span class="trust-lbl">Une communauté à l'écoute</span></span>
+        </div>
+        <div class="trust-item">
+            <span class="trust-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0116 0z"/><circle cx="12" cy="10" r="3"/></svg></span>
+            <span><span class="trust-num">Djibouti</span><span class="trust-lbl">Pensé pour chez nous</span></span>
+        </div>
+    </div>
+</div>
 
 <!-- OFFRE -->
 <section class="offre home-wrap" id="offre">
@@ -126,29 +391,38 @@
 
     <div class="cards">
         <a class="card" href="{% url 'register' %}">
+            <span class="card-num">01</span>
             <div class="card-ph"><img src="{% static 'images/forum.jpg' %}" alt="Forum"></div>
             <div class="card-body">
                 <h3>Forum</h3>
                 <p>Une communauté qui écoute, sans jugement, à toute heure.</p>
-                <span class="tag">Communauté bienveillante</span>
+                <span class="tag">Communauté bienveillante
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </span>
             </div>
         </a>
 
         <a class="card" href="{% url 'register' %}">
+            <span class="card-num">02</span>
             <div class="card-ph"><img src="{% static 'images/psychologue.jpg' %}" alt="Spécialistes"></div>
             <div class="card-body">
                 <h3>Spécialistes</h3>
                 <p>Psychologue, kiné, nutritionniste, coach sportif... des professionnels certifiés, joignables près de chez vous.</p>
-                <span class="tag">Professionnels certifiés</span>
+                <span class="tag">Professionnels certifiés
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </span>
             </div>
         </a>
 
         <a class="card" href="{% url 'register' %}">
+            <span class="card-num">03</span>
             <div class="card-ph"><img src="{% static 'images/ressources.jpg' %}" alt="Ressources"></div>
             <div class="card-body">
                 <h3>Ressources</h3>
                 <p>Des articles et des guides fiables, écrits et vérifiés en français.</p>
-                <span class="tag">Articles &amp; guides</span>
+                <span class="tag">Articles &amp; guides
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </span>
             </div>
         </a>
     </div>
@@ -159,9 +433,73 @@
             <img src="{% static 'images/bienveillance.jpg' %}" alt="Parcours bien-être">
         </div>
         <div class="feature-txt">
+            <span class="feature-badge">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.5-9.5-9A5.5 5.5 0 0112 5.5 5.5 5.5 0 0121.5 12c-2.5 4.5-9.5 9-9.5 9z"/></svg>
+                À votre rythme
+            </span>
             <h3>Un espace de bien-être, à votre rythme</h3>
             <p>Un journal intime, des citations inspirantes, un suivi santé personnalisé et un blog bien-être — quelques minutes suffisent. Rien à prouver, personne à impressionner.</p>
             <a class="btn btn-secondary" href="{% url 'register' %}">Découvrir le Parcours Bien-être</a>
+        </div>
+    </div>
+</section>
+
+<!-- COMMENT ÇA MARCHE -->
+<section class="steps-sec home-wrap">
+    <div class="sec-head" style="text-align:center;">
+        <div class="sec-eye">Simple, à votre allure</div>
+        <h2 class="sec-title">Comment ça marche</h2>
+    </div>
+    <div class="steps-row">
+        <div class="steps-line" aria-hidden="true"></div>
+        <div class="step">
+            <div class="step-num">01</div>
+            <h4>Créez votre espace</h4>
+            <p>Une inscription gratuite et anonyme, en moins d'une minute. Aucune information superflue.</p>
+        </div>
+        <div class="step">
+            <div class="step-num">02</div>
+            <h4>Explorez librement</h4>
+            <p>Forum, journal intime, ressources — avancez à votre rythme, sans pression ni obligation.</p>
+        </div>
+        <div class="step">
+            <div class="step-num">03</div>
+            <h4>Parlez, si vous le souhaitez</h4>
+            <p>Échangez avec la communauté ou prenez rendez-vous avec un professionnel certifié, quand vous êtes prêt·e.</p>
+        </div>
+    </div>
+</section>
+
+<!-- CE QUE VOUS RESSENTIREZ -->
+<section class="quote-sec home-wrap">
+    <div class="sec-head" style="text-align:center;">
+        <div class="sec-eye">Ce que nous voulons pour vous</div>
+        <h2 class="sec-title">Un espace pensé pour vous apaiser</h2>
+    </div>
+    <div class="quote-grid">
+        <div class="quote-card">
+            <span class="quote-mark">"</span>
+            <p>Être écouté·e sans avoir à tout justifier, sans crainte du jugement.</p>
+            <div class="quote-tag">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 000-7.78z"/></svg>
+                Zéro jugement
+            </div>
+        </div>
+        <div class="quote-card">
+            <span class="quote-mark">"</span>
+            <p>Avancer à son propre rythme, sans se sentir forcé·e d'aller plus vite que soi.</p>
+            <div class="quote-tag">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 16 14"/></svg>
+                Votre rythme
+            </div>
+        </div>
+        <div class="quote-card">
+            <span class="quote-mark">"</span>
+            <p>Savoir qu'un vrai professionnel est là, si et quand on en a besoin.</p>
+            <div class="quote-tag">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6z"/><polyline points="9 12 11 14 15 10"/></svg>
+                Un vrai soutien
+            </div>
         </div>
     </div>
 </section>
@@ -178,4 +516,51 @@
     </div>
 </div>
 
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function(){
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    /* Compteurs de la bande de confiance */
+    function animateCount(el){
+        const target = parseInt(el.dataset.count, 10);
+        const suffix = el.dataset.suffix || '';
+        if (reduceMotion || isNaN(target)) {
+            el.textContent = target + suffix;
+            return;
+        }
+        const dur = 1400;
+        const start = performance.now();
+        function tick(now){
+            const p = Math.min(1, (now - start) / dur);
+            const eased = 1 - Math.pow(1 - p, 3);
+            el.textContent = Math.round(target * eased) + suffix;
+            if (p < 1) requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+    }
+    const counters = document.querySelectorAll('.trust-num[data-count]');
+    if (counters.length) {
+        const obs = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                if (e.isIntersecting) { animateCount(e.target); obs.unobserve(e.target); }
+            });
+        }, { threshold: .4 });
+        counters.forEach(c => obs.observe(c));
+    }
+
+    /* Ligne des étapes : se dessine quand la section entre en vue */
+    const stepsSec = document.querySelector('.steps-sec');
+    if (stepsSec) {
+        const stepsObs = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                if (e.isIntersecting) { stepsSec.classList.add('in-view'); stepsObs.unobserve(e.target); }
+            });
+        }, { threshold: .3 });
+        stepsObs.observe(stepsSec);
+    }
+})();
+</script>
 {% endblock %}
