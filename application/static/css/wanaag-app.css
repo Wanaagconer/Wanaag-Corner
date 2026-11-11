@@ -1,0 +1,222 @@
+/* ═══════════════════════════════════════════════════════════════
+   WANAAG CORNER — langage commun de l'espace membre
+   Chargé après les styles propres à chaque page : il harmonise
+   bannières, cartes, boutons, onglets, champs et états vides.
+   Palette : sable, papier, encre, or, sauge.
+   ═══════════════════════════════════════════════════════════════ */
+
+.app-content{--card-bg:var(--papier);--card-bd:rgba(42,33,27,.07);
+  --card-sh:0 1px 2px rgba(42,33,27,.04),0 18px 40px -30px rgba(42,33,27,.32);
+  --card-sh-hover:0 2px 4px rgba(42,33,27,.04),0 34px 60px -30px rgba(42,33,27,.42);
+  --r-card:24px;--r-ctl:999px;}
+
+/* ── Typographie ── */
+.app-content h1,.app-content h2,.app-content h3{font-family:var(--f-display);letter-spacing:-.02em;}
+.app-content h1{font-weight:300;}
+.app-content h2,.app-content h3{font-weight:400;}
+.app-content [style*="text-transform:uppercase"],.app-content [style*="text-transform: uppercase"]{text-transform:none !important;letter-spacing:0 !important;}
+
+/* ═════════ BANNIÈRES DE PAGE ═════════ */
+.forum-hero,.ressources-hero,.pb-hero,.jnl-hero,.ins-hero,.sn-hero,.psy-hero,.crf-hero,.mc-hero,.cd-hero,.req-hero,.rsp-hero,.profile-hero,.ressource-detail-header{
+  position:relative !important;isolation:isolate;overflow:hidden !important;
+  background:var(--encre) !important;background-image:none !important;color:var(--sable) !important;
+  border:none !important;border-radius:32px !important;
+  padding:clamp(28px,4vw,52px) clamp(24px,4vw,56px) !important;
+  box-shadow:0 40px 80px -50px rgba(42,33,27,.7) !important;
+  min-height:0 !important;}
+.forum-hero::before,.ressources-hero::before,.pb-hero::before,.jnl-hero::before,.ins-hero::before,.sn-hero::before,.psy-hero::before,.crf-hero::before,.mc-hero::before,.cd-hero::before,.req-hero::before,.rsp-hero::before,.profile-hero::before,.ressource-detail-header::before{
+  content:'' !important;position:absolute !important;inset:0 !important;z-index:-1 !important;pointer-events:none;display:block !important;
+  width:auto !important;height:auto !important;border-radius:0 !important;opacity:1 !important;filter:none !important;transform:none !important;
+  background:radial-gradient(520px 380px at 92% 10%,rgba(190,140,60,.45),transparent 62%),
+             radial-gradient(420px 320px at 0% 120%,rgba(122,138,102,.35),transparent 62%) !important;}
+.forum-hero::after,.ressources-hero::after,.pb-hero::after,.jnl-hero::after,.ins-hero::after,.sn-hero::after,.psy-hero::after,.crf-hero::after,.mc-hero::after,.cd-hero::after,.req-hero::after,.rsp-hero::after,.profile-hero::after,.ressource-detail-header::after{
+  content:'' !important;position:absolute !important;z-index:-1 !important;pointer-events:none;display:block !important;
+  width:min(300px,40vw) !important;height:auto !important;aspect-ratio:1;right:-90px !important;top:50% !important;left:auto !important;bottom:auto !important;
+  border-radius:50% !important;border:none !important;opacity:.55 !important;filter:blur(1px) !important;
+  background:radial-gradient(circle at 35% 30%,#FBF1DD 0%,var(--or-light) 26%,var(--or) 58%,rgba(122,138,102,.55) 78%,transparent 79%) !important;
+  animation:heroOrb 10s cubic-bezier(.45,0,.55,1) infinite !important;}
+@keyframes heroOrb{0%,100%{transform:translateY(-50%) scale(.84)}40%,55%{transform:translateY(-50%) scale(1)}}
+
+/* éléments décoratifs d'origine remplacés par l'orbe */
+.pb-orb,.sn-orb,.profile-hero-glow,.crf-hero-bg,.hero-accent-line,
+.forum-hero-avatar,.ressources-hero-avatar,.psy-hero-img,.mc-hero-icon,.req-hero-icon,.ins-hero-star{display:none !important;}
+
+/* bannières à image : le contenu passe au premier plan */
+.forum-hero > img,.ressources-hero > img{display:none !important;}
+.forum-hero,.ressources-hero{height:auto !important;}
+.forum-hero-overlay,.ressources-hero-overlay{position:relative !important;inset:auto !important;background:none !important;padding:0 !important;
+  display:flex !important;justify-content:space-between !important;align-items:flex-end !important;gap:24px !important;flex-wrap:wrap;}
+
+/* titres, sous-titres, étiquettes */
+[class*="-hero-title"],.profile-name,.crf-hero-name,.ressource-detail-header h1,.psy-hero-text h1,.psy-hero-text h2,.forum-hero h1,.ressources-hero h1{
+  font-family:var(--f-display) !important;font-weight:300 !important;font-size:clamp(34px,3.8vw,58px) !important;line-height:1.02 !important;
+  letter-spacing:-.035em !important;color:var(--sable) !important;-webkit-text-fill-color:currentColor !important;background:none !important;margin-bottom:.35em !important;}
+[class*="-hero-title"] span,[class*="-hero-title"] em{color:var(--or-light) !important;-webkit-text-fill-color:currentColor !important;background:none !important;font-style:italic;font-weight:300 !important;}
+[class*="-hero-sub"],.profile-email,.profile-bio,.psy-hero-text p,.ressource-detail-header p,.forum-hero p,.ressources-hero p{
+  color:rgba(244,238,226,.72) !important;font-family:var(--f-body) !important;font-size:16px !important;line-height:1.6 !important;max-width:38em;}
+[class*="-hero-eyebrow"],[class*="-hero-badge"],.profile-badge,.ressource-type,.psy-hero-count{
+  display:inline-flex !important;align-items:center;gap:6px;width:auto !important;
+  text-transform:none !important;letter-spacing:0 !important;font-family:var(--f-body) !important;font-size:13px !important;font-weight:500 !important;
+  color:var(--or-light) !important;background:rgba(221,192,146,.12) !important;border:1px solid rgba(221,192,146,.26) !important;
+  border-radius:999px !important;padding:5px 13px !important;margin-bottom:14px;box-shadow:none !important;}
+.ressource-meta-info,.ressource-meta-info *{color:rgba(244,238,226,.7) !important;}
+
+/* statistiques dans les bannières */
+.mc-stat,.req-stat,.psy-stat,.profile-stats > *,.jnl-stat-pill,.sn-chip,.psy-hero-right > *{
+  background:rgba(244,238,226,.07) !important;border:1px solid rgba(244,238,226,.12) !important;
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-radius:20px !important;color:var(--sable) !important;box-shadow:none !important;}
+.mc-stat *,.req-stat *,.psy-stat *,.profile-stats > * *,.sn-chip *{color:inherit !important;}
+.mc-stat .num,.req-stat .num,.psy-stat .num,[class*="stat-num"],[class*="-stat-val"]{font-family:var(--f-display) !important;font-weight:300 !important;}
+
+/* ═════════ CARTES ═════════ */
+.group-card,.ressource-card,.cat-card,.psy-card,.mc-card,.req-card,.quick-card,.panel-card,.stat-card,.similaire-card,.rd-more-card,
+.pb-stat-card,.pb-journal-card,.ins-card,.post-card,.side-card,.edit-card,.crf-card,.cd-info-card,.cd-chat-card,.rsp-card,.rsp-form-card,
+.sn-bio-card,.sn-ex-card,.sn-meal-card,.sn-repos-card,.sn-form-wrap,.search-filter-section,.ressource-content-section,.commentaires-section,
+.event-details-box,.adm-section,.vr-info-panel,.consult-item,.empty-state,.psy-empty,.jnl-page-card,.prompt-card{
+  background:var(--card-bg) !important;border:1px solid var(--card-bd) !important;border-radius:var(--r-card) !important;
+  box-shadow:var(--card-sh) !important;}
+.group-card,.ressource-card,.cat-card,.psy-card,.mc-card,.req-card,.quick-card,.similaire-card,.rd-more-card,.ins-card,.pb-stat-card,.pb-journal-card,.sn-meal-card,.sn-ex-card,.consult-item{
+  transition:transform .7s var(--ease),box-shadow .7s var(--ease),border-color .4s !important;overflow:hidden;}
+.group-card:hover,.ressource-card:hover,.cat-card:hover,.psy-card:hover,.mc-card:hover,.req-card:hover,.quick-card:hover,.similaire-card:hover,.rd-more-card:hover,.ins-card:hover,.pb-stat-card:hover,.pb-journal-card:hover,.sn-meal-card:hover,.sn-ex-card:hover,.consult-item:hover{
+  transform:translateY(-6px) !important;box-shadow:var(--card-sh-hover) !important;border-color:rgba(190,140,60,.28) !important;}
+/* bandes colorées décoratives en haut des cartes : plus discrètes */
+.group-card::before,.mc-card::before,.req-card::before,.ressource-card::before{height:3px !important;opacity:.85;}
+/* images dans les cartes */
+.cat-img-wrap,.ressource-card img,.similaire-card img,.cat-card img,.psy-card-banner{overflow:hidden;}
+.cat-card img,.ressource-card img,.similaire-card img{transition:transform 1.2s var(--ease) !important;}
+.cat-card:hover img,.ressource-card:hover img,.similaire-card:hover img{transform:scale(1.06) !important;}
+.cat-label,.psy-card h3,.ressource-card h3,.group-card h3,.mc-card h3,.req-card h3,.similaire-card h3,.ins-card p{font-family:var(--f-display) !important;}
+.cat-label,.ressource-card h3,.group-card h3,.psy-card h3{font-weight:400 !important;font-size:clamp(19px,1.5vw,23px) !important;letter-spacing:-.015em !important;}
+
+/* ═════════ BOUTONS ═════════ */
+.btn-create,.btn-join,.btn-modal-submit,.mc-btn,.mc-empty-btn,.req-btn-primary,.rsp-btn-submit,.crf-btn-submit,.cd-visio-btn,.pb-nudge-btn,.btn-publish,
+.btn-respond,.psy-cta,.btn-inscription,.btn-complete,.sn-edit-btn,.btn-adm-primary,.jnl-write-btn,.jnl-landing-btn,.cb-new-session-btn,.btn-post-link,.wr-publish,.btn-psy,.rd-btn{
+  background:var(--or-dark) !important;background-image:none !important;color:#fff !important;border:1px solid transparent !important;
+  border-radius:var(--r-ctl) !important;font-family:var(--f-body) !important;font-weight:500 !important;letter-spacing:0 !important;text-transform:none !important;
+  box-shadow:0 12px 26px -14px rgba(171,126,54,.9) !important;
+  transition:background .4s,transform .5s var(--ease),box-shadow .5s var(--ease) !important;}
+.btn-create:hover,.btn-join:hover,.btn-modal-submit:hover,.mc-btn:hover,.mc-empty-btn:hover,.req-btn-primary:hover,.rsp-btn-submit:hover,.crf-btn-submit:hover,.cd-visio-btn:hover,.pb-nudge-btn:hover,.btn-publish:hover,
+.btn-respond:hover,.psy-cta:hover,.btn-inscription:hover,.btn-complete:hover,.sn-edit-btn:hover,.btn-adm-primary:hover,.jnl-write-btn:hover,.jnl-landing-btn:hover,.cb-new-session-btn:hover,.btn-post-link:hover,.wr-publish:hover,.btn-psy:hover,.rd-btn:hover{
+  background:var(--encre) !important;transform:translateY(-2px) !important;box-shadow:0 18px 34px -16px rgba(42,33,27,.7) !important;}
+.btn-modal-cancel,.req-btn-secondary,.rsp-btn-cancel,.crf-btn-cancel,.btn-adm-outline,.btn-cancel-del,.btn-favori{
+  background:transparent !important;color:var(--encre) !important;border:1px solid rgba(42,33,27,.18) !important;border-radius:var(--r-ctl) !important;
+  box-shadow:none !important;font-weight:500 !important;transition:all .4s var(--ease) !important;}
+.btn-modal-cancel:hover,.req-btn-secondary:hover,.rsp-btn-cancel:hover,.crf-btn-cancel:hover,.btn-adm-outline:hover,.btn-cancel-del:hover,.btn-favori:hover{background:var(--encre) !important;color:var(--sable) !important;border-color:var(--encre) !important;}
+/* boutons ronds d'envoi */
+.send-btn,.cb-send-btn,.cd-send-btn,.comment-send-btn{background:var(--encre) !important;background-image:none !important;color:var(--sable) !important;box-shadow:none !important;transition:transform .5s var(--ease),background .3s !important;}
+.send-btn:hover,.cb-send-btn:hover,.cd-send-btn:hover,.comment-send-btn:hover{background:var(--or-dark) !important;transform:rotate(-10deg) scale(1.06) !important;}
+/* liens de retour */
+.cd-back,.cat-back,.rd-back,.chat-back-btn,.vr-back-btn,.wr-back,.crf-back{color:var(--taupe) !important;font-weight:500 !important;transition:color .3s,transform .5s var(--ease) !important;}
+.cd-back:hover,.cat-back:hover,.rd-back:hover,.wr-back:hover{color:var(--encre) !important;transform:translateX(-4px);}
+
+/* ═════════ ONGLETS ET FILTRES ═════════ */
+.cat-btn,.mc-tab,.req-tab,.ins-pill,.feed-tab,.ptab,.sn-tab,.sn-week-tab,.adm-tab,.acces-btn,.type-btn,.cb-starter-chip,.crf-spec-pill{
+  background:var(--papier) !important;background-image:none !important;color:var(--taupe) !important;border:1px solid var(--trait) !important;
+  border-radius:var(--r-ctl) !important;font-family:var(--f-body) !important;font-weight:500 !important;text-transform:none !important;letter-spacing:0 !important;
+  box-shadow:none !important;transition:all .45s var(--ease) !important;}
+.cat-btn:hover,.mc-tab:hover,.req-tab:hover,.ins-pill:hover,.feed-tab:hover,.ptab:hover,.sn-tab:hover,.sn-week-tab:hover,.adm-tab:hover,.acces-btn:hover,.type-btn:hover,.cb-starter-chip:hover{
+  border-color:var(--or) !important;color:var(--encre) !important;transform:translateY(-2px);}
+.cat-btn.active,.mc-tab.active,.req-tab.active,.ins-pill.active,.feed-tab.active,.ptab.active,.sn-tab.active,.sn-week-tab.active,.adm-tab.active,.acces-btn.active,.type-btn.active{
+  background:var(--encre) !important;color:var(--sable) !important;border-color:var(--encre) !important;}
+.mc-filters,.req-filters,.adm-tabs,.profile-tabs,.ins-filters,.categories-wrap{background:transparent !important;border:none !important;box-shadow:none !important;}
+.feed-tab::after,.ptab::after,.adm-tab::after{display:none !important;}
+.tab-badge,.req-tab-count{background:var(--or) !important;color:#fff !important;}
+
+/* ═════════ CHAMPS ═════════ */
+.app-content input[type=text],.app-content input[type=email],.app-content input[type=search],.app-content input[type=number],.app-content input[type=date],
+.app-content input[type=time],.app-content input[type=url],.app-content input[type=password],.app-content select,.app-content textarea{
+  background-color:var(--papier);border-color:var(--trait);border-radius:14px;color:var(--encre);font-family:var(--f-body);}
+.app-content input::placeholder,.app-content textarea::placeholder{color:var(--pierre);}
+.forum-search,.search-box{border-radius:999px !important;background:var(--papier) !important;border:1px solid var(--trait) !important;box-shadow:var(--card-sh) !important;transition:box-shadow .4s,border-color .4s !important;}
+.forum-search:focus-within,.search-box:focus-within{border-color:var(--or) !important;box-shadow:0 0 0 4px rgba(190,140,60,.14),var(--card-sh) !important;}
+.forum-search input,.search-box input{border:none !important;box-shadow:none !important;background:transparent !important;}
+
+/* ═════════ MODALES ═════════ */
+.modal-box,.adm-modal,.delete-box{background:var(--papier) !important;border-radius:28px !important;border:1px solid var(--card-bd) !important;
+  box-shadow:0 50px 100px -40px rgba(42,33,27,.6) !important;animation:modalIn .6s var(--ease);}
+@keyframes modalIn{from{opacity:0;transform:translateY(24px) scale(.97)}to{opacity:1;transform:none}}
+[class*="modal-overlay"],[class*="modal-bg"],.modal{backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);}
+
+/* ═════════ DISCUSSIONS ═════════ */
+.chat-wrapper,.cb-wrap{border-radius:28px !important;overflow:hidden;border:1px solid var(--card-bd) !important;box-shadow:var(--card-sh) !important;background:var(--papier) !important;}
+.chat-topbar{background:rgba(252,250,244,.9) !important;backdrop-filter:blur(14px);border-bottom:1px solid var(--trait) !important;}
+.chat-topbar-title,.cb-bot-name{font-family:var(--f-display) !important;font-weight:400 !important;font-size:20px !important;}
+.messages-zone,.cb-messages{background:radial-gradient(600px 400px at 100% 0%,rgba(221,192,146,.16),transparent 60%),var(--sable) !important;}
+.msg-bubble{background:var(--papier) !important;border:1px solid var(--card-bd) !important;border-radius:4px 20px 20px 20px !important;box-shadow:0 6px 18px -12px rgba(42,33,27,.3) !important;}
+.msg-row.own .msg-bubble{background:var(--or-dark) !important;color:#fff !important;border-color:transparent !important;border-radius:20px 4px 20px 20px !important;}
+.msg-row.own .msg-bubble *{color:inherit;}
+.msg-row,.cb-msg,.cd-msg{animation:msgIn .55s var(--ease) both;}
+@keyframes msgIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.date-sep span,.date-sep{color:var(--pierre) !important;font-size:12.5px !important;}
+.cb-sidebar{background:var(--encre) !important;color:var(--sable) !important;}
+.cb-sidebar *{border-color:rgba(244,238,226,.1) !important;}
+.cb-bot-avatar{border-radius:50% !important;}
+.cb-input-wrap,.cd-send-wrap{background:var(--papier) !important;border-top:1px solid var(--trait) !important;}
+
+/* ═════════ TABLEAUX (administration) ═════════ */
+.adm-table,.adm-mini-table{border-collapse:separate !important;border-spacing:0;}
+.adm-table th,.adm-mini-table th,.adm-table-head{background:var(--sable) !important;color:var(--taupe) !important;text-transform:none !important;letter-spacing:0 !important;font-weight:500 !important;}
+.adm-table tr,.adm-mini-table tr{transition:background .3s;}
+.adm-table tbody tr:hover,.adm-mini-table tbody tr:hover{background:rgba(221,192,146,.14) !important;}
+
+/* ═════════ ÉTATS VIDES ═════════ */
+.empty-state,.psy-empty,[class*="-empty"]:not(.cat-count){text-align:center;}
+[class*="empty-icon"]{font-size:0 !important;width:72px !important;height:72px !important;margin:0 auto 18px !important;border-radius:50% !important;display:block !important;
+  background:radial-gradient(circle at 35% 30%,#FBF1DD,var(--or-light) 35%,var(--or) 80%) !important;animation:markBreath 6s var(--ease) infinite;}
+
+/* ═════════ TITRES DE SECTION ═════════ */
+.sec-title,.section-title,[class*="section-title"],.pb-section-title,.adm-section-title{
+  font-family:var(--f-display) !important;font-weight:400 !important;font-size:clamp(24px,2.2vw,32px) !important;letter-spacing:-.02em !important;
+  color:var(--encre) !important;text-transform:none !important;}
+
+/* ═════════ ÉTIQUETTES ET BADGES ═════════ */
+[class*="badge"]:not([class*="-hero-badge"]):not(.tab-badge),[class*="-tag"]:not(.wgt-tease),.cat-count,.art-type{
+  text-transform:none !important;letter-spacing:0 !important;font-weight:500 !important;border-radius:999px !important;}
+
+/* ═════════ PAGES PARTICULIÈRES ═════════ */
+/* Publications : compositeur */
+.posts-hero{background:var(--encre) !important;background-image:radial-gradient(420px 260px at 100% 0,rgba(190,140,60,.4),transparent 60%) !important;border-radius:28px !important;border:none !important;}
+.hero-input{background:rgba(244,238,226,.08) !important;border:1px solid rgba(244,238,226,.14) !important;color:var(--sable) !important;border-radius:999px !important;}
+.hero-action-btn{color:rgba(244,238,226,.78) !important;border-radius:999px !important;transition:background .3s !important;}
+.hero-action-btn:hover{background:rgba(244,238,226,.1) !important;}
+.post-card{overflow:hidden;}
+.react-btn,.see-comments-btn{border-radius:999px !important;transition:background .3s,color .3s !important;}
+.react-btn:hover{background:rgba(190,140,60,.1) !important;}
+
+/* Spécialistes */
+.cat-card .cat-img-wrap{border-radius:0 !important;}
+.cat-foot .cat-count{background:rgba(122,138,102,.14) !important;color:var(--foret) !important;}
+.psy-card-banner{background:linear-gradient(135deg,var(--encre),#4A3A2C) !important;}
+.psy-av-ring{background:conic-gradient(var(--or-light),var(--or),var(--sauge),var(--or-light)) !important;}
+
+/* Parcours bien-être */
+.pb-quote-card,.pb-nudge,.jnl-release-card,.breathing-card{border-radius:28px !important;}
+.pb-space-card{border-radius:26px !important;transition:transform .7s var(--ease),box-shadow .7s var(--ease) !important;}
+.pb-space-card:hover{transform:translateY(-6px) !important;}
+
+/* Visioconférence */
+.vr-topbar{background:var(--encre) !important;color:var(--sable) !important;border-radius:24px !important;}
+.vr-jitsi-container{border-radius:28px !important;overflow:hidden;}
+
+/* Consultations : statuts */
+.cd-status-pill,[class*="status-pill"]{border-radius:999px !important;font-weight:500 !important;}
+
+/* ═════════ RESPONSIVE ═════════ */
+@media(max-width:700px){
+  .forum-hero,.ressources-hero,.pb-hero,.jnl-hero,.ins-hero,.sn-hero,.psy-hero,.crf-hero,.mc-hero,.cd-hero,.req-hero,.rsp-hero,.profile-hero,.ressource-detail-header{border-radius:26px !important;}
+  .forum-hero::after,.ressources-hero::after,.pb-hero::after,.jnl-hero::after,.ins-hero::after,.sn-hero::after,.psy-hero::after,.crf-hero::after,.mc-hero::after,.cd-hero::after,.req-hero::after,.rsp-hero::after,.profile-hero::after,.ressource-detail-header::after{
+    width:200px !important;right:-80px !important;top:24% !important;opacity:.6 !important;}
+  .chat-wrapper,.cb-wrap{border-radius:0 !important;border-left:none !important;border-right:none !important;}
+}
+@media (prefers-reduced-motion:reduce){
+  .forum-hero::after,.ressources-hero::after,.pb-hero::after,.jnl-hero::after,.ins-hero::after,.sn-hero::after,.psy-hero::after,.crf-hero::after,.mc-hero::after,.cd-hero::after,.req-hero::after,.rsp-hero::after,.profile-hero::after,.ressource-detail-header::after{animation:none !important;transform:translateY(-50%) !important;}
+}
+
+/* Ressources : filtres par type sans vignettes illustrées */
+.type-btn img,.type-btn .type-thumb,.type-btn [class*="thumb"]{display:none !important;}
+.type-btn{padding:.55rem 1.05rem !important;gap:.4rem !important;}
+/* Publications : vignettes de navigation plus sobres */
+.side-card img{border-radius:12px !important;}
+.side-card h3,.side-card h4,.side-card [class*="title"]{font-family:var(--f-display) !important;font-weight:400 !important;text-transform:none !important;letter-spacing:-.01em !important;}
+/* Avatars génériques : dégradé de marque */
+.msg-av,.story-avatar,.cd-av,.rsp-avatar{box-shadow:0 0 0 2px var(--papier) !important;}

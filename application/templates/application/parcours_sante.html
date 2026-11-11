@@ -1,4 +1,5 @@
 {% extends 'application/base.html' %}
+{% block page_title %}Santé et nutrition{% endblock %}
 {% load static %}
 
 {% block title %}Santé & Nutrition — Wanaag Corner{% endblock %}
@@ -61,7 +62,7 @@
   color:rgba(190,140,60,.5); font-weight:700; margin-bottom:.5rem;
 }
 .sn-hero-title {
-  font-family:'Fraunces',serif;
+  font-family:'Newsreader',serif;
   font-size:clamp(2rem,5vw,3.2rem); font-weight:800; font-style:italic;
   color:var(--text); line-height:1.1; margin-bottom:.35rem;
 }
@@ -98,12 +99,12 @@
 
 /* IMC */
 .sn-imc-val {
-  font-family:'Fraunces',serif;
+  font-family:'Newsreader',serif;
   font-size:3.2rem; font-weight:800; color:var(--gold-light); line-height:1;
 }
 .sn-imc-cat { font-size:.85rem; color:var(--text-dim); margin-top:.3rem; margin-bottom:1.1rem; }
 .sn-imc-bar { height:10px; border-radius:5px; position:relative;
-  background:linear-gradient(90deg,#3b82f6 0%,#22c55e 28%,var(--amber) 58%,var(--red) 100%);
+  background:linear-gradient(90deg,#7A8A66 0%,#22c55e 28%,var(--amber) 58%,var(--red) 100%);
   margin-bottom:.5rem;
 }
 .sn-imc-marker {
@@ -118,7 +119,7 @@
 
 /* Calories */
 .sn-cal-num {
-  font-family:'Fraunces',serif;
+  font-family:'Newsreader',serif;
   font-size:3rem; font-weight:800; color:var(--gold); line-height:1;
 }
 .sn-cal-unit { font-size:.7rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:.1em; margin-top:.2rem; }
@@ -135,7 +136,7 @@
 .sn-macro-lbl strong { color:var(--text); }
 .sn-macro-bar-track { flex:1; height:7px; border-radius:4px; background:rgba(190,140,60,.1); overflow:hidden; }
 .sn-macro-bar-fill { height:100%; border-radius:4px; }
-.sn-macro-fill-protein { background:linear-gradient(90deg,#3b82f6,#60a5fa); }
+.sn-macro-fill-protein { background:linear-gradient(90deg,#7A8A66,#60a5fa); }
 .sn-macro-fill-carbs   { background:linear-gradient(90deg,var(--gold),var(--gold-light)); }
 .sn-macro-fill-fat     { background:linear-gradient(90deg,#ef4444,#f87171); }
 .sn-macro-pct { font-size:.68rem; color:var(--text-muted); width:34px; text-align:right; flex-shrink:0; }
@@ -155,7 +156,7 @@
   display:flex; align-items:center; gap:1rem; margin-bottom:1.6rem;
 }
 .sn-sec-head h2 {
-  font-family:'Fraunces',serif; font-size:1.3rem; font-style:italic;
+  font-family:'Newsreader',serif; font-size:1.3rem; font-style:italic;
   color:var(--text); white-space:nowrap;
 }
 .sn-sec-line { flex:1; height:1px; background:linear-gradient(to right,rgba(190,140,60,.2),transparent); }
@@ -237,7 +238,7 @@
 .sn-workout-head > div:not(.sn-wh-photo-bg) { position:relative; z-index:1; }
 .sn-wh-emoji { font-size:2.2rem; }
 .sn-wh-focus {
-  font-family:'Fraunces',serif; font-size:1.05rem; color:var(--text);
+  font-family:'Newsreader',serif; font-size:1.05rem; color:var(--text);
 }
 .sn-workout-head.has-photo .sn-wh-focus { color:#fff; }
 .sn-wh-badges { display:flex; gap:.45rem; margin-top:.35rem; flex-wrap:wrap; }
@@ -285,7 +286,7 @@
   border-radius:14px;
 }
 .sn-repos-icon { font-size:3rem; margin-bottom:.8rem; }
-.sn-repos-title { font-family:'Fraunces',serif; font-size:1.15rem; color:var(--taupe); margin-bottom:.4rem; }
+.sn-repos-title { font-family:'Newsreader',serif; font-size:1.15rem; color:var(--taupe); margin-bottom:.4rem; }
 .sn-repos-text  { font-size:.82rem; color:var(--text-muted); line-height:1.65; }
 
 /* ══════════════════════════════════
@@ -340,7 +341,7 @@
   background:linear-gradient(90deg,transparent,var(--gold),transparent);
 }
 .sn-form-wrap h2 {
-  font-family:'Fraunces',serif; font-size:1.5rem; font-style:italic;
+  font-family:'Newsreader',serif; font-size:1.5rem; font-style:italic;
   color:var(--text); margin-bottom:1.6rem;
 }
 .sn-field { margin-bottom:1.2rem; }
@@ -853,7 +854,7 @@
 <div class="sn-modal-bd" id="snEditModal" onclick="closeOnBd(event)">
   <div class="sn-modal">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
-      <h3 style="font-family:'Fraunces',serif;font-size:1.3rem;color:var(--text);margin:0;">Modifier le profil</h3>
+      <h3 style="font-family:'Newsreader',serif;font-size:1.3rem;color:var(--text);margin:0;">Modifier le profil</h3>
       <button onclick="closeEdit()" style="background:none;border:none;color:var(--taupe);font-size:1.2rem;cursor:pointer;">✕</button>
     </div>
     <form method="post">

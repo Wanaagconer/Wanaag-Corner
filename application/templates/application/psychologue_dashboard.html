@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}Dashboard Psychologue — Wanaag Corner{% endblock %}
-{% block page_title %}Espace Psychologue{% endblock %}
+{% block page_title %}Mon activité{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -18,18 +18,18 @@
     .psy-hero::after{content:'';position:absolute;left:30%;bottom:-60px;width:180px;height:180px;background:radial-gradient(circle,rgba(26,111,168,.1),transparent 70%);pointer-events:none;}
     .psy-hero-left{position:relative;z-index:1;}
     .psy-hero-eyebrow{font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(100,180,240,.8);margin-bottom:.5rem;}
-    .psy-hero-title{font-family:'Fraunces',serif;font-size:1.65rem;font-weight:700;color:white;margin-bottom:.4rem;}
+    .psy-hero-title{font-family:'Newsreader',serif;font-size:1.65rem;font-weight:700;color:white;margin-bottom:.4rem;}
     .psy-hero-sub{font-size:.85rem;color:rgba(255,255,255,.5);line-height:1.5;max-width:400px;}
     .psy-hero-right{display:flex;gap:1rem;flex-shrink:0;position:relative;z-index:1;}
     .psy-stat{
         background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.09);
         border-radius:14px;padding:.9rem 1.2rem;text-align:center;min-width:90px;
     }
-    .psy-stat .num{font-family:'Fraunces',serif;font-size:1.6rem;font-weight:700;}
+    .psy-stat .num{font-family:'Newsreader',serif;font-size:1.6rem;font-weight:700;}
     .psy-stat .lbl{font-size:.68rem;color:rgba(255,255,255,.4);margin-top:.15rem;}
     .psy-stat.warning .num{color:#F39C12;}
     .psy-stat.success .num{color:#2ECC71;}
-    .psy-stat.info .num{color:#3498DB;}
+    .psy-stat.info .num{color:#7A8A66;}
 
     /* QUICK ACTIONS */
     .quick-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.3rem;margin-bottom:1.8rem;}
@@ -61,7 +61,7 @@
         display:flex;align-items:center;justify-content:space-between;
         margin-bottom:1.1rem;
     }
-    .sec-head-title{font-family:'Fraunces',serif;font-size:1.1rem;font-weight:700;color:var(--brown-dark);}
+    .sec-head-title{font-family:'Newsreader',serif;font-size:1.1rem;font-weight:700;color:var(--brown-dark);}
     .sec-head-link{font-size:.8rem;font-weight:600;color:var(--accent-dark);text-decoration:none;}
     .sec-head-link:hover{text-decoration:underline;}
 
@@ -183,7 +183,7 @@
 </div>
 
 <!-- QUICK ACTIONS -->
-<div class="sec-head"><span class="sec-head-title">⚡ Actions rapides</span></div>
+<div class="sec-head"><span class="sec-head-title">Actions rapides</span></div>
 <div class="quick-grid">
     <a href="{% url 'consultation_requests_list' %}" class="quick-card">
         <div class="quick-card-top">

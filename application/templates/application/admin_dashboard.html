@@ -13,7 +13,7 @@
     --adm-border: rgba(171,126,54,.13);
     --adm-radius: 16px;
     --adm-shadow: 0 4px 24px rgba(42,33,27,.10);
-    --green: #27ae60; --red: #e74c3c; --blue: #2980b9; --orange: #e67e22;
+    --green: #27ae60; --red: #e74c3c; --blue: #4F5C3D; --orange: #e67e22;
     --green-bg: rgba(39,174,96,.1); --red-bg: rgba(231,76,60,.08);
     --blue-bg: rgba(41,128,185,.08); --orange-bg: rgba(230,126,34,.1);
 }
@@ -60,7 +60,7 @@
     background: linear-gradient(90deg, var(--accent), var(--accent-dark));
 }
 .stat-card.green::before { background: linear-gradient(90deg, #27ae60, #1e8449); }
-.stat-card.blue::before { background: linear-gradient(90deg, #2980b9, #1a6fa8); }
+.stat-card.blue::before { background: linear-gradient(90deg, #4F5C3D, #1a6fa8); }
 .stat-card.orange::before { background: linear-gradient(90deg, #e67e22, #ca6f1e); }
 .stat-card.red::before { background: linear-gradient(90deg, #e74c3c, #c0392b); }
 .stat-value { font-size: 2.2rem; font-weight: 800; color: var(--brown-dark); line-height: 1; }
@@ -845,7 +845,7 @@
             </label>
             <label style="display:flex;align-items:center;gap:.6rem;cursor:pointer;">
               <input type="checkbox" name="est_epinglee" id="ann-epinglee" style="width:auto;accent-color:var(--accent);">
-              📌 Épingler en tête du tableau de bord
+              Épingler en tête du tableau de bord
             </label>
           </div>
 
@@ -904,7 +904,7 @@
           <div class="res-section res-section-video" style="display:none;grid-column:1/-1;">
             <div class="adm-form-grid" style="margin:0;">
               <div class="adm-form-row full">
-                <label>📁 Uploader votre propre vidéo (MP4, MOV…)</label>
+                <label>Uploader votre propre vidéo (MP4, MOV…)</label>
                 <input type="file" name="video_fichier" id="res-video-fichier" accept="video/*">
                 <small style="color:var(--brown-light);margin-top:.3rem;display:block;">Formats acceptés : MP4, MOV, AVI, MKV</small>
               </div>
@@ -914,7 +914,7 @@
                 <div style="flex:1;height:1px;background:rgba(190,140,60,.2);"></div>
               </div>
               <div class="adm-form-row full">
-                <label>🔗 Lien YouTube / Vimeo</label>
+                <label>Lien YouTube / Vimeo</label>
                 <input type="url" name="lien_externe" id="res-lien-video" placeholder="https://www.youtube.com/watch?v=...">
               </div>
             </div>
@@ -924,7 +924,7 @@
           <div class="res-section res-section-podcast" style="display:none;grid-column:1/-1;display:none;">
             <div class="adm-form-grid" style="margin:0;">
               <div class="adm-form-row full">
-                <label>🎧 Lien Spotify / SoundCloud</label>
+                <label>Lien Spotify / SoundCloud</label>
                 <input type="url" name="lien_externe" id="res-lien-podcast" placeholder="https://open.spotify.com/...">
               </div>
               <div class="adm-form-row full">
@@ -936,7 +936,7 @@
 
           <!-- === SECTION ARTICLE / GUIDE === -->
           <div class="adm-form-row full res-section res-section-contenu" style="display:none;">
-            <label>📝 Contenu complet</label>
+            <label>Contenu complet</label>
             <textarea name="contenu" id="res-contenu" rows="6" placeholder="Écrivez le contenu de l'article ou du guide..."></textarea>
           </div>
 
@@ -944,27 +944,27 @@
           <div class="res-section res-section-event" style="display:none;grid-column:1/-1;">
             <div class="adm-form-grid" style="margin:0;">
               <div class="adm-form-row">
-                <label>📅 Date et heure de début</label>
+                <label>Date et heure de début</label>
                 <input type="datetime-local" name="date_debut" id="res-date-debut">
               </div>
               <div class="adm-form-row">
-                <label>🕐 Date et heure de fin (optionnel)</label>
+                <label>Date et heure de fin (optionnel)</label>
                 <input type="datetime-local" name="date_fin" id="res-date-fin">
               </div>
               <div class="adm-form-row">
-                <label>📍 Lieu</label>
+                <label>Lieu</label>
                 <input type="text" name="lieu" id="res-lieu" placeholder="Ex : En ligne, Paris 75001...">
               </div>
               <div class="adm-form-row">
-                <label>👤 Intervenant / Formateur</label>
+                <label>Intervenant / Formateur</label>
                 <input type="text" name="intervenant" id="res-intervenant" placeholder="Nom de l'intervenant">
               </div>
               <div class="adm-form-row">
-                <label>🎟️ Nombre de places (laisser vide = illimité)</label>
+                <label>Nombre de places (laisser vide = illimité)</label>
                 <input type="number" name="places_disponibles" id="res-places" min="1" placeholder="Ex : 30">
               </div>
               <div class="adm-form-row">
-                <label>🔗 Lien de la session (Zoom, Meet…)</label>
+                <label>Lien de la session (Zoom, Meet…)</label>
                 <input type="url" name="lien_externe" id="res-lien-event" placeholder="https://zoom.us/...">
               </div>
             </div>

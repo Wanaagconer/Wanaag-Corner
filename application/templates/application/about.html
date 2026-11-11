@@ -1,528 +1,188 @@
 {% extends 'application/base.html' %}
 {% load static %}
 
-{% block title %}À propos — Wanaag Corner{% endblock %}
-{% block page_title %}À propos{% endblock %}
+{% block title %}Notre histoire — Wanaag Corner{% endblock %}
+{% block page_title %}Notre histoire{% endblock %}
 
 {% block extra_css %}
 <style>
-.about-wrap { display: flex; flex-direction: column; gap: 1.8rem; }
+.ab-wrap{max-width:1240px;margin:0 auto;padding:0 clamp(20px,4vw,56px);}
+body.is-app .ab-wrap{padding:0;}
 
-/* ===== HERO ===== */
-.ab-hero {
-    background: linear-gradient(135deg, var(--brown-dark) 0%, #362b21 55%, #231c16 100%);
-    border-radius: 22px; padding: 3rem 2.5rem;
-    position: relative; overflow: hidden;
-    box-shadow: 0 10px 40px rgba(0,0,0,.3);
-}
-.ab-hero::before {
-    content: ''; position: absolute; inset: 0;
-    background: radial-gradient(ellipse at 15% 50%, rgba(190,140,60,.18) 0%, transparent 60%),
-                radial-gradient(ellipse at 85% 20%, rgba(190,140,60,.10) 0%, transparent 55%);
-    pointer-events: none;
-}
-.ab-hero-inner { position: relative; z-index: 1; display: flex; align-items: center; gap: 2rem; flex-wrap: wrap; }
-.ab-hero-logo {
-    width: 80px; height: 80px; border-radius: 20px; overflow: hidden; flex-shrink: 0;
-    box-shadow: 0 0 0 2px rgba(190,140,60,.4), 0 8px 24px rgba(0,0,0,.4);
-}
-.ab-hero-logo img { width: 100%; height: 100%; object-fit: cover; }
-.ab-hero-text h1 {
-    font-size: 2rem; font-weight: 800; color: white; margin: 0 0 .4rem;
-    font-family: 'Fraunces', serif;
-}
-.ab-hero-text p { font-size: .9rem; color: rgba(244,238,226,.6); margin: 0; max-width: 520px; line-height: 1.6; }
-.ab-hero-badge {
-    margin-left: auto; flex-shrink: 0;
-    background: rgba(190,140,60,.15); border: 1px solid rgba(190,140,60,.3);
-    border-radius: 50px; padding: .5rem 1.2rem;
-    color: rgba(244,238,226,.8); font-size: .8rem; font-weight: 700; white-space: nowrap;
-}
+/* Héros */
+.ab-hero{padding:clamp(150px,20vh,220px) 0 clamp(70px,9vw,120px);position:relative;}
+body.is-app .ab-hero{padding:clamp(30px,5vw,60px) 0 clamp(50px,7vw,90px);}
+.ab-hero h1{font-weight:300;font-size:clamp(56px,10vw,160px);line-height:.92;letter-spacing:-.045em;max-width:8em;}
+.ab-hero-foot{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:clamp(40px,6vw,80px);align-items:end;}
+.ab-hero-foot p{font-size:clamp(17px,1.4vw,20px);color:var(--ardoise);max-width:28em;}
+.ab-hero-foot .since{justify-self:end;font-family:var(--f-display);font-style:italic;font-weight:300;font-size:20px;color:var(--ardoise);}
+.ab-hero-foot .since b{font-style:normal;font-weight:300;font-size:64px;color:var(--lagon);display:block;line-height:1;letter-spacing:-.03em;}
 
-/* ===== TWO COLS ===== */
-.ab-two-col {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;
-}
-@media(max-width:700px){ .ab-two-col { grid-template-columns: 1fr; } }
+/* Fondatrice */
+.ab-founder{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1fr);gap:clamp(40px,7vw,110px);align-items:start;padding:clamp(40px,6vw,80px) 0 clamp(90px,11vw,160px);}
+.ab-portrait{position:sticky;top:110px;}
+.ab-portrait .frame{border-radius:300px 300px 28px 28px;overflow:hidden;aspect-ratio:3/4;background:var(--brume);}
+.ab-portrait .frame img{width:100%;height:115%;object-fit:cover;display:block;}
+.ab-portrait figcaption{margin-top:18px;display:flex;justify-content:space-between;gap:12px;font-size:15px;color:var(--ardoise);}
+.ab-portrait figcaption strong{color:var(--basalte);font-weight:550;}
+.ab-story{padding-top:clamp(0px,4vw,60px);}
+.ab-story .lead{font-family:var(--f-display);font-weight:300;font-size:clamp(28px,3.1vw,44px);line-height:1.2;letter-spacing:-.02em;margin-bottom:40px;}
+.ab-story p{font-size:18px;line-height:1.75;color:var(--ardoise);max-width:34em;margin-bottom:22px;}
+.ab-story p:first-letter{}
+.ab-quote{margin:50px 0;padding:36px 0 0;border-top:1px solid var(--trait);position:relative;}
+.ab-quote::before{content:'“';position:absolute;top:-6px;left:0;transform:translateY(-50%);background:var(--sel);padding-right:14px;font-family:var(--f-display);font-size:90px;line-height:1;color:var(--lagon);}
+body.is-app .ab-quote::before{background:transparent;}
+.ab-quote blockquote{font-family:var(--f-display);font-style:italic;font-weight:300;font-size:clamp(26px,2.6vw,36px);line-height:1.25;letter-spacing:-.01em;color:var(--basalte);}
 
-/* ===== CARD BASE ===== */
-.ab-card {
-    background: white; border-radius: 22px; overflow: hidden;
-    box-shadow: 0 4px 24px rgba(42,33,27,.09);
-    border: 1px solid rgba(190,140,60,.12);
-    transition: box-shadow .3s, transform .3s;
-}
-.ab-card:hover { transform: translateY(-5px); box-shadow: 0 16px 44px rgba(42,33,27,.16); }
+/* Mission */
+.ab-mission{background:var(--basalte);color:var(--sel);padding:clamp(90px,12vw,170px) 0;position:relative;overflow:hidden;}
+body.is-app .ab-mission{border-radius:32px;padding-left:clamp(24px,4vw,56px);padding-right:clamp(24px,4vw,56px);}
+.ab-mission::after{content:'';position:absolute;width:700px;height:700px;right:-250px;bottom:-300px;border-radius:50%;background:radial-gradient(circle,rgba(171,126,54,.5),transparent 62%);animation:breathe 10s ease-in-out infinite;}
+.ab-mission-grid{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:clamp(40px,6vw,100px);}
+.ab-mission h2{font-weight:300;font-size:clamp(40px,5vw,76px);line-height:1;letter-spacing:-.035em;}
+.ab-mission h2 + p{margin-top:24px;color:rgba(244,238,226,.62);max-width:22em;}
+.ab-goals{list-style:none;}
+.ab-goals li{display:flex;gap:22px;padding:28px 0;border-bottom:1px solid rgba(244,238,226,.12);font-family:var(--f-display);font-weight:300;font-size:clamp(22px,2.1vw,30px);line-height:1.25;}
+.ab-goals li:first-child{border-top:1px solid rgba(244,238,226,.12);}
+.ab-goals li::before{content:'';flex-shrink:0;width:12px;height:12px;margin-top:.5em;border-radius:50%;background:radial-gradient(circle at 35% 30%,#FBF1DD,var(--lagon-clair) 40%,var(--lagon));}
 
-/* Big icon header cards */
-.ab-card-top {
-    padding: 2rem 2rem 0;
-    display: flex; flex-direction: column; align-items: flex-start; gap: 1.1rem;
-}
-.ab-big-icon {
-    width: 62px; height: 62px; border-radius: 18px; flex-shrink: 0;
-    display: flex; align-items: center; justify-content: center;
-    position: relative; overflow: hidden;
-}
-.ab-big-icon::before {
-    content: ''; position: absolute; inset: 0; border-radius: 18px;
-    background: linear-gradient(135deg, rgba(190,140,60,.22) 0%, rgba(171,126,54,.14) 100%);
-    border: 1.5px solid rgba(190,140,60,.35);
-}
-.ab-big-icon svg { width: 28px; height: 28px; position: relative; z-index: 1; }
-.ab-big-icon-glow {
-    position: absolute; inset: -4px; border-radius: 22px;
-    background: radial-gradient(ellipse at center, rgba(190,140,60,.18) 0%, transparent 70%);
-    animation: iconPulse 3s ease-in-out infinite;
-}
-@keyframes iconPulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+/* Valeurs : liste avec image qui suit le curseur */
+.ab-values{padding:clamp(90px,12vw,170px) 0;position:relative;}
+.ab-values-head{display:flex;justify-content:space-between;align-items:end;gap:30px;margin-bottom:50px;}
+.ab-values-head h2{font-weight:300;font-size:clamp(40px,5vw,76px);line-height:1;letter-spacing:-.035em;}
+.ab-values-head p{color:var(--ardoise);max-width:22em;}
+.ab-val{position:relative;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:30px;align-items:baseline;padding:30px 0;border-top:1px solid var(--trait);cursor:default;}
+.ab-val:last-child{border-bottom:1px solid var(--trait);}
+.ab-val h3{font-weight:300;font-size:clamp(40px,6vw,92px);line-height:1;letter-spacing:-.04em;transition:transform .8s var(--ease),color .5s;}
+.ab-val p{font-size:17px;color:var(--ardoise);max-width:26em;transition:opacity .5s;}
+.ab-val:hover h3{transform:translateX(24px);color:var(--lagon);font-style:italic;}
+.ab-float{position:fixed;top:0;left:0;width:260px;aspect-ratio:4/5;border-radius:22px;overflow:hidden;pointer-events:none;z-index:50;
+  opacity:0;transform:translate(-50%,-50%) scale(.6) rotate(-6deg);transition:opacity .4s var(--ease),transform .6s var(--ease);box-shadow:var(--shadow-lg);}
+.ab-float.on{opacity:1;transform:translate(-50%,-50%) scale(1) rotate(-3deg);}
+.ab-float img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .4s;}
+.ab-float img.on{opacity:1;}
 
-.ab-card-title-wrap { display: flex; flex-direction: column; gap: .2rem; }
-.ab-card-label {
-    font-size: .68rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
-    color: #be8c3c;
-}
-.ab-card-title { font-size: 1.25rem; font-weight: 800; color: var(--brown-dark); margin: 0; font-family: 'Fraunces', serif; }
+/* Contact */
+.ab-contact{padding:0 0 clamp(100px,12vw,170px);}
+.ab-contact-card{position:relative;overflow:hidden;border-radius:36px;padding:clamp(40px,7vw,100px);background:linear-gradient(135deg,rgba(221,192,146,.35),rgba(122,138,102,.35));text-align:left;
+  display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);gap:40px;align-items:end;}
+.ab-contact-card h2{font-weight:300;font-size:clamp(40px,5.4vw,84px);line-height:.98;letter-spacing:-.04em;}
+.ab-contact-card p{color:var(--ardoise);margin:20px 0 0;max-width:26em;}
+.ab-contact-mail{display:inline-block;font-family:var(--f-display);font-size:clamp(22px,2.2vw,30px);color:var(--basalte);text-decoration:none;margin-bottom:24px;
+  background:linear-gradient(currentColor,currentColor) 0 100%/100% 1px no-repeat;padding-bottom:4px;transition:background-size .6s var(--ease);word-break:break-all;}
+.ab-contact-mail:hover{background-size:0 1px;background-position:100% 100%;}
+.ab-contact-side{display:flex;flex-direction:column;align-items:flex-start;gap:18px;}
+.ab-contact-links{display:flex;gap:20px;font-size:15px;}
+.ab-contact-links a{color:var(--basalte);text-decoration:none;opacity:.7;transition:opacity .3s;}
+.ab-contact-links a:hover{opacity:1;}
 
-/* Divider */
-.ab-card-divider {
-    height: 1px; margin: 1.2rem 2rem 0;
-    background: linear-gradient(90deg, rgba(190,140,60,.3) 0%, rgba(190,140,60,.06) 100%);
-}
-.ab-card-body { padding: 1.4rem 2rem 2rem; }
-.ab-card-body p { font-size: .88rem; color: #5e5044; line-height: 1.8; margin-bottom: .9rem; }
-.ab-card-body p:last-child { margin-bottom: 0; }
-
-/* Highlight quote in Histoire */
-.ab-quote {
-    border-left: 3px solid #be8c3c;
-    padding: .7rem 1rem; margin: 1rem 0;
-    background: rgba(190,140,60,.06); border-radius: 0 10px 10px 0;
-    font-size: .86rem; color: #ab7e36; font-style: italic; line-height: 1.7;
-}
-
-/* Mission list */
-.ab-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: .85rem; }
-.ab-list li {
-    display: flex; align-items: flex-start; gap: .85rem;
-    font-size: .88rem; color: #5e5044; line-height: 1.6;
-}
-.ab-list-num {
-    width: 26px; height: 26px; border-radius: 8px; flex-shrink: 0; margin-top: .5px;
-    background: linear-gradient(135deg, #be8c3c, #ab7e36);
-    display: flex; align-items: center; justify-content: center;
-    font-size: .7rem; font-weight: 800; color: white;
-    box-shadow: 0 3px 10px rgba(190,140,60,.35);
-}
-
-/* Old dot — keep for values section */
-.ab-list-dot {
-    width: 22px; height: 22px; border-radius: 8px; flex-shrink: 0; margin-top: 1px;
-    background: linear-gradient(135deg, rgba(190,140,60,.2), rgba(171,126,54,.12));
-    border: 1px solid rgba(190,140,60,.3);
-    display: flex; align-items: center; justify-content: center;
-}
-.ab-list-dot svg { width: 11px; height: 11px; }
-
-/* Card header (old style — used for Valeurs) */
-.ab-card-header {
-    padding: 1.4rem 1.8rem 1.1rem;
-    border-bottom: 1px solid rgba(190,140,60,.1);
-    display: flex; align-items: center; gap: .8rem;
-}
-.ab-card-icon {
-    width: 38px; height: 38px; border-radius: 12px; flex-shrink: 0;
-    background: linear-gradient(135deg, rgba(190,140,60,.15), rgba(171,126,54,.1));
-    border: 1px solid rgba(190,140,60,.25);
-    display: flex; align-items: center; justify-content: center;
-}
-.ab-card-icon svg { width: 18px; height: 18px; }
-
-/* Image top card */
-.ab-card-img-wrap {
-    position: relative; overflow: hidden; height: 180px;
-}
-.ab-card-img {
-    width: 100%; height: 100%; object-fit: cover; display: block;
-    transition: transform .5s ease;
-}
-.ab-card:hover .ab-card-img { transform: scale(1.06); }
-.ab-card-img-overlay {
-    position: absolute; inset: 0;
-    background: linear-gradient(to top, rgba(14,36,24,.75) 0%, rgba(14,36,24,.15) 60%, transparent 100%);
-    display: flex; flex-direction: column; justify-content: flex-end;
-    padding: 1.2rem 1.6rem;
-}
-.ab-card-label-over {
-    font-size: .65rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
-    color: #be8c3c; margin-bottom: .2rem;
-}
-.ab-card-title-over {
-    font-size: 1.3rem; font-weight: 800; color: white;
-    font-family: 'Fraunces', serif;
-    text-shadow: 0 2px 8px rgba(0,0,0,.4);
-}
-
-/* ===== VALEURS ===== */
-.ab-values-grid {
-    display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.2rem;
-}
-@media(max-width:900px){ .ab-values-grid { grid-template-columns: repeat(2,1fr); } }
-@media(max-width:500px){ .ab-values-grid { grid-template-columns: 1fr; } }
-
-.ab-val-card {
-    background: white; border-radius: 18px; overflow: hidden;
-    box-shadow: 0 4px 18px rgba(42,33,27,.08);
-    border: 1px solid rgba(190,140,60,.12);
-    transition: transform .25s, box-shadow .25s;
-}
-.ab-val-card:hover { transform: translateY(-5px); box-shadow: 0 12px 32px rgba(42,33,27,.15); }
-.ab-val-img { width: 100%; height: 120px; object-fit: cover; display: block; }
-.ab-val-body { padding: 1rem 1.2rem 1.2rem; }
-.ab-val-body h3 { font-size: .92rem; font-weight: 800; color: var(--brown-dark); margin: 0 0 .3rem; font-family: 'Fraunces', serif; }
-.ab-val-body p { font-size: .78rem; color: #9b8b7e; line-height: 1.55; margin: 0; }
-
-/* ===== FOUNDER ===== */
-.ab-founder {
-    background: white; border-radius: 22px; overflow: hidden;
-    box-shadow: 0 4px 24px rgba(42,33,27,.09);
-    border: 1px solid rgba(190,140,60,.12);
-}
-.ab-founder-inner { display: grid; grid-template-columns: 340px 1fr; gap: 0; min-height: 420px; }
-@media(max-width:800px){ .ab-founder-inner { grid-template-columns: 1fr; } }
-
-.ab-founder-left {
-    position: relative; overflow: hidden; min-height: 420px;
-}
-.ab-founder-photo {
-    width: 100%; height: 100%; object-fit: cover; object-position: top center;
-    display: block; transition: transform .5s ease;
-}
-.ab-founder:hover .ab-founder-photo { transform: scale(1.04); }
-.ab-founder-overlay {
-    position: absolute; inset: 0;
-    background: linear-gradient(to top, rgba(26,10,3,.85) 0%, rgba(26,10,3,.3) 45%, transparent 70%);
-}
-.ab-founder-info {
-    position: absolute; bottom: 0; left: 0; right: 0;
-    padding: 1.8rem 1.8rem 1.6rem;
-}
-.ab-founder-name { font-size: 1.25rem; font-weight: 800; color: white; margin: 0 0 .4rem; font-family: 'Fraunces', serif; text-shadow: 0 2px 8px rgba(0,0,0,.5); }
-.ab-founder-role {
-    display: inline-block; font-size: .72rem; font-weight: 700;
-    padding: .22rem .75rem; border-radius: 20px;
-    background: rgba(190,140,60,.25); border: 1px solid rgba(190,140,60,.5);
-    color: #ddc092; letter-spacing: .4px; backdrop-filter: blur(6px);
-}
-@keyframes spinRing { to { transform: rotate(360deg); } }
-
-@media(max-width:800px){
-    .ab-founder-left { min-height: 320px; }
-}
-
-.ab-founder-right {
-    padding: 2.5rem 2.8rem;
-    display: flex; flex-direction: column; justify-content: center;
-    background: linear-gradient(145deg, #f4eee2 0%, #fcfaf4 60%, #e4dbcb 100%);
-    position: relative; overflow: hidden;
-}
-.ab-founder-right::before {
-    content: ''; position: absolute; top: -40px; right: -40px;
-    width: 220px; height: 220px; border-radius: 50%;
-    background: radial-gradient(ellipse, rgba(190,140,60,.12) 0%, transparent 70%);
-    pointer-events: none;
-}
-.ab-founder-right::after {
-    content: '"'; position: absolute; top: 1rem; right: 2rem;
-    font-size: 8rem; font-family: 'Fraunces', serif;
-    color: rgba(190,140,60,.12); line-height: 1; pointer-events: none;
-    font-weight: 900;
-}
-.ab-founder-right-label {
-    font-size: .68rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
-    color: #be8c3c; margin-bottom: .4rem;
-}
-.ab-founder-right h3 {
-    font-size: 1.4rem; font-weight: 800; color: var(--brown-dark);
-    margin: 0 0 1.4rem; font-family: 'Fraunces', serif;
-    position: relative;
-}
-.ab-founder-right h3::after {
-    content: ''; display: block; width: 42px; height: 3px; border-radius: 2px;
-    background: linear-gradient(90deg, #be8c3c, #ddc092); margin-top: .5rem;
-}
-.ab-founder-right p {
-    font-size: .92rem; color: #5e5044; line-height: 1.85;
-    margin-bottom: 1rem; position: relative; z-index: 1;
-}
-.ab-founder-right p:last-child { margin-bottom: 0; }
-
-/* ===== CONTACT ===== */
-.ab-contact {
-    background: linear-gradient(135deg, var(--brown-dark) 0%, #362b21 55%, #231c16 100%);
-    border-radius: 22px; padding: 2.8rem 2.5rem;
-    position: relative; overflow: hidden;
-    box-shadow: 0 10px 40px rgba(0,0,0,.3);
-    text-align: center;
-}
-.ab-contact::before {
-    content: ''; position: absolute; inset: 0;
-    background: radial-gradient(ellipse at 50% 0%, rgba(190,140,60,.18) 0%, transparent 60%);
-    pointer-events: none;
-}
-.ab-contact-inner { position: relative; z-index: 1; }
-.ab-contact h2 {
-    font-size: 1.7rem; font-weight: 800; color: white; margin: 0 0 .6rem;
-    font-family: 'Fraunces', serif;
-}
-.ab-contact p { font-size: .9rem; color: rgba(244,238,226,.65); line-height: 1.7; margin: 0 auto 1.6rem; max-width: 520px; }
-
-.ab-contact-email {
-    display: inline-flex; align-items: center; gap: .5rem;
-    background: rgba(190,140,60,.12); border: 1px solid rgba(190,140,60,.3);
-    border-radius: 12px; padding: .55rem 1.1rem; margin-bottom: 1.8rem;
-    color: #be8c3c; font-size: .82rem; font-weight: 700; text-decoration: none;
-    transition: background .2s;
-}
-.ab-contact-email:hover { background: rgba(190,140,60,.22); }
-.ab-contact-email svg { width: 15px; height: 15px; }
-
-.ab-contact-btn {
-    display: inline-flex; align-items: center; gap: .6rem;
-    background: linear-gradient(135deg, #be8c3c, #ab7e36);
-    color: white; padding: .9rem 2.2rem; border-radius: 50px;
-    font-weight: 700; font-size: .92rem; text-decoration: none; letter-spacing: .3px;
-    box-shadow: 0 4px 18px rgba(190,140,60,.4);
-    transition: all .2s;
-}
-.ab-contact-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(190,140,60,.55); }
-.ab-contact-btn svg { width: 17px; height: 17px; }
-
-/* Social links */
-.ab-socials { display: flex; align-items: center; justify-content: center; gap: 1rem; margin-top: 2rem; }
-.ab-social-link {
-    display: flex; align-items: center; gap: .5rem;
-    padding: .6rem 1.3rem; border-radius: 50px;
-    font-size: .82rem; font-weight: 700; text-decoration: none;
-    border: 1px solid rgba(255,255,255,.15);
-    color: rgba(244,238,226,.8);
-    transition: all .2s;
-}
-.ab-social-link:hover { border-color: rgba(190,140,60,.5); color: #be8c3c; background: rgba(190,140,60,.08); }
-.ab-social-link svg { width: 18px; height: 18px; flex-shrink: 0; }
-.ab-social-divider { color: rgba(244,238,226,.2); font-size: 1.2rem; }
-
-/* ===== RESPONSIVE ===== */
 @media(max-width:900px){
-    .ab-hero { padding: 2.2rem 1.6rem; }
-    .ab-hero-badge { margin-left: 0; }
-    .ab-founder-right { padding: 2rem 2rem; }
-    .ab-contact { padding: 2.2rem 1.6rem; }
-}
-@media(max-width:600px){
-    .about-wrap { gap: 1.4rem; }
-    .ab-hero-inner { gap: 1.2rem; }
-    .ab-hero-logo { width: 64px; height: 64px; border-radius: 16px; }
-    .ab-hero-text h1 { font-size: 1.5rem; }
-    .ab-hero-text p { font-size: .85rem; }
-    .ab-card-top { padding: 1.4rem 1.4rem 0; gap: .85rem; }
-    .ab-card-divider { margin: 1rem 1.4rem 0; }
-    .ab-card-body { padding: 1.1rem 1.4rem 1.4rem; }
-    .ab-card-header { padding: 1.1rem 1.3rem .9rem; }
-    .ab-card-img-wrap { height: 150px; }
-    .ab-card-title-over { font-size: 1.1rem; }
-    .ab-founder-info { padding: 1.4rem 1.4rem 1.2rem; }
-    .ab-founder-right { padding: 1.8rem 1.4rem; }
-    .ab-founder-right h3 { font-size: 1.2rem; }
-    .ab-contact h2 { font-size: 1.4rem; }
-    .ab-contact p { font-size: .85rem; }
-    .ab-contact-btn, .ab-contact-email { width: 100%; justify-content: center; }
-    .ab-socials { flex-wrap: wrap; gap: .7rem; }
-}
-@media(max-width:480px){
-    .ab-hero { padding: 1.8rem 1.2rem; border-radius: 18px; }
-    .ab-hero-logo { width: 56px; height: 56px; }
-    .ab-hero-text h1 { font-size: 1.3rem; }
-    .ab-values-grid { gap: .9rem; }
-    .ab-val-img { height: 100px; }
-    .ab-founder-left { min-height: 240px; }
-    .ab-contact { padding: 1.6rem 1.1rem; border-radius: 18px; }
-    .ab-contact-btn { padding: .85rem 1.6rem; font-size: .85rem; }
+  .ab-hero-foot,.ab-founder,.ab-mission-grid,.ab-contact-card{grid-template-columns:1fr;}
+  .ab-hero-foot .since{justify-self:start;}
+  .ab-portrait{position:relative;top:0;max-width:420px;}
+  .ab-val{grid-template-columns:1fr;gap:10px;}
+  .ab-values-head{flex-direction:column;align-items:flex-start;}
+  .ab-float{display:none;}
 }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="about-wrap">
+<div class="ab-page">
 
-    <!-- HERO -->
-    <div class="ab-hero">
-        <div class="ab-hero-inner">
-            <div class="ab-hero-logo">
-                <img src="{% static 'images/logo.jpg' %}" alt="Wanaag Corner">
-            </div>
-            <div class="ab-hero-text">
-                <h1>À propos de Wanaag Corner</h1>
-                <p>Un espace bienveillant pour parler, comprendre et guérir ensemble — une safe place pour la santé mentale à Djibouti.</p>
-            </div>
-            <div class="ab-hero-badge">Depuis 2025</div>
-        </div>
+<section class="ab-hero ab-wrap" data-hero>
+    <h1 data-split>Une idée née du silence.</h1>
+    <div class="ab-hero-foot">
+        <p data-reveal style="--d:.5s">Wanaag Corner est né d'un constat simple : à Djibouti, beaucoup de personnes souffrent en silence, faute d'un lieu où en parler sans honte. Nous avons voulu construire ce lieu.</p>
+        <p class="since" data-reveal style="--d:.7s"><b>2025</b>ouverture de Wanaag Corner</p>
     </div>
+</section>
 
-    <!-- HISTOIRE + MISSION -->
-    <div class="ab-two-col">
-
-        <!-- Histoire -->
-        <div class="ab-card">
-            <div class="ab-card-img-wrap">
-                <img src="{% static 'images/Histoire.jpg' %}" alt="Notre Histoire" class="ab-card-img">
-                <div class="ab-card-img-overlay">
-                    <span class="ab-card-label-over">Origines</span>
-                    <div class="ab-card-title-over">Notre Histoire</div>
-                </div>
-            </div>
-            <div class="ab-card-body">
-                <p>Wanaag Corner est né d'un besoin profond : briser le silence autour de la santé mentale à Djibouti.</p>
-                <div class="ab-quote">
-                    « Trop souvent, parler de ses émotions est perçu comme une faiblesse. Nous voulons changer cela. »
-                </div>
-                <p>Ici, chaque mot compte. Chaque témoignage est accueilli avec douceur — un lieu où chacun peut déposer ses fardeaux sans peur du jugement.</p>
-            </div>
+<section class="ab-founder ab-wrap">
+    <figure class="ab-portrait" data-reveal>
+        <div class="frame"><img src="{% static 'images/ilwad.jpg' %}" alt="Portrait d'Ilwad Kadar Daher" data-parallax=".08"></div>
+        <figcaption><strong>Ilwad Kadar Daher</strong><span>Fondatrice</span></figcaption>
+    </figure>
+    <div class="ab-story">
+        <p class="lead" data-split>J'ai cherché de l'aide, et je n'ai rien trouvé qui me ressemble.</p>
+        <p data-reveal>Wanaag Corner est né d'une période difficile de ma vie. Je cherchais du soutien sans trouver de réponses adaptées : ni auprès de mes proches, faute d'éducation sur la santé mentale, ni sur Internet, où rien ne reflétait ma réalité de femme africaine et musulmane.</p>
+        <p data-reveal>J'ai voulu créer l'espace qui m'a manqué. Un endroit sûr où chacun peut se sentir compris, trouver de l'aide et s'exprimer librement, sans peur ni honte.</p>
+        <div class="ab-quote" data-reveal>
+            <blockquote>Trop souvent, parler de ses émotions est perçu comme une faiblesse. Nous voulons que cela change.</blockquote>
         </div>
-
-        <!-- Mission -->
-        <div class="ab-card">
-            <div class="ab-card-img-wrap">
-                <img src="{% static 'images/Mission.jpg' %}" alt="Notre Mission" class="ab-card-img">
-                <div class="ab-card-img-overlay">
-                    <span class="ab-card-label-over">Engagement</span>
-                    <div class="ab-card-title-over">Notre Mission</div>
-                </div>
-            </div>
-            <div class="ab-card-body">
-                <p style="font-weight:600;color:#2a211b;">Wanaag Corner, c'est bien plus qu'une plateforme — c'est un mouvement.</p>
-                <ul class="ab-list">
-                    <li><span class="ab-list-num">01</span>Briser les tabous et libérer la parole autour de la santé mentale</li>
-                    <li><span class="ab-list-num">02</span>Offrir des ressources fiables adaptées à notre culture</li>
-                    <li><span class="ab-list-num">03</span>Construire une communauté solidaire et bienveillante</li>
-                    <li><span class="ab-list-num">04</span>Promouvoir un équilibre sain entre corps, esprit et âme</li>
-                </ul>
-            </div>
-        </div>
-
+        <p data-reveal>Ici, chaque mot compte. Chaque témoignage est reçu avec douceur, parce que personne ne devrait traverser ses épreuves seul.</p>
     </div>
+</section>
 
-    <!-- VALEURS -->
-    <div class="ab-card">
-        <div class="ab-card-header">
-            <div class="ab-card-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="#be8c3c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
-                </svg>
-            </div>
-            <div class="ab-card-title">Nos Valeurs</div>
+<section class="ab-mission" data-dark>
+    <div class="ab-wrap ab-mission-grid">
+        <div>
+            <h2 data-split>Ce que nous voulons changer</h2>
+            <p data-reveal>Wanaag Corner est une plateforme, mais d'abord un mouvement.</p>
         </div>
-        <div class="ab-card-body" style="padding-top:1.2rem">
-            <div class="ab-values-grid">
-                <div class="ab-val-card">
-                    <img src="{% static 'images/bienveillance.jpg' %}" alt="Bienveillance" class="ab-val-img">
-                    <div class="ab-val-body">
-                        <h3>Bienveillance</h3>
-                        <p>Chaque voix mérite d'être entendue avec respect et empathie</p>
-                    </div>
-                </div>
-                <div class="ab-val-card">
-                    <img src="{% static 'images/confidentialite.jpg' %}" alt="Confidentialité" class="ab-val-img">
-                    <div class="ab-val-body">
-                        <h3>Confidentialité</h3>
-                        <p>Votre confiance est précieuse, vos échanges restent privés</p>
-                    </div>
-                </div>
-                <div class="ab-val-card">
-                    <img src="{% static 'images/inclusivite.jpg' %}" alt="Inclusivité" class="ab-val-img">
-                    <div class="ab-val-body">
-                        <h3>Inclusivité</h3>
-                        <p>Wanaag Corner accueille chacun, sans distinction ni jugement</p>
-                    </div>
-                </div>
-                <div class="ab-val-card">
-                    <img src="{% static 'images/solidarite.jpg' %}" alt="Solidarité" class="ab-val-img">
-                    <div class="ab-val-body">
-                        <h3>Solidarité</h3>
-                        <p>Ensemble, nous avançons vers un mieux-être collectif</p>
-                    </div>
-                </div>
+        <ul class="ab-goals">
+            <li data-reveal>Briser les tabous et libérer la parole autour de la santé mentale.</li>
+            <li data-reveal style="--d:.1s">Offrir des ressources fiables, pensées pour notre culture.</li>
+            <li data-reveal style="--d:.2s">Construire une communauté solidaire, où l'on prend soin les uns des autres.</li>
+            <li data-reveal style="--d:.3s">Promouvoir un équilibre sain entre le corps, l'esprit et l'âme.</li>
+        </ul>
+    </div>
+</section>
+
+<section class="ab-values ab-wrap">
+    <div class="ab-values-head">
+        <h2 data-split>Quatre engagements</h2>
+        <p data-reveal>Ils guident chaque décision, de la modération d'un message au choix d'un spécialiste.</p>
+    </div>
+    <div class="ab-val-list">
+        <div class="ab-val" data-img="0" data-reveal><h3>Bienveillance</h3><p>Chaque voix mérite d'être entendue avec respect et empathie, quelle que soit son histoire.</p></div>
+        <div class="ab-val" data-img="1" data-reveal><h3>Confidentialité</h3><p>Votre confiance est précieuse. Vos échanges restent privés et votre identité vous appartient.</p></div>
+        <div class="ab-val" data-img="2" data-reveal><h3>Inclusivité</h3><p>Wanaag Corner accueille chacun, sans distinction d'âge, d'origine ou de croyance.</p></div>
+        <div class="ab-val" data-img="3" data-reveal><h3>Solidarité</h3><p>Ensemble, on avance plus loin. Le mieux-être de chacun nourrit celui de tous.</p></div>
+    </div>
+    <div class="ab-float" aria-hidden="true">
+        <img src="{% static 'images/bienveillance.jpg' %}" alt="">
+        <img src="{% static 'images/consultation.jpg' %}" alt="">
+        <img src="{% static 'images/inclusivite.jpg' %}" alt="">
+        <img src="{% static 'images/solidarite.jpg' %}" alt="">
+    </div>
+</section>
+
+<section class="ab-contact ab-wrap">
+    <div class="ab-contact-card" data-reveal="scale">
+        <div>
+            <h2 data-split>Écrivez-nous.</h2>
+            <p>Une question, une idée, ou l'envie de partager votre histoire ? Nous lisons chaque message et répondons avec attention.</p>
+        </div>
+        <div class="ab-contact-side">
+            <a href="https://mail.google.com/mail/?view=cm&to=wanaagcorner@gmail.com" target="_blank" rel="noopener" class="ab-contact-mail">wanaagcorner@gmail.com</a>
+            <a href="https://mail.google.com/mail/?view=cm&to=wanaagcorner@gmail.com" target="_blank" rel="noopener" class="wc-btn"><span class="wc-btn-txt"><span>Nous écrire</span><span>Nous écrire</span></span></a>
+            <div class="ab-contact-links">
+                <a href="https://www.instagram.com/wanaagcorner/" target="_blank" rel="noopener">Instagram</a>
+                <a href="https://www.tiktok.com/@wanaag.corner" target="_blank" rel="noopener">TikTok</a>
             </div>
         </div>
     </div>
-
-    <!-- FONDATRICE -->
-    <div class="ab-founder">
-        <div class="ab-founder-inner">
-            <div class="ab-founder-left">
-                <img src="{% static 'images/ilwad.jpg' %}" alt="Ilwad Kadar Daher" class="ab-founder-photo">
-                <div class="ab-founder-overlay"></div>
-                <div class="ab-founder-info">
-                    <div class="ab-founder-name">Ilwad Kadar Daher</div>
-                    <div class="ab-founder-role">Fondatrice</div>
-                </div>
-            </div>
-            <div class="ab-founder-right">
-                <h3>Mon Histoire</h3>
-                <p>
-                    Wanaag Corner est né d'une période difficile où je cherchais du soutien sans jamais trouver de réponses adaptées — ni auprès de mes proches, faute d'éducation sur la santé mentale, ni sur Internet, où rien ne reflétait ma réalité de femme africaine et musulmane.
-                </p>
-                <p>
-                    J'ai voulu créer un espace sûr où chacun puisse se sentir compris, trouver de l'aide et s'exprimer librement, sans peur ni honte. Parce que personne ne devrait jamais traverser ses épreuves seul.
-                </p>
-            </div>
-        </div>
-    </div>
-
-    <!-- CONTACT -->
-    <div class="ab-contact">
-        <div class="ab-contact-inner">
-            <h2>Contactez-nous</h2>
-            <p>Des questions, des idées ou simplement envie de partager votre histoire ?<br>Écrivez-nous, nous serons heureux de vous lire et de vous répondre avec bienveillance.</p>
-
-            <div>
-                <a href="https://mail.google.com/mail/?view=cm&to=wanaagcorner@gmail.com" target="_blank" class="ab-contact-email">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>
-                    </svg>
-                    wanaagcorner@gmail.com
-                </a>
-            </div>
-
-            <a href="https://mail.google.com/mail/?view=cm&to=wanaagcorner@gmail.com" target="_blank" class="ab-contact-btn">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
-                </svg>
-                Nous écrire
-            </a>
-
-            <!-- Réseaux sociaux -->
-            <div class="ab-socials">
-                <a href="https://www.instagram.com/wanaagcorner/" target="_blank" rel="noopener" class="ab-social-link">
-                    <!-- Instagram SVG -->
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
-                        <path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/>
-                        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
-                    </svg>
-                    Instagram
-                </a>
-                <span class="ab-social-divider">·</span>
-                <a href="https://www.tiktok.com/@wanaag.corner?_r=1&amp;_t=ZS-94jg2ni96P9" target="_blank" rel="noopener" class="ab-social-link">
-                    <!-- TikTok SVG -->
-                    <svg viewBox="0 0 24 24" fill="currentColor" style="opacity:.85">
-                        <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.34 6.34 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.27 8.27 0 004.84 1.55V6.79a4.85 4.85 0 01-1.07-.1z"/>
-                    </svg>
-                    TikTok
-                </a>
-            </div>
-        </div>
-    </div>
+</section>
 
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function(){
+  var fl = document.querySelector('.ab-float');
+  if (!fl || !matchMedia('(hover:hover) and (pointer:fine)').matches) return;
+  var imgs = fl.querySelectorAll('img'), x=0,y=0,tx=0,ty=0;
+  document.querySelectorAll('.ab-val').forEach(function(v){
+    v.addEventListener('mouseenter', function(){
+      imgs.forEach(function(i){ i.classList.remove('on'); });
+      imgs[+v.dataset.img].classList.add('on'); fl.classList.add('on');
+    });
+    v.addEventListener('mouseleave', function(){ fl.classList.remove('on'); });
+  });
+  addEventListener('mousemove', function(e){ tx=e.clientX+150; ty=e.clientY; }, {passive:true});
+  (function loop(){ x+=(tx-x)*.12; y+=(ty-y)*.12; fl.style.left=x+'px'; fl.style.top=y+'px'; requestAnimationFrame(loop); })();
+})();
+</script>
 {% endblock %}

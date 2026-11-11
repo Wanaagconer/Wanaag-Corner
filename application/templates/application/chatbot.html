@@ -54,7 +54,7 @@
     50%{box-shadow:0 0 0 6px rgba(16,185,129,0);}
 }
 .cb-bot-name {
-    font-family:'Fraunces',serif; font-size:1.3rem; font-weight:800;
+    font-family:'Newsreader',serif; font-size:1.3rem; font-weight:800;
     color:var(--text); margin-bottom:.2rem;
 }
 .cb-bot-tag {
@@ -169,7 +169,7 @@
 }
 .cb-welcome-avatar img { width:100%; height:100%; object-fit:cover; display:block; }
 .cb-welcome h2 {
-    font-family:'Fraunces',serif; font-size:1.6rem; font-weight:800;
+    font-family:'Newsreader',serif; font-size:1.6rem; font-weight:800;
     color:var(--text); margin-bottom:.5rem;
 }
 .cb-welcome p { font-size:.9rem; color:var(--text-muted); max-width:380px; margin:0 auto 1.8rem; line-height:1.7; }
@@ -365,7 +365,7 @@
 
         {% if chat_session.crisis_flag %}
         <div class="cb-crisis-box">
-            <strong>⚠️ Ressources d'urgence</strong>
+            <strong>Ressources d'urgence</strong>
             SAMU : <strong>15</strong> · Urgences : <strong>17</strong><br>
             <a href="{% url 'psychologues_list' %}">Consulter un psychologue →</a>
         </div>
@@ -377,7 +377,7 @@
         <div class="cb-past-list">
             {% for ps in past_sessions %}
             <div class="cb-past-item">
-                📁 {{ ps.started_at|date:"d/m H:i" }} ({{ ps.messages.count }} msgs)
+                {{ ps.started_at|date:"d/m H:i" }} ({{ ps.messages.count }} msgs)
             </div>
             {% endfor %}
         </div>
@@ -386,7 +386,7 @@
         <!-- Actions -->
         <div class="cb-sidebar-actions">
             <button class="cb-new-session-btn" onclick="newSession()">
-                ✦ Nouvelle conversation
+                Nouvelle conversation
             </button>
         </div>
     </aside>
@@ -404,12 +404,12 @@
                 <h2>Bonjour, {{ request.user.pseudonyme }} 👋</h2>
                 <p>Je suis Wana, l'assistant expert de Wanaag Corner. Je m'appuie sur les principes de l'écoute active pour vous accompagner, et je connais le site sur le bout des doigts pour vous guider — partagez ce que vous ressentez, posez vos questions ou parlez-moi de votre journée.</p>
                 <div class="cb-starter-chips">
-                    <div class="cb-starter-chip" onclick="sendStarter(this)">🧭 Comment fonctionne le site ?</div>
-                    <div class="cb-starter-chip" onclick="sendStarter(this)">😔 Je me sens triste</div>
-                    <div class="cb-starter-chip" onclick="sendStarter(this)">😰 Je suis anxieux·se</div>
-                    <div class="cb-starter-chip" onclick="sendStarter(this)">💬 J'ai besoin de parler</div>
-                    <div class="cb-starter-chip" onclick="sendStarter(this)">🌿 Exercice de respiration</div>
-                    <div class="cb-starter-chip" onclick="sendStarter(this)">🩺 Trouver un psychologue</div>
+                    <div class="cb-starter-chip" onclick="sendStarter(this)">Comment fonctionne le site ?</div>
+                    <div class="cb-starter-chip" onclick="sendStarter(this)">Je me sens triste</div>
+                    <div class="cb-starter-chip" onclick="sendStarter(this)">Je suis anxieux·se</div>
+                    <div class="cb-starter-chip" onclick="sendStarter(this)">J'ai besoin de parler</div>
+                    <div class="cb-starter-chip" onclick="sendStarter(this)">Exercice de respiration</div>
+                    <div class="cb-starter-chip" onclick="sendStarter(this)">Trouver un psychologue</div>
                 </div>
             </div>
             {% else %}

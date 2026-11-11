@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}Forum Communautaire - Wanaag Corner{% endblock %}
-{% block page_title %}Forum Communautaire{% endblock %}
+{% block page_title %}Groupes de parole{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -32,7 +32,7 @@
     }
     .forum-hero-avatar img { width: 100%; height: 100%; object-fit: cover; }
     .forum-hero-title {
-        font-family: 'Fraunces', serif;
+        font-family: 'Newsreader', serif;
         font-size: 1.9rem; font-weight: 800; color: white; line-height: 1.2;
     }
     .forum-hero-sub { font-size: .88rem; color: rgba(244,238,226,.7); margin-top: .3rem; }
@@ -92,7 +92,7 @@
 
     /* ===== SECTION TITLE ===== */
     .sec-title {
-        font-family: 'Fraunces', serif;
+        font-family: 'Newsreader', serif;
         font-size: 1.1rem; font-weight: 700; color: var(--brown-dark);
         margin-bottom: 1.2rem;
         display: flex; align-items: center; gap: .5rem;
@@ -123,7 +123,7 @@
     .story-avatar {
         width: 100%; height: 100%; border-radius: 50%;
         background: white; display: flex; align-items: center; justify-content: center;
-        font-family: 'Fraunces', serif; font-weight: 700; font-size: 1.3rem; color: white;
+        font-family: 'Newsreader', serif; font-weight: 700; font-size: 1.3rem; color: white;
         border: 2.5px solid white;
     }
     .story-name {
@@ -155,7 +155,7 @@
     .chat-row-avatar {
         width: 52px; height: 52px; border-radius: 50%; flex-shrink: 0;
         display: flex; align-items: center; justify-content: center;
-        color: white; font-family: 'Fraunces', serif; font-weight: 700; font-size: 1.25rem;
+        color: white; font-family: 'Newsreader', serif; font-weight: 700; font-size: 1.25rem;
     }
     .chat-row-main { flex: 1; min-width: 0; }
     .chat-row-top {
@@ -211,14 +211,14 @@
     .group-card-bar {
         height: 4px;
     }
-    .bar-blue   { background: linear-gradient(90deg, #3b82f6, #1d4ed8); }
-    .bar-purple { background: linear-gradient(90deg, #a855f7, #7c3aed); }
-    .bar-pink   { background: linear-gradient(90deg, #ec4899, #db2777); }
+    .bar-blue   { background: linear-gradient(90deg, #BE8C3C, #AB7E36); }
+    .bar-purple { background: linear-gradient(90deg, #7A8A66, #4F5C3D); }
+    .bar-pink   { background: linear-gradient(90deg, #DDC092, #BE8C3C); }
     .bar-green  { background: linear-gradient(90deg, #10b981, #059669); }
-    .bar-indigo { background: linear-gradient(90deg, #6366f1, #4f46e5); }
-    .bar-teal   { background: linear-gradient(90deg, #06b6d4, #0891b2); }
+    .bar-indigo { background: linear-gradient(90deg, #7A8A66, #4f46e5); }
+    .bar-teal   { background: linear-gradient(90deg, #06b6d4, #4F5C3D); }
     .bar-amber  { background: linear-gradient(90deg, var(--accent), var(--accent-dark)); }
-    .bar-rose   { background: linear-gradient(90deg, #f43f5e, #be123c); }
+    .bar-rose   { background: linear-gradient(90deg, #B4473F, #be123c); }
 
     .group-card-body { padding: 1.3rem 1.4rem; }
     .group-card-head {
@@ -294,7 +294,7 @@
         to   { opacity: 1; transform: translateY(0); }
     }
     .modal-title {
-        font-family: 'Fraunces', serif;
+        font-family: 'Newsreader', serif;
         font-size: 1.3rem; font-weight: 700; color: var(--brown-dark);
         margin-bottom: 1.5rem; padding-bottom: 1rem;
         border-bottom: 1px solid var(--beige);
@@ -379,11 +379,11 @@
                 <img src="{% static 'images/forum.jpg' %}" alt="">
             </div>
             <div>
-                <div class="forum-hero-title">Forum Communautaire</div>
-                <div class="forum-hero-sub">Échangez avec bienveillance · {{ my_groups|length }} groupe{{ my_groups|length|pluralize }} rejoint{{ my_groups|length|pluralize }}</div>
+                <div class="forum-hero-title">Groupes de parole</div>
+                <div class="forum-hero-sub">Des espaces par thème pour parler et être entendu·e. Vous avez rejoint {{ my_groups|length }} groupe{{ my_groups|length|pluralize }} rejoint{{ my_groups|length|pluralize }}</div>
             </div>
         </div>
-        <button class="btn-create" onclick="showCreateModal()">＋ Créer un groupe</button>
+        <button class="btn-create" onclick="showCreateModal()">Créer un groupe</button>
     </div>
 </div>
 
@@ -395,25 +395,25 @@
 
 <!-- CATEGORIES -->
 <div class="categories-wrap">
-    <button class="cat-btn active" onclick="filterCategory('all', this)">🌍 Tous</button>
-    <button class="cat-btn" onclick="filterCategory('anxiete', this)">💭 Anxiété</button>
-    <button class="cat-btn" onclick="filterCategory('depression', this)">💙 Dépression</button>
-    <button class="cat-btn" onclick="filterCategory('stress', this)">⚡ Stress & Burn-out</button>
-    <button class="cat-btn" onclick="filterCategory('meditation', this)">🧘 Méditation</button>
-    <button class="cat-btn" onclick="filterCategory('trauma', this)">🛡️ Trauma</button>
-    <button class="cat-btn" onclick="filterCategory('sommeil', this)">🌙 Sommeil</button>
-    <button class="cat-btn" onclick="filterCategory('relations', this)">💞 Relations</button>
-    <button class="cat-btn" onclick="filterCategory('famille', this)">👨‍👩‍👧‍👦 Famille</button>
-    <button class="cat-btn" onclick="filterCategory('deuil', this)">🕊️ Deuil</button>
-    <button class="cat-btn" onclick="filterCategory('confiance', this)">⭐ Confiance en soi</button>
-    <button class="cat-btn" onclick="filterCategory('addiction', this)">🔗 Addictions</button>
-    <button class="cat-btn" onclick="filterCategory('colere', this)">🔥 Colère</button>
-    <button class="cat-btn" onclick="filterCategory('solitude', this)">🫂 Solitude</button>
-    <button class="cat-btn" onclick="filterCategory('identite', this)">🌍 Identité</button>
-    <button class="cat-btn" onclick="filterCategory('jeunes', this)">🎓 Jeunes</button>
-    <button class="cat-btn" onclick="filterCategory('spiritualite', this)">✨ Spiritualité</button>
-    <button class="cat-btn" onclick="filterCategory('alimentation', this)">🥗 Alimentation</button>
-    <button class="cat-btn" onclick="filterCategory('developpement', this)">🌱 Développement</button>
+    <button class="cat-btn active" onclick="filterCategory('all', this)">Tous</button>
+    <button class="cat-btn" onclick="filterCategory('anxiete', this)">Anxiété</button>
+    <button class="cat-btn" onclick="filterCategory('depression', this)">Dépression</button>
+    <button class="cat-btn" onclick="filterCategory('stress', this)">Stress & Burn-out</button>
+    <button class="cat-btn" onclick="filterCategory('meditation', this)">Méditation</button>
+    <button class="cat-btn" onclick="filterCategory('trauma', this)">Trauma</button>
+    <button class="cat-btn" onclick="filterCategory('sommeil', this)">Sommeil</button>
+    <button class="cat-btn" onclick="filterCategory('relations', this)">Relations</button>
+    <button class="cat-btn" onclick="filterCategory('famille', this)">Famille</button>
+    <button class="cat-btn" onclick="filterCategory('deuil', this)">Deuil</button>
+    <button class="cat-btn" onclick="filterCategory('confiance', this)">Confiance en soi</button>
+    <button class="cat-btn" onclick="filterCategory('addiction', this)">Addictions</button>
+    <button class="cat-btn" onclick="filterCategory('colere', this)">Colère</button>
+    <button class="cat-btn" onclick="filterCategory('solitude', this)">Solitude</button>
+    <button class="cat-btn" onclick="filterCategory('identite', this)">Identité</button>
+    <button class="cat-btn" onclick="filterCategory('jeunes', this)">Jeunes</button>
+    <button class="cat-btn" onclick="filterCategory('spiritualite', this)">Spiritualité</button>
+    <button class="cat-btn" onclick="filterCategory('alimentation', this)">Alimentation</button>
+    <button class="cat-btn" onclick="filterCategory('developpement', this)">Développement</button>
 </div>
 
 {% if my_groups %}
@@ -424,7 +424,7 @@
         <span class="story-name">Nouveau</span>
     </a>
     {% for item in my_groups %}
-    {% cycle '#3b82f6' '#a855f7' '#ec4899' '#10b981' '#6366f1' '#0891b2' 'var(--accent)' '#f43f5e' as avcolor2 silent %}
+    {% cycle '#AB7E36' '#7A8A66' '#5E5044' '#BE8C3C' '#4F5C3D' '#8A6427' '#9B8B7E' '#3A2E25' as avcolor2 silent %}
     <a class="story-item" href="{% url 'group_chat' item.group.id %}" title="{{ item.group.name }}">
         <div class="story-ring {% if item.unread > 0 %}unread{% endif %}">
             <div class="story-avatar" style="background:{{ avcolor2 }};">{{ item.group.name|first|upper }}</div>
@@ -436,12 +436,12 @@
 {% endif %}
 
 <!-- MES GROUPES -->
-<div class="sec-title">👥 Mes groupes ({{ my_groups|length }})</div>
+<div class="sec-title">Mes groupes ({{ my_groups|length }})</div>
 
 {% if my_groups %}
 <div class="chat-list" id="myGroups">
     {% for item in my_groups %}
-    {% cycle '#3b82f6' '#a855f7' '#ec4899' '#10b981' '#6366f1' '#0891b2' 'var(--accent)' '#f43f5e' as avcolor silent %}
+    {% cycle '#AB7E36' '#7A8A66' '#5E5044' '#BE8C3C' '#4F5C3D' '#8A6427' '#9B8B7E' '#3A2E25' as avcolor silent %}
     <a class="chat-row" data-category="{{ item.group.category }}" href="{% url 'group_chat' item.group.id %}">
         <div class="chat-row-avatar" style="background:{{ avcolor }};">{{ item.group.name|first|upper }}</div>
         <div class="chat-row-main">
@@ -470,7 +470,7 @@
 {% endif %}
 
 <!-- DÉCOUVRIR -->
-<div class="sec-title">🔍 Découvrir des groupes</div>
+<div class="sec-title">Découvrir des groupes</div>
 
 {% if discover_groups %}
 <div class="groups-grid" id="discoverGroups">
@@ -481,7 +481,7 @@
             <div class="group-card-name" style="margin-bottom:.4rem;">{{ group.name }}</div>
             <span class="group-card-cat">{{ group.get_category_display }}</span>
             <div class="group-card-desc">{{ group.description|truncatewords:18 }}</div>
-            <div class="group-card-stats">👥 {{ group.member_count }} membre{{ group.member_count|pluralize }}</div>
+            <div class="group-card-stats">{{ group.member_count }} membre{{ group.member_count|pluralize }}</div>
             <button class="btn-join" onclick="joinGroup(event, {{ group.id }})">Rejoindre le groupe</button>
         </div>
     </div>
@@ -498,7 +498,7 @@
 <!-- MODAL CRÉER UN GROUPE -->
 <div class="modal-overlay" id="createModal">
     <div class="modal-box">
-        <div class="modal-title">✨ Créer un groupe</div>
+        <div class="modal-title">Créer un groupe</div>
         <form id="createGroupForm">
             {% csrf_token %}
             <div class="form-group">
@@ -512,24 +512,24 @@
             <div class="form-group">
                 <label>Thème de santé mentale</label>
                 <select name="category" id="groupCategory">
-                    <option value="anxiete">💭 Anxiété</option>
-                    <option value="depression">💙 Dépression</option>
-                    <option value="stress">⚡ Stress & Burn-out</option>
-                    <option value="meditation">🧘 Méditation & Pleine conscience</option>
-                    <option value="trauma">🛡️ Trauma & PTSD</option>
-                    <option value="sommeil">🌙 Troubles du sommeil</option>
-                    <option value="relations">💞 Relations & Amour</option>
-                    <option value="famille">👨‍👩‍👧‍👦 Famille</option>
-                    <option value="deuil">🕊️ Deuil & Perte</option>
-                    <option value="confiance">⭐ Confiance en soi</option>
-                    <option value="addiction">🔗 Addictions</option>
-                    <option value="colere">🔥 Gestion de la colère</option>
-                    <option value="solitude">🫂 Solitude & Isolement</option>
-                    <option value="identite">🌍 Identité & Culture</option>
-                    <option value="jeunes">🎓 Santé mentale des jeunes</option>
-                    <option value="spiritualite">✨ Spiritualité & Foi</option>
-                    <option value="alimentation">🥗 Alimentation & Image du corps</option>
-                    <option value="developpement">🌱 Développement personnel</option>
+                    <option value="anxiete">Anxiété</option>
+                    <option value="depression">Dépression</option>
+                    <option value="stress">Stress & Burn-out</option>
+                    <option value="meditation">Méditation & Pleine conscience</option>
+                    <option value="trauma">Trauma & PTSD</option>
+                    <option value="sommeil">Troubles du sommeil</option>
+                    <option value="relations">Relations & Amour</option>
+                    <option value="famille">Famille</option>
+                    <option value="deuil">Deuil & Perte</option>
+                    <option value="confiance">Confiance en soi</option>
+                    <option value="addiction">Addictions</option>
+                    <option value="colere">Gestion de la colère</option>
+                    <option value="solitude">Solitude & Isolement</option>
+                    <option value="identite">Identité & Culture</option>
+                    <option value="jeunes">Santé mentale des jeunes</option>
+                    <option value="spiritualite">Spiritualité & Foi</option>
+                    <option value="alimentation">Alimentation & Image du corps</option>
+                    <option value="developpement">Développement personnel</option>
                 </select>
             </div>
             <div class="modal-actions">

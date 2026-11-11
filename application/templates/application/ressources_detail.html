@@ -1,4 +1,5 @@
 {% extends 'application/base.html' %}
+{% block page_title %}Ressource{% endblock %}
 
 {% block title %}{{ ressource.titre }} - Wanaag Corner{% endblock %}
 
@@ -31,7 +32,7 @@
         padding: 2rem;
         border-radius: 15px;
         margin-top: 2rem;
-        border-left: 5px solid #2196f3;
+        border-left: 5px solid #7A8A66;
     }
 
     .event-details-box h3 {
@@ -134,7 +135,7 @@
     }
 
     .btn-inscription {
-        background: #2196f3;
+        background: #7A8A66;
         color: white;
         font-size: 1.1rem;
         padding: 1rem 2rem;
@@ -411,12 +412,12 @@
     <h1>{{ ressource.titre }}</h1>
     
     <div class="ressource-meta-info">
-        <span>📂 {{ ressource.categorie }}</span>
-        <span>⏱️ {{ ressource.duree_lecture }} min</span>
-        <span>📊 {{ ressource.get_niveau_display }}</span>
-        <span>👁️ {{ ressource.vues }} vues</span>
+        <span>{{ ressource.categorie }}</span>
+        <span>{{ ressource.duree_lecture }} min</span>
+        <span>{{ ressource.get_niveau_display }}</span>
+        <span>{{ ressource.vues }} vues</span>
         {% if ressource.auteur %}
-        <span>✍️ Par {{ ressource.auteur.pseudonyme }}</span>
+        <span>Par {{ ressource.auteur.pseudonyme }}</span>
         {% endif %}
     </div>
     
@@ -432,7 +433,7 @@
     
     {% if ressource.is_evenement %}
     <div class="event-details-box">
-        <h3>📅 Informations sur l'événement</h3>
+        <h3>Informations sur l'événement</h3>
         
         {% if ressource.date_debut %}
         <div class="event-detail-item">

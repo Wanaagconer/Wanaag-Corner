@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}Posts — Wanaag Corner{% endblock %}
-{% block page_title %}Posts{% endblock %}
+{% block page_title %}Publications{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -175,7 +175,7 @@ a.hero-action-btn { text-decoration: none; font-family: inherit; }
 .art-type { display: inline-block; font-size: .64rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; padding: .2rem .6rem; border-radius: 50px; margin-bottom: .6rem; }
 .art-type-blog { background: rgba(190,140,60,.14); color: #8a622a; }
 .art-type-article { background: rgba(96,122,92,.16); color: #3f5a3c; }
-.art-title { font-family: 'Fraunces', serif; font-weight: 800; font-size: 1.55rem; line-height: 1.2; letter-spacing: -.01em; color: var(--brown-dark); margin: 0 0 .5rem; text-wrap: balance; transition: color .15s; }
+.art-title { font-family: 'Newsreader', serif; font-weight: 800; font-size: 1.55rem; line-height: 1.2; letter-spacing: -.01em; color: var(--brown-dark); margin: 0 0 .5rem; text-wrap: balance; transition: color .15s; }
 .art-link:hover .art-title { color: #9c6f2f; }
 .art-sub { font-size: .95rem; line-height: 1.55; color: #7a6856; margin: 0 0 .8rem; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 .art-info { display: flex; flex-wrap: wrap; align-items: center; gap: .45rem; font-size: .76rem; color: #9b8b7e; }
@@ -303,7 +303,7 @@ a.react-btn { text-decoration: none; }
     padding: 1.2rem 1.5rem; border-bottom: 1px solid rgba(171,126,54,.1);
     background: linear-gradient(135deg,#f4eee2,white);
 }
-.modal-head h4 { font-size: 1.05rem; font-weight: 800; color: var(--brown-dark); margin: 0; font-family: 'Fraunces',serif; }
+.modal-head h4 { font-size: 1.05rem; font-weight: 800; color: var(--brown-dark); margin: 0; font-family: 'Newsreader',serif; }
 .modal-close-btn { width: 32px; height: 32px; border-radius: 50%; background: #fcfaf4; border: none; cursor: pointer; font-size: 1rem; color: var(--brown); display: flex; align-items: center; justify-content: center; transition: all .15s; }
 .modal-close-btn:hover { background: #fde8e8; color: #e74c3c; transform: rotate(90deg); }
 .modal-author-row { display: flex; align-items: center; gap: .9rem; padding: 1.1rem 1.5rem .5rem; }
@@ -336,7 +336,7 @@ a.react-btn { text-decoration: none; }
     border-radius: 50px; font-size: .8rem; font-weight: 700;
     transition: all .15s;
 }
-.upload-label.photo { color: #2980b9; background: rgba(41,128,185,.08); border: 1px solid rgba(41,128,185,.18); }
+.upload-label.photo { color: #4F5C3D; background: rgba(41,128,185,.08); border: 1px solid rgba(41,128,185,.18); }
 .upload-label.video { color: #8e44ad; background: rgba(142,68,173,.08); border: 1px solid rgba(142,68,173,.18); }
 .upload-label:hover { opacity: .85; transform: translateY(-1px); }
 .upload-label svg { width: 15px; height: 15px; fill: currentColor; }
@@ -458,7 +458,7 @@ a.react-btn { text-decoration: none; }
       <a class="feed-tab {% if active_type == 'article' %}active{% endif %}" href="?type=article{% if active_tag %}&tag={{ active_tag|urlencode }}{% endif %}">Articles<small>{{ type_counts.article }}</small></a>
     </nav>
     {% if active_tag %}
-    <div class="tag-banner">Sujet : <span class="chip">{{ active_tag }}</span> <a href="{% url 'posts_feed' %}{% if active_type %}?type={{ active_type }}{% endif %}">✕ Retirer le filtre</a></div>
+    <div class="tag-banner">Sujet : <span class="chip">{{ active_tag }}</span> <a href="{% url 'posts_feed' %}{% if active_type %}?type={{ active_type }}{% endif %}">Retirer le filtre</a></div>
     {% endif %}
 
     <!-- POSTS FEED -->
@@ -668,8 +668,8 @@ a.react-btn { text-decoration: none; }
       <div class="side-section-title">Écrire</div>
       <p style="font-size:.82rem;color:#7a6856;line-height:1.5;margin:0 0 .9rem;">Racontez votre histoire ou partagez votre expertise avec toute la communauté.</p>
       <div style="display:flex;flex-direction:column;gap:.5rem;">
-        <a href="{% url 'post_write' %}?type=blog" style="display:block;text-align:center;padding:.65rem;border-radius:12px;background:linear-gradient(135deg,#c79a52,#9c6f2f);color:#fff;font-size:.84rem;font-weight:800;text-decoration:none;">✍️ Écrire un blog</a>
-        <a href="{% url 'post_write' %}?type=article" style="display:block;text-align:center;padding:.65rem;border-radius:12px;border:1.5px solid rgba(96,122,92,.45);background:rgba(96,122,92,.08);color:#3f5a3c;font-size:.84rem;font-weight:800;text-decoration:none;">📰 Écrire un article</a>
+        <a href="{% url 'post_write' %}?type=blog" style="display:block;text-align:center;padding:.65rem;border-radius:12px;background:linear-gradient(135deg,#c79a52,#9c6f2f);color:#fff;font-size:.84rem;font-weight:800;text-decoration:none;">Écrire un blog</a>
+        <a href="{% url 'post_write' %}?type=article" style="display:block;text-align:center;padding:.65rem;border-radius:12px;border:1.5px solid rgba(96,122,92,.45);background:rgba(96,122,92,.08);color:#3f5a3c;font-size:.84rem;font-weight:800;text-decoration:none;">Écrire un article</a>
       </div>
     </div>
     {% if popular_tags %}
@@ -700,7 +700,7 @@ a.react-btn { text-decoration: none; }
 <div class="modal-overlay" id="createPostModal">
   <div class="modal-box">
     <div class="modal-head">
-      <h4>✨ Créer un post</h4>
+      <h4>Créer un post</h4>
       <button class="modal-close-btn" onclick="closeCreateModal()">✕</button>
     </div>
     <div class="modal-author-row">
@@ -741,7 +741,7 @@ a.react-btn { text-decoration: none; }
 <div class="modal-overlay" id="editPostModal">
   <div class="modal-box">
     <div class="modal-head">
-      <h4>✏️ Modifier le post</h4>
+      <h4>Modifier le post</h4>
       <button class="modal-close-btn" onclick="closeEditModal()">✕</button>
     </div>
     <div class="modal-author-row">

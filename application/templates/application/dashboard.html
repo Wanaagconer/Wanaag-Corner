@@ -1,504 +1,264 @@
 {% extends 'application/base.html' %}
 {% load static %}
 
-{% block title %}Tableau de bord — Wanaag Corner{% endblock %}
-{% block page_title %}Tableau de bord{% endblock %}
+{% block title %}Accueil — Wanaag Corner{% endblock %}
+{% block page_title %}Accueil{% endblock %}
 
 {% block extra_css %}
 <style>
-    /* ===== HERO BANNER ===== */
-    .dash-hero{
-        background:linear-gradient(135deg,#594836 0%,#403326 55%,#2c241b 100%);
-        border-radius:28px;
-        padding:2.8rem 3rem;
-        margin-bottom:2.2rem;
-        position:relative;overflow:hidden;
-        display:flex;align-items:center;justify-content:space-between;gap:2rem;
-        box-shadow:0 12px 50px rgba(30,10,0,.25);
-    }
-    /* Particules lumineuses hero */
-    .dash-hero::before{
-        content:'';position:absolute;
-        top:-100px;right:-60px;width:350px;height:350px;
-        background:radial-gradient(circle,rgba(190,140,60,.22),transparent 65%);
-        pointer-events:none;
-    }
-    .dash-hero::after{
-        content:'';position:absolute;
-        bottom:-80px;left:20%;width:250px;height:250px;
-        background:radial-gradient(circle,rgba(79,122,99,.18),transparent 65%);
-        pointer-events:none;
-    }
-    /* Ligne décorative dorée */
-    .dash-hero .hero-accent-line {
-        position:absolute;bottom:0;left:0;right:0;height:2px;
-        background:linear-gradient(90deg,transparent,var(--accent),transparent);
-    }
-    .dash-hero-text{position:relative;z-index:1;}
-    .dash-hero-eyebrow{
-        font-size:.68rem;font-weight:800;letter-spacing:.15em;text-transform:uppercase;
-        color:var(--accent);margin-bottom:.7rem;
-        display:inline-flex;align-items:center;gap:.5rem;
-    }
-    .dash-hero-eyebrow::before{content:'';width:20px;height:1px;background:var(--accent);}
-    .dash-hero-title{
-        font-family:'Fraunces',serif;
-        font-size:2.2rem;font-weight:800;color:white;margin-bottom:.6rem;
-        letter-spacing:-.02em;line-height:1.2;
-    }
-    .dash-hero-title span{color:var(--accent);}
-    .dash-hero-subtitle{font-size:.88rem;color:rgba(244,238,226,.6);line-height:1.7;max-width:400px;}
-    .dash-hero-badge{
-        background:rgba(190,140,60,.12);
-        border:1px solid rgba(190,140,60,.22);
-        border-radius:50px;
-        padding:.4rem 1rem;
-        font-size:.72rem;font-weight:700;color:var(--accent-light);
-        display:inline-flex;align-items:center;gap:.5rem;margin-top:1rem;
-        letter-spacing:.04em;
-    }
-    .dash-hero-visual{
-        position:relative;z-index:1;
-        display:flex;gap:1.2rem;align-items:center;
-        flex-shrink:0;
-    }
-    .dash-stat-pill{
-        background:rgba(255,255,255,.05);
-        border:1px solid rgba(255,255,255,.09);
-        border-radius:18px;padding:1.2rem 1.5rem;
-        text-align:center;min-width:100px;
-        backdrop-filter:blur(12px);
-        transition:all .25s;
-    }
-    .dash-stat-pill:hover{background:rgba(190,140,60,.12);border-color:rgba(190,140,60,.25);}
-    .dash-stat-pill .num{
-        font-family:'Fraunces',serif;font-size:1.9rem;font-weight:800;
-        color:var(--accent);line-height:1;
-    }
-    .dash-stat-pill .lbl{font-size:.68rem;color:rgba(255,255,255,.4);margin-top:.3rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;}
+.db{display:flex;flex-direction:column;gap:clamp(28px,3.5vw,44px);max-width:1280px;}
 
-    /* ===== QUOTE / INSPIRATION ===== */
-    .dash-quote{
-        background:linear-gradient(135deg,white 0%,#fffdf8 100%);
-        border-radius:18px;
-        padding:1.5rem 2rem;
-        margin-bottom:2.2rem;
-        border-left:4px solid var(--accent);
-        box-shadow:0 4px 20px rgba(42,33,27,.07);
-        display:flex;align-items:center;gap:1.2rem;
-        position:relative;overflow:hidden;
-    }
-    .dash-quote::after{
-        content:'"';position:absolute;right:1.5rem;top:-1rem;
-        font-size:6rem;color:rgba(190,140,60,.07);font-family:'Fraunces',serif;
-        line-height:1;pointer-events:none;
-    }
-    .dash-quote-icon{font-size:1.6rem;flex-shrink:0;}
-    .dash-quote-text{font-size:.9rem;font-style:italic;color:var(--brown);line-height:1.7;font-weight:400;}
+/* Héros */
+.db-hero{position:relative;overflow:hidden;border-radius:34px;background:var(--basalte);color:var(--sel);padding:clamp(30px,4.5vw,60px);display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:40px;min-height:380px;}
+.db-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(600px 420px at 85% 30%,rgba(171,126,54,.55),transparent 62%),radial-gradient(420px 360px at 0% 110%,rgba(79,92,61,.3),transparent 60%);}
+.db-hero > *{position:relative;z-index:1;}
+.db-hero-orb{position:absolute;right:6%;top:50%;width:min(300px,34vw);aspect-ratio:1;transform:translateY(-50%);border-radius:50%;z-index:0;
+  background:radial-gradient(circle at 35% 30%,#FBF1DD,var(--lagon-clair) 25%,var(--lagon) 58%,rgba(79,92,61,.55) 78%,transparent 79%);animation:authBreath 10s cubic-bezier(.45,0,.55,1) infinite;opacity:.85;}
+@keyframes authBreath{0%,100%{transform:translateY(-50%) scale(.84)}40%,55%{transform:translateY(-50%) scale(1)}}
+.db-hello{font-size:15px;color:rgba(244,238,226,.6);margin-bottom:14px;}
+.db-hero h1{font-weight:300;font-size:clamp(40px,5.2vw,76px);line-height:.98;letter-spacing:-.04em;margin-bottom:22px;}
+.db-hero h1 em{font-style:italic;color:var(--lagon-clair);}
+.db-hero p.lede{color:rgba(244,238,226,.7);max-width:30em;margin-bottom:28px;}
+.db-hero-actions{display:flex;flex-wrap:wrap;gap:12px;}
+.db-stats{display:flex;flex-direction:column;justify-content:flex-end;align-items:flex-end;gap:10px;}
+.db-stat{display:flex;align-items:baseline;gap:12px;padding:12px 18px;border-radius:999px;background:rgba(244,238,226,.08);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(244,238,226,.1);text-decoration:none;color:inherit;transition:background .4s,transform .5s var(--ease);}
+.db-stat:hover{background:rgba(244,238,226,.16);transform:translateX(-6px);}
+.db-stat b{font-family:var(--f-display);font-weight:300;font-size:30px;line-height:1;}
+.db-stat span{font-size:14px;color:rgba(244,238,226,.7);}
 
-    /* ===== ANNONCES WANAAG CORNER ===== */
-    .annonces-wrap{
-        margin-bottom:2.2rem;
-    }
-    .annonces-row{
-        display:flex;gap:1.1rem;overflow-x:auto;padding-bottom:.4rem;
-        scroll-snap-type:x proximity;
-    }
-    .annonces-row::-webkit-scrollbar{height:6px;}
-    .annonces-row::-webkit-scrollbar-thumb{background:rgba(190,140,60,.3);border-radius:10px;}
-    .ann-card{
-        scroll-snap-align:start;
-        flex:0 0 320px;
-        background:white;
-        border-radius:20px;
-        padding:1.3rem 1.4rem;
-        box-shadow:0 4px 20px rgba(42,33,27,.08);
-        border:1px solid rgba(171,126,54,.13);
-        position:relative;overflow:hidden;
-        display:flex;flex-direction:column;gap:.6rem;
-    }
-    .ann-card.pinned{
-        border:1.5px solid rgba(190,140,60,.45);
-        background:linear-gradient(160deg,#fffaf0 0%,white 60%);
-    }
-    .ann-pin-tag{
-        position:absolute;top:.9rem;right:.9rem;
-        font-size:.62rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;
-        color:var(--accent-dark);background:rgba(190,140,60,.14);
-        padding:.22rem .6rem;border-radius:20px;
-    }
-    .ann-card-img{
-        width:100%;height:130px;border-radius:14px;overflow:hidden;margin-bottom:.2rem;
-    }
-    .ann-card-img img{width:100%;height:100%;object-fit:cover;display:block;}
-    .ann-type-badge{
-        display:inline-flex;align-items:center;gap:.4rem;
-        font-size:.68rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
-        color:var(--accent-dark);
-    }
-    .ann-card-title{
-        font-family:'Fraunces',serif;font-size:1.02rem;font-weight:700;
-        color:var(--brown-dark);line-height:1.35;
-    }
-    .ann-card-text{
-        font-size:.83rem;color:var(--brown-light);line-height:1.6;
-        flex:1;
-    }
-    .ann-card-foot{
-        display:flex;align-items:center;justify-content:space-between;gap:.6rem;
-        margin-top:.2rem;
-    }
-    .ann-card-date{font-size:.72rem;color:var(--brown-light);opacity:.75;}
-    .ann-card-link{
-        font-size:.78rem;font-weight:700;color:var(--accent-dark);text-decoration:none;
-        display:inline-flex;align-items:center;gap:.3rem;
-    }
-    .ann-card-link:hover{text-decoration:underline;}
-    @media(max-width:600px){
-        .ann-card{flex:0 0 82vw;}
-    }
+/* Humeur */
+.db-mood{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:24px;align-items:center;padding:24px 28px;border-radius:26px;background:var(--ecume);border:1px solid rgba(42,33,27,.06);box-shadow:var(--shadow-sm);}
+.db-mood h2{font-size:26px;font-weight:400;letter-spacing:-.02em;}
+.db-mood p{color:var(--ardoise);font-size:15px;margin-top:4px;}
+.db-moods{display:flex;gap:8px;flex-wrap:wrap;}
+.db-moods a{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 14px;min-width:76px;border-radius:18px;text-decoration:none;color:var(--basalte);font-size:13px;border:1px solid var(--trait);transition:all .5s var(--ease);}
+.db-moods a i{width:26px;height:26px;border-radius:50%;background:var(--c);transition:transform .6s var(--ease);}
+.db-moods a:hover{border-color:var(--c);transform:translateY(-4px);background:color-mix(in srgb,var(--c) 14%,transparent);}
+.db-moods a:hover i{transform:scale(1.25);}
 
-    /* ===== SECTION TITLE ===== */
-    .sec-title{
-        font-family:'Fraunces',serif;
-        font-size:1.2rem;font-weight:800;color:var(--brown-dark);
-        margin-bottom:1.4rem;
-        display:flex;align-items:center;gap:.65rem;
-    }
-    .sec-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(42,33,27,.12),transparent);margin-left:.3rem;}
+/* Pensée du jour */
+.db-thought{position:relative;padding:clamp(28px,4vw,48px) 0 0;border-top:1px solid var(--trait);display:grid;grid-template-columns:auto minmax(0,1fr);gap:28px;align-items:start;}
+.db-thought small{font-size:14px;color:var(--pierre);padding-top:10px;white-space:nowrap;}
+.db-thought blockquote{font-family:var(--f-display);font-weight:300;font-size:clamp(26px,3vw,42px);line-height:1.2;letter-spacing:-.02em;max-width:24em;}
 
-    /* ===== MODULES GRID ===== */
-    .modules-grid{
-        display:grid;
-        grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
-        gap:1.4rem;
-        margin-bottom:2.5rem;
-    }
-    .module-card{
-        border-radius:22px;
-        overflow:hidden;
-        position:relative;
-        cursor:pointer;
-        transition:all .32s cubic-bezier(.4,0,.2,1);
-        text-decoration:none;
-        display:block;
-        box-shadow:0 4px 20px rgba(42,33,27,.1);
-    }
-    .module-card:hover{transform:translateY(-8px) scale(1.01);box-shadow:0 20px 50px rgba(42,33,27,.22);}
-    .module-bg{
-        height:185px;
-        position:relative;overflow:hidden;
-    }
-    .module-bg img {
-        width:100%; height:100%; object-fit:cover;
-        transition: transform .5s ease;
-    }
-    .module-card:hover .module-bg img { transform: scale(1.07); }
-    .module-bg::after{
-        content:'';position:absolute;inset:0;
-        background:linear-gradient(180deg,rgba(0,0,0,.05) 0%,rgba(0,0,0,.45) 100%);
-    }
-    .bg-posts{background:linear-gradient(135deg,#fcfaf4 0%,#ddc092 100%);}
-    .bg-forum{background:linear-gradient(135deg,#ddc092 0%,#ab7e36 100%);}
-    .bg-ressources{background:linear-gradient(135deg,#e4dbcb 0%,#be8c3c 100%);}
-    .bg-psy{background:linear-gradient(135deg,#ddc092 0%,#2a211b 100%);}
-    .bg-consult{background:linear-gradient(135deg,#fcfaf4 0%,#ab7e36 100%);}
-    .bg-parcours{background:linear-gradient(135deg,#b1a59a,#5e5044);}
-    .module-bg-label {
-        position:absolute;bottom:.7rem;left:.9rem;z-index:2;
-        color:white;font-size:.7rem;font-weight:700;
-        letter-spacing:.08em;text-transform:uppercase;
-        background:rgba(0,0,0,.28);backdrop-filter:blur(6px);
-        padding:.2rem .6rem;border-radius:20px;
-        border:1px solid rgba(255,255,255,.2);
-    }
-    .module-body{
-        background:white;
-        padding:1.2rem 1.4rem 1.3rem;
-    }
-    .module-title{font-size:1rem;font-weight:700;color:var(--brown-dark);margin-bottom:.35rem;}
-    .module-desc{font-size:.8rem;color:var(--brown-light);line-height:1.55;margin-bottom:.9rem;}
-    .module-cta{
-        display:inline-flex;align-items:center;gap:.35rem;
-        font-size:.8rem;font-weight:700;color:var(--accent-dark);
-        padding:.35rem .9rem;
-        background:rgba(190,140,60,.1);
-        border-radius:50px;
-        transition:background .2s;
-    }
-    .module-card:hover .module-cta{background:rgba(190,140,60,.2);}
-    .module-card.disabled{opacity:.7;cursor:default;}
-    .module-card.disabled:hover{transform:none;box-shadow:0 4px 20px rgba(42,33,27,.1);}
-    .badge-soon{
-        position:absolute;top:.8rem;right:.8rem;z-index:2;
-        background:rgba(42,33,27,.8);color:rgba(255,255,255,.9);
-        font-size:.62rem;font-weight:700;padding:.28rem .65rem;border-radius:8px;
-        backdrop-filter:blur(8px);letter-spacing:.05em;
-    }
+/* Annonces */
+.db-sec-head{display:flex;justify-content:space-between;align-items:end;gap:20px;margin-bottom:18px;}
+.db-sec-head h2{font-size:clamp(28px,2.6vw,38px);font-weight:400;letter-spacing:-.025em;}
+.db-sec-head .ctrl{display:flex;gap:8px;}
+.db-sec-head .ctrl button{width:42px;height:42px;border-radius:50%;border:1px solid var(--trait);background:var(--ecume);cursor:pointer;color:var(--basalte);display:grid;place-items:center;transition:all .4s var(--ease);}
+.db-sec-head .ctrl button:hover{background:var(--basalte);color:var(--sel);border-color:var(--basalte);}
+.db-sec-head .ctrl svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;}
+.ann-row{display:flex;gap:18px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:10px;scrollbar-width:none;}
+.ann-row::-webkit-scrollbar{display:none;}
+.ann{flex:0 0 min(360px,85%);scroll-snap-align:start;display:flex;flex-direction:column;border-radius:24px;overflow:hidden;background:var(--ecume);border:1px solid rgba(42,33,27,.06);box-shadow:var(--shadow-sm);transition:transform .6s var(--ease),box-shadow .6s var(--ease);}
+.ann:hover{transform:translateY(-6px);box-shadow:var(--shadow-lg);}
+.ann.pinned{background:var(--basalte);color:var(--sel);}
+.ann-img{height:170px;overflow:hidden;}
+.ann-img img{width:100%;height:100%;object-fit:cover;transition:transform 1.2s var(--ease);}
+.ann:hover .ann-img img{transform:scale(1.06);}
+.ann-body{padding:20px 22px 22px;display:flex;flex-direction:column;gap:10px;flex:1;}
+.ann-meta{display:flex;gap:8px;flex-wrap:wrap;font-size:12.5px;}
+.ann-meta span{padding:3px 10px;border-radius:99px;background:rgba(171,126,54,.1);color:var(--lagon);}
+.ann.pinned .ann-meta span{background:rgba(221,192,146,.16);color:var(--lagon-clair);}
+.ann h3{font-family:var(--f-display);font-size:23px;font-weight:400;line-height:1.15;}
+.ann p{font-size:14.5px;color:var(--ardoise);line-height:1.55;flex:1;}
+.ann.pinned p{color:rgba(244,238,226,.68);}
+.ann-foot{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--pierre);padding-top:10px;border-top:1px solid rgba(140,125,110,.18);}
+.ann-foot a{color:var(--lagon);text-decoration:none;font-weight:500;}
+.ann.pinned .ann-foot a{color:var(--lagon-clair);}
 
-    /* ===== PSY DASHBOARD SECTION ===== */
-    .psy-hero{
-        background:linear-gradient(135deg,#1E3A4A 0%,#0F2535 100%);
-        border-radius:18px;padding:2rem 2.5rem;margin-bottom:2rem;
-        display:flex;align-items:center;justify-content:space-between;gap:2rem;
-        position:relative;overflow:hidden;
-    }
-    .psy-hero::before{
-        content:'';position:absolute;right:-50px;top:-50px;
-        width:200px;height:200px;
-        background:radial-gradient(circle,rgba(52,152,219,.2),transparent);
-        pointer-events:none;
-    }
-    .psy-hero-text .eyebrow{font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(100,180,240,.8);margin-bottom:.5rem;}
-    .psy-hero-text h2{font-family:'Fraunces',serif;font-size:1.4rem;font-weight:700;color:white;margin-bottom:.4rem;}
-    .psy-hero-text p{font-size:.85rem;color:rgba(255,255,255,.55);line-height:1.5;max-width:360px;}
-    .btn-psy{
-        background:linear-gradient(135deg,rgba(52,152,219,.3),rgba(52,152,219,.1));
-        border:1px solid rgba(52,152,219,.35);
-        color:rgba(180,220,255,.9);
-        padding:.7rem 1.6rem;border-radius:50px;
-        font-weight:600;font-size:.85rem;text-decoration:none;
-        transition:all .22s;white-space:nowrap;display:inline-block;
-    }
-    .btn-psy:hover{background:rgba(52,152,219,.3);color:white;}
+/* Espace pro */
+.db-pro{display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap;padding:28px 32px;border-radius:26px;background:linear-gradient(120deg,rgba(221,192,146,.35),rgba(122,138,102,.3));}
+.db-pro h2{font-size:30px;font-weight:400;letter-spacing:-.02em;}
+.db-pro p{color:var(--ardoise);margin-top:4px;max-width:36em;}
 
-    /* ===== RECENT POSTS PREVIEW ===== */
-    .recent-posts{
-        background:white;
-        border-radius:18px;
-        box-shadow:0 2px 12px rgba(42,33,27,.06);
-        overflow:hidden;margin-bottom:2rem;
-    }
-    .recent-posts-header{
-        padding:1.2rem 1.5rem;
-        border-bottom:1px solid var(--beige-light);
-        display:flex;align-items:center;justify-content:space-between;
-    }
-    .recent-posts-title{font-size:1rem;font-weight:700;color:var(--brown-dark);}
-    .see-all{font-size:.8rem;font-weight:600;color:var(--accent-dark);text-decoration:none;}
-    .see-all:hover{text-decoration:underline;}
-    .empty-state{
-        padding:3rem 1.5rem;text-align:center;
-        color:var(--brown-light);font-size:.9rem;
-    }
-    .empty-state .empty-icon{font-size:2.5rem;margin-bottom:.75rem;}
+/* Rubriques — grille éditoriale */
+.db-bento{display:grid;grid-template-columns:repeat(6,1fr);grid-auto-rows:minmax(200px,auto);gap:16px;}
+.mod{position:relative;overflow:hidden;border-radius:26px;text-decoration:none;color:var(--sel);display:flex;flex-direction:column;justify-content:flex-end;padding:24px;min-height:220px;isolation:isolate;background:var(--basalte);}
+.mod .duo{position:absolute;inset:0;z-index:-2;}
+.mod::after{content:'';position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,transparent 30%,rgba(42,33,27,.85));transition:opacity .6s;}
+.mod .duo img{transition:transform 1.4s var(--ease),filter 1s var(--ease);}
+.mod:hover .duo img{transform:scale(1.07);}
+.mod h3{font-size:clamp(26px,2.3vw,34px);font-weight:400;letter-spacing:-.02em;line-height:1.05;}
+.mod p{font-size:14.5px;color:rgba(244,238,226,.75);margin-top:6px;max-width:26em;}
+.mod .go{position:absolute;top:20px;right:20px;width:46px;height:46px;border-radius:50%;background:rgba(244,238,226,.14);backdrop-filter:blur(8px);display:grid;place-items:center;transition:all .6s var(--ease);}
+.mod .go svg{width:18px;height:18px;stroke:var(--sel);fill:none;stroke-width:1.8;stroke-linecap:round;transition:transform .6s var(--ease);}
+.mod:hover .go{background:var(--lagon-clair);}
+.mod:hover .go svg{stroke:var(--basalte);transform:rotate(-45deg);}
+.mod.span-3{grid-column:span 3;}
+.mod.span-2{grid-column:span 2;}
+.mod.span-4{grid-column:span 4;}
+.mod.tall{grid-row:span 2;}
+.mod.plain{background:var(--ecume);color:var(--basalte);border:1px solid rgba(42,33,27,.06);}
+.mod.plain::after{display:none;}
+.mod.plain p{color:var(--ardoise);}
+.mod.plain .go{background:var(--sel);}
+.mod.plain .go svg{stroke:var(--basalte);}
+.mod.wana{background:var(--lagon);}
+.mod.wana::after{display:none;}
+.mod.wana .orb{position:absolute;right:-50px;top:-50px;width:220px;height:220px;border-radius:50%;z-index:-1;background:radial-gradient(circle at 35% 30%,#FBF1DD,var(--lagon-clair) 35%,transparent 70%);animation:markBreath 8s var(--ease) infinite;}
 
-    @media(max-width:900px){
-        .dash-hero{flex-direction:column;padding:1.8rem;align-items:flex-start;}
-        .dash-hero-visual{display:none;}
-        .modules-grid{grid-template-columns:repeat(auto-fill,minmax(220px,1fr));}
-        .psy-hero{flex-direction:column;align-items:flex-start;gap:1.2rem;}
-        .btn-psy{align-self:stretch;text-align:center;}
-    }
-    @media(max-width:600px){
-        .modules-grid{grid-template-columns:1fr;}
-        .psy-hero{padding:1.5rem;}
-        .dash-hero{padding:1.4rem;}
-        .dash-hero-title{font-size:1.6rem;}
-        .dash-hero-subtitle{max-width:100%;}
-        .dash-quote{padding:1.2rem 1.4rem;gap:.9rem;}
-        .recent-posts-header{padding:1rem 1.2rem;flex-wrap:wrap;gap:.5rem;}
-        .module-body{padding:1.1rem 1.2rem 1.2rem;}
-    }
-    @media(max-width:480px){
-        .dash-hero{padding:1.2rem;border-radius:20px;}
-        .dash-hero-title{font-size:1.35rem;}
-        .dash-hero-eyebrow{font-size:.62rem;}
-        .dash-hero-subtitle{font-size:.82rem;}
-        .dash-hero-badge{font-size:.68rem;padding:.35rem .8rem;}
-        .dash-quote{padding:1rem 1.1rem;flex-direction:row;}
-        .dash-quote-text{font-size:.85rem;}
-        .sec-title{font-size:1.05rem;margin-bottom:1.1rem;}
-        .module-bg{height:150px;}
-        .psy-hero-text h2{font-size:1.2rem;}
-        .empty-state{padding:2rem 1.2rem;}
-    }
+@media(max-width:1100px){.db-bento{grid-template-columns:repeat(4,1fr);} .mod.span-3,.mod.span-4{grid-column:span 2;} .mod.span-2{grid-column:span 2;}}
+@media(max-width:760px){
+  .db-hero{grid-template-columns:1fr;} .db-stats{flex-direction:row;flex-wrap:wrap;justify-content:flex-start;align-items:flex-start;}
+  .db-hero-orb{width:220px;right:-60px;top:80px;}
+  .db-mood{grid-template-columns:1fr;}
+  .db-thought{grid-template-columns:1fr;gap:10px;}
+  .db-bento{grid-template-columns:1fr;} .mod.span-3,.mod.span-4,.mod.span-2{grid-column:auto;} .mod.tall{grid-row:auto;min-height:260px;}
+}
 </style>
 {% endblock %}
 
 {% block content %}
+<div class="db" data-no-auto>
 
-<!-- HERO BANNER -->
-<div class="dash-hero">
-    <div class="hero-accent-line"></div>
-    <div class="dash-hero-text">
-        {% if user.psychologue_profile %}
-        <div class="dash-hero-eyebrow">Espace Professionnel</div>
-        <div class="dash-hero-title">Bienvenue, <span>{{ user.psychologue_profile.titre_nom }}</span></div>
-        <div class="dash-hero-subtitle">
-            Votre expertise fait la différence. Accompagnez vos patients avec bienveillance
-            et guidez-les vers le bien-être qu'ils méritent.
-        </div>
-        <div class="dash-hero-badge">{{ user.psychologue_profile.icone_specialite }} {{ user.psychologue_profile.get_type_specialiste_display }} certifié · Wanaag Corner</div>
-        {% else %}
-        <div class="dash-hero-eyebrow">Votre espace personnel</div>
-        <div class="dash-hero-title">Bonjour, <span>{{ user.pseudonyme }}</span></div>
-        <div class="dash-hero-subtitle">
-            Bienvenue dans votre espace sécurisé. Prenez le temps qu'il vous faut —
-            vous n'êtes jamais seul·e ici.
-        </div>
-        <div class="dash-hero-badge">🌿 Membre · Wanaag Corner</div>
-        {% endif %}
-    </div>
-    <div class="dash-hero-visual">
-        <div class="dash-stat-pill">
-            <div class="num">{{ user.posts.count }}</div>
-            <div class="lbl">Posts</div>
-        </div>
-        {% if not user.psychologue_profile %}
-        <div class="dash-stat-pill">
-            <div class="num">{{ user.consultation_requests.count }}</div>
-            <div class="lbl">Consultations</div>
-        </div>
-        {% endif %}
-        <div class="dash-stat-pill">
-            <div class="num">{{ user.joined_groups.count }}</div>
-            <div class="lbl">Groupes</div>
-        </div>
-    </div>
-</div>
-
-<!-- QUOTE -->
-<div class="dash-quote">
-    <div class="dash-quote-icon">💛</div>
-    <div class="dash-quote-text">
-        "Votre santé mentale est importante. Chaque petit pas vers le mieux-être est une victoire."
-    </div>
-</div>
-
-<!-- ANNONCES WANAAG CORNER -->
-{% if annonces %}
-<div class="annonces-wrap">
-    <div class="sec-title">📣 Annonces Wanaag Corner</div>
-    <div class="annonces-row">
-        {% for a in annonces %}
-        <div class="ann-card {% if a.est_epinglee %}pinned{% endif %}">
-            {% if a.est_epinglee %}<span class="ann-pin-tag">📌 À la une</span>{% endif %}
-            {% if a.image %}
-            <div class="ann-card-img"><img src="{{ a.image.url }}" alt=""></div>
-            {% endif %}
-            <span class="ann-type-badge">{{ a.icone }} {{ a.get_type_annonce_display }}</span>
-            <div class="ann-card-title">{{ a.titre }}</div>
-            <div class="ann-card-text">{{ a.contenu|truncatewords:28 }}</div>
-            <div class="ann-card-foot">
-                <span class="ann-card-date">{{ a.date_creation|date:"d M Y" }}</span>
-                {% if a.lien_externe %}
-                <a href="{{ a.lien_externe }}" target="_blank" rel="noopener noreferrer" class="ann-card-link">En savoir plus →</a>
-                {% endif %}
+    <section class="db-hero" data-dark data-reveal="scale">
+        <div class="db-hero-orb" aria-hidden="true"></div>
+        <div>
+            {% if user.psychologue_profile %}
+            <p class="db-hello">Espace professionnel</p>
+            <h1><span data-greet>Bonjour</span>,<br><em>{{ user.psychologue_profile.titre_nom }}</em></h1>
+            <p class="lede">Vos patients comptent sur votre écoute. Retrouvez vos demandes et vos échanges en un coup d'œil.</p>
+            <div class="db-hero-actions">
+                <a href="{% url 'psychologue_dashboard' %}" class="wc-btn wc-btn--light"><span class="wc-btn-txt"><span>Mon activité</span><span>Mon activité</span></span></a>
+                <a href="{% url 'consultation_requests_list' %}" class="wc-btn wc-btn--outline-light"><span class="wc-btn-txt"><span>Demandes reçues</span><span>Demandes reçues</span></span></a>
             </div>
+            {% else %}
+            <p class="db-hello" data-today></p>
+            <h1><span data-greet>Bonjour</span>,<br><em>{{ user.pseudonyme }}</em></h1>
+            <p class="lede">Prenez le temps qu'il vous faut. Ici, rien ne presse, et vous n'êtes jamais seul·e.</p>
+            <div class="db-hero-actions">
+                <button type="button" class="wc-btn wc-btn--light" data-breathe><span class="wc-btn-txt"><span>Respirer une minute</span><span>Respirer une minute</span></span></button>
+                <a href="{% url 'parcours_journal' %}" class="wc-btn wc-btn--outline-light"><span class="wc-btn-txt"><span>Ouvrir mon journal</span><span>Ouvrir mon journal</span></span></a>
+            </div>
+            {% endif %}
         </div>
-        {% endfor %}
-    </div>
-</div>
-{% endif %}
-
-<!-- PSY BLOCK (only for psychologists) -->
-{% if user.psychologue_profile %}
-<div class="psy-hero">
-    <div class="psy-hero-text">
-        <div class="eyebrow">{{ user.psychologue_profile.icone_specialite }} Espace {{ user.psychologue_profile.get_type_specialiste_display }}</div>
-        <h2>Mon espace professionnel</h2>
-        <p>Gérez vos consultations, répondez aux patients et suivez votre activité depuis votre dashboard dédié.</p>
-    </div>
-    <a href="{% url 'psychologue_dashboard' %}" class="btn-psy">Accéder à mon dashboard →</a>
-</div>
-{% endif %}
-
-<!-- MODULES -->
-<div class="sec-title">🗂️ Rubriques</div>
-<div class="modules-grid">
-
-    <!-- Posts -->
-    <a href="{% url 'posts_feed' %}" class="module-card">
-        <div class="module-bg">
-            <img src="{% static 'images/posts.jpg' %}" alt="Posts">
-            <span class="module-bg-label">Communauté</span>
+        <div class="db-stats">
+            <a href="{% url 'posts_feed' %}" class="db-stat"><b data-count="{{ user.posts.count }}">{{ user.posts.count }}</b><span>publication{{ user.posts.count|pluralize }}</span></a>
+            {% if not user.psychologue_profile %}
+            <a href="{% url 'mes_consultations' %}" class="db-stat"><b data-count="{{ user.consultation_requests.count }}">{{ user.consultation_requests.count }}</b><span>consultation{{ user.consultation_requests.count|pluralize }}</span></a>
+            {% endif %}
+            <a href="{% url 'forum_home' %}" class="db-stat"><b data-count="{{ user.joined_groups.count }}">{{ user.joined_groups.count }}</b><span>groupe{{ user.joined_groups.count|pluralize }} de parole</span></a>
         </div>
-        <div class="module-body">
-            <div class="module-title">Posts</div>
-            <div class="module-desc">Partagez vos pensées et photos avec la communauté.</div>
-            <div class="module-cta">Voir les posts →</div>
-        </div>
-    </a>
-
-    <!-- Forum -->
-    <a href="{% url 'forum_home' %}" class="module-card">
-        <div class="module-bg">
-            <img src="{% static 'images/forum.jpg' %}" alt="Forum">
-            <span class="module-bg-label">Groupes</span>
-        </div>
-        <div class="module-body">
-            <div class="module-title">Forum</div>
-            <div class="module-desc">Échangez dans des groupes thématiques bienveillants.</div>
-            <div class="module-cta">Accéder au forum →</div>
-        </div>
-    </a>
-
-    <!-- Ressources -->
-    <a href="{% url 'ressources_home' %}" class="module-card">
-        <div class="module-bg">
-            <img src="{% static 'images/ressources.jpg' %}" alt="Ressources">
-            <span class="module-bg-label">Éducation</span>
-        </div>
-        <div class="module-body">
-            <div class="module-title">Ressources</div>
-            <div class="module-desc">Articles, guides et contenus éducatifs sur la santé mentale.</div>
-            <div class="module-cta">Découvrir →</div>
-        </div>
-    </a>
+    </section>
 
     {% if not user.psychologue_profile %}
-    <!-- Spécialistes -->
-    <a href="{% url 'psychologues_list' %}" class="module-card">
-        <div class="module-bg">
-            <img src="{% static 'images/psychologue.jpg' %}" alt="Spécialistes">
-            <span class="module-bg-label">Professionnels</span>
+    <section class="db-mood" data-reveal>
+        <div>
+            <h2>Comment vous sentez-vous aujourd'hui ?</h2>
+            <p>Choisissez un mot, puis écrivez-en quelques lignes dans votre journal.</p>
         </div>
-        <div class="module-body">
-            <div class="module-title">Spécialistes</div>
-            <div class="module-desc">Psychologue, kiné, nutritionniste... trouvez le bon professionnel et réservez.</div>
-            <div class="module-cta">Voir les catégories →</div>
+        <div class="db-moods">
+            <a href="{% url 'parcours_journal' %}" style="--c:#AB7E36"><i></i>Serein·e</a>
+            <a href="{% url 'parcours_journal' %}" style="--c:#DDC092"><i></i>Bien</a>
+            <a href="{% url 'parcours_journal' %}" style="--c:#B7C2A3"><i></i>Fatigué·e</a>
+            <a href="{% url 'parcours_journal' %}" style="--c:#7A8A66"><i></i>Anxieux·se</a>
+            <a href="{% url 'parcours_journal' %}" style="--c:#5E5044"><i></i>Lourd·e</a>
         </div>
-    </a>
-
-    <!-- Consultations -->
-    <a href="{% url 'mes_consultations' %}" class="module-card">
-        <div class="module-bg">
-            <img src="{% static 'images/consultation.jpg' %}" alt="Consultations">
-            <span class="module-bg-label">Suivi</span>
-        </div>
-        <div class="module-body">
-            <div class="module-title">Mes consultations</div>
-            <div class="module-desc">Suivez vos demandes et échangez avec vos psychologues.</div>
-            <div class="module-cta">Voir mes demandes →</div>
-        </div>
-    </a>
+    </section>
     {% endif %}
 
-    <!-- Parcours bien-être -->
-    <a href="{% url 'parcours_home' %}" class="module-card">
-        <div class="module-bg bg-parcours" style="display:flex;align-items:center;justify-content:center;font-size:3rem;">🌿</div>
-        <div class="module-body">
-            <div class="module-title">Parcours bien-être</div>
-            <div class="module-desc">Journal intime, nutrition, inspiration et blog santé.</div>
-            <div class="module-cta">Explorer →</div>
+    {% if annonces %}
+    <section data-reveal>
+        <div class="db-sec-head">
+            <h2>Les nouvelles de Wanaag Corner</h2>
+            <div class="ctrl">
+                <button type="button" aria-label="Précédent" onclick="document.getElementById('annRow').scrollBy({left:-380,behavior:'smooth'})"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></button>
+                <button type="button" aria-label="Suivant" onclick="document.getElementById('annRow').scrollBy({left:380,behavior:'smooth'})"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>
+            </div>
         </div>
-    </a>
+        <div class="ann-row" id="annRow">
+            {% for a in annonces %}
+            <article class="ann {% if a.est_epinglee %}pinned{% endif %}">
+                {% if a.image %}<div class="ann-img"><img src="{{ a.image.url }}" alt="" loading="lazy"></div>{% endif %}
+                <div class="ann-body">
+                    <div class="ann-meta">{% if a.est_epinglee %}<span>À la une</span>{% endif %}<span>{{ a.get_type_annonce_display }}</span></div>
+                    <h3>{{ a.titre }}</h3>
+                    <p>{{ a.contenu|truncatewords:28 }}</p>
+                    <div class="ann-foot">
+                        <span>{{ a.date_creation|date:"j F Y" }}</span>
+                        {% if a.lien_externe %}<a href="{{ a.lien_externe }}" target="_blank" rel="noopener noreferrer">En savoir plus</a>{% endif %}
+                    </div>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    {% if user.psychologue_profile %}
+    <section class="db-pro" data-reveal>
+        <div>
+            <h2>Votre espace {{ user.psychologue_profile.get_type_specialiste_display|lower }}</h2>
+            <p>Gérez vos consultations, répondez à vos patients et suivez votre activité.</p>
+        </div>
+        <a href="{% url 'psychologue_dashboard' %}" class="wc-btn"><span class="wc-btn-txt"><span>Ouvrir mon tableau de bord</span><span>Ouvrir mon tableau de bord</span></span></a>
+    </section>
+    {% endif %}
+
+    <section>
+        <div class="db-sec-head" data-reveal><h2>Où voulez-vous aller ?</h2></div>
+        <div class="db-bento">
+            <a href="{% url 'forum_home' %}" class="mod span-3 tall" data-reveal data-tilt="4">
+                <div class="duo"><img src="{% static 'images/inclusivite.jpg' %}" alt="" loading="lazy"></div>
+                <span class="go"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+                <h3>Groupes de parole</h3><p>Échangez avec des personnes qui traversent la même chose que vous.</p>
+            </a>
+            <a href="{% url 'posts_feed' %}" class="mod span-3" data-reveal style="--d:.08s" data-tilt="4">
+                <div class="duo"><img src="{% static 'images/solidarite.jpg' %}" alt="" loading="lazy"></div>
+                <span class="go"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+                <h3>Publications</h3><p>Partagez une pensée, une photo, un petit progrès.</p>
+            </a>
+            <a href="{% url 'chatbot' %}" class="mod span-3 wana" data-reveal style="--d:.16s" data-tilt="4">
+                <span class="orb"></span>
+                <span class="go"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+                <h3>Parler à Wana</h3><p>Votre assistant bien-être, disponible à toute heure.</p>
+            </a>
+            {% if not user.psychologue_profile %}
+            <a href="{% url 'psychologues_list' %}" class="mod span-2" data-reveal data-tilt="4">
+                <div class="duo"><img src="{% static 'images/consultation.jpg' %}" alt="" loading="lazy"></div>
+                <span class="go"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+                <h3>Spécialistes</h3><p>Trouvez le bon professionnel.</p>
+            </a>
+            <a href="{% url 'mes_consultations' %}" class="mod span-2 plain" data-reveal style="--d:.08s" data-tilt="4">
+                <span class="go"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+                <h3>Mes consultations</h3><p>Suivez vos demandes et vos échanges.</p>
+            </a>
+            {% endif %}
+            <a href="{% url 'parcours_home' %}" class="mod span-2" data-reveal style="--d:.16s" data-tilt="4">
+                <div class="duo"><img src="{% static 'images/espace-bien-etre.jpg' %}" alt="" loading="lazy"></div>
+                <span class="go"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+                <h3>Parcours bien-être</h3><p>Journal, inspiration, suivi santé.</p>
+            </a>
+            <a href="{% url 'ressources_home' %}" class="mod {% if user.psychologue_profile %}span-4{% else %}span-6{% endif %} plain" data-reveal data-tilt="2" style="{% if not user.psychologue_profile %}grid-column:1/-1;min-height:160px;{% endif %}">
+                <span class="go"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+                <h3>Ressources</h3><p>Articles, guides, vidéos et podcasts pour comprendre ce que vous vivez.</p>
+            </a>
+        </div>
+    </section>
+
+    <section class="db-thought" data-reveal>
+        <small>Une pensée pour aujourd'hui</small>
+        <blockquote id="dbThought">Prendre soin de soi n'est pas un luxe. C'est ce qui vous permet de rester présent·e pour les autres.</blockquote>
+    </section>
 
 </div>
+{% endblock %}
 
-<!-- RECENT POSTS PREVIEW -->
-<div class="sec-title">📸 Derniers posts</div>
-<div class="recent-posts">
-    <div class="recent-posts-header">
-        <span class="recent-posts-title">Fil d'actualité</span>
-        <a href="{% url 'posts_feed' %}" class="see-all">Voir tout →</a>
-    </div>
-    <div class="empty-state">
-        <div class="empty-icon">📸</div>
-        <p>Découvrez les posts de la communauté et partagez les vôtres.</p>
-        <a href="{% url 'posts_feed' %}" style="display:inline-block;margin-top:1rem;padding:.65rem 1.6rem;background:var(--brown-dark);color:white;border-radius:50px;font-size:.85rem;font-weight:600;text-decoration:none;">Aller aux posts</a>
-    </div>
-</div>
-
+{% block extra_js %}
+<script>
+(function(){
+  var T = [
+    "Prendre soin de soi n'est pas un luxe. C'est ce qui vous permet de rester présent·e pour les autres.",
+    "Aller mieux ne se fait pas en ligne droite. Un jour difficile n'efface pas le chemin parcouru.",
+    "Demander de l'aide est un acte de courage, pas un aveu de faiblesse.",
+    "Vous n'avez pas besoin de tout comprendre aujourd'hui. Il suffit de faire le prochain petit pas.",
+    "Vos émotions sont des messages, pas des ennemies. Elles méritent d'être écoutées.",
+    "Se reposer fait partie du travail. Vous avez le droit de ralentir.",
+    "Parler à quelqu'un, même brièvement, peut alléger ce qui semblait trop lourd à porter seul·e."
+  ];
+  var d = new Date(), n = Math.floor((d - new Date(d.getFullYear(),0,0)) / 864e5);
+  var el = document.getElementById('dbThought'); if (el) el.textContent = T[n % T.length];
+})();
+</script>
 {% endblock %}

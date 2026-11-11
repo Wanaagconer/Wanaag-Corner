@@ -1,804 +1,133 @@
-{% load static %}
-<!DOCTYPE html>
+{% load static %}<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#2A211B">
+    <meta name="description" content="Wanaag Corner : un espace confidentiel pour parler de santé mentale à Djibouti. Communauté, spécialistes, ressources et parcours bien-être.">
     <title>{% block title %}Wanaag Corner{% endblock %}</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,800;1,9..144,400;1,9..144,500;1,9..144,600&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            /* ── Palette Wanaag Corner : sable & or ── */
-            --sable: #F4EEE2;
-            --papier: #FCFAF4;
-            --encre: #2A211B;
-            --taupe: #5E5044;
-            --or: #BE8C3C;
-            --or-hover: #CA9A48;
-            --or-light: #DDC092;
-            --or-dark: #AB7E36;
-            --sauge: #7A8A66;
-            --foret: #4F5C3D;
-            --trait: #E4DBCB;
-
-            /* Alias rétro-compatibles (utilisés dans les styles propres à chaque page) */
-            --beige-light: var(--sable);
-            --beige: var(--papier);
-            --beige-dark: var(--trait);
-            --brown-light: var(--taupe);
-            --brown: var(--taupe);
-            --brown-dark: var(--encre);
-            --accent: var(--or);
-            --accent-light: var(--or-light);
-            --accent-dark: var(--or-dark);
-
-            --sidebar-width: 268px;
-            --topbar-height: 72px;
-            --glass: rgba(252,250,244,0.86);
-            --glass-border: rgba(190,140,60,0.16);
-            --shadow-sm: 0 1px 4px rgba(42,33,27,0.06);
-            --shadow-md: 0 4px 20px rgba(42,33,27,0.08);
-            --shadow-lg: 0 16px 44px rgba(42,33,27,0.14);
-            --radius: 14px;
-            --radius-lg: 22px;
-        }
-        *{margin:0;padding:0;box-sizing:border-box;}
-        html{scroll-behavior:smooth;overflow-x:hidden;max-width:100%;}
-        body{
-            font-family:'Instrument Sans','Segoe UI',system-ui,sans-serif;
-            background:var(--sable);
-            color:var(--encre);
-            min-height:100vh;
-            overflow-x:hidden;
-            max-width:100%;
-            overflow-x:hidden;
-            line-height:1.6;
-            -webkit-font-smoothing:antialiased;
-        }
-        a{color:inherit;}
-        h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:500;}
-
-        /* ===== PUBLIC NAV ===== */
-        .public-nav{
-            background: color-mix(in srgb, var(--sable) 82%, transparent);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
-            border-bottom: 1px solid var(--trait);
-            height: 74px;
-            padding: 0 5%;
-            display: flex; align-items: center; justify-content: space-between;
-            position: sticky; top: 0; z-index: 1000;
-        }
-
-        /* Brand */
-        .nav-brand{ display:flex; align-items:center; gap:.7rem; text-decoration:none; }
-        .nav-logo-wrap{
-            width:38px; height:38px; border-radius:50%; overflow:hidden; flex-shrink:0;
-            border:1.5px solid var(--or);
-            background:var(--papier);
-        }
-        .nav-logo-img{ width:100%; height:100%; object-fit:cover; display:block; }
-        .nav-brand-name{
-            font-family:'Fraunces',serif; font-size:1.3rem; font-weight:500;
-            color:var(--encre); letter-spacing:.1px; white-space:nowrap;
-        }
-
-        /* Links */
-        .nav-public-links{ display:flex; align-items:center; gap:1.7rem; list-style:none; }
-        .nav-link-item{
-            text-decoration:none; color:var(--taupe); font-weight:500; font-size:.92rem;
-            padding:.3rem 0; transition:color .2s; position:relative;
-        }
-        .nav-link-item:hover{ color:var(--encre); }
-        .nav-link-item.active{ color:var(--encre); font-weight:600; }
-        .nav-link-item.active::after{
-            content:''; position:absolute; bottom:-4px; left:0; right:0; height:2px;
-            background:var(--or); border-radius:2px;
-        }
-
-        /* Separator dot */
-        .nav-sep{ width:4px; height:4px; border-radius:50%; background:var(--trait); flex-shrink:0; }
-
-        /* Buttons */
-        .btn-nav{
-            display:inline-flex; align-items:center; gap:8px;
-            padding:.62rem 1.15rem; border-radius:100px; font-weight:500; font-size:.86rem;
-            text-decoration:none; transition:transform .18s ease, background .18s ease, box-shadow .18s ease;
-            cursor:pointer; border:1px solid transparent;
-            font-family:inherit; display:inline-block;
-        }
-        .btn-nav-outline{
-            color:var(--encre); border-color:var(--trait); background:transparent;
-        }
-        .btn-nav-outline:hover{ background:var(--papier); transform:translateY(-1px); }
-        .btn-nav-filled{
-            background:var(--or); color:var(--papier); font-weight:600;
-        }
-        .btn-nav-filled:hover{ background:var(--or-hover); transform:translateY(-1px); box-shadow:0 8px 22px -10px rgba(190,140,60,.7); }
-
-        @media(max-width:600px){
-            .nav-sep{display:none;}
-            .nav-link-item{font-size:.86rem;}
-            .btn-nav{padding:.5rem .95rem;font-size:.8rem;}
-            .nav-brand-name{font-size:1.1rem;}
-        }
-        /* Sur très petits écrans : masquer les liens texte, garder seulement les boutons */
-        @media(max-width:480px){
-            .nav-li-text, .nav-li-sep{ display:none; }
-            .nav-link-item:not(.btn-nav){ display:none; }
-            .nav-sep{ display:none; }
-            .nav-public-links{ gap:.5rem; }
-            .btn-nav{ padding:.45rem .85rem; font-size:.78rem; }
-            .nav-brand-name{ font-size:1.02rem; }
-            .public-nav{ padding:0 4%; }
-        }
-
-        /* ===== SIDEBAR (espace connecté) ===== */
-        .sidebar{
-            width:var(--sidebar-width);
-            background:var(--papier);
-            border-right:1px solid var(--trait);
-            position:fixed;top:0;left:0;height:100vh;
-            display:flex;flex-direction:column;
-            z-index:200;
-            overflow:hidden;
-        }
-        .sidebar-header{
-            padding:1.5rem 1.4rem 1.2rem;
-            border-bottom:1px solid var(--trait);
-            display:flex;align-items:center;gap:.75rem;
-        }
-        .sidebar-logo-img{width:38px;height:38px;border-radius:50%;object-fit:cover;border:1.5px solid var(--or);}
-        .sidebar-brand-name{font-family:'Fraunces',serif;font-size:1.12rem;font-weight:500;color:var(--encre);line-height:1.2;}
-        .sidebar-brand-sub{font-size:.66rem;color:var(--taupe);margin-top:.15rem;letter-spacing:.02em;}
-
-        .sidebar-nav{flex:1;padding:1.1rem .8rem;overflow-y:auto;scrollbar-width:none;}
-        .sidebar-nav::-webkit-scrollbar{display:none;}
-        .nav-label{font-size:.62rem;font-weight:700;letter-spacing:.12em;color:var(--sauge);text-transform:uppercase;padding:1rem .6rem .4rem;}
-        .nav-item{
-            display:flex;align-items:center;gap:.7rem;
-            padding:.68rem .8rem;border-radius:11px;
-            text-decoration:none;color:var(--taupe);
-            font-size:.88rem;font-weight:500;
-            margin-bottom:.15rem;transition:all .18s;position:relative;
-        }
-        .nav-item:hover{background:var(--sable);color:var(--encre);}
-        .nav-item.active{
-            background:linear-gradient(135deg, rgba(190,140,60,.16), rgba(190,140,60,.06));
-            color:var(--encre);
-            font-weight:600;
-        }
-        .nav-item.active::before{
-            content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);
-            width:3px;height:60%;background:var(--or);border-radius:0 3px 3px 0;
-        }
-        .nav-icon{
-            width:30px;height:30px;border-radius:9px;
-            display:flex;align-items:center;justify-content:center;
-            font-size:.92rem;background:var(--sable);flex-shrink:0;
-            overflow:hidden;
-        }
-        .nav-icon img{width:100%;height:100%;object-fit:cover;border-radius:9px;}
-        .nav-item.active .nav-icon{background:rgba(190,140,60,.18);}
-
-        .sidebar-user{
-            padding:1rem 1.2rem;
-            border-top:1px solid var(--trait);
-            display:flex;align-items:center;gap:.7rem;
-        }
-        .avatar-sidebar{
-            width:36px;height:36px;border-radius:50%;flex-shrink:0;
-            background:linear-gradient(135deg,var(--or),var(--or-dark));
-            display:flex;align-items:center;justify-content:center;
-            color:var(--papier);font-weight:700;font-size:.85rem;
-        }
-        .sidebar-user-info{flex:1;min-width:0;}
-        .sidebar-user-name{font-size:.83rem;font-weight:600;color:var(--encre);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-        .sidebar-user-role{font-size:.68rem;color:var(--or-dark);font-weight:500;}
-        .logout-btn{background:none;border:none;cursor:pointer;color:var(--taupe);font-size:1rem;padding:.3rem;border-radius:6px;transition:all .2s;}
-        .logout-btn:hover{background:rgba(220,50,50,.1);color:#c0392b;}
-
-        /* ===== APP MAIN ===== */
-        .app-main{margin-left:var(--sidebar-width);min-height:100vh;display:flex;flex-direction:column;}
-        .app-topbar{
-            height:var(--topbar-height);
-            background:var(--glass);
-            backdrop-filter:blur(16px);
-            border-bottom:1px solid var(--glass-border);
-            display:flex;align-items:center;justify-content:space-between;
-            padding:0 2rem;
-            position:sticky;top:0;z-index:50;
-            transition:box-shadow .2s;
-        }
-        .topbar-left{display:flex;align-items:center;gap:1rem;}
-        .hamburger{display:none;background:none;border:none;cursor:pointer;font-size:1.3rem;color:var(--encre);}
-        .topbar-title{font-family:'Fraunces',serif;font-size:1.15rem;font-weight:500;color:var(--encre);}
-        .topbar-right{display:flex;align-items:center;gap:.75rem;}
-        .topbar-greeting{
-            font-size:.83rem;color:var(--taupe);
-            transition:opacity .6s ease, transform .6s ease;
-        }
-        .topbar-greeting strong{color:var(--encre);}
-        .topbar-greeting.hidden{opacity:0;transform:translateY(-6px);pointer-events:none;}
-        .avatar-topbar{
-            width:34px;height:34px;border-radius:50%;
-            background:linear-gradient(135deg,var(--or),var(--or-dark));
-            display:flex;align-items:center;justify-content:center;
-            color:var(--papier);font-weight:700;font-size:.8rem;
-        }
-        .app-content{flex:1;padding:2rem;}
-
-        /* ===== MESSAGES ===== */
-        .django-messages{margin-bottom:1.5rem;}
-        .alert{padding:.8rem 1.1rem;border-radius:10px;margin-bottom:.6rem;font-size:.87rem;font-weight:500;animation:slideDown .3s ease;}
-        @keyframes slideDown{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
-        .alert-success{background:rgba(79,92,61,.1);color:#3c4630;border:1px solid rgba(79,92,61,.22);}
-        .alert-error{background:rgba(231,76,60,.08);color:#b03030;border:1px solid rgba(231,76,60,.15);}
-        .alert-warning{background:rgba(190,140,60,.12);color:#8a6423;border:1px solid rgba(190,140,60,.25);}
-        .alert-info{background:rgba(52,152,219,.08);color:#1a6fa8;border:1px solid rgba(52,152,219,.15);}
-
-        /* ===== PUBLIC FOOTER ===== */
-        .public-footer {
-            background: var(--sable);
-            color: var(--taupe);
-            border-top:1px solid var(--trait);
-            position: relative;
-        }
-
-        /* Main grid */
-        .footer-main {
-            max-width: 1140px;
-            margin: 0 auto;
-            padding: 4rem 2rem 3rem;
-            display: grid;
-            grid-template-columns: 1.8fr 1fr 1fr 1.4fr;
-            gap: 3rem;
-        }
-
-        /* Brand col */
-        .footer-brand-logo {
-            display: flex; align-items: center; gap: .7rem;
-            margin-bottom: 1.1rem; text-decoration: none;
-        }
-        .footer-logo-img {
-            width: 40px; height: 40px; border-radius: 50%; object-fit: cover;
-            border:1.5px solid var(--or);
-        }
-        .footer-brand-name {
-            font-family: 'Fraunces', serif;
-            font-size: 1.25rem; font-weight: 500;
-            color:var(--encre);
-        }
-        .footer-tagline {
-            font-size: .85rem; color: var(--taupe);
-            line-height: 1.65; margin-bottom: 1.4rem; max-width: 230px;
-        }
-
-        /* Social icons */
-        .footer-socials { display: flex; gap: .7rem; }
-        .footer-social-btn {
-            width: 38px; height: 38px; border-radius: 10px;
-            display: flex; align-items: center; justify-content: center;
-            border: 1px solid var(--trait);
-            background: var(--papier);
-            text-decoration: none; transition: all .2s;
-            color: var(--taupe);
-        }
-        .footer-social-btn:hover {
-            border-color: var(--or);
-            transform: translateY(-2px);
-            color: var(--or-dark);
-        }
-        .footer-social-btn svg { width: 17px; height: 17px; }
-
-        /* Nav cols */
-        .footer-col-title {
-            font-size: .7rem; font-weight: 700; letter-spacing: .1em;
-            text-transform: uppercase; color: var(--foret);
-            margin-bottom: 1.1rem; padding-bottom: .6rem;
-            border-bottom: 1px solid var(--trait);
-        }
-        .footer-links { list-style: none; display: flex; flex-direction: column; gap: .55rem; }
-        .footer-links a {
-            text-decoration: none; color: var(--taupe);
-            font-size: .85rem; font-weight: 500; transition: all .2s;
-            display: flex; align-items: center; gap: .45rem;
-        }
-        .footer-links a:hover { color: var(--or-dark); padding-left: .3rem; }
-        .footer-links a::before {
-            content: '›'; font-size: .9rem; color: var(--or-light);
-            transition: color .2s;
-        }
-        .footer-links a:hover::before { color: var(--or); }
-
-        /* Contact col */
-        .footer-contact-items { display: flex; flex-direction: column; gap: .8rem; }
-        .footer-contact-item {
-            display: flex; align-items: flex-start; gap: .7rem;
-        }
-        .footer-contact-icon {
-            width: 32px; height: 32px; border-radius: 8px; flex-shrink: 0;
-            background: var(--papier); border: 1px solid var(--trait);
-            display: flex; align-items: center; justify-content: center;
-            margin-top: .05rem;
-        }
-        .footer-contact-icon svg { width: 14px; height: 14px; color: var(--or-dark); }
-        .footer-contact-label { font-size: .7rem; color: var(--foret); font-weight: 700; text-transform: uppercase; letter-spacing: .05em; margin-bottom: .15rem; }
-        .footer-contact-value {
-            font-size: .85rem; color: var(--taupe); font-weight: 500;
-            text-decoration: none; transition: color .2s;
-        }
-        a.footer-contact-value:hover { color: var(--or-dark); }
-
-        /* Divider */
-        .footer-divider {
-            max-width: 1140px; margin: 0 auto;
-            border: none; border-top: 1px solid var(--trait);
-        }
-
-        /* Bottom bar */
-        .footer-bottom {
-            max-width: 1140px; margin: 0 auto;
-            padding: 1.4rem 2rem;
-            display: flex; align-items: center; justify-content: space-between;
-            flex-wrap: wrap; gap: .8rem;
-        }
-        .footer-bottom-left { font-size: .78rem; color: var(--taupe); opacity:.8; }
-        .footer-bottom-left strong { color: var(--encre); }
-        .footer-bottom-right { display: flex; gap: 1.2rem; }
-        .footer-bottom-right a {
-            font-size: .76rem; color: var(--taupe);
-            text-decoration: none; transition: color .2s;
-        }
-        .footer-bottom-right a:hover { color: var(--or-dark); }
-
-        /* Badge */
-        .footer-dj-badge {
-            display: inline-flex; align-items: center; gap: .4rem;
-            background: var(--papier); border: 1px solid var(--trait);
-            border-radius: 20px; padding: .25rem .8rem;
-            font-size: .72rem; color: var(--foret); font-weight: 600;
-            margin-top: .9rem;
-        }
-
-        @media(max-width: 900px) {
-            .footer-main { grid-template-columns: 1fr 1fr; gap: 2rem; }
-        }
-        @media(max-width: 560px) {
-            .footer-main { grid-template-columns: 1fr; gap: 1.8rem; padding: 2.5rem 1.5rem 2rem; }
-            .footer-bottom { flex-direction: column; align-items: flex-start; }
-        }
-
-        /* ===== GLOBAL BUTTONS ===== */
-        .btn{
-            padding:.75rem 1.75rem;border-radius:100px;font-weight:500;font-size:.9rem;
-            text-decoration:none;transition:transform .18s ease, background .18s ease, box-shadow .18s ease;
-            cursor:pointer;border:1px solid transparent;display:inline-flex;align-items:center;gap:.4rem;font-family:inherit;
-        }
-        .btn-primary{background:var(--or);color:var(--papier);font-weight:600;box-shadow:0 1px 0 rgba(0,0,0,.04);}
-        .btn-primary:hover{background:var(--or-hover);transform:translateY(-2px);box-shadow:0 10px 26px -12px rgba(190,140,60,.7);}
-        .btn-secondary{background:transparent;color:var(--encre);border:1.5px solid var(--trait);}
-        .btn-secondary:hover{background:var(--papier);border-color:var(--or);transform:translateY(-1px);}
-
-        /* ===== SIDEBAR OVERLAY ===== */
-        .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(42,33,27,.4);z-index:199;}
-        .sidebar-overlay.open{display:block;}
-
-        /* ===== RESPONSIVE ===== */
-        @media(max-width:900px){
-            .sidebar{transform:translateX(-100%);transition:transform .28s cubic-bezier(.4,0,.2,1);}
-            .sidebar.open{transform:translateX(0);}
-            .app-main{margin-left:0;}
-            .hamburger{display:block;}
-            .app-content{padding:1.25rem;}
-            .topbar-greeting{display:none;}
-            .app-topbar{padding:0 1.2rem;}
-        }
-        @media(max-width:480px){
-            .app-content{padding:.9rem;}
-            .app-topbar{padding:0 1rem;}
-            .topbar-title{font-size:.95rem;}
-        }
-        /* ========================================
-           ANIMATIONS — WANAAG CORNER
-           ======================================== */
-
-        /* 1. Keyframes */
-        @keyframes wowUp {
-            from { opacity:0; transform:translateY(40px); }
-            to   { opacity:1; transform:translateY(0);    }
-        }
-        @keyframes wowPop {
-            from { opacity:0; transform:scale(.9) translateY(22px); }
-            to   { opacity:1; transform:scale(1) translateY(0);     }
-        }
-        @keyframes wowLeft {
-            from { opacity:0; transform:translateX(-40px); }
-            to   { opacity:1; transform:translateX(0);     }
-        }
-        @keyframes wowRight {
-            from { opacity:0; transform:translateX(40px); }
-            to   { opacity:1; transform:translateX(0);    }
-        }
-
-        /* 2. Scroll-reveal */
-        .wow {
-            opacity: 0;
-            transform: translateY(60px) scale(0.96);
-            transition:
-                opacity   .75s cubic-bezier(.22,1,.36,1),
-                transform .75s cubic-bezier(.22,1,.36,1);
-            will-change: opacity, transform;
-        }
-        /* Hero : entrée encore plus dramatique */
-        .wow.wow-hero {
-            transform: translateY(50px) scale(0.92);
-            transition:
-                opacity   1.1s cubic-bezier(.22,1,.36,1),
-                transform 1.1s cubic-bezier(.22,1,.36,1);
-        }
-        /* Directionnels */
-        .wow.from-left  { transform: translateX(-80px) scale(0.97); }
-        .wow.from-right { transform: translateX(80px)  scale(0.97); }
-        /* Révélation */
-        .wow.animated {
-            opacity: 1 !important;
-            transform: none !important;
-        }
-        /* Stagger */
-        .wow.d1 { transition-delay: .10s !important; }
-        .wow.d2 { transition-delay: .20s !important; }
-        .wow.d3 { transition-delay: .30s !important; }
-        .wow.d4 { transition-delay: .40s !important; }
-        .wow.d5 { transition-delay: .50s !important; }
-
-        /* 3. Particules flottantes */
-        #particles-canvas {
-            position:fixed; top:0; left:0; width:100%; height:100%;
-            pointer-events:none; z-index:-1; opacity:.35;
-        }
-
-        /* 4. Cursor glow */
-        #cursor-glow {
-            position:fixed; width:320px; height:320px; border-radius:50%;
-            background:radial-gradient(circle, rgba(190,140,60,.07) 0%, transparent 70%);
-            pointer-events:none; z-index:9998;
-            transform:translate(-50%,-50%);
-            transition:left .12s ease, top .12s ease;
-        }
-
-        /* 5. Halo qui respire — repris du mockup, réutilisable sur les héros */
-        .halo{
-            position:absolute; border-radius:50%;
-            background:radial-gradient(circle at 50% 45%, rgba(122,138,102,.5), rgba(190,140,60,.16) 55%, transparent 72%);
-            filter:blur(8px); pointer-events:none;
-            animation:breathe 7.5s ease-in-out infinite;
-        }
-        @keyframes breathe{0%,100%{transform:scale(.96);opacity:.55}50%{transform:scale(1.06);opacity:.8}}
-
-        @media (prefers-reduced-motion:reduce){
-            .halo{animation:none}
-        }
-
-        /* 6. Transition de page — fondu d'entrée (toujours) + API native
-           View Transitions pour un fondu croisé entre deux pages, sans
-           JavaScript ni interception des clics (dégradation automatique et
-           sans risque sur les navigateurs qui ne la supportent pas). */
-        body{
-            /* fill-mode intentionally omitted: with "both", the last keyframe's
-               transform (even translateY(0)) stays a live computed style after
-               the animation ends, which makes body a new containing block for
-               every position:fixed descendant (modals, FABs, overlays) — they'd
-               anchor to the document instead of the viewport as soon as the
-               page is scrolled. Not needed anyway: the animation starts at
-               t=0 with no delay, so there's no gap for "backwards" fill to cover. */
-            animation: pageFadeIn .5s cubic-bezier(.22,1,.36,1);
-        }
-        @keyframes pageFadeIn{ from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);} }
-        @view-transition{ navigation: auto; }
-        ::view-transition-old(root){ animation-duration:.22s; }
-        ::view-transition-new(root){ animation-duration:.28s; }
-
-        /* 7. Bouton "shine" — reflet lumineux au survol, appliqué automatiquement
-           aux boutons dorés principaux (voir applyShine() en JS) */
-        .btn-shine{ position:relative; overflow:hidden; isolation:isolate; }
-        .btn-shine::after{
-            content:''; position:absolute; top:0; left:-60%; width:40%; height:100%;
-            background:linear-gradient(115deg, transparent, rgba(255,255,255,.4), transparent);
-            transform:skewX(-18deg); pointer-events:none; z-index:1;
-            transition:left .6s cubic-bezier(.22,1,.36,1);
-        }
-        .btn-shine:hover::after{ left:130%; }
-
-        /* 8. Ripple générique (réutilisé au-delà des .nav-item) */
-        .ripple-host{ position:relative; overflow:hidden; }
-        @keyframes rippleOutGlobal{ to{ transform:scale(2.6); opacity:0; } }
-
-        /* 9. Spinner de chargement pour boutons (formulaires) */
-        .btn.is-loading{ color:transparent !important; pointer-events:none; position:relative; }
-        .btn.is-loading::before{
-            content:''; position:absolute; inset:0; margin:auto; width:18px; height:18px;
-            border-radius:50%; border:2.5px solid rgba(255,255,255,.4); border-top-color:#fff;
-            animation:btnSpin .7s linear infinite;
-        }
-        .btn-ghost.is-loading::before, .btn-nav-outline.is-loading::before{
-            border-color:rgba(42,33,27,.25); border-top-color:var(--encre);
-        }
-        @keyframes btnSpin{ to{ transform:rotate(360deg); } }
-
-        /* 10. Scrollbar thématisée (navigateurs WebKit) */
-        ::-webkit-scrollbar{ width:10px; height:10px; }
-        ::-webkit-scrollbar-track{ background:transparent; }
-        ::-webkit-scrollbar-thumb{ background:rgba(190,140,60,.28); border-radius:20px; border:2px solid transparent; background-clip:padding-box; }
-        ::-webkit-scrollbar-thumb:hover{ background:rgba(190,140,60,.48); background-clip:padding-box; }
-
-        /* 11. Lift au survol — classe utilitaire réutilisable pour cartes */
-        .lift-hover{ transition:transform .3s cubic-bezier(.22,1,.36,1), box-shadow .3s ease; }
-        .lift-hover:hover{ transform:translateY(-6px); box-shadow:0 20px 44px -18px rgba(42,33,27,.35); }
-
-        @media (prefers-reduced-motion:reduce){
-            body{ animation:none !important; transition:none !important; }
-            .btn-shine::after{ transition:none; }
-            .lift-hover{ transition:none; }
-        }
-
-        /* ══════════════════════════════════════════════════════
-           WIDGET WANA — partagé entre la version connectée et la
-           version publique (avant connexion), pour une identité
-           visuelle strictement identique partout.
-        ══════════════════════════════════════════════════════ */
-        #chatWidget, #pubChatWidget {
-            position:fixed; bottom:24px; right:24px; z-index:8888;
-            font-family:'Instrument Sans',sans-serif;
-        }
-        .wgt-bubble {
-            width:62px; height:62px; border-radius:50%;
-            background:linear-gradient(135deg,var(--or),var(--or-dark));
-            border:none; cursor:pointer; padding:0; position:relative;
-            display:flex; align-items:center; justify-content:center;
-            box-shadow:0 8px 28px rgba(190,140,60,.5), 0 0 0 3px rgba(190,140,60,.16);
-            transition:transform .22s, box-shadow .22s;
-        }
-        .wgt-bubble:hover { transform:scale(1.08) translateY(-2px); box-shadow:0 12px 38px rgba(190,140,60,.62), 0 0 0 4px rgba(190,140,60,.22); }
-        .wgt-bubble-logo { width:40px; height:40px; border-radius:50%; object-fit:cover; box-shadow:0 0 0 2px rgba(255,255,255,.4); }
-        .wgt-bubble-close { display:none; font-size:1.25rem; font-weight:300; color:#fff; }
-        .wgt-online-dot {
-            position:absolute; bottom:1px; right:1px; width:15px; height:15px; border-radius:50%;
-            background:#10b981; border:2.5px solid var(--papier);
-        }
-        .wgt-pulse-ring {
-            position:absolute; inset:-6px; border-radius:50%; pointer-events:none;
-            border:2px solid rgba(190,140,60,.35);
-            animation:wgtPulse 2.5s ease-in-out infinite;
-        }
-        @keyframes wgtPulse { 0%,100%{transform:scale(1);opacity:.6} 50%{transform:scale(1.18);opacity:0} }
-
-        .wgt-panel {
-            position:absolute; bottom:78px; right:0; width:380px; max-width:calc(100vw - 32px);
-            background:var(--papier); border-radius:24px;
-            box-shadow:0 28px 80px rgba(42,33,27,.28), 0 0 0 1px var(--trait);
-            overflow:hidden; flex-direction:column;
-            animation:wgtPop .3s cubic-bezier(.34,1.56,.64,1);
-        }
-        @keyframes wgtPop { from{opacity:0;transform:scale(.88) translateY(14px)} to{opacity:1;transform:scale(1) translateY(0)} }
-
-        .wgt-head {
-            background:linear-gradient(150deg,var(--foret) 0%,var(--encre) 65%,#1a1410 100%);
-            padding:1.05rem 1.1rem; display:flex; align-items:center; gap:.75rem;
-            position:relative; overflow:hidden;
-        }
-        .wgt-head::before {
-            content:''; position:absolute; top:0; left:0; right:0; height:2px;
-            background:linear-gradient(90deg,transparent,var(--or),var(--or-light),var(--or),transparent);
-        }
-        .wgt-av-wrap { position:relative; flex-shrink:0; width:44px; height:44px; }
-        .wgt-av-ring {
-            position:absolute; inset:-3px; border-radius:50%; z-index:0;
-            background:conic-gradient(var(--or),var(--or-light),transparent 60%,var(--or));
-            animation:wgtSpinRing 6s linear infinite;
-        }
-        @keyframes wgtSpinRing { to { transform:rotate(360deg); } }
-        .wgt-av {
-            position:relative; z-index:1; width:44px; height:44px; border-radius:50%;
-            overflow:hidden; box-shadow:0 0 0 2px var(--encre);
-        }
-        .wgt-av img { width:100%; height:100%; object-fit:cover; display:block; }
-        .wgt-head-text { min-width:0; flex:1; }
-        .wgt-name-row { display:flex; align-items:center; gap:.4rem; flex-wrap:wrap; }
-        .wgt-name { font-weight:800; color:var(--or-light); font-size:.96rem; font-family:'Fraunces',serif; }
-        .wgt-credential {
-            font-size:.54rem; font-weight:700; letter-spacing:.05em; text-transform:uppercase;
-            color:rgba(221,192,146,.9); background:rgba(190,140,60,.18);
-            border:1px solid rgba(190,140,60,.32); border-radius:20px; padding:.08rem .48rem;
-            white-space:nowrap;
-        }
-        .wgt-status { font-size:.66rem; color:rgba(255,255,255,.5); display:flex; align-items:center; gap:.32rem; margin-top:.2rem; }
-        .wgt-dot { width:6px; height:6px; border-radius:50%; background:#10b981; flex-shrink:0; box-shadow:0 0 6px #10b981; }
-        .wgt-expand, .wgt-signup-link {
-            margin-left:auto; flex-shrink:0; color:rgba(255,255,255,.55); text-decoration:none; transition:color .2s;
-        }
-        .wgt-expand:hover, .wgt-signup-link:hover { color:var(--or-light); }
-        .wgt-signup-link { font-size:.68rem; font-weight:700; border:1px solid rgba(255,255,255,.2); border-radius:20px; padding:.28rem .6rem; white-space:nowrap; }
-
-        .wgt-body {
-            height:300px; overflow-y:auto; padding:1rem 1rem .6rem;
-            display:flex; flex-direction:column; gap:.7rem;
-            scrollbar-width:thin; scrollbar-color:rgba(190,140,60,.18) transparent;
-            background:radial-gradient(circle at 15% 0%, rgba(190,140,60,.06), transparent 45%), var(--papier);
-        }
-        .wgt-body::-webkit-scrollbar { width:4px; }
-        .wgt-body::-webkit-scrollbar-thumb { background:rgba(190,140,60,.2); border-radius:4px; }
-
-        .wgt-welcome-row { display:flex; gap:.55rem; align-items:flex-start; }
-        .wgt-welcome-av { width:26px; height:26px; border-radius:50%; overflow:hidden; flex-shrink:0; margin-top:2px; box-shadow:0 0 0 1.5px rgba(190,140,60,.3); }
-        .wgt-welcome-av img { width:100%; height:100%; object-fit:cover; display:block; }
-        .wgt-welcome-col { flex:1; min-width:0; }
-        .wgt-welcome {
-            background:#fff; border:1px solid var(--trait); border-left:3px solid var(--or);
-            padding:.7rem .85rem; border-radius:4px 14px 14px 14px;
-            font-size:.8rem; color:var(--encre); line-height:1.6;
-        }
-        .wgt-suggestions { display:flex; flex-direction:column; gap:.4rem; margin-top:.5rem; }
-        .wgt-chip {
-            text-align:left; background:#fff; border:1px solid var(--trait);
-            color:var(--encre); font-size:.76rem; padding:.55rem .75rem; border-radius:12px;
-            cursor:pointer; transition:all .18s; font-family:inherit; font-weight:600;
-        }
-        .wgt-chip:hover { border-color:var(--or); background:var(--sable); transform:translateX(3px); box-shadow:0 4px 14px rgba(190,140,60,.15); }
-
-        .wgt-msg-row { display:flex; gap:.5rem; align-items:flex-end; animation:wgtMsgIn .25s ease; }
-        @keyframes wgtMsgIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
-        .wgt-msg-row.bot { align-self:flex-start; max-width:92%; }
-        .wgt-msg-row.user { align-self:flex-end; flex-direction:row-reverse; max-width:88%; }
-        .wgt-msg-av-sm { width:24px; height:24px; border-radius:50%; overflow:hidden; flex-shrink:0; box-shadow:0 0 0 1.5px rgba(190,140,60,.3); }
-        .wgt-msg-av-sm img { width:100%; height:100%; object-fit:cover; display:block; }
-        .wgt-msg-user {
-            background:linear-gradient(135deg,var(--or),var(--or-dark)); color:#fff;
-            padding:.55rem .8rem; border-radius:14px 14px 4px 14px; font-size:.82rem; line-height:1.5;
-        }
-        .wgt-msg-bot {
-            background:#fff; border:1px solid var(--trait); border-left:2.5px solid rgba(190,140,60,.45);
-            color:var(--encre); padding:.55rem .8rem; border-radius:4px 14px 14px 14px; font-size:.82rem; line-height:1.5;
-        }
-        .wgt-typing {
-            padding:.5rem .9rem; display:flex; gap:4px; align-items:center;
-            background:var(--papier); border-top:1px solid var(--trait);
-        }
-        .wgt-typing span { width:6px; height:6px; border-radius:50%; background:var(--or); animation:wgtBounce 1.3s infinite; }
-        .wgt-typing span:nth-child(2){animation-delay:.18s}
-        .wgt-typing span:nth-child(3){animation-delay:.36s}
-        @keyframes wgtBounce { 0%,100%{transform:translateY(0);opacity:.3} 50%{transform:translateY(-5px);opacity:1} }
-
-        .wgt-input-row { border-top:1px solid var(--trait); padding:.7rem .85rem; display:flex; gap:.5rem; background:var(--papier); }
-        .wgt-input {
-            flex:1; border:1.5px solid var(--trait); border-radius:12px;
-            padding:.55rem .8rem; font-size:.82rem; outline:none;
-            color:var(--encre); background:#fff; transition:border-color .2s, box-shadow .2s;
-        }
-        .wgt-input:focus { border-color:var(--or); box-shadow:0 0 0 3px rgba(190,140,60,.12); }
-        .wgt-send {
-            width:38px; height:38px; border-radius:11px; flex-shrink:0;
-            background:linear-gradient(135deg,var(--or),var(--or-dark));
-            border:none; color:#fff; cursor:pointer;
-            display:flex; align-items:center; justify-content:center;
-            transition:transform .15s, box-shadow .15s; box-shadow:0 4px 14px rgba(190,140,60,.35);
-        }
-        .wgt-send:hover { transform:scale(1.08); box-shadow:0 6px 18px rgba(190,140,60,.5); }
-        .wgt-disclaimer { padding:.15rem .85rem .7rem; font-size:.6rem; color:var(--taupe); text-align:center; line-height:1.4; background:var(--papier); }
-        .wgt-disclaimer strong { color:var(--or-dark); }
-
-        @media(max-width:480px) {
-            .wgt-panel { width:calc(100vw - 24px); right:-16px; bottom:74px; }
-            #chatWidget, #pubChatWidget { bottom:16px; right:14px; }
-            .wgt-body { height:50vh; max-height:360px; }
-        }
-
-    </style>
+    <link rel="preload" href="{% static 'fonts/newsreader-latin-standard-normal.woff2' %}" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="{% static 'fonts/onest-latin-wght-normal.woff2' %}" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="{% static 'css/wanaag.css' %}">
     {% block extra_css %}{% endblock %}
+    {% if user.is_authenticated %}<link rel="stylesheet" href="{% static 'css/wanaag-app.css' %}">{% endif %}
 </head>
-<body>
+<body class="{% if user.is_authenticated %}is-app{% else %}is-public{% endif %} page-{{ request.resolver_match.url_name|default:'x' }}">
 
-<!-- Floating particles -->
-<canvas id="particles-canvas"></canvas>
+<div class="wc-grain" aria-hidden="true"></div>
+<div class="wc-progress" aria-hidden="true"><i></i></div>
+<div class="wc-curtain" id="wcCurtain" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+<div class="wc-curtain-mark" aria-hidden="true"><i></i></div>
 
-<!-- Cursor glow -->
-<div id="cursor-glow"></div>
+{% if not user.is_authenticated %}
+<div class="wc-loader" id="wcLoader" aria-hidden="true">
+    <div class="wc-loader-inner">
+        <div class="wc-loader-orb"></div>
+        <div class="wc-loader-word"><span style="animation-delay:.05s">W</span><span style="animation-delay:.1s">a</span><span style="animation-delay:.15s">n</span><span style="animation-delay:.2s">a</span><span style="animation-delay:.25s">a</span><span style="animation-delay:.3s">g</span></div>
+        <div class="wc-loader-sub">Prenez une inspiration.</div>
+    </div>
+</div>
+{% endif %}
 
 {% if user.is_authenticated %}
-<!-- ====== AUTHENTICATED: SIDEBAR LAYOUT ====== -->
+<!-- ════════ ESPACE CONNECTÉ ════════ -->
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
-<aside class="sidebar" id="sidebar">
-    <div class="sidebar-header">
-        <img src="{% static 'images/logo.jpg' %}" alt="Logo" class="sidebar-logo-img">
+<aside class="sidebar" id="sidebar" data-dark>
+    <a href="{% url 'dashboard' %}" class="sidebar-header">
+        <span class="nav-mark"><i></i><b></b></span>
         <div>
             <div class="sidebar-brand-name">Wanaag Corner</div>
-            <div class="sidebar-brand-sub">Santé mentale · Bien-être</div>
+            <div class="sidebar-brand-sub">Votre espace, en toute confiance</div>
         </div>
-    </div>
-    <nav class="sidebar-nav">
-        <div class="nav-label">Principal</div>
+    </a>
+    <nav class="sidebar-nav" aria-label="Navigation principale">
         <a href="{% url 'dashboard' %}" class="nav-item {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
-            <span class="nav-icon"><img src="{% static 'images/espace-bien-etre.jpg' %}" alt=""></span> Tableau de bord
+            <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg></span> Accueil
         </a>
-        <a href="{% url 'posts_feed' %}" class="nav-item {% if request.resolver_match.url_name == 'posts_feed' %}active{% endif %}">
-            <span class="nav-icon"><img src="{% static 'images/posts.jpg' %}" alt=""></span> Posts
+        <a href="{% url 'posts_feed' %}" class="nav-item {% if 'post' in request.resolver_match.url_name %}active{% endif %}">
+            <span class="nav-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="9" cy="9" r="2"/><path d="m21 15-4.5-4.5L6 21"/></svg></span> Publications
         </a>
-        <a href="{% url 'forum_home' %}" class="nav-item {% if 'forum' in request.resolver_match.url_name %}active{% endif %}">
-            <span class="nav-icon"><img src="{% static 'images/forum.jpg' %}" alt=""></span> Forum
+        <a href="{% url 'forum_home' %}" class="nav-item {% if 'forum' in request.resolver_match.url_name or 'group' in request.resolver_match.url_name %}active{% endif %}">
+            <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20.5l1.4-4.6A8 8 0 1 1 21 12z"/></svg></span> Groupes de parole
         </a>
         <a href="{% url 'ressources_home' %}" class="nav-item {% if 'ressource' in request.resolver_match.url_name %}active{% endif %}">
-            <span class="nav-icon"><img src="{% static 'images/ressources.jpg' %}" alt=""></span> Ressources
+            <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"/></svg></span> Ressources
         </a>
         <a href="{% url 'parcours_home' %}" class="nav-item {% if 'parcours' in request.resolver_match.url_name %}active{% endif %}">
-            <span class="nav-icon" style="background:linear-gradient(135deg,rgba(190,140,60,.22),rgba(190,140,60,.06));border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:.9rem;">🌿</span> Parcours Bien-être
+            <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M5 21c0-9 6-15 15-16-1 9-7 15-15 16z"/><path d="M5 21 13 13"/></svg></span> Parcours bien-être
         </a>
-        <a href="{% url 'chatbot' %}" class="nav-item {% if request.resolver_match.url_name == 'chatbot' %}active{% endif %}" style="position:relative;">
-            <span class="nav-icon"><img src="{% static 'images/logo.jpg' %}" alt=""></span>
-            Wana
+        <a href="{% url 'chatbot' %}" class="nav-item {% if 'chatbot' in request.resolver_match.url_name %}active{% endif %}">
+            <span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9 7 7M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/></svg></span> Wana <span class="nav-pill">IA</span>
         </a>
+
         {% if not user.psychologue_profile %}
-        <div class="nav-label">Santé</div>
-        <a href="{% url 'psychologues_list' %}" class="nav-item {% if request.resolver_match.url_name == 'psychologues_list' or request.resolver_match.url_name == 'specialistes_categorie' %}active{% endif %}">
-            <span class="nav-icon"><img src="{% static 'images/psychologue.jpg' %}" alt=""></span> Spécialistes
+        <div class="nav-label">Accompagnement</div>
+        <a href="{% url 'psychologues_list' %}" class="nav-item {% if request.resolver_match.url_name == 'psychologues_list' or request.resolver_match.url_name == 'specialistes_categorie' or request.resolver_match.url_name == 'consultation_request_form' %}active{% endif %}">
+            <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M6 3v6a5 5 0 0 0 10 0V3"/><path d="M11 14v2a5 5 0 0 0 10 0v-1"/><circle cx="21" cy="13" r="1.5"/></svg></span> Spécialistes
         </a>
-        <a href="{% url 'mes_consultations' %}" class="nav-item {% if 'consultation' in request.resolver_match.url_name %}active{% endif %}">
-            <span class="nav-icon"><img src="{% static 'images/consultation.jpg' %}" alt=""></span> Mes consultations
+        <a href="{% url 'mes_consultations' %}" class="nav-item {% if request.resolver_match.url_name == 'mes_consultations' or request.resolver_match.url_name == 'consultation_detail' or request.resolver_match.url_name == 'visio_room' %}active{% endif %}">
+            <span class="nav-icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="M3 9h18M8 2v4M16 2v4"/></svg></span> Mes consultations
         </a>
-        {% endif %}
-        {% if user.psychologue_profile %}
-        <div class="nav-label">Espace Pro</div>
+        {% else %}
+        <div class="nav-label">Espace professionnel</div>
         <a href="{% url 'psychologue_dashboard' %}" class="nav-item {% if request.resolver_match.url_name == 'psychologue_dashboard' %}active{% endif %}">
-            <span class="nav-icon"><img src="{% static 'images/psychologue.jpg' %}" alt=""></span> Mon dashboard
+            <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="m7 15 4-4 3 3 5-6"/></svg></span> Mon activité
         </a>
-        <a href="{% url 'consultation_requests_list' %}" class="nav-item {% if request.resolver_match.url_name == 'consultation_requests_list' %}active{% endif %}">
-            <span class="nav-icon"><img src="{% static 'images/consultation.jpg' %}" alt=""></span> Demandes reçues
+        <a href="{% url 'consultation_requests_list' %}" class="nav-item {% if request.resolver_match.url_name == 'consultation_requests_list' or request.resolver_match.url_name == 'consultation_respond' %}active{% endif %}">
+            <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.5 5h13L22 12v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-6z"/></svg></span> Demandes reçues
         </a>
         {% endif %}
-        <div class="nav-label">Infos</div>
-        <a href="{% url 'profile' %}" class="nav-item {% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
-            <span class="nav-icon">
-                {% if user.photo %}<img src="{{ user.photo.url }}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:9px;">
-                {% else %}<img src="{% static 'images/photo-de-profil.jpg' %}" alt="">{% endif %}
-            </span> Mon profil
+
+        <div class="nav-label">Vous</div>
+        <a href="{% url 'profile' %}" class="nav-item {% if 'profile' in request.resolver_match.url_name %}active{% endif %}">
+            <span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span> Mon profil
         </a>
         <a href="{% url 'about' %}" class="nav-item {% if request.resolver_match.url_name == 'about' %}active{% endif %}">
-            <span class="nav-icon"><img src="{% static 'images/espace-bien-etre.jpg' %}" alt=""></span> À propos
+            <span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/></svg></span> À propos
         </a>
         {% if user.is_staff or user.is_superuser %}
-        <div class="nav-label" style="color:var(--or-dark);margin-top:.8rem;">Administration</div>
-        <a href="{% url 'admin_panel' %}" class="nav-item {% if 'admin' in request.resolver_match.url_name %}active{% endif %}" style="border-left:2px solid var(--or);">
-            <span class="nav-icon" style="background:linear-gradient(135deg,var(--or),var(--or-dark));border-radius:9px;display:flex;align-items:center;justify-content:center;color:var(--papier);font-size:.9rem;">⚙</span> Dashboard Admin
+        <div class="nav-label">Administration</div>
+        <a href="{% url 'admin_panel' %}" class="nav-item nav-admin {% if 'admin' in request.resolver_match.url_name %}active{% endif %}">
+            <span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></span> Tableau d'administration
         </a>
-        <a href="/admin/" class="nav-item" target="_blank" style="opacity:.75;">
-            <span class="nav-icon" style="background:rgba(41,128,185,.12);border-radius:9px;display:flex;align-items:center;justify-content:center;color:#2980b9;font-size:.9rem;">🔧</span> Django Admin
+        <a href="/admin/" class="nav-item" target="_blank" rel="noopener">
+            <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18v3h3l6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.4-.6-.6-2.4z"/></svg></span> Admin Django
         </a>
         {% endif %}
     </nav>
+    <button type="button" class="sidebar-breath" data-breathe>
+        <span class="orb"></span>
+        <span><strong>Une minute pour respirer</strong><small>Exercice guidé</small></span>
+    </button>
     <div class="sidebar-user">
         <div class="avatar-sidebar">{{ user.pseudonyme|first|upper }}</div>
         <div class="sidebar-user-info">
             <div class="sidebar-user-name">{{ user.pseudonyme }}</div>
-            <div class="sidebar-user-role">{% if user.psychologue_profile %}{{ user.psychologue_profile.icone_specialite }} {{ user.psychologue_profile.get_type_specialiste_display }}{% else %}Membre{% endif %}</div>
+            <div class="sidebar-user-role">{% if user.psychologue_profile %}{{ user.psychologue_profile.get_type_specialiste_display }}{% else %}Membre{% endif %}</div>
         </div>
         <form method="post" action="{% url 'logout' %}" style="margin:0;">
             {% csrf_token %}
-            <button type="submit" class="logout-btn" title="Déconnexion">⏻</button>
+            <button type="submit" class="logout-btn" title="Se déconnecter" aria-label="Se déconnecter">
+                <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+            </button>
         </form>
     </div>
 </aside>
 
 <div class="app-main">
+    <div class="app-bg" aria-hidden="true"><i></i><i></i></div>
     <header class="app-topbar">
         <div class="topbar-left">
-            <button class="hamburger" onclick="toggleSidebar()">☰</button>
+            <button class="hamburger" onclick="toggleSidebar()" aria-label="Ouvrir le menu">
+                <svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h10M4 17h16"/></svg>
+            </button>
             <span class="topbar-title">{% block page_title %}Wanaag Corner{% endblock %}</span>
         </div>
         <div class="topbar-right">
-            <span class="topbar-greeting">Bonjour, <strong>{{ user.pseudonyme }}</strong></span>
-            <div class="avatar-topbar">{{ user.pseudonyme|first|upper }}</div>
+            <span class="topbar-greeting"><span data-greet>Bonjour</span>, <strong>{{ user.pseudonyme }}</strong></span>
+            <span class="topbar-date" data-today></span>
+            <a href="{% url 'profile' %}" class="avatar-topbar" aria-label="Mon profil">{{ user.pseudonyme|first|upper }}</a>
         </div>
     </header>
     <div class="app-content">
@@ -811,253 +140,171 @@
         {% endif %}
 
 {% else %}
-<!-- ====== PUBLIC: STANDARD LAYOUT ====== -->
-<nav class="public-nav">
-    <a href="{% url 'home' %}" class="nav-brand">
-        <div class="nav-logo-wrap">
-            <img src="{% static 'images/logo.jpg' %}" alt="Logo" class="nav-logo-img">
-        </div>
-        <span class="nav-brand-name">Wanaag Corner</span>
+<!-- ════════ ESPACE PUBLIC ════════ -->
+<nav class="public-nav" aria-label="Navigation principale">
+    <a href="{% url 'home' %}" class="nav-brand" aria-label="Wanaag Corner, accueil">
+        <span class="nav-mark"><i></i><b></b></span>
+        <span class="nav-brand-name">Wanaag <em>Corner</em></span>
     </a>
     <ul class="nav-public-links">
-        <li class="nav-li-text"><a href="{% url 'home' %}" class="nav-link-item {% if request.resolver_match.url_name == 'home' %}active{% endif %}">Accueil</a></li>
-        <li class="nav-li-text"><a href="{% url 'about' %}" class="nav-link-item {% if request.resolver_match.url_name == 'about' %}active{% endif %}">À propos</a></li>
-        <li class="nav-li-sep"><span class="nav-sep"></span></li>
-        <li><a href="{% url 'login' %}" class="btn-nav btn-nav-outline">Connexion</a></li>
-        <li><a href="{% url 'register' %}" class="btn-nav btn-nav-filled">S'inscrire</a></li>
+        <li><a href="{% url 'home' %}" class="nav-link-item {% if request.resolver_match.url_name == 'home' %}active{% endif %}">Accueil</a></li>
+        <li><a href="{% url 'home' %}#espaces" class="nav-link-item">Ce que vous trouverez</a></li>
+        <li><a href="{% url 'about' %}" class="nav-link-item {% if request.resolver_match.url_name == 'about' %}active{% endif %}">Notre histoire</a></li>
     </ul>
+    <div class="nav-actions">
+        <a href="{% url 'login' %}" class="nav-login">Se connecter</a>
+        <a href="{% url 'register' %}" class="wc-btn nav-cta"><span class="wc-btn-txt"><span>Créer mon espace</span><span>Créer mon espace</span></span></a>
+        <button type="button" class="nav-burger" onclick="WC.toggleMenu()" aria-label="Menu"><span></span><span></span></button>
+    </div>
 </nav>
-<div class="public-page-content">
+<div class="wc-menu" aria-hidden="true">
+    <a href="{% url 'home' %}"><span>Accueil</span></a>
+    <a href="{% url 'about' %}"><span>Notre histoire</span></a>
+    <a href="{% url 'login' %}"><span>Se connecter</span></a>
+    <a href="{% url 'register' %}"><span>Créer mon espace</span></a>
+    <p class="wc-menu-foot">wanaagcorner@gmail.com<br>Djibouti-Ville</p>
+</div>
+<main class="public-page-content">
     {% if messages %}
-    <div style="max-width:680px;margin:1.5rem auto;padding:0 1.5rem;">
+    <div class="wc-flash">
         {% for message in messages %}
         <div class="alert alert-{{ message.tags }}">{{ message }}</div>
         {% endfor %}
     </div>
     {% endif %}
-
 {% endif %}
 
 {% block content %}{% endblock %}
 
 {% if user.is_authenticated %}
-    </div><!-- end app-content -->
-</div><!-- end app-main -->
+    </div><!-- /app-content -->
+</div><!-- /app-main -->
 {% else %}
-</div><!-- end public wrapper -->
-<footer class="public-footer">
-
-    <div class="footer-main">
-
-        <!-- COL 1 : BRAND -->
-        <div>
-            <a href="{% url 'home' %}" class="footer-brand-logo">
-                <img src="{% static 'images/logo.jpg' %}" alt="Logo" class="footer-logo-img">
-                <span class="footer-brand-name">Wanaag Corner</span>
-            </a>
-            <p class="footer-tagline">
-                Un espace bienveillant dédié à la santé mentale à Djibouti. Parce que votre bien-être compte, chaque jour.
-            </p>
-            <div class="footer-socials">
-                <!-- Instagram -->
-                <a href="https://www.instagram.com/wanaagcorner" target="_blank" class="footer-social-btn" title="Instagram">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
-                        <path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/>
-                        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
-                    </svg>
-                </a>
-                <!-- TikTok -->
-                <a href="https://www.tiktok.com/@wanaagcorner" target="_blank" class="footer-social-btn" title="TikTok">
-                    <svg viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.17 8.17 0 004.78 1.52V6.76a4.85 4.85 0 01-1.01-.07z"/>
-                    </svg>
-                </a>
-                <!-- Gmail -->
-                <a href="https://mail.google.com/mail/?view=cm&to=wanaagcorner@gmail.com" target="_blank" class="footer-social-btn" title="Email">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-                        <polyline points="22,6 12,13 2,6"/>
-                    </svg>
-                </a>
-            </div>
-            <div class="footer-dj-badge">
-                📍 Djibouti, République de Djibouti
-            </div>
-        </div>
-
-        <!-- COL 2 : NAVIGATION -->
-        <div>
-            <div class="footer-col-title">Navigation</div>
-            <ul class="footer-links">
-                <li><a href="{% url 'home' %}">Accueil</a></li>
-                <li><a href="{% url 'about' %}">À propos</a></li>
-                <li><a href="{% url 'register' %}">S'inscrire</a></li>
-                <li><a href="{% url 'login' %}">Se connecter</a></li>
-            </ul>
-        </div>
-
-        <!-- COL 3 : SERVICES -->
-        <div>
-            <div class="footer-col-title">Services</div>
-            <ul class="footer-links">
-                <li><a href="{% url 'login' %}">Forum communautaire</a></li>
-                <li><a href="{% url 'login' %}">Ressources éducatives</a></li>
-                <li><a href="{% url 'login' %}">Consulter un psy</a></li>
-                <li><a href="{% url 'login' %}">Visioconférence</a></li>
-                <li><a href="{% url 'login' %}">Posts & partages</a></li>
-            </ul>
-        </div>
-
-        <!-- COL 4 : CONTACT -->
-        <div>
-            <div class="footer-col-title">Contact</div>
-            <div class="footer-contact-items">
-                <div class="footer-contact-item">
-                    <div class="footer-contact-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.68A2 2 0 012 .18h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.09-1.09a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14.92z"/></svg>
-                    </div>
-                    <div>
-                        <div class="footer-contact-label">Téléphone</div>
-                        <a href="tel:+25377280597" class="footer-contact-value">+253 77 28 05 97</a>
-                    </div>
-                </div>
-                <div class="footer-contact-item">
-                    <div class="footer-contact-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-                    </div>
-                    <div>
-                        <div class="footer-contact-label">Email</div>
-                        <a href="https://mail.google.com/mail/?view=cm&to=wanaagcorner@gmail.com" target="_blank" class="footer-contact-value">wanaagcorner@gmail.com</a>
-                    </div>
-                </div>
-                <div class="footer-contact-item">
-                    <div class="footer-contact-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                    </div>
-                    <div>
-                        <div class="footer-contact-label">Localisation</div>
-                        <span class="footer-contact-value">Djibouti-Ville, Djibouti</span>
-                    </div>
-                </div>
-                <div class="footer-contact-item">
-                    <div class="footer-contact-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                    </div>
-                    <div>
-                        <div class="footer-contact-label">Disponibilité</div>
-                        <span class="footer-contact-value">7j/7 · 24h/24</span>
-                    </div>
+</main>
+<footer class="public-footer" data-dark>
+    <div class="ft-wrap">
+        <div class="ft-top">
+            <div>
+                <p class="ft-pitch">Un endroit où l'on peut dire « ça ne va pas » sans avoir à se justifier.</p>
+                <div class="ft-socials">
+                    <a href="https://www.instagram.com/wanaagcorner" target="_blank" rel="noopener" class="ft-social" aria-label="Instagram">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><rect x="2.5" y="2.5" width="19" height="19" rx="5.5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.6" cy="6.4" r=".6" fill="currentColor"/></svg>
+                    </a>
+                    <a href="https://www.tiktok.com/@wanaagcorner" target="_blank" rel="noopener" class="ft-social" aria-label="TikTok">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.17 8.17 0 004.78 1.52V6.76a4.85 4.85 0 01-1.01-.07z"/></svg>
+                    </a>
+                    <a href="https://mail.google.com/mail/?view=cm&to=wanaagcorner@gmail.com" target="_blank" rel="noopener" class="ft-social" aria-label="Écrire un email">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4.5" width="19" height="15" rx="3"/><path d="m3 6 9 7 9-7"/></svg>
+                    </a>
                 </div>
             </div>
+            <div class="ft-col">
+                <h4>Découvrir</h4>
+                <ul>
+                    <li><a href="{% url 'home' %}">Accueil</a></li>
+                    <li><a href="{% url 'about' %}">Notre histoire</a></li>
+                    <li><a href="{% url 'register' %}">Créer mon espace</a></li>
+                    <li><a href="{% url 'login' %}">Se connecter</a></li>
+                </ul>
+            </div>
+            <div class="ft-col">
+                <h4>Sur la plateforme</h4>
+                <ul>
+                    <li><a href="{% url 'register' %}">Groupes de parole</a></li>
+                    <li><a href="{% url 'register' %}">Spécialistes</a></li>
+                    <li><a href="{% url 'register' %}">Ressources</a></li>
+                    <li><a href="{% url 'register' %}">Parcours bien-être</a></li>
+                </ul>
+            </div>
+            <div class="ft-col">
+                <h4>Nous joindre</h4>
+                <ul>
+                    <li><a href="tel:+25377280597">+253 77 28 05 97</a></li>
+                    <li><a href="https://mail.google.com/mail/?view=cm&to=wanaagcorner@gmail.com" target="_blank" rel="noopener">wanaagcorner@gmail.com</a></li>
+                    <li><span>Djibouti-Ville, Djibouti</span></li>
+                    <li><span>Wana répond jour et nuit</span></li>
+                </ul>
+            </div>
         </div>
-
-    </div>
-
-    <hr class="footer-divider">
-
-    <div class="footer-bottom">
-        <div class="footer-bottom-left">
-            &copy; 2025 <strong>Wanaag Corner</strong> — Tous droits réservés · Une safe place pour la santé mentale à Djibouti
-        </div>
-        <div class="footer-bottom-right">
-            <a href="{% url 'about' %}">À propos</a>
-            <a href="https://mail.google.com/mail/?view=cm&to=wanaagcorner@gmail.com" target="_blank">Contact</a>
+        <div class="ft-giant" aria-hidden="true"><span>W</span><span>a</span><span>n</span><span>a</span><span>a</span><span>g</span><span><em>.</em></span></div>
+        <div class="ft-bottom">
+            <span>&copy; {% now "Y" %} Wanaag Corner. Tous droits réservés.</span>
+            <span>« Wanaag » signifie bien-être, en somali.</span>
         </div>
     </div>
-
 </footer>
 {% endif %}
 
+<!-- Respiration guidée -->
+<div class="wc-breath" id="wcBreath" role="dialog" aria-modal="true" aria-label="Exercice de respiration">
+    <button type="button" class="wc-breath-close" aria-label="Fermer">&times;</button>
+    <div class="wc-breath-stage">
+        <div class="wc-breath-ring"></div>
+        <div class="wc-breath-orb"></div>
+        <div class="wc-breath-word">Installez-vous</div>
+    </div>
+    <p class="wc-breath-cap"></p>
+</div>
+
 {% if not user.is_authenticated %}
-<!-- ═══════════════════════════════════════════════
-     WIDGET FLOTTANT PUBLIC — WANA, avant connexion
-     (mêmes classes visuelles que le widget connecté, défini dans le
-     <style> partagé de <head> ; endpoint et copie adaptés à un visiteur
-     qui n'a pas encore de compte)
-═══════════════════════════════════════════════ -->
+<!-- Wana, avant connexion -->
 <div id="pubChatWidget">
-    <button class="wgt-bubble" id="pwgtBubble" onclick="pwgtToggle()" title="Wana — l'assistant Wanaag Corner">
-        <img src="{% static 'images/logo.jpg' %}" alt="Wana" class="wgt-bubble-logo" id="pwgtBubbleLogo">
+    <span class="wgt-tease" id="pwgtTease">Une question ? Wana vous répond.</span>
+    <button class="wgt-bubble" id="pwgtBubble" onclick="pwgtToggle()" title="Parler à Wana" aria-label="Parler à Wana">
+        <span class="wgt-bubble-orb" id="pwgtBubbleLogo"></span>
         <span class="wgt-bubble-close" id="pwgtIconClose">✕</span>
         <span class="wgt-online-dot"></span>
         <span class="wgt-pulse-ring"></span>
     </button>
-
     <div class="wgt-panel" id="pwgtPanel" style="display:none;">
         <div class="wgt-head">
-            <div class="wgt-av-wrap">
-                <div class="wgt-av-ring"></div>
-                <div class="wgt-av"><img src="{% static 'images/logo.jpg' %}" alt="Wana"></div>
-            </div>
+            <div class="wgt-av-wrap"><div class="wgt-av-ring"></div><div class="wgt-av"></div></div>
             <div class="wgt-head-text">
-                <div class="wgt-name-row">
-                    <span class="wgt-name">Wana</span>
-                    <span class="wgt-credential">Expert bien-être</span>
-                </div>
-                <div class="wgt-status"><span class="wgt-dot"></span> En ligne · toujours disponible</div>
+                <div class="wgt-name-row"><span class="wgt-name">Wana</span><span class="wgt-credential">Assistant bien-être</span></div>
+                <div class="wgt-status"><span class="wgt-dot"></span> Disponible maintenant</div>
             </div>
-            <a href="{% url 'register' %}" class="wgt-signup-link">S'inscrire</a>
+            <a href="{% url 'register' %}" class="wgt-signup-link">Créer mon espace</a>
         </div>
         <div class="wgt-body" id="pwgtBody">
             <div class="wgt-welcome-row">
-                <div class="wgt-welcome-av"><img src="{% static 'images/logo.jpg' %}" alt=""></div>
+                <div class="wgt-welcome-av"></div>
                 <div class="wgt-welcome-col">
-                    <div class="wgt-welcome">
-                        Bonjour 👋 Je suis Wana, l'assistant expert de Wanaag Corner. Je peux vous présenter le site, répondre à vos questions, ou simplement vous écouter — même sans compte.
-                    </div>
+                    <div class="wgt-welcome">Bonjour, je suis Wana. Je peux vous présenter Wanaag Corner, répondre à vos questions ou simplement vous écouter, même sans compte.</div>
                     <div class="wgt-suggestions" id="pwgtSuggestions">
-                        <button type="button" class="wgt-chip" data-q="Que propose Wanaag Corner ? À quoi ça sert ?">🧭 Découvrir Wanaag Corner</button>
-                        <button type="button" class="wgt-chip" data-q="J'ai besoin de parler de comment je me sens.">💛 J'ai besoin de parler</button>
-                        <button type="button" class="wgt-chip" data-q="Comment créer un compte et qu'est-ce que ça change ?">📝 Comment créer un compte ?</button>
+                        <button type="button" class="wgt-chip" data-q="Que propose Wanaag Corner ? À quoi ça sert ?">Que propose Wanaag Corner ?</button>
+                        <button type="button" class="wgt-chip" data-q="J'ai besoin de parler de comment je me sens.">J'ai besoin de parler</button>
+                        <button type="button" class="wgt-chip" data-q="Comment créer un compte et qu'est-ce que ça change ?">Comment créer un compte ?</button>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="wgt-typing" id="pwgtTyping" style="display:none;">
-            <span></span><span></span><span></span>
-        </div>
+        <div class="wgt-typing" id="pwgtTyping" style="display:none;"><span></span><span></span><span></span></div>
         <div class="wgt-input-row">
-            <input type="text" id="pwgtInput" class="wgt-input"
-                   placeholder="Écrivez ici…"
-                   onkeydown="if(event.key==='Enter') pwgtSend()">
-            <button class="wgt-send" onclick="pwgtSend()">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
-                </svg>
+            <input type="text" id="pwgtInput" class="wgt-input" placeholder="Écrivez ce que vous ressentez…" onkeydown="if(event.key==='Enter') pwgtSend()">
+            <button class="wgt-send" onclick="pwgtSend()" aria-label="Envoyer">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
             </button>
         </div>
-        <div class="wgt-disclaimer">Wana ne remplace pas un avis médical. En urgence, appelez le <strong>15</strong>.</div>
+        <div class="wgt-disclaimer">Wana ne remplace pas un avis médical. En cas d'urgence, appelez le <strong>15</strong>.</div>
     </div>
 </div>
-
 <script>
 const PWGT_SEND_URL = '{% url "public_chatbot_send" %}';
 const PWGT_CSRF     = document.cookie.match(/csrftoken=([^;]+)/)?.[1] || '{{ csrf_token }}';
-const PWGT_LOGO_URL = '{% static "images/logo.jpg" %}';
 let pwgtOpen = false;
 let pwgtHistory = [];
-
 function pwgtToggle() {
     pwgtOpen = !pwgtOpen;
-    const panel = document.getElementById('pwgtPanel');
-    const logo  = document.getElementById('pwgtBubbleLogo');
-    const close = document.getElementById('pwgtIconClose');
-    panel.style.display = pwgtOpen ? 'flex' : 'none';
-    logo.style.display  = pwgtOpen ? 'none' : '';
-    close.style.display = pwgtOpen ? 'inline' : 'none';
+    document.getElementById('pwgtPanel').style.display = pwgtOpen ? 'flex' : 'none';
+    document.getElementById('pwgtBubbleLogo').style.display = pwgtOpen ? 'none' : '';
+    document.getElementById('pwgtIconClose').style.display = pwgtOpen ? 'inline' : 'none';
+    document.getElementById('pwgtTease').classList.remove('is-on');
     if (pwgtOpen) document.getElementById('pwgtInput').focus();
 }
-
 function pwgtAddMsg(bodyEl, role, txt) {
     const row = document.createElement('div');
     row.className = 'wgt-msg-row ' + role;
-    if (role === 'bot') {
-        const av = document.createElement('div');
-        av.className = 'wgt-msg-av-sm';
-        av.innerHTML = '<img src="' + PWGT_LOGO_URL + '" alt="">';
-        row.appendChild(av);
-    }
+    if (role === 'bot') { const av = document.createElement('div'); av.className = 'wgt-msg-av-sm'; row.appendChild(av); }
     const bubble = document.createElement('div');
     bubble.className = role === 'user' ? 'wgt-msg-user' : 'wgt-msg-bot';
     bubble.textContent = txt;
@@ -1065,26 +312,18 @@ function pwgtAddMsg(bodyEl, role, txt) {
     bodyEl.appendChild(row);
     bodyEl.scrollTop = bodyEl.scrollHeight;
 }
-
 async function pwgtSend() {
     const input = document.getElementById('pwgtInput');
     const text  = input.value.trim();
     if (!text) return;
     input.value = '';
-
     const body = document.getElementById('pwgtBody');
     pwgtAddMsg(body, 'user', text);
-
     const typing = document.getElementById('pwgtTyping');
     typing.style.display = 'flex';
     body.scrollTop = body.scrollHeight;
-
     try {
-        const r = await fetch(PWGT_SEND_URL, {
-            method:'POST',
-            headers:{'Content-Type':'application/json','X-CSRFToken':PWGT_CSRF},
-            body: JSON.stringify({message: text, history: pwgtHistory}),
-        });
+        const r = await fetch(PWGT_SEND_URL, {method:'POST', headers:{'Content-Type':'application/json','X-CSRFToken':PWGT_CSRF}, body: JSON.stringify({message: text, history: pwgtHistory})});
         const d = await r.json();
         typing.style.display = 'none';
         if (d.reply) {
@@ -1093,336 +332,92 @@ async function pwgtSend() {
             pwgtHistory.push({role:'assistant', content:d.reply});
             if (pwgtHistory.length > 12) pwgtHistory = pwgtHistory.slice(-12);
         } else {
-            pwgtAddMsg(body, 'bot', d.error || 'Erreur…');
+            pwgtAddMsg(body, 'bot', d.error || "Wana n'a pas pu répondre. Réessayez dans un instant.");
         }
     } catch {
         typing.style.display = 'none';
-        pwgtAddMsg(body, 'bot', 'Connexion perdue. Réessayez.');
+        pwgtAddMsg(body, 'bot', 'La connexion a été interrompue. Vérifiez votre réseau puis renvoyez votre message.');
     }
 }
-
 document.querySelectorAll('#pubChatWidget .wgt-chip').forEach(function(btn){
     btn.addEventListener('click', function(){
-        var suggestions = document.getElementById('pwgtSuggestions');
-        if (suggestions) suggestions.style.display = 'none';
+        var s = document.getElementById('pwgtSuggestions'); if (s) s.style.display = 'none';
         document.getElementById('pwgtInput').value = btn.dataset.q;
         pwgtSend();
     });
 });
+setTimeout(function(){ if(!pwgtOpen){ var t=document.getElementById('pwgtTease'); t.classList.add('is-on'); setTimeout(function(){t.classList.remove('is-on');},6000);} }, 9000);
 </script>
+<script src="{% static 'vendor/gsap.min.js' %}"></script>
+<script src="{% static 'vendor/ScrollTrigger.min.js' %}"></script>
+<script src="{% static 'vendor/lenis.min.js' %}"></script>
 {% endif %}
 
-<script>
-/* =============================================
-   WANAAG CORNER — WOW ANIMATIONS ENGINE
-   ============================================= */
-
-// ── 1. SIDEBAR TOGGLE ──
-function toggleSidebar(){
-    document.getElementById('sidebar') && document.getElementById('sidebar').classList.toggle('open');
-    document.getElementById('sidebarOverlay') && document.getElementById('sidebarOverlay').classList.toggle('open');
-}
-
-
-// ── 3. EFFET "SHINE" auto sur les boutons dorés principaux ──
-function applyShine(){
-    document.querySelectorAll('.btn-gold, .btn-nav-filled, .btn-primary, .jnl-write-btn, .writer-save-btn').forEach(el => {
-        el.classList.add('btn-shine');
-    });
-}
-
-// ── 4. SPINNER auto sur les formulaires — safe pour les formulaires AJAX
-//    (beaucoup de pages interceptent déjà le submit en fetch) : on ne bloque
-//    jamais le bouton plus de quelques secondes, pour ne jamais le laisser
-//    coincé si un formulaire est réutilisé (ex: modale rouverte).
-function wireFormSpinners(){
-    document.querySelectorAll('form').forEach(form => {
-        form.addEventListener('submit', () => {
-            const btn = form.querySelector('button[type="submit"]');
-            if (!btn || btn.classList.contains('is-loading')) return;
-            btn.classList.add('is-loading');
-            btn.disabled = true;
-            setTimeout(() => {
-                btn.classList.remove('is-loading');
-                btn.disabled = false;
-            }, 4000);
-        });
-    });
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    applyShine();
-    wireFormSpinners();
-
-
-    // ── WOW SCROLL REVEAL ──
-    const _seen  = new Set();
-    const _order = [];   // order of addition = DOM order
-
-    function _add(el, opts) {
-        if (!el || _seen.has(el)) return;
-        if (el.closest && (el.closest('.sidebar') || el.closest('.app-topbar'))) return;
-        if (!el.tagName || el.tagName === 'STYLE' || el.tagName === 'SCRIPT') return;
-        _seen.add(el);
-        _order.push({ el, ...(opts || {}) });
-    }
-
-    // 1. Direct children of main wrappers (these become the "sections")
-    ['.app-content', '.public-page-content'].forEach(sel => {
-        let isFirst = true;
-        document.querySelectorAll(sel).forEach(root => {
-            Array.from(root.children).forEach(child => {
-                _add(child, { hero: isFirst });
-                isFirst = false;
-            });
-        });
-    });
-
-    // 2. Items inside grids/lists for per-card stagger
-    const GRID_SELS = [
-        '.psy-grid > .psy-card',
-        '.dash-grid > *', '.adm-stats-grid > *',
-        '.ab-values-grid > *',
-        '.forum-groups-grid > *', '.ressources-grid > *',
-        '.consultations-list > *', '.requests-list > *',
-        '.feed-wrap > *', '.posts-grid > *',
-    ];
-    GRID_SELS.forEach(sel => {
-        document.querySelectorAll(sel).forEach(el => _add(el));
-    });
-
-    // 3. Two-column items get left/right directional animation
-    document.querySelectorAll('.ab-two-col > *, .crf-wrap > *').forEach((el, i) => {
-        _add(el, { dir: i % 2 === 0 ? 'left' : 'right' });
-    });
-
-    // 4. Apply classes & observe
-    const wowObs = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (!entry.isIntersecting) return;
-            const el = entry.target;
-            // Stagger siblings in the same parent grid
-            const delay = el._wowDelay || 0;
-            setTimeout(() => el.classList.add('animated'), delay);
-            wowObs.unobserve(el);
-        });
-    }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
-
-    _order.forEach(({ el, hero, dir }) => {
-        el.classList.add('wow');
-        if (hero)        el.classList.add('wow-hero');
-        if (dir === 'left')  el.classList.add('from-left');
-        if (dir === 'right') el.classList.add('from-right');
-
-        // Stagger for grid siblings
-        if (!hero && !dir) {
-            const sibs = _order
-                .filter(o => o.el.parentElement === el.parentElement && _seen.has(o.el))
-                .map(o => o.el);
-            const idx = sibs.indexOf(el);
-            if (idx > 0 && idx <= 5) el.classList.add('d' + idx);
-            el._wowDelay = 0;
-        }
-
-        wowObs.observe(el);
-    });
-
-    // ── 4. CURSOR GLOW ──
-    const glow = document.getElementById('cursor-glow');
-    if (glow) {
-        document.addEventListener('mousemove', e => {
-            glow.style.left = e.clientX + 'px';
-            glow.style.top  = e.clientY + 'px';
-        });
-    }
-
-    // ── 5. FLOATING PARTICLES ──
-    const canvas = document.getElementById('particles-canvas');
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    let W, H, particles = [];
-
-    function resize() {
-        W = canvas.width  = window.innerWidth;
-        H = canvas.height = window.innerHeight;
-    }
-    resize();
-    window.addEventListener('resize', resize);
-
-    const COLORS = ['rgba(190,140,60,', 'rgba(122,138,102,', 'rgba(171,126,54,'];
-
-    function Particle() {
-        this.reset = function() {
-            this.x  = Math.random() * W;
-            this.y  = Math.random() * H;
-            this.r  = Math.random() * 1.8 + .4;
-            this.vx = (Math.random() - .5) * .35;
-            this.vy = (Math.random() - .5) * .35;
-            this.a  = Math.random() * .5 + .08;
-            this.c  = COLORS[Math.floor(Math.random() * COLORS.length)];
-        };
-        this.reset();
-    }
-
-    for (let i = 0; i < 55; i++) particles.push(new Particle());
-
-    function draw() {
-        ctx.clearRect(0, 0, W, H);
-        particles.forEach(p => {
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-            ctx.fillStyle = p.c + p.a + ')';
-            ctx.fill();
-
-            p.x += p.vx;
-            p.y += p.vy;
-
-            if (p.x < -10 || p.x > W + 10 || p.y < -10 || p.y > H + 10) p.reset();
-        });
-        requestAnimationFrame(draw);
-    }
-    draw();
-
-    // ── 6. TOPBAR SCROLL SHADOW ──
-    const topbar = document.querySelector('.app-topbar');
-    if (topbar) {
-        window.addEventListener('scroll', () => {
-            topbar.style.boxShadow = window.scrollY > 10
-                ? '0 4px 20px rgba(42,33,27,.1)'
-                : 'none';
-        }, { passive: true });
-    }
-
-    // ── 7. NAV ITEM RIPPLE ──
-    document.querySelectorAll('.nav-item').forEach(item => {
-        item.addEventListener('click', function(e) {
-            const rect = this.getBoundingClientRect();
-            const ripple = document.createElement('span');
-            const size = Math.max(rect.width, rect.height);
-            ripple.style.cssText = `
-                position:absolute;border-radius:50%;
-                width:${size}px;height:${size}px;
-                left:${e.clientX - rect.left - size/2}px;
-                top:${e.clientY - rect.top - size/2}px;
-                background:rgba(190,140,60,.22);
-                transform:scale(0);pointer-events:none;
-                animation:rippleOut .5s ease forwards;
-            `;
-            this.style.position = 'relative';
-            this.style.overflow = 'hidden';
-            this.appendChild(ripple);
-            setTimeout(() => ripple.remove(), 500);
-        });
-    });
-
-});
-
-// Ripple keyframe injected once
-const s = document.createElement('style');
-s.textContent = '@keyframes rippleOut{to{transform:scale(2.5);opacity:0;}}';
-document.head.appendChild(s);
-
-</script>
+<script src="{% static 'js/wanaag.js' %}"></script>
 {% block extra_js %}{% endblock %}
 
 {% url 'chatbot' as wgtChatbotUrl %}
 {% url 'group_chat' group.id as wgtGroupChatUrl %}
 {% if user.is_authenticated and request.path != wgtChatbotUrl and request.path != wgtGroupChatUrl and request.resolver_match.url_name != 'parcours_journal' and request.resolver_match.url_name != 'post_write' and request.resolver_match.url_name != 'post_rewrite' %}
-<!-- ═══════════════════════════════════════════════
-     WIDGET FLOTTANT — WANAAG IA
-     (partagé sur toutes les pages authentifiées, sauf les pages qui ont
-     déjà leur propre champ d'envoi en bas à droite — le chatbot plein
-     écran et les chats de groupe — où le widget recouvrirait et
-     bloquerait réellement le clic sur le bouton d'envoi)
-═══════════════════════════════════════════════ -->
 {% url 'chatbot_send' as chatbot_send_url %}
 {% url 'chatbot' as chatbot_url %}
+<!-- Wana, espace connecté -->
 <div id="chatWidget">
-    <!-- Bouton bulle -->
-    <button class="wgt-bubble" id="wgtBubble" onclick="wgtToggle()" title="Wana — l'assistant Wanaag Corner">
-        <img src="{% static 'images/logo.jpg' %}" alt="Wana" class="wgt-bubble-logo" id="wgtBubbleLogo">
+    <button class="wgt-bubble" id="wgtBubble" onclick="wgtToggle()" title="Parler à Wana" aria-label="Parler à Wana">
+        <span class="wgt-bubble-orb" id="wgtBubbleLogo"></span>
         <span class="wgt-bubble-close" id="wgtIconClose">✕</span>
         <span class="wgt-online-dot"></span>
         <span class="wgt-pulse-ring"></span>
     </button>
-
-    <!-- Panneau mini-chat -->
     <div class="wgt-panel" id="wgtPanel" style="display:none;">
         <div class="wgt-head">
-            <div class="wgt-av-wrap">
-                <div class="wgt-av-ring"></div>
-                <div class="wgt-av"><img src="{% static 'images/logo.jpg' %}" alt="Wana"></div>
-            </div>
+            <div class="wgt-av-wrap"><div class="wgt-av-ring"></div><div class="wgt-av"></div></div>
             <div class="wgt-head-text">
-                <div class="wgt-name-row">
-                    <span class="wgt-name">Wana</span>
-                    <span class="wgt-credential">Expert bien-être</span>
-                </div>
-                <div class="wgt-status"><span class="wgt-dot"></span> En ligne · toujours disponible</div>
+                <div class="wgt-name-row"><span class="wgt-name">Wana</span><span class="wgt-credential">Assistant bien-être</span></div>
+                <div class="wgt-status"><span class="wgt-dot"></span> Disponible maintenant</div>
             </div>
-            <a href="{{ chatbot_url }}" class="wgt-expand" title="Ouvrir en plein écran">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+            <a href="{{ chatbot_url }}" class="wgt-expand" title="Ouvrir en plein écran" aria-label="Ouvrir en plein écran">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
             </a>
         </div>
         <div class="wgt-body" id="wgtBody">
             <div class="wgt-welcome-row">
-                <div class="wgt-welcome-av"><img src="{% static 'images/logo.jpg' %}" alt=""></div>
+                <div class="wgt-welcome-av"></div>
                 <div class="wgt-welcome-col">
-                    <div class="wgt-welcome">
-                        Bonjour <strong>{{ user.pseudonyme }}</strong> 💛<br>
-                        Je suis Wana, l'assistant expert de Wanaag Corner. Je peux vous aider à trouver votre chemin sur le site, ou simplement vous écouter.
-                    </div>
+                    <div class="wgt-welcome"><span data-greet>Bonjour</span> <strong>{{ user.pseudonyme }}</strong>. Je peux vous aider à trouver votre chemin sur Wanaag Corner, ou simplement vous écouter.</div>
                     <div class="wgt-suggestions" id="wgtSuggestions">
-                        <button type="button" class="wgt-chip" data-q="Comment fonctionne Wanaag Corner ? Que puis-je faire sur le site ?">🧭 Découvrir le site</button>
-                        <button type="button" class="wgt-chip" data-q="J'ai besoin de parler de comment je me sens.">💛 J'ai besoin de parler</button>
-                        <button type="button" class="wgt-chip" data-q="Comment prendre rendez-vous avec un spécialiste ?">🩺 Trouver un spécialiste</button>
+                        <button type="button" class="wgt-chip" data-q="Comment fonctionne Wanaag Corner ? Que puis-je faire sur le site ?">Que puis-je faire ici ?</button>
+                        <button type="button" class="wgt-chip" data-q="J'ai besoin de parler de comment je me sens.">J'ai besoin de parler</button>
+                        <button type="button" class="wgt-chip" data-q="Comment prendre rendez-vous avec un spécialiste ?">Prendre rendez-vous</button>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="wgt-typing" id="wgtTyping" style="display:none;">
-            <span></span><span></span><span></span>
-        </div>
+        <div class="wgt-typing" id="wgtTyping" style="display:none;"><span></span><span></span><span></span></div>
         <div class="wgt-input-row">
-            <input type="text" id="wgtInput" class="wgt-input"
-                   placeholder="Écrivez ici…"
-                   onkeydown="if(event.key==='Enter') wgtSend()">
-            <button class="wgt-send" onclick="wgtSend()">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
-                </svg>
+            <input type="text" id="wgtInput" class="wgt-input" placeholder="Écrivez ce que vous ressentez…" onkeydown="if(event.key==='Enter') wgtSend()">
+            <button class="wgt-send" onclick="wgtSend()" aria-label="Envoyer">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
             </button>
         </div>
-        <div class="wgt-disclaimer">Wana ne remplace pas un avis médical. En urgence, appelez le <strong>15</strong>.</div>
+        <div class="wgt-disclaimer">Wana ne remplace pas un avis médical. En cas d'urgence, appelez le <strong>15</strong>.</div>
     </div>
 </div>
-
 <script>
 const WGT_SEND_URL = '{{ chatbot_send_url }}';
 const WGT_CSRF     = document.cookie.match(/csrftoken=([^;]+)/)?.[1] || '{{ csrf_token }}';
-const WGT_LOGO_URL = '{% static "images/logo.jpg" %}';
 let wgtOpen = false;
-
 function wgtToggle() {
     wgtOpen = !wgtOpen;
-    const panel = document.getElementById('wgtPanel');
-    const logo  = document.getElementById('wgtBubbleLogo');
-    const close = document.getElementById('wgtIconClose');
-    panel.style.display = wgtOpen ? 'flex' : 'none';
-    logo.style.display  = wgtOpen ? 'none' : '';
-    close.style.display = wgtOpen ? 'inline' : 'none';
+    document.getElementById('wgtPanel').style.display = wgtOpen ? 'flex' : 'none';
+    document.getElementById('wgtBubbleLogo').style.display = wgtOpen ? 'none' : '';
+    document.getElementById('wgtIconClose').style.display = wgtOpen ? 'inline' : 'none';
     if (wgtOpen) document.getElementById('wgtInput').focus();
 }
-
 function wgtAddMsg(bodyEl, role, txt) {
     const row = document.createElement('div');
     row.className = 'wgt-msg-row ' + role;
-    if (role === 'bot') {
-        const av = document.createElement('div');
-        av.className = 'wgt-msg-av-sm';
-        av.innerHTML = '<img src="' + WGT_LOGO_URL + '" alt="">';
-        row.appendChild(av);
-    }
+    if (role === 'bot') { const av = document.createElement('div'); av.className = 'wgt-msg-av-sm'; row.appendChild(av); }
     const bubble = document.createElement('div');
     bubble.className = role === 'user' ? 'wgt-msg-user' : 'wgt-msg-bot';
     bubble.textContent = txt;
@@ -1430,39 +425,29 @@ function wgtAddMsg(bodyEl, role, txt) {
     bodyEl.appendChild(row);
     bodyEl.scrollTop = bodyEl.scrollHeight;
 }
-
 async function wgtSend() {
     const input = document.getElementById('wgtInput');
     const text  = input.value.trim();
     if (!text) return;
     input.value = '';
-
     const body = document.getElementById('wgtBody');
     wgtAddMsg(body, 'user', text);
-
     const typing = document.getElementById('wgtTyping');
     typing.style.display = 'flex';
     body.scrollTop = body.scrollHeight;
-
     try {
-        const r = await fetch(WGT_SEND_URL, {
-            method:'POST',
-            headers:{'Content-Type':'application/json','X-CSRFToken':WGT_CSRF},
-            body: JSON.stringify({message: text}),
-        });
+        const r = await fetch(WGT_SEND_URL, {method:'POST', headers:{'Content-Type':'application/json','X-CSRFToken':WGT_CSRF}, body: JSON.stringify({message: text})});
         const d = await r.json();
         typing.style.display = 'none';
-        wgtAddMsg(body, 'bot', d.reply || d.error || 'Erreur…');
+        wgtAddMsg(body, 'bot', d.reply || d.error || "Wana n'a pas pu répondre. Réessayez dans un instant.");
     } catch {
         typing.style.display = 'none';
-        wgtAddMsg(body, 'bot', 'Connexion perdue. Réessayez.');
+        wgtAddMsg(body, 'bot', 'La connexion a été interrompue. Vérifiez votre réseau puis renvoyez votre message.');
     }
 }
-
 document.querySelectorAll('#chatWidget .wgt-chip').forEach(function(btn){
     btn.addEventListener('click', function(){
-        var suggestions = document.getElementById('wgtSuggestions');
-        if (suggestions) suggestions.style.display = 'none';
+        var s = document.getElementById('wgtSuggestions'); if (s) s.style.display = 'none';
         document.getElementById('wgtInput').value = btn.dataset.q;
         wgtSend();
     });
@@ -1471,12 +456,10 @@ document.querySelectorAll('#chatWidget .wgt-chip').forEach(function(btn){
 {% if request.resolver_match.url_name == 'dashboard' %}
 <script>
 (function(){
-    var key = 'wanaag_wana_autoopen_{{ user.pseudonyme }}';
+    var key = 'wanaag_wana_autoopen_{{ user.pseudonyme|escapejs }}';
     if (sessionStorage.getItem(key)) return;
     sessionStorage.setItem(key, '1');
-    setTimeout(function(){
-        if (!wgtOpen) wgtToggle();
-    }, 1100);
+    setTimeout(function(){ if (!wgtOpen) wgtToggle(); }, 2200);
 })();
 </script>
 {% endif %}
@@ -1485,21 +468,13 @@ document.querySelectorAll('#chatWidget .wgt-chip').forEach(function(btn){
 {% if user.is_authenticated %}
 <script>
 (function(){
-    var key = 'wanaag_greeting_{{ user.pseudonyme }}';
+    var key = 'wanaag_greeting_{{ user.pseudonyme|escapejs }}';
     var el = document.querySelector('.topbar-greeting');
     if(!el) return;
-    var shown = sessionStorage.getItem(key);
-    if(shown){
-        el.classList.add('hidden');
-    } else {
-        setTimeout(function(){
-            el.classList.add('hidden');
-            sessionStorage.setItem(key, '1');
-        }, 5000);
-    }
+    if(sessionStorage.getItem(key)){ el.classList.add('hidden'); }
+    else { setTimeout(function(){ el.classList.add('hidden'); sessionStorage.setItem(key, '1'); }, 6000); }
 })();
 </script>
 {% endif %}
-
 </body>
 </html>
