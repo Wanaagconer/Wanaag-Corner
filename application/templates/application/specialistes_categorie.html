@@ -1,243 +1,70 @@
 {% extends 'application/base.html' %}
-{% load static %}
+{% load static custom_filters wanaag %}
 
-{% block title %}{{ categorie.label }} — Wanaag Corner{% endblock %}
+{% block title %}{{ categorie.label|sobre }} — Wanaag Corner{% endblock %}
 {% block page_title %}Spécialistes{% endblock %}
 
 {% block extra_css %}
 <style>
-/* ===== BACK LINK ===== */
-.cat-back {
-    display: inline-flex; align-items: center; gap: .4rem;
-    font-size: .84rem; font-weight: 700; color: var(--brown-light);
-    text-decoration: none; margin-bottom: 1.1rem; transition: color .2s;
-}
-.cat-back:hover { color: var(--brown-dark); }
-
-/* ===== HERO ===== */
-.psy-hero {
-    background: linear-gradient(135deg, var(--brown-dark) 0%, #362b21 60%, #231c16 100%);
-    border-radius: 22px; padding: 2.4rem 2.5rem; margin-bottom: 2rem;
-    position: relative; overflow: hidden;
-    box-shadow: 0 10px 40px rgba(0,0,0,.3);
-}
-.psy-hero::before {
-    content: ''; position: absolute; inset: 0;
-    background: radial-gradient(ellipse at 15% 50%, rgba(190,140,60,.18) 0%, transparent 60%),
-                radial-gradient(ellipse at 85% 20%, rgba(190,140,60,.10) 0%, transparent 55%);
-    pointer-events: none;
-}
-.psy-hero-inner { position: relative; z-index: 1; display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap; }
-.psy-hero-img {
-    width: 72px; height: 72px; border-radius: 18px; flex-shrink: 0; position: relative;
-    background: rgba(190,140,60,.14); border: 1px solid rgba(190,140,60,.3);
-    box-shadow: 0 8px 24px rgba(0,0,0,.4); overflow: hidden;
-}
-.psy-hero-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.psy-hero-text h1 {
-    font-size: 1.9rem; font-weight: 800; color: white; margin: 0 0 .4rem;
-    font-family: 'Newsreader', serif;
-}
-.psy-hero-text p { font-size: .92rem; color: rgba(244,238,226,.65); margin: 0; max-width: 480px; }
-.psy-hero-count {
-    margin-left: auto; background: rgba(190,140,60,.15); border: 1px solid rgba(190,140,60,.3);
-    border-radius: 50px; padding: .5rem 1.2rem; color: rgba(244,238,226,.8);
-    font-size: .82rem; font-weight: 700; white-space: nowrap;
-}
-
-/* ===== GRID ===== */
-.psy-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
-    gap: 1.6rem;
-}
-
-/* ===== CARD ===== */
-.psy-card {
-    background: white; border-radius: 22px; overflow: hidden;
-    box-shadow: 0 4px 24px rgba(42,33,27,.10);
-    border: 1px solid rgba(190,140,60,.12);
-    transition: box-shadow .25s, transform .25s;
-    position: relative;
-    animation: cardIn .35s ease both;
-}
-.psy-card:hover { transform: translateY(-5px); box-shadow: 0 14px 44px rgba(42,33,27,.18); }
-@keyframes cardIn { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
-
-.psy-card-banner {
-    height: 90px; position: relative; overflow: hidden;
-    background: linear-gradient(135deg, var(--brown-dark), #362b21);
-}
-.psy-card-banner::after {
-    content: ''; position: absolute; inset: 0;
-    background: radial-gradient(ellipse at 30% 60%, rgba(190,140,60,.25) 0%, transparent 65%);
-}
-
-.psy-avatar-wrap {
-    position: absolute; bottom: -36px; left: 50%; transform: translateX(-50%);
-    z-index: 2;
-}
-.psy-av-ring {
-    position: absolute; inset: -3px; border-radius: 50%;
-    background: conic-gradient(#be8c3c 0%, #ddc092 45%, transparent 55%, #be8c3c 100%);
-    animation: spinRing 6s linear infinite;
-}
-@keyframes spinRing { to { transform: rotate(360deg); } }
-.psy-av {
-    width: 76px; height: 76px; border-radius: 50%; overflow: hidden; position: relative; z-index: 1;
-    background: linear-gradient(135deg, #be8c3c, var(--brown-dark));
-    border: 3px solid white;
-    display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 4px 20px rgba(0,0,0,.2);
-}
-.psy-av img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.psy-av-initials { font-size: 1.6rem; font-weight: 800; color: white; font-family: inherit; }
-
-.psy-card-body { padding: 2.8rem 1.6rem 1.6rem; text-align: center; }
-.psy-name {
-    font-size: 1.2rem; font-weight: 800; color: var(--brown-dark);
-    font-family: 'Newsreader', serif; margin-bottom: .2rem;
-}
-.psy-role {
-    display: inline-block; font-size: .72rem; font-weight: 700; padding: .18rem .65rem;
-    border-radius: 20px; background: linear-gradient(135deg, rgba(190,140,60,.15), rgba(171,126,54,.1));
-    color: #ab7e36; border: 1px solid rgba(190,140,60,.3); margin-bottom: 1rem;
-    letter-spacing: .3px;
-}
-
-.psy-tags { display: flex; flex-wrap: wrap; gap: .4rem; justify-content: center; margin-bottom: 1rem; }
-.psy-tag {
-    background: rgba(244,238,226,.9); color: var(--brown); font-size: .73rem; font-weight: 600;
-    padding: .22rem .65rem; border-radius: 20px; border: 1px solid rgba(171,126,54,.15);
-}
-
-.psy-exp {
-    display: flex; align-items: center; justify-content: center; gap: .5rem;
-    font-size: .82rem; color: var(--brown-light); margin-bottom: 1rem;
-}
-.psy-exp-dot {
-    width: 6px; height: 6px; border-radius: 50%;
-    background: linear-gradient(135deg, #be8c3c, #ab7e36);
-}
-.psy-exp strong { color: var(--brown-dark); font-size: .95rem; }
-
-.psy-bio {
-    font-size: .84rem; color: #9b8b7e; line-height: 1.6; margin-bottom: 1.3rem;
-    display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
-}
-
-.psy-cta {
-    display: block; width: 100%; padding: .75rem;
-    background: linear-gradient(135deg, #be8c3c, #ab7e36);
-    color: white; border: none; border-radius: 12px; font-weight: 700;
-    font-size: .88rem; cursor: pointer; text-decoration: none; text-align: center;
-    transition: all .2s; box-shadow: 0 4px 14px rgba(190,140,60,.35);
-    letter-spacing: .3px;
-}
-.psy-cta:hover { transform: translateY(-2px); box-shadow: 0 7px 22px rgba(190,140,60,.5); }
-
-.psy-empty {
-    text-align: center; padding: 4rem 2rem; background: white;
-    border-radius: 22px; box-shadow: 0 4px 24px rgba(42,33,27,.08);
-    border: 1px solid rgba(190,140,60,.12);
-    grid-column: 1 / -1;
-}
-.psy-empty p { color: #9b8b7e; font-size: .95rem; }
-
-@media(max-width:900px) {
-    .psy-grid { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
-}
-@media(max-width:600px) {
-    .psy-grid { grid-template-columns: 1fr; gap: 1.2rem; }
-    .psy-hero-count { display: none; }
-    .psy-hero { padding: 1.8rem 1.5rem; }
-    .psy-hero-text h1 { font-size: 1.5rem; }
-    .psy-hero-img { width: 56px; height: 56px; border-radius: 14px; }
-}
-@media(max-width:480px) {
-    .psy-hero { padding: 1.5rem 1.1rem; border-radius: 18px; }
-    .psy-hero-inner { gap: 1rem; }
-    .psy-hero-text h1 { font-size: 1.3rem; }
-    .psy-hero-text p { font-size: .82rem; }
-    .psy-card-body { padding: 2.6rem 1.2rem 1.4rem; }
-    .psy-cta { padding: .85rem; font-size: .9rem; }
-}
+.sp-pro{display:flex;flex-direction:column;overflow:hidden;height:100%;}
+.sp-pro-top{position:relative;height:96px;background:var(--encre);overflow:hidden;}
+.sp-pro-top::before{content:'';position:absolute;inset:0;background:radial-gradient(260px 160px at 90% 0%,rgba(190,140,60,.6),transparent 65%),radial-gradient(220px 160px at 0% 120%,rgba(122,138,102,.5),transparent 65%);}
+.sp-pro-av{margin:-52px 0 0 24px;position:relative;align-self:flex-start;}
+.sp-pro-av .w-av{box-shadow:0 0 0 5px var(--papier);}
+.sp-pro-body{padding:14px 24px 24px;display:flex;flex-direction:column;gap:10px;flex:1;}
+.sp-pro-body h3{font-size:clamp(23px,2vw,28px);}
+.sp-pro-tags{display:flex;gap:6px;flex-wrap:wrap;}
+.sp-pro-bio{flex:1;}
+.sp-pro-exp{display:flex;align-items:baseline;gap:8px;font-size:14px;color:var(--taupe);padding:12px 0;border-top:1px solid var(--trait);border-bottom:1px solid var(--trait);}
+.sp-pro-exp b{font-family:var(--f-display);font-weight:300;font-size:28px;line-height:1;color:var(--encre);}
 </style>
 {% endblock %}
 
 {% block content %}
+<div class="w-page">
+    <a href="{% url 'psychologues_list' %}" class="w-back"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg>Toutes les disciplines</a>
 
-<a href="{% url 'psychologues_list' %}" class="cat-back">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-    Toutes les catégories
-</a>
-
-<!-- HERO -->
-<div class="psy-hero">
-    <div class="psy-hero-inner">
-        <div class="psy-hero-img">
-            <img src="{% static 'images/' %}{{ categorie.value|specialiste_img }}" alt="{{ categorie.label }}">
-        </div>
-        <div class="psy-hero-text">
-            <h1>{{ categorie.label }}</h1>
-            <p>{{ categorie.description }}</p>
+    <header class="w-banner w-banner--photo">
+        <img class="bg" src="{% static 'images/' %}{{ categorie.value|specialiste_img }}" alt="">
+        <span class="w-orb" aria-hidden="true"></span>
+        <div>
+            <span class="w-kicker">Spécialistes</span>
+            <h1>{{ categorie.label|sobre }}</h1>
+            <p class="w-lede">{{ categorie.description }}</p>
         </div>
         {% if psychologues %}
-        <div class="psy-hero-count">{{ psychologues|length }} disponible{{ psychologues|length|pluralize }}</div>
+        <div class="w-banner-side"><span class="w-stat"><b>{{ psychologues|length }}</b><span>disponible{{ psychologues|length|pluralize }}</span></span></div>
         {% endif %}
-    </div>
-</div>
+    </header>
 
-<!-- GRID -->
-<div class="psy-grid">
     {% if psychologues %}
+    <div class="w-grid w-grid--wide">
         {% for psy in psychologues %}
-        <div class="psy-card" style="animation-delay:{{ forloop.counter0 }}00ms">
-            <div class="psy-card-banner">
-                <div class="psy-avatar-wrap">
-                    <div class="psy-av-ring"></div>
-                    <div class="psy-av">
-                        {% if psy.photo %}
-                            <img src="{{ psy.photo.url }}" alt="{{ psy.titre_nom }}">
-                        {% else %}
-                            <span class="psy-av-initials">{{ psy.user.pseudonyme|first|upper }}</span>
-                        {% endif %}
-                    </div>
+        <article class="w-card w-card--lift sp-pro">
+            <div class="sp-pro-top"></div>
+            <div class="sp-pro-av"><span class="w-av w-av--xl">{% if psy.photo %}<img src="{{ psy.photo.url }}" alt="{{ psy.titre_nom }}">{% else %}{{ psy.user.pseudonyme|first|upper }}{% endif %}</span></div>
+            <div class="sp-pro-body">
+                <div>
+                    <h3>{{ psy.titre_nom }}</h3>
+                    <span class="w-text">{{ categorie.label|sobre }}</span>
                 </div>
-            </div>
-
-            <div class="psy-card-body">
-                <div class="psy-name">{{ psy.titre_nom }}</div>
-                <div class="psy-role">{{ categorie.label }}</div>
-
                 {% if psy.specialites %}
-                <div class="psy-tags">
-                    {% for spec in psy.specialites|split:',' %}
-                    <span class="psy-tag">{{ spec|trim }}</span>
-                    {% endfor %}
-                </div>
+                <div class="sp-pro-tags">{% for spec in psy.specialites|decoupe %}<span class="w-pill w-pill--or">{{ spec }}</span>{% endfor %}</div>
                 {% endif %}
-
-                <div class="psy-exp">
-                    <div class="psy-exp-dot"></div>
-                    <span><strong>{{ psy.experience_ans }}</strong> ans d'expérience</span>
-                </div>
-
-                {% if psy.biographie %}
-                <div class="psy-bio">{{ psy.biographie }}</div>
-                {% endif %}
-
-                <a href="{% url 'consultation_request_form' psy.id %}" class="psy-cta">
-                    Voir le profil et réserver →
-                </a>
+                {% if psy.biographie %}<p class="w-text w-clamp-3 sp-pro-bio">{{ psy.biographie }}</p>{% else %}<span class="sp-pro-bio"></span>{% endif %}
+                <div class="sp-pro-exp"><b>{{ psy.experience_ans }}</b><span>an{{ psy.experience_ans|pluralize }} d'expérience</span></div>
+                <a href="{% url 'consultation_request_form' psy.id %}" class="w-btn w-btn--block">Demander un rendez-vous</a>
             </div>
-        </div>
+        </article>
         {% endfor %}
+    </div>
     {% else %}
-        <div class="psy-empty">
-            <p>Aucun {{ categorie.label|lower }} disponible pour le moment.<br>Revenez bientôt !</p>
-        </div>
+    <div class="w-void">
+        <span class="w-orb"></span>
+        <h3>Aucun profil dans cette discipline pour l'instant</h3>
+        <p>De nouveaux spécialistes rejoignent Wanaag Corner régulièrement. En attendant, d'autres disciplines peuvent vous aider.</p>
+        <a class="w-btn" href="{% url 'psychologues_list' %}">Voir les autres disciplines</a>
+    </div>
     {% endif %}
 </div>
-
 {% endblock %}

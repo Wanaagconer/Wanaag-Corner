@@ -9,8 +9,8 @@
     <link rel="preload" href="{% static 'fonts/newsreader-latin-standard-normal.woff2' %}" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="{% static 'fonts/onest-latin-wght-normal.woff2' %}" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="{% static 'css/wanaag.css' %}">
+    {% if user.is_authenticated %}<link rel="stylesheet" href="{% static 'css/wanaag-ui.css' %}">{% endif %}
     {% block extra_css %}{% endblock %}
-    {% if user.is_authenticated %}<link rel="stylesheet" href="{% static 'css/wanaag-app.css' %}">{% endif %}
 </head>
 <body class="{% if user.is_authenticated %}is-app{% else %}is-public{% endif %} page-{{ request.resolver_match.url_name|default:'x' }}">
 

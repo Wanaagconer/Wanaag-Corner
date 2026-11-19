@@ -1,545 +1,182 @@
 {% extends 'application/base.html' %}
-{% load static %}
+{% load static wanaag %}
 
-{% block title %}Forum Communautaire - Wanaag Corner{% endblock %}
+{% block title %}Groupes de parole — Wanaag Corner{% endblock %}
 {% block page_title %}Groupes de parole{% endblock %}
 
 {% block extra_css %}
 <style>
-    /* ===== HERO FORUM ===== */
-    .forum-hero {
-        border-radius: 22px;
-        overflow: hidden;
-        margin-bottom: 2rem;
-        position: relative;
-        height: 200px;
-        box-shadow: 0 8px 32px rgba(42,33,27,.15);
-    }
-    .forum-hero img {
-        width: 100%; height: 100%; object-fit: cover; display: block;
-    }
-    .forum-hero-overlay {
-        position: absolute; inset: 0;
-        background: linear-gradient(135deg, rgba(30,10,0,.72) 0%, rgba(42,33,27,.45) 100%);
-        display: flex; align-items: center; justify-content: space-between;
-        padding: 0 2.5rem;
-    }
-    .forum-hero-left { display: flex; align-items: center; gap: 1.2rem; }
-    .forum-hero-avatar {
-        width: 62px; height: 62px; border-radius: 16px; overflow: hidden;
-        border: 2px solid rgba(190,140,60,.5);
-        flex-shrink: 0;
-    }
-    .forum-hero-avatar img { width: 100%; height: 100%; object-fit: cover; }
-    .forum-hero-title {
-        font-family: 'Newsreader', serif;
-        font-size: 1.9rem; font-weight: 800; color: white; line-height: 1.2;
-    }
-    .forum-hero-sub { font-size: .88rem; color: rgba(244,238,226,.7); margin-top: .3rem; }
-    .btn-create {
-        background: linear-gradient(135deg, var(--accent), var(--accent-dark));
-        color: white; border: none;
-        padding: .75rem 1.6rem; border-radius: 50px;
-        font-weight: 700; font-size: .9rem; cursor: pointer;
-        transition: all .22s; white-space: nowrap;
-        box-shadow: 0 4px 16px rgba(190,140,60,.4);
-        display: inline-flex; align-items: center; gap: .4rem;
-    }
-    .btn-create:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(190,140,60,.55); }
-
-    /* ===== SEARCH ===== */
-    .forum-search {
-        position: relative; margin-bottom: 1.5rem;
-    }
-    .forum-search input {
-        width: 100%;
-        padding: .9rem 1.2rem .9rem 3rem;
-        border: 2px solid var(--beige-dark);
-        border-radius: 14px;
-        font-size: .95rem; font-family: inherit;
-        background: white; color: var(--brown-dark);
-        outline: none; transition: border-color .2s, box-shadow .2s;
-    }
-    .forum-search input:focus {
-        border-color: var(--accent);
-        box-shadow: 0 0 0 3px rgba(190,140,60,.12);
-    }
-    .forum-search-icon {
-        position: absolute; left: 1rem; top: 50%; transform: translateY(-50%);
-        font-size: 1rem; pointer-events: none;
-    }
-
-    /* ===== CATEGORIES ===== */
-    .categories-wrap {
-        display: flex; gap: .55rem; overflow-x: auto;
-        margin-bottom: 2rem; padding-bottom: .3rem;
-        scrollbar-width: none;
-    }
-    .categories-wrap::-webkit-scrollbar { display: none; }
-    .cat-btn {
-        background: white;
-        border: 1.5px solid var(--beige-dark);
-        color: var(--brown);
-        padding: .45rem 1rem; border-radius: 50px;
-        font-size: .8rem; font-weight: 600; white-space: nowrap;
-        cursor: pointer; transition: all .2s; font-family: inherit;
-    }
-    .cat-btn:hover { border-color: var(--accent); color: var(--accent-dark); }
-    .cat-btn.active {
-        background: linear-gradient(135deg, var(--brown-dark), var(--brown));
-        border-color: transparent; color: white;
-    }
-
-    /* ===== SECTION TITLE ===== */
-    .sec-title {
-        font-family: 'Newsreader', serif;
-        font-size: 1.1rem; font-weight: 700; color: var(--brown-dark);
-        margin-bottom: 1.2rem;
-        display: flex; align-items: center; gap: .5rem;
-    }
-    .sec-title::after { content: ''; flex: 1; height: 1px; background: rgba(42,33,27,.08); margin-left: .5rem; }
-
-    /* ===== BANDEAU D'ACCÈS RAPIDE (façon "stories") ===== */
-    .stories-strip {
-        display: flex; gap: 1.1rem; overflow-x: auto; padding: .3rem .2rem 1.1rem;
-        margin-bottom: .3rem; scrollbar-width: none;
-    }
-    .stories-strip::-webkit-scrollbar { display: none; }
-    .story-item {
-        display: flex; flex-direction: column; align-items: center; gap: .4rem;
-        text-decoration: none; flex-shrink: 0; width: 68px;
-    }
-    .story-ring {
-        width: 64px; height: 64px; border-radius: 50%;
-        display: flex; align-items: center; justify-content: center;
-        padding: 3px;
-        background: rgba(190,140,60,.15);
-        transition: transform .2s ease;
-    }
-    .story-ring.unread {
-        background: conic-gradient(from 220deg, var(--or), var(--or-light), var(--or-dark), var(--or));
-    }
-    .story-item:hover .story-ring { transform: scale(1.06); }
-    .story-avatar {
-        width: 100%; height: 100%; border-radius: 50%;
-        background: white; display: flex; align-items: center; justify-content: center;
-        font-family: 'Newsreader', serif; font-weight: 700; font-size: 1.3rem; color: white;
-        border: 2.5px solid white;
-    }
-    .story-name {
-        font-size: .68rem; color: var(--taupe); text-align: center;
-        white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;
-    }
-    .story-item.new-group .story-ring { background: transparent; border: 2px dashed rgba(190,140,60,.4); }
-    .story-item.new-group .story-avatar { background: var(--papier); color: var(--or-dark); font-size: 1.6rem; border: none; }
-
-    /* ===== LISTE DE CONVERSATIONS (façon messagerie) ===== */
-    .chat-list {
-        background: white;
-        border-radius: 18px;
-        box-shadow: 0 2px 14px rgba(42,33,27,.08);
-        border: 1px solid rgba(190,140,60,.1);
-        overflow: hidden;
-        margin-bottom: 2.5rem;
-    }
-    .chat-row {
-        display: flex; align-items: center; gap: .9rem;
-        padding: .9rem 1.3rem;
-        text-decoration: none; color: inherit;
-        border-bottom: 1px solid var(--beige-light);
-        transition: background .15s;
-        cursor: pointer;
-    }
-    .chat-row:last-child { border-bottom: none; }
-    .chat-row:hover { background: var(--beige-light); }
-    .chat-row-avatar {
-        width: 52px; height: 52px; border-radius: 50%; flex-shrink: 0;
-        display: flex; align-items: center; justify-content: center;
-        color: white; font-family: 'Newsreader', serif; font-weight: 700; font-size: 1.25rem;
-    }
-    .chat-row-main { flex: 1; min-width: 0; }
-    .chat-row-top {
-        display: flex; align-items: baseline; justify-content: space-between;
-        gap: .6rem; margin-bottom: .2rem;
-    }
-    .chat-row-name {
-        font-size: .96rem; font-weight: 700; color: var(--brown-dark);
-        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    }
-    .chat-row-time { font-size: .72rem; color: #aaa; flex-shrink: 0; }
-    .chat-row-bottom { display: flex; align-items: center; justify-content: space-between; gap: .6rem; }
-    .chat-row-preview {
-        font-size: .84rem; color: var(--brown-light);
-        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-        flex: 1; min-width: 0;
-    }
-    .chat-row-preview strong { color: var(--brown); }
-    .chat-row-preview.empty { font-style: italic; opacity: .7; }
-    .chat-row-badge {
-        background: var(--accent); color: white;
-        font-size: .68rem; font-weight: 700;
-        min-width: 20px; height: 20px; padding: 0 .4rem;
-        border-radius: 50px; flex-shrink: 0;
-        display: flex; align-items: center; justify-content: center;
-    }
-    .chat-row-cat {
-        font-size: .68rem; font-weight: 600; color: var(--accent-dark);
-        flex-shrink: 0;
-    }
-
-    /* ===== GROUPS GRID ===== */
-    .groups-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
-        gap: 1.3rem;
-        margin-bottom: 2.5rem;
-    }
-
-    .group-card {
-        background: white;
-        border-radius: 18px;
-        overflow: hidden;
-        box-shadow: 0 2px 14px rgba(42,33,27,.08);
-        transition: all .28s cubic-bezier(.4,0,.2,1);
-        cursor: pointer;
-        border: 1px solid rgba(190,140,60,.1);
-    }
-    .group-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 12px 36px rgba(42,33,27,.15);
-    }
-    .group-card-bar {
-        height: 4px;
-    }
-    .bar-blue   { background: linear-gradient(90deg, #BE8C3C, #AB7E36); }
-    .bar-purple { background: linear-gradient(90deg, #7A8A66, #4F5C3D); }
-    .bar-pink   { background: linear-gradient(90deg, #DDC092, #BE8C3C); }
-    .bar-green  { background: linear-gradient(90deg, #10b981, #059669); }
-    .bar-indigo { background: linear-gradient(90deg, #7A8A66, #4f46e5); }
-    .bar-teal   { background: linear-gradient(90deg, #06b6d4, #4F5C3D); }
-    .bar-amber  { background: linear-gradient(90deg, var(--accent), var(--accent-dark)); }
-    .bar-rose   { background: linear-gradient(90deg, #B4473F, #be123c); }
-
-    .group-card-body { padding: 1.3rem 1.4rem; }
-    .group-card-head {
-        display: flex; justify-content: space-between; align-items: flex-start;
-        margin-bottom: .5rem;
-    }
-    .group-card-name {
-        font-size: 1rem; font-weight: 700; color: var(--brown-dark);
-        line-height: 1.3;
-    }
-    .unread-badge {
-        background: #e74c3c; color: white;
-        font-size: .68rem; font-weight: 700;
-        padding: .18rem .5rem; border-radius: 50px;
-        flex-shrink: 0; margin-left: .5rem;
-    }
-    .group-card-cat {
-        font-size: .7rem; font-weight: 600; color: var(--accent-dark);
-        background: rgba(190,140,60,.12); border-radius: 50px;
-        padding: .15rem .55rem; display: inline-block; margin-bottom: .6rem;
-    }
-    .group-card-desc {
-        font-size: .82rem; color: var(--brown-light); line-height: 1.55;
-        margin-bottom: .9rem;
-    }
-    .group-card-stats {
-        display: flex; align-items: center; gap: .4rem;
-        font-size: .78rem; color: #aaa;
-        padding-top: .8rem; border-top: 1px solid var(--beige-light);
-    }
-    .last-msg-preview {
-        background: var(--beige-light);
-        border-radius: 10px; padding: .6rem .85rem;
-        font-size: .78rem; color: var(--brown); margin-top: .8rem;
-        border-left: 3px solid var(--accent);
-    }
-    .last-msg-preview strong { color: var(--brown-dark); }
-    .last-msg-time { font-size: .7rem; color: #bbb; margin-top: .2rem; }
-
-    .btn-join {
-        width: 100%; margin-top: .9rem;
-        background: linear-gradient(135deg, var(--or), var(--or-dark));
-        color: white; border: none;
-        padding: .65rem; border-radius: 50px;
-        font-weight: 700; font-size: .85rem;
-        cursor: pointer; transition: all .2s; font-family: inherit;
-    }
-    .btn-join:hover { background: linear-gradient(135deg, var(--brown), var(--accent-dark)); }
-
-    /* ===== EMPTY STATE ===== */
-    .empty-state {
-        text-align: center; padding: 3rem 1.5rem;
-        color: var(--brown-light);
-    }
-    .empty-state .empty-icon { font-size: 3rem; margin-bottom: .75rem; }
-    .empty-state h3 { font-size: 1rem; font-weight: 700; color: var(--brown-dark); margin-bottom: .4rem; }
-    .empty-state p { font-size: .85rem; }
-
-    /* ===== MODAL ===== */
-    .modal-overlay {
-        display: none; position: fixed; inset: 0;
-        background: rgba(0,0,0,.5); z-index: 2000;
-        align-items: center; justify-content: center;
-    }
-    .modal-overlay.show { display: flex; }
-    .modal-box {
-        background: white; border-radius: 22px;
-        padding: 2rem; width: 90%; max-width: 520px;
-        animation: fadeUp .25s ease;
-    }
-    @keyframes fadeUp {
-        from { opacity: 0; transform: translateY(20px); }
-        to   { opacity: 1; transform: translateY(0); }
-    }
-    .modal-title {
-        font-family: 'Newsreader', serif;
-        font-size: 1.3rem; font-weight: 700; color: var(--brown-dark);
-        margin-bottom: 1.5rem; padding-bottom: 1rem;
-        border-bottom: 1px solid var(--beige);
-    }
-    .form-group { margin-bottom: 1.2rem; }
-    .form-group label {
-        display: block; font-size: .85rem; font-weight: 600;
-        color: var(--brown-dark); margin-bottom: .4rem;
-    }
-    .form-group input,
-    .form-group textarea,
-    .form-group select {
-        width: 100%; padding: .75rem 1rem;
-        border: 2px solid var(--beige-dark); border-radius: 10px;
-        font-size: .9rem; font-family: inherit; color: var(--brown-dark);
-        outline: none; transition: border-color .2s;
-        background: white;
-    }
-    .form-group input:focus,
-    .form-group textarea:focus,
-    .form-group select:focus {
-        border-color: var(--accent);
-        box-shadow: 0 0 0 3px rgba(190,140,60,.1);
-    }
-    .modal-actions { display: flex; gap: .75rem; justify-content: flex-end; margin-top: 1.5rem; }
-    .btn-modal-cancel {
-        padding: .65rem 1.4rem; border-radius: 50px;
-        background: var(--beige); color: var(--brown-dark);
-        border: none; cursor: pointer; font-weight: 600; font-family: inherit;
-    }
-    .btn-modal-submit {
-        padding: .65rem 1.8rem; border-radius: 50px;
-        background: linear-gradient(135deg, var(--or), var(--or-dark));
-        color: white; border: none; cursor: pointer;
-        font-weight: 700; font-family: inherit;
-        transition: all .2s;
-    }
-    .btn-modal-submit:hover { transform: translateY(-1px); }
-
-    @media(max-width:900px){
-        .groups-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
-    }
-    @media(max-width:600px){
-        .forum-hero { height:auto; }
-        .forum-hero-overlay { flex-direction:column; align-items:flex-start; gap:1rem; padding:1.5rem; }
-        .forum-hero-title { font-size:1.4rem; }
-        .btn-create { width:100%; justify-content:center; }
-        .forum-hero-left { gap:.8rem; }
-        .forum-hero-avatar { width:46px; height:46px; }
-        .groups-grid { grid-template-columns: 1fr; gap:1rem; }
-        .cat-btn { padding:.55rem 1.1rem; }
-        .chat-row { padding:.75rem 1rem; gap:.7rem; }
-        .chat-row-avatar { width:46px; height:46px; font-size:1.1rem; }
-        .modal-box { width:92%; padding:1.6rem; }
-        .modal-actions { flex-wrap:wrap; }
-        .modal-actions .btn-modal-cancel,
-        .modal-actions .btn-modal-submit { flex:1; text-align:center; }
-        .forum-search input,
-        .form-group input,
-        .form-group textarea,
-        .form-group select { font-size:16px; }
-    }
-    @media(max-width:480px){
-        .forum-hero-overlay { padding:1.1rem; }
-        .forum-hero-title { font-size:1.15rem; }
-        .forum-search input { padding:.8rem 1rem .8rem 2.6rem; }
-        .group-card-body { padding:1.1rem 1.15rem; }
-        .modal-box { padding:1.3rem; }
-        .sec-title { font-size:1rem; }
-    }
+.fg-tools{display:flex;flex-direction:column;gap:14px;}
+.fg-card{display:flex;flex-direction:column;gap:12px;padding:24px;min-height:230px;overflow:hidden;}
+.fg-card::before{content:'';position:absolute;width:150px;height:150px;right:-60px;top:-60px;border-radius:50%;opacity:.5;
+  background:radial-gradient(circle,var(--tone,rgba(221,192,146,.7)),transparent 68%);transition:transform .9s var(--ease),opacity .6s;}
+.fg-card:hover::before{transform:scale(1.5);opacity:.8;}
+.fg-card:nth-child(3n+2){--tone:rgba(183,194,163,.75);}
+.fg-card:nth-child(3n){--tone:rgba(190,140,60,.45);}
+.fg-card p{flex:1;}
+.fg-card-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-top:6px;}
+.fg-none{display:none;}
+.fg-none.is-on{display:flex;}
+.fg-live{width:9px;height:9px;border-radius:50%;background:var(--or-dark);box-shadow:0 0 0 0 rgba(171,126,54,.6);animation:fgLive 2s infinite;}
+@keyframes fgLive{to{box-shadow:0 0 0 10px rgba(171,126,54,0)}}
 </style>
 {% endblock %}
 
 {% block content %}
+<div class="w-page">
 
-<!-- HERO -->
-<div class="forum-hero">
-    <img src="{% static 'images/forum.jpg' %}" alt="Forum Communautaire">
-    <div class="forum-hero-overlay">
-        <div class="forum-hero-left">
-            <div class="forum-hero-avatar">
-                <img src="{% static 'images/forum.jpg' %}" alt="">
-            </div>
-            <div>
-                <div class="forum-hero-title">Groupes de parole</div>
-                <div class="forum-hero-sub">Des espaces par thème pour parler et être entendu·e. Vous avez rejoint {{ my_groups|length }} groupe{{ my_groups|length|pluralize }} rejoint{{ my_groups|length|pluralize }}</div>
-            </div>
+    <header class="w-banner w-banner--photo">
+        <img class="bg" src="{% static 'images/inclusivite.jpg' %}" alt="">
+        <span class="w-orb" aria-hidden="true"></span>
+        <div>
+            <span class="w-kicker">Communauté</span>
+            <h1>Parler, être <em>entendu·e</em></h1>
+            <p class="w-lede">Des cercles par thème, ouverts jour et nuit. Lisez, répondez, ou restez simplement présent·e : ici, personne ne juge.</p>
         </div>
-        <button class="btn-create" onclick="showCreateModal()">Créer un groupe</button>
-    </div>
-</div>
-
-<!-- SEARCH -->
-<div class="forum-search">
-    <span class="forum-search-icon">🔍</span>
-    <input type="text" id="searchInput" placeholder="Rechercher un groupe..." oninput="filterGroups()">
-</div>
-
-<!-- CATEGORIES -->
-<div class="categories-wrap">
-    <button class="cat-btn active" onclick="filterCategory('all', this)">Tous</button>
-    <button class="cat-btn" onclick="filterCategory('anxiete', this)">Anxiété</button>
-    <button class="cat-btn" onclick="filterCategory('depression', this)">Dépression</button>
-    <button class="cat-btn" onclick="filterCategory('stress', this)">Stress & Burn-out</button>
-    <button class="cat-btn" onclick="filterCategory('meditation', this)">Méditation</button>
-    <button class="cat-btn" onclick="filterCategory('trauma', this)">Trauma</button>
-    <button class="cat-btn" onclick="filterCategory('sommeil', this)">Sommeil</button>
-    <button class="cat-btn" onclick="filterCategory('relations', this)">Relations</button>
-    <button class="cat-btn" onclick="filterCategory('famille', this)">Famille</button>
-    <button class="cat-btn" onclick="filterCategory('deuil', this)">Deuil</button>
-    <button class="cat-btn" onclick="filterCategory('confiance', this)">Confiance en soi</button>
-    <button class="cat-btn" onclick="filterCategory('addiction', this)">Addictions</button>
-    <button class="cat-btn" onclick="filterCategory('colere', this)">Colère</button>
-    <button class="cat-btn" onclick="filterCategory('solitude', this)">Solitude</button>
-    <button class="cat-btn" onclick="filterCategory('identite', this)">Identité</button>
-    <button class="cat-btn" onclick="filterCategory('jeunes', this)">Jeunes</button>
-    <button class="cat-btn" onclick="filterCategory('spiritualite', this)">Spiritualité</button>
-    <button class="cat-btn" onclick="filterCategory('alimentation', this)">Alimentation</button>
-    <button class="cat-btn" onclick="filterCategory('developpement', this)">Développement</button>
-</div>
-
-{% if my_groups %}
-<!-- ACCÈS RAPIDE -->
-<div class="stories-strip">
-    <a class="story-item new-group" href="#" onclick="showCreateModal(); return false;" title="Créer un groupe">
-        <div class="story-ring"><div class="story-avatar">＋</div></div>
-        <span class="story-name">Nouveau</span>
-    </a>
-    {% for item in my_groups %}
-    {% cycle '#AB7E36' '#7A8A66' '#5E5044' '#BE8C3C' '#4F5C3D' '#8A6427' '#9B8B7E' '#3A2E25' as avcolor2 silent %}
-    <a class="story-item" href="{% url 'group_chat' item.group.id %}" title="{{ item.group.name }}">
-        <div class="story-ring {% if item.unread > 0 %}unread{% endif %}">
-            <div class="story-avatar" style="background:{{ avcolor2 }};">{{ item.group.name|first|upper }}</div>
+        <div class="w-banner-side">
+            <span class="w-stat"><b>{{ my_groups|length }}</b><span>groupe{{ my_groups|length|pluralize }} rejoint{{ my_groups|length|pluralize }}</span></span>
+            <button type="button" class="w-btn w-btn--light" onclick="showCreateModal()">
+                <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Créer un groupe
+            </button>
         </div>
-        <span class="story-name">{{ item.group.name|truncatechars:10 }}</span>
-    </a>
-    {% endfor %}
-</div>
-{% endif %}
+    </header>
 
-<!-- MES GROUPES -->
-<div class="sec-title">Mes groupes ({{ my_groups|length }})</div>
-
-{% if my_groups %}
-<div class="chat-list" id="myGroups">
-    {% for item in my_groups %}
-    {% cycle '#AB7E36' '#7A8A66' '#5E5044' '#BE8C3C' '#4F5C3D' '#8A6427' '#9B8B7E' '#3A2E25' as avcolor silent %}
-    <a class="chat-row" data-category="{{ item.group.category }}" href="{% url 'group_chat' item.group.id %}">
-        <div class="chat-row-avatar" style="background:{{ avcolor }};">{{ item.group.name|first|upper }}</div>
-        <div class="chat-row-main">
-            <div class="chat-row-top">
-                <span class="chat-row-name">{{ item.group.name }}</span>
-                {% if item.last_message %}<span class="chat-row-time">{{ item.last_message.created_at|date:"H:i" }}</span>{% endif %}
-            </div>
-            <div class="chat-row-bottom">
-                {% if item.last_message %}
-                <span class="chat-row-preview"><strong>{{ item.last_message.sender.pseudonyme }} :</strong> {{ item.last_message.content|truncatechars:42 }}</span>
-                {% else %}
-                <span class="chat-row-preview empty">{{ item.group.get_category_display }} · {{ item.group.member_count }} membre{{ item.group.member_count|pluralize }}</span>
-                {% endif %}
-                {% if item.unread > 0 %}<span class="chat-row-badge">{{ item.unread }}</span>{% endif %}
-            </div>
-        </div>
-    </a>
-    {% endfor %}
-</div>
-{% else %}
-<div class="empty-state" style="background:white;border-radius:18px;box-shadow:0 2px 14px rgba(42,33,27,.07);margin-bottom:2rem;">
-    <div class="empty-icon">📭</div>
-    <h3>Vous n'avez rejoint aucun groupe</h3>
-    <p>Explorez les groupes ci-dessous et rejoignez une communauté !</p>
-</div>
-{% endif %}
-
-<!-- DÉCOUVRIR -->
-<div class="sec-title">Découvrir des groupes</div>
-
-{% if discover_groups %}
-<div class="groups-grid" id="discoverGroups">
-    {% for group in discover_groups %}
-    <div class="group-card" data-category="{{ group.category }}">
-        <div class="group-card-bar {% cycle 'bar-rose' 'bar-green' 'bar-purple' 'bar-teal' 'bar-indigo' 'bar-amber' %}"></div>
-        <div class="group-card-body">
-            <div class="group-card-name" style="margin-bottom:.4rem;">{{ group.name }}</div>
-            <span class="group-card-cat">{{ group.get_category_display }}</span>
-            <div class="group-card-desc">{{ group.description|truncatewords:18 }}</div>
-            <div class="group-card-stats">{{ group.member_count }} membre{{ group.member_count|pluralize }}</div>
-            <button class="btn-join" onclick="joinGroup(event, {{ group.id }})">Rejoindre le groupe</button>
+    <div class="fg-tools">
+        <label class="w-search">
+            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            <input type="text" id="searchInput" placeholder="Rechercher un groupe, un thème…" oninput="filterGroups()" aria-label="Rechercher un groupe">
+        </label>
+        <div class="w-tabs" role="tablist" aria-label="Thèmes">
+            <button class="w-tab cat-btn active" onclick="filterCategory('all', this)">Tous</button>
+            <button class="w-tab cat-btn" onclick="filterCategory('anxiete', this)">Anxiété</button>
+            <button class="w-tab cat-btn" onclick="filterCategory('depression', this)">Dépression</button>
+            <button class="w-tab cat-btn" onclick="filterCategory('stress', this)">Stress et burn-out</button>
+            <button class="w-tab cat-btn" onclick="filterCategory('meditation', this)">Méditation</button>
+            <button class="w-tab cat-btn" onclick="filterCategory('trauma', this)">Trauma</button>
+            <button class="w-tab cat-btn" onclick="filterCategory('sommeil', this)">Sommeil</button>
+            <button class="w-tab cat-btn" onclick="filterCategory('relations', this)">Relations</button>
+            <button class="w-tab cat-btn" onclick="filterCategory('famille', this)">Famille</button>
+            <button class="w-tab cat-btn" onclick="filterCategory('deuil', this)">Deuil</button>
+            <button class="w-tab cat-btn" onclick="filterCategory('confiance', this)">Confiance en soi</button>
+            <button class="w-tab cat-btn" onclick="filterCategory('addiction', this)">Addictions</button>
+            <button class="w-tab cat-btn" onclick="filterCategory('colere', this)">Colère</button>
+            <button class="w-tab cat-btn" onclick="filterCategory('solitude', this)">Solitude</button>
+            <button class="w-tab cat-btn" onclick="filterCategory('identite', this)">Identité</button>
+            <button class="w-tab cat-btn" onclick="filterCategory('jeunes', this)">Jeunes</button>
+            <button class="w-tab cat-btn" onclick="filterCategory('spiritualite', this)">Spiritualité</button>
+            <button class="w-tab cat-btn" onclick="filterCategory('alimentation', this)">Alimentation</button>
+            <button class="w-tab cat-btn" onclick="filterCategory('developpement', this)">Développement</button>
         </div>
     </div>
-    {% endfor %}
-</div>
-{% else %}
-<div class="empty-state" style="background:white;border-radius:18px;box-shadow:0 2px 14px rgba(42,33,27,.07);">
-    <div class="empty-icon">🎉</div>
-    <h3>Vous avez rejoint tous les groupes !</h3>
-    <p>Créez un nouveau groupe pour démarrer une nouvelle communauté.</p>
-</div>
-{% endif %}
 
-<!-- MODAL CRÉER UN GROUPE -->
-<div class="modal-overlay" id="createModal">
-    <div class="modal-box">
-        <div class="modal-title">Créer un groupe</div>
-        <form id="createGroupForm">
+    <section class="w-stack">
+        <div class="w-sec"><h2>Mes groupes <small>{{ my_groups|length }}</small></h2></div>
+        {% if my_groups %}
+        <div class="w-list w-list--card" id="myGroups" data-stagger>
+            {% for item in my_groups %}
+            <a class="w-item chat-row" data-category="{{ item.group.category }}" href="{% url 'group_chat' item.group.id %}">
+                <span class="w-av {% cycle '' 'w-av--sauge' 'w-av--encre' %}">{{ item.group.name|first|upper }}</span>
+                <span class="w-item-main">
+                    <span class="w-item-title" style="display:block;">{{ item.group.name }}</span>
+                    <span class="w-item-sub" style="display:block;">
+                        {% if item.last_message %}<strong>{{ item.last_message.sender.pseudonyme }} :</strong> {{ item.last_message.content|truncatechars:60 }}
+                        {% else %}{{ item.group.get_category_display|sobre }} · {{ item.group.member_count }} membre{{ item.group.member_count|pluralize }}{% endif %}
+                    </span>
+                </span>
+                <span class="w-item-side">
+                    {% if item.last_message %}<span>{{ item.last_message.created_at|date:"H:i" }}</span>{% endif %}
+                    {% if item.unread > 0 %}<span class="w-count">{{ item.unread }}</span>{% endif %}
+                </span>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="w-void">
+            <span class="w-orb"></span>
+            <h3>Vous n'avez encore rejoint aucun groupe</h3>
+            <p>Parcourez les cercles ci-dessous. Vous pouvez en rejoindre un pour lire, sans rien écrire au début.</p>
+        </div>
+        {% endif %}
+    </section>
+
+    <section class="w-stack">
+        <div class="w-sec"><h2>Découvrir</h2><p>Rejoindre un groupe ne vous engage à rien.</p></div>
+        {% if discover_groups %}
+        <div class="w-grid" id="discoverGroups">
+            {% for group in discover_groups %}
+            <article class="w-card w-card--lift fg-card group-card" data-category="{{ group.category }}">
+                <span class="w-pill w-pill--or" style="align-self:flex-start;">{{ group.get_category_display|sobre }}</span>
+                <h3>{{ group.name }}</h3>
+                <p class="w-text w-clamp-3">{{ group.description|truncatewords:26 }}</p>
+                <div class="fg-card-foot">
+                    <span class="w-meta"><span><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.5a6.5 6.5 0 0 1 3.5 5.5"/></svg>{{ group.member_count }} membre{{ group.member_count|pluralize }}</span></span>
+                    <button class="w-btn w-btn--sm" onclick="joinGroup(event, {{ group.id }})">Rejoindre</button>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="w-void">
+            <span class="w-orb w-orb--sauge"></span>
+            <h3>Vous faites déjà partie de tous les groupes</h3>
+            <p>Un thème vous manque ? Ouvrez un nouveau cercle, d'autres s'y reconnaîtront.</p>
+            <button type="button" class="w-btn" onclick="showCreateModal()">Créer un groupe</button>
+        </div>
+        {% endif %}
+        <div class="w-void fg-none" id="noResult">
+            <span class="w-orb"></span>
+            <h3>Aucun groupe ne correspond</h3>
+            <p>Essayez un autre mot, ou revenez sur « Tous ».</p>
+        </div>
+    </section>
+</div>
+
+<div class="w-modal" id="createModal" role="dialog" aria-modal="true" aria-labelledby="createTitle">
+    <div class="w-modal-box">
+        <div class="w-modal-head">
+            <h2 id="createTitle">Ouvrir un nouveau cercle</h2>
+            <button type="button" class="w-x" onclick="hideCreateModal()" aria-label="Fermer">&times;</button>
+        </div>
+        <form id="createGroupForm" class="w-form">
             {% csrf_token %}
-            <div class="form-group">
-                <label>Nom du groupe *</label>
-                <input type="text" name="name" id="groupName" placeholder="Ex: Gestion du stress au quotidien" required>
+            <div class="w-field">
+                <label class="w-label" for="groupName">Nom du groupe <span class="w-req">obligatoire</span></label>
+                <input type="text" name="name" id="groupName" placeholder="Ex. : Gérer le stress au quotidien" required>
             </div>
-            <div class="form-group">
-                <label>Description</label>
-                <textarea rows="3" name="description" id="groupDesc" placeholder="Décrivez l'objectif et l'ambiance de votre groupe..."></textarea>
+            <div class="w-field">
+                <label class="w-label" for="groupDesc">Description</label>
+                <textarea rows="3" name="description" id="groupDesc" placeholder="À qui s'adresse ce groupe, et dans quel esprit ?"></textarea>
             </div>
-            <div class="form-group">
-                <label>Thème de santé mentale</label>
+            <div class="w-field">
+                <label class="w-label" for="groupCategory">Thème</label>
                 <select name="category" id="groupCategory">
                     <option value="anxiete">Anxiété</option>
                     <option value="depression">Dépression</option>
-                    <option value="stress">Stress & Burn-out</option>
-                    <option value="meditation">Méditation & Pleine conscience</option>
-                    <option value="trauma">Trauma & PTSD</option>
+                    <option value="stress">Stress et burn-out</option>
+                    <option value="meditation">Méditation et pleine conscience</option>
+                    <option value="trauma">Trauma et stress post-traumatique</option>
                     <option value="sommeil">Troubles du sommeil</option>
-                    <option value="relations">Relations & Amour</option>
+                    <option value="relations">Relations et amour</option>
                     <option value="famille">Famille</option>
-                    <option value="deuil">Deuil & Perte</option>
+                    <option value="deuil">Deuil et perte</option>
                     <option value="confiance">Confiance en soi</option>
                     <option value="addiction">Addictions</option>
                     <option value="colere">Gestion de la colère</option>
-                    <option value="solitude">Solitude & Isolement</option>
-                    <option value="identite">Identité & Culture</option>
+                    <option value="solitude">Solitude et isolement</option>
+                    <option value="identite">Identité et culture</option>
                     <option value="jeunes">Santé mentale des jeunes</option>
-                    <option value="spiritualite">Spiritualité & Foi</option>
-                    <option value="alimentation">Alimentation & Image du corps</option>
+                    <option value="spiritualite">Spiritualité et foi</option>
+                    <option value="alimentation">Alimentation et image du corps</option>
                     <option value="developpement">Développement personnel</option>
                 </select>
             </div>
-            <div class="modal-actions">
-                <button type="button" class="btn-modal-cancel" onclick="hideCreateModal()">Annuler</button>
-                <button type="submit" class="btn-modal-submit">Créer le groupe</button>
+            <div class="w-form-actions">
+                <button type="submit" class="w-btn">Créer le groupe</button>
+                <button type="button" class="w-btn w-btn--ghost" onclick="hideCreateModal()">Annuler</button>
             </div>
         </form>
     </div>
 </div>
-
 {% endblock %}
 
 {% block extra_js %}
@@ -548,6 +185,7 @@
 
     function showCreateModal() {
         document.getElementById('createModal').classList.add('show');
+        setTimeout(() => document.getElementById('groupName').focus(), 200);
     }
     function hideCreateModal() {
         document.getElementById('createModal').classList.remove('show');
@@ -556,6 +194,7 @@
     document.getElementById('createModal').addEventListener('click', function(e) {
         if (e.target === this) hideCreateModal();
     });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') hideCreateModal(); });
 
     document.getElementById('createGroupForm').addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -569,27 +208,27 @@
             if (data.success) {
                 window.location.href = `/forum/group/${data.group_id}/`;
             } else {
-                alert('Erreur : ' + data.message);
+                alert('Le groupe n\'a pas pu être créé : ' + data.message);
             }
-        } catch(err) { alert('Erreur lors de la création'); }
+        } catch(err) { alert('Le groupe n\'a pas pu être créé. Vérifiez votre connexion puis réessayez.'); }
     });
 
     async function joinGroup(event, groupId) {
         event.stopPropagation();
-        const btn = event.target;
+        const btn = event.currentTarget;
+        btn.disabled = true;
         try {
-            const res = await fetch(`/forum/join-group/${groupId}/`, {
+            const res = await fetch(`/forum/join/${groupId}/`, {
                 method: 'POST',
                 headers: { 'X-CSRFToken': '{{ csrf_token }}' }
             });
             const data = await res.json();
             if (data.success) {
-                btn.textContent = '✓ Rejoint !';
-                btn.style.background = 'linear-gradient(135deg,#27ae60,#1e8449)';
-                btn.disabled = true;
-                setTimeout(() => window.location.reload(), 900);
-            } else { alert(data.message); }
-        } catch(err) { alert('Erreur'); }
+                btn.textContent = 'Bienvenue';
+                btn.classList.add('w-btn--sage');
+                setTimeout(() => window.location.href = `/forum/group/${groupId}/`, 700);
+            } else { btn.disabled = false; alert(data.message); }
+        } catch(err) { btn.disabled = false; alert('Impossible de rejoindre ce groupe pour le moment. Réessayez dans un instant.'); }
     }
 
     function filterCategory(cat, el) {
@@ -601,13 +240,16 @@
 
     function filterGroups() {
         const q = document.getElementById('searchInput').value.toLowerCase();
+        let shown = 0, total = 0;
         document.querySelectorAll('.group-card, .chat-row').forEach(card => {
             const cat = card.dataset.category;
             const text = card.textContent.toLowerCase();
-            const matchCat = currentCategory === 'all' || cat === currentCategory;
-            const matchSearch = text.includes(q);
-            card.style.display = (matchCat && matchSearch) ? '' : 'none';
+            const ok = (currentCategory === 'all' || cat === currentCategory) && text.includes(q);
+            card.style.display = ok ? '' : 'none';
+            if (card.classList.contains('group-card')) { total++; if (ok) shown++; }
         });
+        const none = document.getElementById('noResult');
+        if (none) none.classList.toggle('is-on', total > 0 && shown === 0);
     }
 </script>
 {% endblock %}

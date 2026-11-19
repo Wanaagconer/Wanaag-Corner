@@ -1,495 +1,241 @@
 {% extends 'application/base.html' %}
-{% block page_title %}Ressource{% endblock %}
+{% load static wanaag %}
 
-{% block title %}{{ ressource.titre }} - Wanaag Corner{% endblock %}
+{% block title %}{{ ressource.titre }} — Wanaag Corner{% endblock %}
+{% block page_title %}{{ ressource.get_type_ressource_display }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/prose.css' %}">
+{% include 'application/partials/ressource_styles.html' %}
+<style>
+.rd-head{padding:8px 0 4px;}
+.rd-head h1{font-family:var(--f-display);font-weight:300;font-size:clamp(38px,5.2vw,70px);line-height:1;letter-spacing:-.04em;margin:18px 0 20px;max-width:16em;text-wrap:balance;}
+.rd-tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;}
+.rd-cover{border-radius:30px;overflow:hidden;background:var(--brume);box-shadow:var(--shadow-lg);max-height:520px;}
+.rd-cover img{width:100%;height:100%;max-height:520px;object-fit:cover;display:block;}
+.rd-summary{font-family:var(--f-display);font-style:italic;font-weight:300;font-size:clamp(20px,2vw,26px);line-height:1.4;color:var(--taupe);padding-bottom:24px;margin-bottom:26px;border-bottom:1px solid var(--trait);}
+.rd-player{border-radius:22px;overflow:hidden;background:var(--encre);margin-bottom:26px;}
+.rd-player video{width:100%;display:block;max-height:520px;}
+.rd-player audio{width:100%;display:block;}
+.rd-player--audio{padding:22px;display:flex;flex-direction:column;gap:14px;color:var(--sable);}
+.rd-event{display:flex;flex-direction:column;gap:14px;padding:clamp(18px,2.2vw,26px);margin-bottom:26px;}
+.rd-event-row{display:flex;gap:14px;align-items:flex-start;}
+.rd-event-row svg{width:20px;height:20px;flex-shrink:0;margin-top:2px;stroke:var(--foret);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;}
+.rd-event-row strong{display:block;font-size:13px;font-weight:500;color:var(--taupe);}
+.rd-event-row span{font-size:16px;color:var(--encre);font-weight:500;}
+.rd-seats{display:flex;align-items:baseline;gap:10px;padding-top:14px;border-top:1px solid rgba(79,92,61,.2);font-size:14.5px;color:var(--foret);}
+.rd-seats b{font-family:var(--f-display);font-weight:300;font-size:40px;line-height:1;}
+.rd-seats.is-low{color:#8A6427;}.rd-seats.is-full{color:var(--danger);}
+
+.rd-actions{padding:22px;display:flex;flex-direction:column;gap:10px;}
+.rd-actions h3{margin-bottom:4px;}
+.rd-actions .w-btn svg.fill{fill:currentColor;}
+.rd-done{display:none;align-items:center;gap:10px;padding:12px 14px;border-radius:16px;background:rgba(122,138,102,.14);color:var(--foret);font-size:14px;font-weight:500;}
+.rd-done.is-on{display:flex;animation:wMsg .5s var(--ease);}
+.rd-done svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+
+.rd-com-form{display:flex;gap:10px;align-items:flex-end;margin-bottom:22px;}
+.rd-com-form textarea{flex:1;min-width:0;min-height:54px;max-height:180px;padding:14px 18px;border-radius:22px;border:1px solid var(--trait);background:var(--papier);font:400 16px/1.45 var(--f-body);color:var(--encre);outline:none;resize:vertical;transition:border-color .3s,box-shadow .3s;}
+.rd-com-form textarea:focus{border-color:var(--or);box-shadow:0 0 0 4px rgba(190,140,60,.14);}
+#rdComList{display:flex;flex-direction:column;gap:14px;}
+.rd-com{display:flex;gap:12px;align-items:flex-start;animation:wMsg .5s var(--ease);}
+.rd-com-bubble{padding:12px 16px;border-radius:6px 20px 20px 20px;background:var(--papier);border:1px solid rgba(42,33,27,.07);min-width:0;}
+.rd-com-name{font-weight:600;font-size:14.5px;}
+.rd-com-text{font-size:15.5px;line-height:1.55;overflow-wrap:anywhere;white-space:pre-line;}
+.rd-com-time{font-size:12.5px;color:var(--pierre);margin-top:4px;}
+.rd-empty{color:var(--taupe);font-style:italic;font-family:var(--f-display);font-size:19px;}
+.rd-toast{position:fixed;left:50%;bottom:30px;z-index:9200;transform:translate(-50%,24px);opacity:0;pointer-events:none;padding:12px 20px;border-radius:999px;background:var(--encre);color:var(--sable);font-size:14.5px;font-weight:500;transition:opacity .4s,transform .5s var(--ease);}
+.rd-toast.show{opacity:1;transform:translate(-50%,0);}
+@media(max-width:600px){ .rd-cover{border-radius:22px;} .rd-com-form{flex-direction:column;align-items:stretch;} }
+</style>
+{% endblock %}
 
 {% block content %}
-<style>
-    .ressource-detail-header {
-        background: white;
-        border-radius: 20px;
-        padding: 3rem;
-        margin-bottom: 2rem;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-    }
-
-    .ressource-meta-info {
-        display: flex;
-        gap: 2rem;
-        flex-wrap: wrap;
-        margin-bottom: 1.5rem;
-        color: var(--brown-light);
-    }
-
-    .ressource-meta-info span {
-        display: flex;
-        align-items: center;
-        gap: 0.3rem;
-    }
-
-    .event-details-box {
-        background: linear-gradient(135deg, #e3f2fd, #bbdefb);
-        padding: 2rem;
-        border-radius: 15px;
-        margin-top: 2rem;
-        border-left: 5px solid #7A8A66;
-    }
-
-    .event-details-box h3 {
-        color: #1976d2;
-        margin-bottom: 1.5rem;
-        font-size: 1.3rem;
-    }
-
-    .event-detail-item {
-        display: flex;
-        align-items: flex-start;
-        gap: 1rem;
-        margin-bottom: 1rem;
-        padding: 0.8rem;
-        background: white;
-        border-radius: 10px;
-    }
-
-    .event-detail-icon {
-        font-size: 1.5rem;
-        min-width: 30px;
-    }
-
-    .event-detail-content strong {
-        display: block;
-        color: var(--brown-dark);
-        margin-bottom: 0.3rem;
-    }
-
-    .event-detail-content span {
-        color: var(--brown-light);
-    }
-
-    .places-info {
-        background: white;
-        padding: 1rem;
-        border-radius: 10px;
-        text-align: center;
-        margin-top: 1rem;
-    }
-
-    .places-info.disponible {
-        border: 2px solid #be8c3c;
-    }
-
-    .places-info.limited {
-        border: 2px solid #ff9800;
-    }
-
-    .places-info.complet {
-        border: 2px solid #f44336;
-    }
-
-    .places-number {
-        font-size: 2rem;
-        font-weight: bold;
-        margin-bottom: 0.5rem;
-    }
-
-    .places-number.disponible { color: #be8c3c; }
-    .places-number.limited { color: #ff9800; }
-    .places-number.complet { color: #f44336; }
-
-    .ressource-actions {
-        display: flex;
-        gap: 1rem;
-        margin-top: 2rem;
-        flex-wrap: wrap;
-    }
-
-    .btn-action {
-        padding: 0.8rem 1.5rem;
-        border: none;
-        border-radius: 10px;
-        cursor: pointer;
-        font-weight: 600;
-        transition: all 0.3s;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .btn-favori {
-        background: var(--beige);
-        color: var(--brown);
-    }
-
-    .btn-favori.active {
-        background: var(--accent);
-        color: white;
-    }
-
-    .btn-complete {
-        background: var(--brown);
-        color: white;
-    }
-
-    .btn-complete.completed {
-        background: #28a745;
-    }
-
-    .btn-inscription {
-        background: #7A8A66;
-        color: white;
-        font-size: 1.1rem;
-        padding: 1rem 2rem;
-    }
-
-    .btn-inscription:hover {
-        background: #1976d2;
-    }
-
-    .btn-inscription:disabled {
-        background: #ccc;
-        cursor: not-allowed;
-    }
-
-    .ressource-content-section {
-        background: white;
-        border-radius: 20px;
-        padding: 3rem;
-        margin-bottom: 2rem;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-        line-height: 1.8;
-    }
-
-    .ressource-content-section h2 {
-        color: var(--brown-dark);
-        margin-top: 2rem;
-        margin-bottom: 1rem;
-    }
-
-    .ressource-content-section h3 {
-        color: var(--brown);
-        margin-top: 1.5rem;
-        margin-bottom: 0.8rem;
-    }
-
-    .ressource-content-section p {
-        margin-bottom: 1rem;
-        color: var(--brown-light);
-    }
-
-    .ressource-content-section ul, .ressource-content-section ol {
-        margin-left: 2rem;
-        margin-bottom: 1rem;
-    }
-
-    .video-container {
-        position: relative;
-        padding-bottom: 56.25%;
-        height: 0;
-        overflow: hidden;
-        margin: 2rem 0;
-        border-radius: 10px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    }
-
-    .video-container iframe {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-    }
-
-    .audio-player {
-        background: var(--beige-light);
-        padding: 1.5rem;
-        border-radius: 10px;
-        margin: 2rem 0;
-    }
-
-    .audio-player audio {
-        width: 100%;
-    }
-
-    .commentaires-section {
-        background: white;
-        border-radius: 20px;
-        padding: 2rem;
-        margin-bottom: 2rem;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-    }
-
-    .commentaire-form {
-        margin-bottom: 2rem;
-    }
-
-    .commentaire-form textarea {
-        width: 100%;
-        padding: 1rem;
-        border: 2px solid var(--beige);
-        border-radius: 10px;
-        font-size: 1rem;
-        font-family: inherit;
-        resize: vertical;
-        min-height: 100px;
-    }
-
-    .commentaire-form button {
-        margin-top: 1rem;
-        padding: 0.8rem 2rem;
-        background: var(--brown);
-        color: white;
-        border: none;
-        border-radius: 10px;
-        cursor: pointer;
-        font-weight: 600;
-        transition: all 0.3s;
-    }
-
-    .commentaire-form button:hover {
-        background: var(--brown-dark);
-    }
-
-    .commentaire {
-        padding: 1.5rem;
-        background: var(--beige-light);
-        border-radius: 10px;
-        margin-bottom: 1rem;
-    }
-
-    .commentaire-header {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 0.8rem;
-    }
-
-    .commentaire-auteur {
-        font-weight: 600;
-        color: var(--brown-dark);
-    }
-
-    .commentaire-date {
-        color: var(--brown-light);
-        font-size: 0.9rem;
-    }
-
-    .commentaire-contenu {
-        color: var(--brown);
-        line-height: 1.6;
-    }
-
-    .ressources-similaires {
-        margin-top: 3rem;
-    }
-
-    .ressources-similaires h2 {
-        font-size: 1.8rem;
-        color: var(--brown-dark);
-        margin-bottom: 1.5rem;
-    }
-
-    .similaires-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-        gap: 1.5rem;
-    }
-
-    .similaire-card {
-        background: white;
-        border-radius: 15px;
-        padding: 1.5rem;
-        box-shadow: 0 3px 15px rgba(0,0,0,0.08);
-        transition: all 0.3s;
-        text-decoration: none;
-        color: inherit;
-        display: block;
-    }
-
-    .similaire-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 5px 20px rgba(0,0,0,0.12);
-    }
-
-    .similaire-title {
-        font-size: 1.1rem;
-        font-weight: 600;
-        color: var(--brown-dark);
-        margin-bottom: 0.5rem;
-    }
-
-    .similaire-description {
-        font-size: 0.9rem;
-        color: var(--brown-light);
-    }
-
-    @media (max-width: 900px) {
-        .ressource-detail-header, .ressource-content-section, .commentaires-section {
-            padding: 1.5rem;
-        }
-
-        .ressource-actions {
-            flex-direction: column;
-        }
-
-        .btn-action {
-            width: 100%;
-            justify-content: center;
-            box-sizing: border-box;
-        }
-
-        .ressource-meta-info {
-            gap: 1rem;
-        }
-
-        .event-details-box {
-            padding: 1.5rem;
-        }
-    }
-
-    @media (max-width: 600px) {
-        .ressource-detail-header, .ressource-content-section, .commentaires-section {
-            padding: 1.1rem;
-            border-radius: 16px;
-        }
-
-        .ressource-meta-info {
-            gap: .7rem;
-            font-size: .85rem;
-        }
-
-        .event-details-box {
-            padding: 1.1rem;
-        }
-
-        .event-detail-item {
-            gap: .7rem;
-            padding: .6rem;
-        }
-
-        .btn-inscription {
-            width: 100%;
-            justify-content: center;
-            box-sizing: border-box;
-            font-size: 1rem;
-        }
-
-        .commentaire-form textarea {
-            font-size: 16px;
-        }
-
-        .commentaire-form button {
-            width: 100%;
-            box-sizing: border-box;
-        }
-
-        .commentaire-header {
-            flex-wrap: wrap;
-            gap: .3rem;
-        }
-
-        .similaires-grid {
-            grid-template-columns: 1fr;
-        }
-    }
-
-    @media (max-width: 480px) {
-        .ressource-detail-header, .ressource-content-section, .commentaires-section {
-            padding: .9rem;
-        }
-
-        .places-number {
-            font-size: 1.6rem;
-        }
-
-        .event-detail-icon {
-            font-size: 1.2rem;
-            min-width: 24px;
-        }
-    }
-</style>
-
-<div class="ressource-detail-header">
-    <span class="ressource-type">{{ ressource.get_type_ressource_display }}</span>
-    <h1>{{ ressource.titre }}</h1>
-    
-    <div class="ressource-meta-info">
-        <span>{{ ressource.categorie }}</span>
-        <span>{{ ressource.duree_lecture }} min</span>
-        <span>{{ ressource.get_niveau_display }}</span>
-        <span>{{ ressource.vues }} vues</span>
-        {% if ressource.auteur %}
-        <span>Par {{ ressource.auteur.pseudonyme }}</span>
+<div class="w-page">
+    <a class="w-back" href="{% url 'ressources_home' %}"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg>Toutes les ressources</a>
+
+    <header class="rd-head">
+        <div class="w-row-flex" style="gap:8px;">
+            <span class="w-pill w-pill--dark">{{ ressource.get_type_ressource_display }}</span>
+            {% if ressource.categorie %}<span class="w-pill w-pill--or">{{ ressource.categorie.nom }}</span>{% endif %}
+            <span class="w-pill">{{ ressource.get_niveau_display }}</span>
+            {% if ressource.acces == 'premium' %}<span class="w-pill w-pill--or">Premium</span>{% endif %}
+        </div>
+        <h1>{{ ressource.titre }}</h1>
+        <div class="w-meta" style="font-size:14.5px;">
+            <span><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>{{ ressource.duree_lecture }} min</span>
+            <span><svg viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>{{ ressource.vues }} vue{{ ressource.vues|pluralize }}</span>
+            {% if ressource.auteur %}<span><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>{{ ressource.auteur.pseudonyme }}</span>{% endif %}
+            <span>Publié le {{ ressource.date_creation|date:"j F Y" }}</span>
+        </div>
+        {% if ressource.tags %}
+        <div class="rd-tags">{% for tag in ressource.tags|decoupe %}<span class="w-pill">{{ tag }}</span>{% endfor %}</div>
         {% endif %}
-    </div>
-    
-    {% if ressource.tags %}
-    <div style="margin-top: 1rem;">
-        {% for tag in ressource.tags|split:',' %}
-        <span style="display: inline-block; padding: 0.3rem 0.8rem; background: var(--beige-light); border-radius: 20px; margin-right: 0.5rem; font-size: 0.9rem;">
-            #{{ tag|trim }}
-        </span>
-        {% endfor %}
-    </div>
+    </header>
+
+    {% if ressource.image_couverture %}
+    <figure class="rd-cover" data-reveal="scale"><img src="{{ ressource.image_couverture.url }}" alt=""></figure>
     {% endif %}
-    
-    {% if ressource.is_evenement %}
-    <div class="event-details-box">
-        <h3>Informations sur l'événement</h3>
-        
-        {% if ressource.date_debut %}
-        <div class="event-detail-item">
-            <div class="event-detail-icon">📅</div>
-            <div class="event-detail-content">
-                <strong>Date et heure</strong>
-                <span>{{ ressource.date_debut|date:"l d F Y à H:i" }}</span>
-                {% if ressource.date_fin %}
-                <span> - Fin: {{ ressource.date_fin|date:"H:i" }}</span>
+
+    <div class="w-split">
+        <div style="min-width:0;">
+            {% if ressource.is_evenement %}{% if ressource.date_debut or ressource.lieu or ressource.intervenant or ressource.places_disponibles %}
+            <div class="w-card w-card--tint rd-event">
+                <h3>L'événement en pratique</h3>
+                {% if ressource.date_debut %}
+                <div class="rd-event-row"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>
+                    <div><strong>Date et heure</strong><span>{{ ressource.date_debut|date:"l j F Y à H:i" }}{% if ressource.date_fin %}, jusqu'à {{ ressource.date_fin|date:"H:i" }}{% endif %}</span></div></div>
                 {% endif %}
+                {% if ressource.lieu %}
+                <div class="rd-event-row"><svg viewBox="0 0 24 24"><path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>
+                    <div><strong>Lieu</strong><span>{{ ressource.lieu }}</span></div></div>
+                {% endif %}
+                {% if ressource.intervenant %}
+                <div class="rd-event-row"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+                    <div><strong>Animé par</strong><span>{{ ressource.intervenant }}</span></div></div>
+                {% endif %}
+                {% if ressource.places_disponibles %}{% with places=ressource.places_restantes %}
+                <div class="rd-seats {% if places == 0 %}is-full{% elif places <= 5 %}is-low{% endif %}">
+                    {% if places == 0 %}<span>Toutes les places sont prises.</span>
+                    {% else %}<b>{{ places }}</b><span>place{{ places|pluralize }} restante{{ places|pluralize }} sur {{ ressource.places_disponibles }}</span>{% endif %}
+                </div>
+                {% endwith %}{% endif %}
             </div>
-        </div>
-        {% endif %}
-        
-        {% if ressource.lieu %}
-        <div class="event-detail-item">
-            <div class="event-detail-icon">📍</div>
-            <div class="event-detail-content">
-                <strong>Lieu</strong>
-                <span>{{ ressource.lieu }}</span>
+            {% endif %}{% endif %}
+
+            {% if ressource.fichier_video %}
+            <div class="rd-player"><video controls preload="metadata" playsinline><source src="{{ ressource.fichier_video.url }}">Votre navigateur ne peut pas lire cette vidéo.</video></div>
+            {% endif %}
+            {% if ressource.fichier_audio %}
+            <div class="rd-player rd-player--audio">
+                <span class="w-row-flex"><span class="w-orb" style="width:34px;height:34px;"></span><strong>Écouter</strong></span>
+                <audio controls preload="metadata"><source src="{{ ressource.fichier_audio.url }}">Votre navigateur ne peut pas lire cet enregistrement.</audio>
             </div>
+            {% endif %}
+
+            {% if ressource.description %}<p class="rd-summary">{{ ressource.description }}</p>{% endif %}
+            {% if ressource.contenu %}<div class="prose" style="font-size:clamp(17px,1.25vw,19px);">{{ ressource.contenu|texte_riche }}</div>{% endif %}
+
+            <section style="margin-top:56px;" id="commentaires">
+                <div class="w-sec" style="margin-bottom:18px;"><h2>Vos réactions <small id="rdComCount">{{ commentaires|length }}</small></h2></div>
+                <div class="rd-com-form">
+                    <textarea id="rdComInput" maxlength="1000" placeholder="Qu'en retenez-vous ? Votre retour peut aider d'autres lecteurs." aria-label="Votre commentaire"></textarea>
+                    <button type="button" class="w-btn" id="rdComSend">Publier</button>
+                </div>
+                <div id="rdComList">
+                    {% for com in commentaires %}
+                    <div class="rd-com">
+                        <span class="w-av w-av--sm">{{ com.auteur.pseudonyme|first|upper }}</span>
+                        <div class="rd-com-bubble">
+                            <div class="rd-com-name">{{ com.auteur.pseudonyme }}</div>
+                            <div class="rd-com-text">{{ com.contenu }}</div>
+                            <div class="rd-com-time">{{ com.date_creation|date:"j F Y, H:i" }}</div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p class="rd-empty" id="rdComEmpty">Personne n'a encore réagi à cette ressource.</p>
+                    {% endfor %}
+                </div>
+            </section>
         </div>
-        {% endif %}
-        
-        {% if ressource.intervenant %}
-        <div class="event-detail-item">
-            <div class="event-detail-icon">👤</div>
-            <div class="event-detail-content">
-                <strong>Intervenant</strong>
-                <span>{{ ressource.intervenant }}</span>
-            </div>
-        </div>
-        {% endif %}
-        
-        {% if ressource.places_disponibles %}
-        {% with places=ressource.places_restantes %}
-        <div class="places-info {% if places == 0 %}complet{% elif places <= 5 %}limited{% else %}disponible{% endif %}">
-            <div class="places-number {% if places == 0 %}complet{% elif places <= 5 %}limited{% else %}disponible{% endif %}">
-                {% if places == 0 %}
-                    🔴 COMPLET
+
+        <aside class="w-stick w-stack" data-reveal style="--d:.15s">
+            <div class="w-card rd-actions">
+                <h3>{% if ressource.is_evenement %}Participer{% else %}Garder le fil{% endif %}</h3>
+                <div class="rd-done {% if progression.est_complete %}is-on{% endif %}" id="rdDone">
+                    <svg viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>
+                    <span>{% if ressource.is_evenement %}Vous êtes inscrit·e.{% else %}Vous avez terminé cette ressource.{% endif %}</span>
+                </div>
+                {% if ressource.is_evenement and ressource.is_complet and not progression.est_complete %}
+                <button type="button" class="w-btn w-btn--block" disabled>Complet</button>
                 {% else %}
-                    {{ places }}
+                <button type="button" class="w-btn w-btn--block" id="rdComplete" data-on="{% if progression.est_complete %}1{% else %}0{% endif %}"></button>
+                {% endif %}
+                <button type="button" class="w-btn w-btn--ghost w-btn--block" id="rdFav" data-on="{% if est_favori %}1{% else %}0{% endif %}"></button>
+                {% if ressource.lien_externe %}
+                <a class="w-btn w-btn--ghost w-btn--block" href="{{ ressource.lien_externe }}" target="_blank" rel="noopener noreferrer">
+                    <svg viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>Ouvrir le lien
+                </a>
                 {% endif %}
             </div>
-            <div>
-                {% if places == 0 %}
-                    Plus de places disponibles
-                {% elif places == 1 %}
-                    Dernière place disponible !
-                {% else %}
-                    Places restantes
-                {% endif %}
+            <div class="w-note">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/></svg>
+                <span>Cette ressource informe, elle ne remplace pas l'avis d'un professionnel. <a class="w-link" href="{% url 'psychologues_list' %}" style="color:inherit;">Trouver un spécialiste</a></span>
             </div>
-        </div>
-        {% endwith %}
-        {% endif %}
+        </aside>
     </div>
+
+    {% if ressources_similaires %}
+    <section class="w-stack" style="padding-top:20px;border-top:1px solid var(--trait);">
+        <div class="w-sec"><h2>Dans le même thème</h2></div>
+        <div class="w-grid">{% for ressource in ressources_similaires %}{% include 'application/partials/ressource_card.html' %}{% endfor %}</div>
+    </section>
     {% endif %}
+</div>
+<div class="rd-toast" id="rdToast" role="status"></div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+  const CSRF = '{{ csrf_token }}', ID = {{ ressource.id }}, EVENT = {{ ressource.is_evenement|yesno:"true,false" }};
+  const $ = id => document.getElementById(id);
+  function toast(msg) { const t = $('rdToast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove('show'), 2600); }
+  const post = (url, body) => fetch(url, { method: 'POST', headers: { 'X-CSRFToken': CSRF }, body }).then(r => r.json());
+  const HEART = '<svg viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4.5L6 21z"/></svg>';
+
+  const fav = $('rdFav');
+  function paintFav() {
+    const on = fav.dataset.on === '1';
+    fav.innerHTML = HEART + (on ? 'Dans mes favoris' : 'Ajouter aux favoris');
+    fav.querySelector('svg').classList.toggle('fill', on);
+  }
+  paintFav();
+  fav.addEventListener('click', () => {
+    post('/ressources/' + ID + '/favori/').then(d => {
+      if (!d.success) return;
+      fav.dataset.on = d.est_favori ? '1' : '0'; paintFav();
+      toast(d.est_favori ? 'Ajoutée à vos favoris' : 'Retirée de vos favoris');
+    }).catch(() => toast('Action impossible pour le moment. Réessayez.'));
+  });
+
+  const done = $('rdComplete');
+  function paintDone() {
+    const on = done.dataset.on === '1';
+    done.textContent = EVENT ? (on ? 'Annuler mon inscription' : "M'inscrire") : (on ? 'Marquer comme non terminée' : "J'ai terminé");
+    done.classList.toggle('w-btn--ghost', on);
+    $('rdDone').classList.toggle('is-on', on);
+  }
+  if (done) {
+    paintDone();
+    done.addEventListener('click', () => {
+      post('/ressources/' + ID + '/complete/').then(d => {
+        if (!d.success) return;
+        done.dataset.on = d.est_complete ? '1' : '0'; paintDone();
+        toast(EVENT ? (d.est_complete ? 'Votre place est réservée' : 'Inscription annulée') : (d.est_complete ? 'Bravo, une ressource de plus' : 'Ressource remise en cours'));
+      }).catch(() => toast('Action impossible pour le moment. Réessayez.'));
+    });
+  }
+
+  function sendComment() {
+    const input = $('rdComInput'), text = input.value.trim();
+    if (!text) { input.focus(); return; }
+    const fd = new FormData(); fd.append('contenu', text);
+    post('/ressources/' + ID + '/commenter/', fd).then(d => {
+      if (!d.success) { toast(d.message || 'Votre commentaire n\'a pas pu être publié.'); return; }
+      input.value = '';
+      const empty = $('rdComEmpty'); if (empty) empty.remove();
+      const el = document.createElement('div'); el.className = 'rd-com';
+      const av = document.createElement('span'); av.className = 'w-av w-av--sm'; av.textContent = d.auteur.charAt(0).toUpperCase();
+      const bubble = document.createElement('div'); bubble.className = 'rd-com-bubble';
+      [['rd-com-name', d.auteur], ['rd-com-text', text], ['rd-com-time', d.date]].forEach(([cls, val]) => {
+        const n = document.createElement('div'); n.className = cls; n.textContent = val; bubble.appendChild(n);
+      });
+      el.append(av, bubble); $('rdComList').prepend(el);
+      const c = $('rdComCount'); c.textContent = (parseInt(c.textContent, 10) || 0) + 1;
+    }).catch(() => toast('Votre commentaire n\'a pas pu être publié. Vérifiez votre connexion.'));
+  }
+  $('rdComSend').addEventListener('click', sendComment);
+})();
+</script>
 {% endblock %}

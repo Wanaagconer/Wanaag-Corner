@@ -1,298 +1,109 @@
 {% extends 'application/base.html' %}
-{% load static %}
+{% load static wanaag %}
 
-{% block title %}Répondre — {{ consultation.utilisateur.pseudonyme }}{% endblock %}
+{% block title %}Répondre à {{ consultation.utilisateur.pseudonyme }} — Wanaag Corner{% endblock %}
 {% block page_title %}Répondre à la demande{% endblock %}
 
 {% block extra_css %}
 <style>
-.rsp-wrap { max-width: 780px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.5rem; }
-
-/* ===== HERO ===== */
-.rsp-hero {
-    background: linear-gradient(135deg, #231c16 0%, #362b21 55%, #594836 100%);
-    border-radius: 22px; padding: 2rem 2.5rem;
-    position: relative; overflow: hidden;
-    box-shadow: 0 10px 40px rgba(0,0,0,.35);
-    display: flex; align-items: center; gap: 1.8rem;
-}
-.rsp-hero::before {
-    content: ''; position: absolute; inset: 0;
-    background: radial-gradient(ellipse at 15% 50%, rgba(190,140,60,.16) 0%, transparent 60%);
-    pointer-events: none;
-}
-.rsp-avatar {
-    position: relative; z-index: 1; flex-shrink: 0;
-    width: 64px; height: 64px; border-radius: 50%;
-    background: linear-gradient(135deg, #be8c3c, #ab7e36);
-    display: flex; align-items: center; justify-content: center;
-    color: white; font-weight: 800; font-size: 1.5rem;
-    box-shadow: 0 0 0 3px rgba(190,140,60,.3), 0 6px 20px rgba(0,0,0,.3);
-}
-.rsp-hero-text { position: relative; z-index: 1; flex: 1; }
-.rsp-hero-badge {
-    display: inline-block; font-size: .7rem; font-weight: 700; letter-spacing: .5px;
-    padding: .2rem .7rem; border-radius: 20px; margin-bottom: .5rem; text-transform: uppercase;
-    background: rgba(190,140,60,.15); border: 1px solid rgba(190,140,60,.3); color: #be8c3c;
-}
-.rsp-hero-title { font-size: 1.55rem; font-weight: 800; color: white; margin: 0 0 .25rem; font-family: 'Newsreader', serif; }
-.rsp-hero-sub { font-size: .85rem; color: rgba(244,238,226,.5); margin: 0; }
-
-/* ===== REQUEST CARD ===== */
-.rsp-card {
-    background: white; border-radius: 20px; overflow: hidden;
-    box-shadow: 0 4px 24px rgba(42,33,27,.09); border: 1px solid rgba(190,140,60,.1);
-}
-.rsp-card-header {
-    padding: 1.2rem 1.8rem; border-bottom: 1px solid rgba(190,140,60,.1);
-    display: flex; align-items: center; gap: .8rem;
-    background: rgba(244,238,226,.4);
-}
-.rsp-card-icon {
-    width: 36px; height: 36px; border-radius: 10px;
-    background: rgba(190,140,60,.12); border: 1px solid rgba(190,140,60,.22);
-    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-}
-.rsp-card-icon svg { width: 17px; height: 17px; }
-.rsp-card-label { font-size: .95rem; font-weight: 700; color: var(--brown-dark); }
-
-.rsp-card-body { padding: 1.6rem 1.8rem; display: flex; flex-direction: column; gap: 1rem; }
-
-.rsp-field {
-    background: rgba(244,238,226,.6); border-radius: 12px; padding: 1rem 1.2rem;
-    border: 1px solid rgba(190,140,60,.12);
-}
-.rsp-field-lbl { font-size: .72rem; font-weight: 700; color: #be8c3c; text-transform: uppercase; letter-spacing: .4px; margin-bottom: .3rem; }
-.rsp-field-val { font-size: .92rem; color: var(--brown-dark); line-height: 1.6; font-weight: 500; }
-
-.rsp-date { font-size: .8rem; color: #9b8b7e; display: flex; align-items: center; gap: .4rem; margin-top: .5rem; }
-.rsp-date svg { width: 13px; height: 13px; }
-
-/* ===== FORM CARD ===== */
-.rsp-form-card {
-    background: white; border-radius: 20px; overflow: hidden;
-    box-shadow: 0 4px 24px rgba(42,33,27,.09); border: 1px solid rgba(190,140,60,.1);
-}
-.rsp-form-header {
-    padding: 1.2rem 1.8rem; border-bottom: 1px solid rgba(190,140,60,.1);
-    display: flex; align-items: center; gap: .8rem;
-}
-.rsp-form-header .rsp-card-icon { background: linear-gradient(135deg, rgba(190,140,60,.18), rgba(171,126,54,.1)); }
-.rsp-form-title { font-size: .95rem; font-weight: 700; color: var(--brown-dark); }
-.rsp-form-sub { font-size: .78rem; color: #9b8b7e; }
-
-.rsp-form-body { padding: 1.6rem 1.8rem; }
-
-/* Form elements */
-.rsp-group { margin-bottom: 1.4rem; }
-.rsp-label {
-    display: block; font-size: .82rem; font-weight: 700; color: var(--brown-dark);
-    margin-bottom: .5rem; letter-spacing: .2px;
-}
-.rsp-select, .rsp-textarea, .rsp-input {
-    width: 100%; box-sizing: border-box;
-    padding: .85rem 1rem; border: 1.5px solid rgba(190,140,60,.25); border-radius: 12px;
-    font-family: inherit; font-size: .92rem; color: var(--brown-dark);
-    background: rgba(244,238,226,.35); transition: all .2s; outline: none;
-    appearance: none;
-}
-.rsp-select:focus, .rsp-textarea:focus, .rsp-input:focus {
-    border-color: #be8c3c; background: white;
-    box-shadow: 0 0 0 3px rgba(190,140,60,.12);
-}
-.rsp-textarea { resize: vertical; min-height: 130px; line-height: 1.65; }
-
-/* Action section */
-.rsp-action-section {
-    display: none; margin-top: 1rem;
-    background: rgba(244,238,226,.5); border-radius: 12px; padding: 1.1rem 1.2rem;
-    border: 1px solid rgba(190,140,60,.15);
-}
-.rsp-action-section.show { display: block; }
-.rsp-action-desc { font-size: .85rem; color: #5e5044; line-height: 1.55; margin-bottom: 1rem; }
-
-/* Buttons */
-.rsp-actions {
-    display: flex; gap: 1rem; padding: 1.3rem 1.8rem;
-    border-top: 1px solid rgba(190,140,60,.1); background: rgba(244,238,226,.3);
-}
-.rsp-btn-submit {
-    flex: 1; padding: .9rem 1.5rem;
-    background: linear-gradient(135deg, #be8c3c, #ab7e36);
-    color: white; border: none; border-radius: 12px;
-    font-weight: 700; font-size: .92rem; cursor: pointer;
-    box-shadow: 0 4px 16px rgba(190,140,60,.35); transition: all .2s;
-    display: flex; align-items: center; justify-content: center; gap: .5rem; font-family: inherit;
-}
-.rsp-btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(190,140,60,.5); }
-.rsp-btn-submit svg { width: 17px; height: 17px; }
-
-.rsp-btn-cancel {
-    padding: .9rem 1.5rem; border-radius: 12px;
-    background: transparent; color: #ab7e36;
-    border: 1.5px solid rgba(190,140,60,.4);
-    font-weight: 700; font-size: .88rem; cursor: pointer;
-    text-decoration: none; display: flex; align-items: center; justify-content: center; gap: .4rem;
-    transition: all .2s; font-family: inherit;
-}
-.rsp-btn-cancel:hover { background: rgba(190,140,60,.08); border-color: #be8c3c; }
-.rsp-btn-cancel svg { width: 15px; height: 15px; }
-
-@media(max-width:600px) {
-    .rsp-hero { flex-wrap: wrap; padding: 1.6rem 1.4rem; gap: 1.2rem; }
-    .rsp-actions { flex-direction: column; }
-    .rsp-form-body, .rsp-card-body { padding: 1.2rem; }
-    .rsp-card-header, .rsp-form-header { padding: 1.1rem 1.2rem; }
-}
-
-@media(max-width:480px) {
-    .rsp-hero { padding: 1.3rem 1.1rem; gap: 1rem; }
-    .rsp-avatar { width: 52px; height: 52px; font-size: 1.2rem; }
-    .rsp-hero-title { font-size: 1.2rem; }
-    .rsp-hero-sub { font-size: .78rem; }
-    .rsp-card-header, .rsp-form-header { padding: 1rem; }
-    .rsp-form-body, .rsp-card-body { padding: 1rem; }
-    .rsp-field { padding: .85rem 1rem; }
-    .rsp-actions { padding: 1rem; }
-    .rsp-select, .rsp-textarea, .rsp-input { font-size: 16px; }
-    .rsp-btn-submit, .rsp-btn-cancel { width: 100%; box-sizing: border-box; }
-}
+.rp{display:grid;grid-template-columns:minmax(260px,380px) minmax(0,1fr);gap:clamp(18px,2.4vw,32px);align-items:start;}
+.rp-ask{padding:26px;display:flex;flex-direction:column;gap:16px;position:sticky;top:calc(var(--topbar-height) + 16px);}
+.rp-msg{padding:18px 20px;border-radius:6px 22px 22px 22px;background:var(--sable);font-size:16px;line-height:1.65;white-space:pre-line;overflow-wrap:anywhere;}
+.rp-form{padding:clamp(22px,3vw,38px);}
+.rp-form h2{font-family:var(--f-display);font-weight:400;font-size:clamp(28px,2.8vw,38px);letter-spacing:-.025em;line-height:1.05;margin-bottom:6px;}
+.rp-section{display:none;flex-direction:column;gap:14px;padding:20px;border-radius:20px;background:var(--sable);}
+.rp-section.show{display:flex;animation:wMsg .5s var(--ease);}
+.rp-section p{font-size:15px;color:var(--taupe);line-height:1.6;}
+.rp-section .w-field textarea,.rp-section .w-field input{background:var(--papier);}
+@media(max-width:900px){ .rp{grid-template-columns:1fr;} .rp-ask{position:static;} }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="rsp-wrap">
+<div class="w-page">
+    <a href="{% url 'consultation_requests_list' %}" class="w-back"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg>Demandes reçues</a>
 
-    <!-- HERO -->
-    <div class="rsp-hero">
-        <div class="rsp-avatar">{{ consultation.utilisateur.pseudonyme|first|upper }}</div>
-        <div class="rsp-hero-text">
-            <div class="rsp-hero-badge">Demande de consultation</div>
-            <div class="rsp-hero-title">Répondre à {{ consultation.utilisateur.pseudonyme }}</div>
-            <div class="rsp-hero-sub">Accompagnez ce patient avec bienveillance et professionnalisme</div>
-        </div>
-    </div>
-
-    <!-- REQUEST INFO -->
-    <div class="rsp-card">
-        <div class="rsp-card-header">
-            <div class="rsp-card-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="#be8c3c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/>
-                </svg>
-            </div>
-            <div class="rsp-card-label">Détails de la demande</div>
-        </div>
-        <div class="rsp-card-body">
-            <div class="rsp-field">
-                <div class="rsp-field-lbl">Patient</div>
-                <div class="rsp-field-val">{{ consultation.utilisateur.pseudonyme }}</div>
-            </div>
-            <div class="rsp-field">
-                <div class="rsp-field-lbl">Sujet de consultation</div>
-                <div class="rsp-field-val">{{ consultation.sujet }}</div>
-            </div>
-            <div class="rsp-field">
-                <div class="rsp-field-lbl">Message du patient</div>
-                <div class="rsp-field-val">{{ consultation.message }}</div>
-                <div class="rsp-date">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                    Reçu le {{ consultation.date_demande|date:"d/m/Y à H:i" }}
+    <div class="rp">
+        <aside class="w-card rp-ask" data-reveal>
+            <div class="w-row-flex">
+                <span class="w-av w-av--lg">{{ consultation.utilisateur.pseudonyme|first|upper }}</span>
+                <div>
+                    <h3 style="font-size:26px;">{{ consultation.utilisateur.pseudonyme }}</h3>
+                    <span class="w-text">Le {{ consultation.date_demande|date:"j F Y à H:i" }}</span>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <!-- RESPONSE FORM -->
-    <form method="post" class="rsp-form-card">
-        {% csrf_token %}
-
-        <div class="rsp-form-header">
-            <div class="rsp-card-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="#be8c3c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
-                </svg>
+            <div class="w-row-flex" style="gap:6px;">
+                <span class="w-pill w-pill--or">{% if consultation.type_seance == 'visio' %}Visioconférence souhaitée{% else %}Au cabinet{% endif %}</span>
             </div>
             <div>
-                <div class="rsp-form-title">Votre réponse</div>
-                <div class="rsp-form-sub">Choisissez une action et répondez au patient</div>
+                <span class="w-hint">Sujet</span>
+                <p class="w-h3" style="margin-top:2px;">{{ consultation.sujet }}</p>
             </div>
-        </div>
+            <div class="rp-msg">{{ consultation.message }}</div>
+        </aside>
 
-        <div class="rsp-form-body">
-
-            <div class="rsp-group">
-                <label class="rsp-label" for="action">Que souhaitez-vous faire ?</label>
-                <select name="action" id="action" class="rsp-select" required>
-                    <option value="">— Sélectionnez une action —</option>
-                    <option value="confirmer">Confirmer la consultation</option>
-                    <option value="rejeter">Rejeter la demande</option>
-                    <option value="programmer">Programmer une session</option>
-                </select>
+        <form method="post" class="w-card rp-form w-form" data-reveal style="--d:.12s">
+            {% csrf_token %}
+            <div>
+                <h2>Votre réponse</h2>
+                <p class="w-text">Choisissez comment donner suite. La personne sera prévenue dans son espace.</p>
             </div>
 
-            <!-- Confirmer -->
-            <div class="rsp-action-section" id="confirmer-section">
-                <div class="rsp-action-desc">La demande sera confirmée. Le patient recevra une notification et pourra vous contacter pour les détails.</div>
-            </div>
-
-            <!-- Rejeter -->
-            <div class="rsp-action-section" id="rejeter-section">
-                <div class="rsp-action-desc">Expliquez poliment la raison du refus — cela aide le patient à mieux comprendre et trouver une autre solution.</div>
-                <div class="rsp-group" style="margin-bottom:0">
-                    <label class="rsp-label" for="raison">Raison du rejet</label>
-                    <textarea id="raison" name="raison" class="rsp-textarea" placeholder="Expliquez poliment votre refus..."></textarea>
+            <div class="w-field">
+                <span class="w-label">Que souhaitez-vous faire ?</span>
+                <div class="w-choice" id="action">
+                    <label><input type="radio" name="action" value="programmer" required>
+                        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>
+                        <strong>Proposer un créneau</strong><small>Fixer la date de la séance</small></label>
+                    <label><input type="radio" name="action" value="confirmer">
+                        <svg viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>
+                        <strong>Accepter</strong><small>Confirmer sans date pour l'instant</small></label>
+                    <label><input type="radio" name="action" value="rejeter">
+                        <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg>
+                        <strong>Décliner</strong><small>Avec un mot d'explication</small></label>
                 </div>
             </div>
 
-            <!-- Programmer -->
-            <div class="rsp-action-section" id="programmer-section">
-                <div class="rsp-action-desc">Proposez une date et heure pour la première séance. Le patient recevra cette proposition directement.</div>
-                <div class="rsp-group" style="margin-bottom:0">
-                    <label class="rsp-label" for="date_session">Date et heure de la session</label>
-                    <input type="datetime-local" id="date_session" name="date_session" class="rsp-input">
-                </div>
+            <div class="rp-section" id="programmer-section">
+                <p>Proposez la date et l'heure de la première séance.</p>
+                <div class="w-field"><label class="w-label" for="date_session">Date et heure</label>
+                    <input type="datetime-local" id="date_session" name="date_session"></div>
+            </div>
+            <div class="rp-section" id="confirmer-section">
+                <p>La demande sera acceptée. Vous pourrez convenir d'une date ensemble dans la messagerie de la consultation.</p>
+            </div>
+            <div class="rp-section" id="rejeter-section">
+                <p>Quelques mots suffisent. Si vous le pouvez, orientez la personne vers une autre piste : cela l'aidera à ne pas rester seule.</p>
+                <div class="w-field"><label class="w-label" for="raison">Votre message</label>
+                    <textarea id="raison" name="raison" placeholder="Ex. : je ne prends pas de nouveaux patients ce mois-ci, mais…"></textarea></div>
             </div>
 
-        </div>
-
-        <div class="rsp-actions">
-            <button type="submit" class="rsp-btn-submit">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
-                </svg>
-                Envoyer la réponse
-            </button>
-            <a href="{% url 'consultation_requests_list' %}" class="rsp-btn-cancel">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
-                </svg>
-                Annuler
-            </a>
-        </div>
-    </form>
-
+            <div class="w-form-actions">
+                <button type="submit" class="w-btn"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>Envoyer ma réponse</button>
+                <a href="{% url 'consultation_requests_list' %}" class="w-btn w-btn--ghost">Annuler</a>
+            </div>
+        </form>
+    </div>
 </div>
+{% endblock %}
 
+{% block extra_js %}
 <script>
 (function() {
-    const sel = document.getElementById('action');
     const sections = {
         confirmer: document.getElementById('confirmer-section'),
         rejeter:   document.getElementById('rejeter-section'),
         programmer: document.getElementById('programmer-section'),
     };
-    const raison = document.getElementById('raison');
-    const dateInput = document.getElementById('date_session');
-
-    sel.addEventListener('change', function() {
+    const raison = document.getElementById('raison'), dateInput = document.getElementById('date_session');
+    const minDate = new Date(Date.now() + 30 * 60 * 1000), pad = n => String(n).padStart(2, '0');
+    dateInput.min = `${minDate.getFullYear()}-${pad(minDate.getMonth()+1)}-${pad(minDate.getDate())}T${pad(minDate.getHours())}:${pad(minDate.getMinutes())}`;
+    document.querySelectorAll('input[name="action"]').forEach(r => r.addEventListener('change', function() {
         Object.values(sections).forEach(s => s.classList.remove('show'));
-        raison.required = false;
-        dateInput.required = false;
-        if (this.value === 'confirmer')   sections.confirmer.classList.add('show');
-        if (this.value === 'rejeter')   { sections.rejeter.classList.add('show');   raison.required = true; }
-        if (this.value === 'programmer'){ sections.programmer.classList.add('show'); dateInput.required = true; }
-    });
+        raison.required = this.value === 'rejeter';
+        dateInput.required = this.value === 'programmer';
+        if (sections[this.value]) sections[this.value].classList.add('show');
+    }));
 })();
 </script>
 {% endblock %}

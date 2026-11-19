@@ -1,323 +1,71 @@
 {% extends 'application/base.html' %}
-{% load static %}
+{% load static wanaag %}
 
-{% block title %}Demandes de consultation — {{ request.user.psychologue_profile.titre_nom }}{% endblock %}
+{% block title %}Demandes reçues — Wanaag Corner{% endblock %}
 {% block page_title %}Demandes reçues{% endblock %}
 
 {% block extra_css %}
 <style>
-
-/* ===== HERO ===== */
-.req-hero {
-    background: linear-gradient(135deg, #231c16 0%, #362b21 55%, #594836 100%);
-    border-radius: 22px; padding: 2.2rem 2.5rem;
-    position: relative; overflow: hidden;
-    box-shadow: 0 10px 40px rgba(0,0,0,.35);
-    display: flex; align-items: center; gap: 2rem;
-}
-.req-hero::before {
-    content: ''; position: absolute; inset: 0;
-    background: radial-gradient(ellipse at 15% 50%, rgba(190,140,60,.16) 0%, transparent 60%),
-                radial-gradient(ellipse at 85% 10%, rgba(190,140,60,.09) 0%, transparent 55%);
-    pointer-events: none;
-}
-.req-hero-icon {
-    position: relative; z-index: 1; flex-shrink: 0;
-    width: 64px; height: 64px; border-radius: 18px;
-    background: rgba(190,140,60,.15); border: 1px solid rgba(190,140,60,.3);
-    display: flex; align-items: center; justify-content: center;
-}
-.req-hero-icon svg { width: 30px; height: 30px; }
-.req-hero-text { position: relative; z-index: 1; flex: 1; }
-.req-hero-badge {
-    display: inline-block; font-size: .7rem; font-weight: 700; letter-spacing: .5px;
-    padding: .2rem .7rem; border-radius: 20px; margin-bottom: .6rem; text-transform: uppercase;
-    background: rgba(190,140,60,.15); border: 1px solid rgba(190,140,60,.3); color: #be8c3c;
-}
-.req-hero-title {
-    font-size: 1.75rem; font-weight: 800; color: white; margin: 0 0 .3rem;
-    font-family: 'Newsreader', serif;
-}
-.req-hero-sub { font-size: .88rem; color: rgba(244,238,226,.5); margin: 0; }
-
-/* Stats pills in hero */
-.req-hero-stats { position: relative; z-index: 1; display: flex; gap: .8rem; flex-shrink: 0; }
-.req-stat {
-    background: rgba(190,140,60,.12); border: 1px solid rgba(190,140,60,.22);
-    border-radius: 14px; padding: .7rem 1.1rem; text-align: center; min-width: 70px;
-}
-.req-stat strong {
-    display: block; font-size: 1.5rem; font-weight: 800;
-    background: linear-gradient(135deg, #be8c3c, #ddc092);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-    line-height: 1;
-}
-.req-stat span { font-size: .68rem; color: rgba(244,238,226,.45); font-weight: 600; }
-
-/* ===== FILTER TABS ===== */
-.req-filters {
-    display: flex; gap: .6rem; flex-wrap: wrap;
-    background: white; border-radius: 16px; padding: .9rem 1.2rem;
-    box-shadow: 0 2px 16px rgba(42,33,27,.08); border: 1px solid rgba(190,140,60,.1);
-}
-.req-tab {
-    padding: .55rem 1.3rem; border-radius: 10px;
-    font-size: .85rem; font-weight: 600; text-decoration: none;
-    transition: all .2s; border: 1.5px solid transparent;
-    color: #9b8b7e; background: transparent;
-    display: flex; align-items: center; gap: .4rem;
-}
-.req-tab:hover { background: rgba(190,140,60,.08); color: var(--brown-dark); border-color: rgba(190,140,60,.2); }
-.req-tab.active {
-    background: linear-gradient(135deg, #be8c3c, #ab7e36);
-    color: white; box-shadow: 0 3px 12px rgba(190,140,60,.35);
-}
-.req-tab.active svg, .req-tab svg { width: 14px; height: 14px; }
-.req-tab-count {
-    background: rgba(255,255,255,.25); border-radius: 20px;
-    padding: .05rem .45rem; font-size: .72rem; font-weight: 700;
-}
-.req-tab:not(.active) .req-tab-count { background: rgba(190,140,60,.12); color: #ab7e36; }
-
-/* ===== CARDS ===== */
-.requests-list { display: flex; flex-direction: column; gap: 1.2rem; }
-
-.req-card {
-    background: white; border-radius: 18px; overflow: hidden;
-    box-shadow: 0 3px 20px rgba(42,33,27,.09);
-    border: 1px solid rgba(190,140,60,.1);
-    transition: box-shadow .25s, transform .25s;
-}
-.req-card:hover { box-shadow: 0 8px 32px rgba(42,33,27,.16); transform: translateY(-2px); }
-
-/* Left accent bar */
-.req-card-inner {
-    display: flex; position: relative;
-}
-.req-card-bar {
-    width: 4px; flex-shrink: 0;
-    background: linear-gradient(180deg, #be8c3c, #ab7e36);
-}
-.req-card-bar.en-attente { background: linear-gradient(180deg, #f39c12, #e67e22); }
-.req-card-bar.confirmee  { background: linear-gradient(180deg, #27ae60, #1e8449); }
-.req-card-bar.rejetee    { background: linear-gradient(180deg, #e74c3c, #c0392b); }
-
-.req-card-body { flex: 1; padding: 1.5rem 1.8rem; }
-
-/* Top row */
-.req-card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
-
-/* Avatar + name */
-.req-card-user { display: flex; align-items: center; gap: .85rem; }
-.req-avatar {
-    width: 44px; height: 44px; border-radius: 50%; flex-shrink: 0;
-    background: linear-gradient(135deg, #be8c3c, #ab7e36);
-    display: flex; align-items: center; justify-content: center;
-    color: white; font-weight: 800; font-size: 1rem;
-    box-shadow: 0 2px 10px rgba(190,140,60,.3);
-}
-.req-user-name { font-size: 1rem; font-weight: 700; color: var(--brown-dark); margin: 0 0 .2rem; }
-.req-user-date { font-size: .78rem; color: #9b8b7e; display: flex; align-items: center; gap: .35rem; }
-.req-user-date svg { width: 12px; height: 12px; }
-
-/* Status badge */
-.req-badge {
-    padding: .4rem 1rem; border-radius: 20px; font-size: .78rem; font-weight: 700;
-    white-space: nowrap; display: flex; align-items: center; gap: .35rem;
-}
-.req-badge svg { width: 13px; height: 13px; }
-.req-badge.en-attente { background: rgba(243,156,18,.12); color: #9a6e00; border: 1px solid rgba(243,156,18,.25); }
-.req-badge.confirmee  { background: rgba(39,174,96,.1);  color: #1a7a40; border: 1px solid rgba(39,174,96,.2); }
-.req-badge.rejetee    { background: rgba(231,76,60,.08); color: #b03030; border: 1px solid rgba(231,76,60,.15); }
-
-/* Subject block */
-.req-subject {
-    background: rgba(244,238,226,.6); border-radius: 12px; padding: 1rem 1.2rem;
-    border: 1px solid rgba(190,140,60,.12); margin-bottom: 1.2rem;
-}
-.req-subject-label {
-    font-size: .72rem; font-weight: 700; letter-spacing: .4px; text-transform: uppercase;
-    color: #be8c3c; margin-bottom: .35rem;
-}
-.req-subject-text { font-size: .92rem; color: var(--brown-dark); font-weight: 500; line-height: 1.5; }
-
-/* Action button */
-.req-actions { display: flex; justify-content: flex-end; }
-.req-btn {
-    padding: .65rem 1.5rem; border-radius: 10px; font-size: .85rem; font-weight: 700;
-    text-decoration: none; display: inline-flex; align-items: center; gap: .5rem;
-    transition: all .2s;
-}
-.req-btn svg { width: 15px; height: 15px; }
-.req-btn-primary {
-    background: linear-gradient(135deg, #be8c3c, #ab7e36); color: white;
-    box-shadow: 0 3px 12px rgba(190,140,60,.35);
-}
-.req-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(190,140,60,.5); }
-.req-btn-secondary {
-    background: transparent; color: var(--brown-dark);
-    border: 1.5px solid rgba(190,140,60,.35);
-}
-.req-btn-secondary:hover { background: rgba(190,140,60,.08); border-color: #be8c3c; }
-
-/* ===== EMPTY STATE ===== */
-.req-empty {
-    text-align: center; padding: 4rem 2rem;
-    background: white; border-radius: 20px;
-    box-shadow: 0 4px 24px rgba(42,33,27,.07);
-    border: 1px solid rgba(190,140,60,.1);
-}
-.req-empty-icon { font-size: 3rem; margin-bottom: 1rem; }
-.req-empty p { color: #9b8b7e; font-size: .95rem; }
-
-@media(max-width:900px) {
-    .req-hero { padding: 1.8rem 2rem; }
-}
-
-@media(max-width:640px) {
-    .req-hero { flex-wrap: wrap; padding: 1.5rem 1.4rem; gap: 1.2rem; }
-    .req-hero-stats { display: none; }
-    .req-card-top { flex-direction: column; }
-    .req-card-body { padding: 1.3rem 1.4rem; }
-    .req-filters { gap: .4rem; }
-    .req-tab { font-size: .8rem; padding: .45rem .9rem; }
-}
-
-@media(max-width:480px) {
-    .req-hero { padding: 1.3rem 1.1rem; }
-    .req-hero-icon { width: 48px; height: 48px; border-radius: 14px; }
-    .req-hero-icon svg { width: 22px; height: 22px; }
-    .req-hero-title { font-size: 1.35rem; }
-    .req-hero-sub { font-size: .8rem; }
-    .req-card-body { padding: 1.1rem 1rem; }
-    .req-filters { padding: .7rem .8rem; }
-    .req-tab { flex: 1 1 auto; justify-content: center; }
-    .req-subject { padding: .85rem 1rem; }
-    .req-actions { justify-content: stretch; }
-    .req-btn { width: 100%; justify-content: center; }
-}
+.rq{padding:clamp(18px,2.2vw,26px);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px 24px;align-items:center;overflow:hidden;}
+.rq::before{content:'';position:absolute;left:0;top:22px;bottom:22px;width:3px;border-radius:0 3px 3px 0;background:var(--tone,var(--or));}
+.rq.confirmee{--tone:var(--sauge);} .rq.rejetee{--tone:var(--danger);}
+.rq-who{display:flex;align-items:center;gap:14px;min-width:0;}
+.rq-subject{grid-column:1/-1;font-family:var(--f-display);font-size:clamp(20px,1.8vw,24px);line-height:1.25;}
+.rq-subject small{display:block;font-family:var(--f-body);font-size:13px;font-weight:500;color:var(--pierre);margin-bottom:2px;}
+.rq-foot{grid-column:1/-1;display:flex;justify-content:flex-end;gap:10px;padding-top:14px;border-top:1px solid var(--trait);}
+@media(max-width:600px){ .rq{grid-template-columns:1fr;} .rq-foot .w-btn{flex:1;} }
 </style>
 {% endblock %}
 
 {% block content %}
-
-<!-- HERO -->
-<div class="req-hero">
-    <div class="req-hero-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#be8c3c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
-            <polyline points="14 2 14 8 20 8"/>
-            <line x1="16" y1="13" x2="8" y2="13"/>
-            <line x1="16" y1="17" x2="8" y2="17"/>
-            <polyline points="10 9 9 9 8 9"/>
-        </svg>
-    </div>
-    <div class="req-hero-text">
-        <div class="req-hero-badge">Espace Psychologue</div>
-        <div class="req-hero-title">Demandes de consultation</div>
-        <div class="req-hero-sub">Gérez les demandes de vos patients — répondez avec soin et bienveillance</div>
-    </div>
-    <div class="req-hero-stats">
-        <div class="req-stat">
-            <strong>{{ consultations|length }}</strong>
-            <span>Total</span>
+<div class="w-page w-page--mid">
+    <header class="w-head">
+        <div>
+            <span class="w-kicker">Espace professionnel</span>
+            <h1>Demandes <em>reçues</em></h1>
+            <p class="w-lede">Chaque demande est un premier pas pour la personne qui l'a écrite. Une réponse, même brève, lui évite d'attendre dans le doute.</p>
         </div>
-        <div class="req-stat">
-            <strong>{{ consultations|dictsort:"statut"|length }}</strong>
-            <span>Actives</span>
-        </div>
-    </div>
-</div>
+        <div class="w-head-side"><span class="w-stat w-stat--light"><b>{{ consultations|length }}</b><span>demande{{ consultations|length|pluralize }}</span></span></div>
+    </header>
 
-<!-- FILTER TABS -->
-<div class="req-filters">
-    <a href="{% url 'consultation_requests_list' %}" class="req-tab {% if not request.GET.status %}active{% endif %}">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg>
-        Toutes
-    </a>
-    <a href="?status=en_attente" class="req-tab {% if request.GET.status == 'en_attente' %}active{% endif %}">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-        En attente
-    </a>
-    <a href="?status=confirmee" class="req-tab {% if request.GET.status == 'confirmee' %}active{% endif %}">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-        Confirmées
-    </a>
-    <a href="?status=rejetee" class="req-tab {% if request.GET.status == 'rejetee' %}active{% endif %}">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-        Rejetées
-    </a>
-</div>
+    <nav class="w-tabs" aria-label="Filtrer par état">
+        <a href="{% url 'consultation_requests_list' %}" class="w-tab {% if not request.GET.status %}active{% endif %}">Toutes</a>
+        <a href="?status=en_attente" class="w-tab {% if request.GET.status == 'en_attente' %}active{% endif %}">En attente</a>
+        <a href="?status=confirmee" class="w-tab {% if request.GET.status == 'confirmee' %}active{% endif %}">Confirmées</a>
+        <a href="?status=rejetee" class="w-tab {% if request.GET.status == 'rejetee' %}active{% endif %}">Déclinées</a>
+    </nav>
 
-<!-- LIST -->
-{% if consultations %}
-<div class="requests-list">
-    {% for consultation in consultations %}
-    <div class="req-card">
-        <div class="req-card-inner">
-            <div class="req-card-bar {{ consultation.statut }}"></div>
-            <div class="req-card-body">
-
-                <div class="req-card-top">
-                    <!-- User -->
-                    <div class="req-card-user">
-                        <div class="req-avatar">{{ consultation.utilisateur.pseudonyme|first|upper }}</div>
-                        <div>
-                            <div class="req-user-name">{{ consultation.utilisateur.pseudonyme }}</div>
-                            <div class="req-user-date">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                                {{ consultation.date_demande|date:"d/m/Y à H:i" }}
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Badge -->
-                    <span class="req-badge {{ consultation.statut }}">
-                        {% if consultation.statut == 'en_attente' %}
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                        En attente
-                        {% elif consultation.statut == 'confirmee' %}
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                        Confirmée
-                        {% else %}
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                        Rejetée
-                        {% endif %}
-                    </span>
+    {% if consultations %}
+    <div class="w-stack" data-stagger>
+        {% for consultation in consultations %}
+        <article class="w-card w-card--lift rq {{ consultation.statut }}">
+            <div class="rq-who">
+                <span class="w-av">{{ consultation.utilisateur.pseudonyme|first|upper }}</span>
+                <div style="min-width:0;">
+                    <h3>{{ consultation.utilisateur.pseudonyme }}</h3>
+                    <span class="w-text">Reçue le {{ consultation.date_demande|date:"j F Y à H:i" }} · {% if consultation.type_seance == 'visio' %}visioconférence{% else %}au cabinet{% endif %}</span>
                 </div>
-
-                <!-- Subject -->
-                <div class="req-subject">
-                    <div class="req-subject-label">Sujet de la consultation</div>
-                    <div class="req-subject-text">{{ consultation.sujet }}</div>
-                </div>
-
-                <!-- Action -->
-                <div class="req-actions">
-                    {% if consultation.statut == 'en_attente' %}
-                    <a href="{% url 'consultation_respond' consultation.id %}" class="req-btn req-btn-primary">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-                        Répondre à la demande
-                    </a>
-                    {% else %}
-                    <a href="{% url 'consultation_detail' consultation.id %}" class="req-btn req-btn-secondary">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                        Voir les détails
-                    </a>
-                    {% endif %}
-                </div>
-
             </div>
-        </div>
+            {% include 'application/partials/statut_pill.html' with statut=consultation.statut %}
+            <div class="rq-subject"><small>Sujet</small>{{ consultation.sujet }}</div>
+            <div class="rq-foot">
+                {% if consultation.statut == 'en_attente' %}
+                <a href="{% url 'consultation_detail' consultation.id %}" class="w-btn w-btn--ghost w-btn--sm">Lire l'échange</a>
+                <a href="{% url 'consultation_respond' consultation.id %}" class="w-btn w-btn--sm">Répondre</a>
+                {% else %}
+                <a href="{% url 'consultation_detail' consultation.id %}" class="w-btn w-btn--ghost w-btn--sm">Ouvrir<svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+                {% endif %}
+            </div>
+        </article>
+        {% endfor %}
     </div>
-    {% endfor %}
+    {% else %}
+    <div class="w-void">
+        <span class="w-orb"></span>
+        <h3>Aucune demande {% if request.GET.status %}dans cet état{% else %}pour le moment{% endif %}</h3>
+        <p>Les demandes de vos patients apparaîtront ici.</p>
+        {% if request.GET.status %}<a href="{% url 'consultation_requests_list' %}" class="w-btn w-btn--ghost">Tout afficher</a>{% endif %}
+    </div>
+    {% endif %}
 </div>
-
-{% else %}
-<div class="req-empty">
-    <div class="req-empty-icon">📭</div>
-    <p>Aucune demande de consultation trouvée.<br>Vos patients apparaîtront ici.</p>
-</div>
-{% endif %}
-
 {% endblock %}

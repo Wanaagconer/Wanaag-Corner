@@ -1,457 +1,129 @@
 {% extends 'application/base.html' %}
-{% load static %}
+{% load static wanaag %}
 
-{% block title %}Consultation — {{ psychologue.titre_nom }}{% endblock %}
-{% block page_title %}Consultation{% endblock %}
+{% block title %}Demander un rendez-vous — {{ psychologue.titre_nom }}{% endblock %}
+{% block page_title %}Demande de rendez-vous{% endblock %}
 
 {% block extra_css %}
 <style>
-/* ===== LAYOUT ===== */
-.crf-wrap {
-    max-width: 780px;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-}
-
-/* ===== HERO BANNER ===== */
-.crf-hero {
-    background: linear-gradient(135deg, var(--brown-dark) 0%, #362b21 55%, #231c16 100%);
-    border-radius: 22px;
-    overflow: hidden;
-    position: relative;
-    box-shadow: 0 10px 40px rgba(0,0,0,.35);
-}
-.crf-hero-bg {
-    position: absolute; inset: 0;
-    background: radial-gradient(ellipse at 10% 50%, rgba(190,140,60,.18) 0%, transparent 55%),
-                radial-gradient(ellipse at 90% 10%, rgba(190,140,60,.10) 0%, transparent 55%);
-    pointer-events: none;
-}
-.crf-hero-inner {
-    position: relative; z-index: 1;
-    padding: 2rem 2.2rem;
-    display: flex; align-items: center; gap: 2rem;
-}
-
-/* PSY avatar in hero */
-.crf-av-wrap { position: relative; flex-shrink: 0; width: 90px; height: 90px; }
-.crf-av-ring {
-    position: absolute; inset: -3px; border-radius: 50%;
-    background: conic-gradient(#be8c3c 0%, #ddc092 45%, transparent 55%, #be8c3c 100%);
-    animation: spinRing 6s linear infinite;
-}
-@keyframes spinRing { to { transform: rotate(360deg); } }
-.crf-av {
-    position: absolute; inset: 3px; border-radius: 50%; overflow: hidden;
-    background: linear-gradient(135deg, #be8c3c, var(--brown-dark));
-    border: 3px solid #231c16;
-    display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 4px 20px rgba(0,0,0,.4);
-}
-.crf-av img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.crf-av-initials { font-size: 2rem; font-weight: 800; color: white; }
-
-/* Hero text */
-.crf-hero-text { flex: 1; }
-.crf-hero-badge {
-    display: inline-block; font-size: .7rem; font-weight: 700; letter-spacing: .5px;
-    padding: .2rem .7rem; border-radius: 20px;
-    background: rgba(190,140,60,.15); border: 1px solid rgba(190,140,60,.35);
-    color: #be8c3c; margin-bottom: .6rem; text-transform: uppercase;
-}
-.crf-hero-name {
-    font-size: 1.65rem; font-weight: 800; color: white; margin: 0 0 .3rem;
-    font-family: 'Newsreader', serif;
-}
-.crf-hero-sub { font-size: .85rem; color: rgba(244,238,226,.55); margin: 0; }
-
-/* Specs pills */
-.crf-specs { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .8rem; }
-.crf-spec-pill {
-    background: rgba(190,140,60,.12); border: 1px solid rgba(190,140,60,.25);
-    color: rgba(244,238,226,.75); font-size: .72rem; font-weight: 600;
-    padding: .2rem .65rem; border-radius: 20px;
-}
-
-/* exp badge in hero */
-.crf-hero-exp {
-    margin-left: auto; flex-shrink: 0;
-    background: rgba(190,140,60,.12); border: 1px solid rgba(190,140,60,.25);
-    border-radius: 16px; padding: .7rem 1.2rem; text-align: center;
-}
-.crf-hero-exp strong {
-    display: block; font-size: 1.6rem; font-weight: 800;
-    background: linear-gradient(135deg, #be8c3c, #ddc092);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    background-clip: text; line-height: 1;
-}
-.crf-hero-exp span { font-size: .72rem; color: rgba(244,238,226,.5); font-weight: 600; }
-
-/* ===== FORM CARD ===== */
-.crf-card {
-    background: white;
-    border-radius: 22px;
-    overflow: hidden;
-    box-shadow: 0 4px 30px rgba(42,33,27,.10);
-    border: 1px solid rgba(190,140,60,.12);
-}
-.crf-card-header {
-    padding: 1.4rem 2rem 1.2rem;
-    border-bottom: 1px solid rgba(190,140,60,.12);
-    display: flex; align-items: center; gap: .8rem;
-}
-.crf-card-icon {
-    width: 38px; height: 38px; border-radius: 12px;
-    background: linear-gradient(135deg, rgba(190,140,60,.15), rgba(171,126,54,.1));
-    border: 1px solid rgba(190,140,60,.25);
-    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-}
-.crf-card-icon svg { width: 18px; height: 18px; }
-.crf-card-title { font-size: 1rem; font-weight: 800; color: var(--brown-dark); margin: 0; }
-.crf-card-sub { font-size: .78rem; color: #9b8b7e; margin: 0; }
-
-.crf-card-body { padding: 1.8rem 2rem; }
-
-/* ===== FORM FIELDS ===== */
-.crf-field { margin-bottom: 1.6rem; }
-.crf-label {
-    display: flex; align-items: center; gap: .5rem;
-    font-size: .82rem; font-weight: 700; color: var(--brown-dark);
-    margin-bottom: .55rem; letter-spacing: .2px;
-}
-.crf-label svg { width: 14px; height: 14px; opacity: .7; }
-.crf-required {
-    display: inline-block; width: 6px; height: 6px; border-radius: 50%;
-    background: linear-gradient(135deg, #be8c3c, #ab7e36); margin-left: auto;
-}
-
-.crf-input, .crf-textarea {
-    width: 100%; box-sizing: border-box;
-    padding: .85rem 1rem;
-    border: 1.5px solid rgba(190,140,60,.25);
-    border-radius: 12px;
-    font-family: inherit; font-size: .92rem; color: var(--brown-dark);
-    background: rgba(244,238,226,.35);
-    transition: border-color .2s, box-shadow .2s, background .2s;
-    outline: none;
-}
-.crf-input::placeholder, .crf-textarea::placeholder { color: #9b8b7e; font-size: .88rem; }
-.crf-input:focus, .crf-textarea:focus {
-    border-color: #be8c3c;
-    background: white;
-    box-shadow: 0 0 0 3px rgba(190,140,60,.12);
-}
-.crf-textarea { resize: vertical; min-height: 180px; line-height: 1.65; }
-
-.crf-count {
-    display: flex; justify-content: flex-end;
-    font-size: .75rem; color: #9b8b7e; margin-top: .35rem;
-}
-.crf-count span { font-weight: 700; color: #ab7e36; }
-
-/* ===== ACTIONS ===== */
-.crf-actions {
-    display: flex; gap: 1rem; padding: 1.4rem 2rem;
-    border-top: 1px solid rgba(190,140,60,.10);
-    background: rgba(244,238,226,.3);
-}
-.crf-btn-submit {
-    flex: 1; padding: .9rem 1.5rem;
-    background: linear-gradient(135deg, #be8c3c, #ab7e36);
-    color: white; border: none; border-radius: 12px;
-    font-weight: 700; font-size: .92rem; cursor: pointer; letter-spacing: .3px;
-    box-shadow: 0 4px 16px rgba(190,140,60,.35);
-    transition: all .2s; display: flex; align-items: center; justify-content: center; gap: .5rem;
-}
-.crf-btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(190,140,60,.5); }
-.crf-btn-submit svg { width: 17px; height: 17px; }
-
-.crf-btn-cancel {
-    padding: .9rem 1.6rem;
-    background: transparent; color: #ab7e36;
-    border: 1.5px solid rgba(190,140,60,.4); border-radius: 12px;
-    font-weight: 700; font-size: .88rem; cursor: pointer; letter-spacing: .3px;
-    text-decoration: none; display: flex; align-items: center; justify-content: center; gap: .4rem;
-    transition: all .2s;
-}
-.crf-btn-cancel:hover { background: rgba(190,140,60,.08); border-color: #be8c3c; }
-.crf-btn-cancel svg { width: 15px; height: 15px; }
-
-/* ===== SUCCESS TOAST ===== */
-.crf-tip {
-    display: flex; align-items: flex-start; gap: .8rem;
-    background: rgba(190,140,60,.08); border: 1px solid rgba(190,140,60,.2);
-    border-radius: 14px; padding: 1rem 1.3rem;
-}
-.crf-tip-icon { flex-shrink: 0; margin-top: .05rem; }
-.crf-tip-icon svg { width: 18px; height: 18px; }
-.crf-tip p { margin: 0; font-size: .82rem; color: #ab7e36; line-height: 1.5; }
-.crf-tip strong { color: var(--brown-dark); }
-
-@media(max-width:900px) {
-    .crf-wrap { max-width: 100%; }
-}
-
-@media(max-width:640px) {
-    .crf-hero-inner { flex-wrap: wrap; padding: 1.6rem 1.4rem; gap: 1.2rem; }
-    .crf-hero-exp { margin-left: 0; }
-    .crf-actions { flex-direction: column; padding: 1.2rem 1.3rem; }
-    .crf-card-body { padding: 1.4rem 1.2rem; }
-    .crf-card-header { padding: 1.2rem 1.3rem 1rem; flex-wrap: wrap; }
-}
-
-@media(max-width:480px) {
-    .crf-hero-inner { padding: 1.3rem 1rem; gap: 1rem; }
-    .crf-av-wrap { width: 68px; height: 68px; }
-    .crf-av-initials { font-size: 1.4rem; }
-    .crf-hero-name { font-size: 1.25rem; }
-    .crf-hero-sub { font-size: .78rem; }
-    .crf-hero-exp { width: 100%; box-sizing: border-box; }
-    .crf-card-header { padding: 1rem; }
-    .crf-card-body { padding: 1.1rem .9rem; }
-    .crf-actions { padding: 1rem; }
-    .crf-input, .crf-textarea { font-size: 16px; }
-    .crf-btn-submit, .crf-btn-cancel { font-size: .85rem; padding: .85rem 1rem; width: 100%; box-sizing: border-box; }
-    /* Seance type buttons (inline-styled flex row) stack on very small screens */
-    .crf-card-body > .crf-field:first-child > div[style*="display:flex"] {
-        flex-direction: column !important;
-    }
-}
+.cr{display:grid;grid-template-columns:minmax(280px,380px) minmax(0,1fr);gap:clamp(18px,2.4vw,32px);align-items:start;}
+.cr-pro{position:sticky;top:calc(var(--topbar-height) + 16px);overflow:hidden;}
+.cr-pro-top{position:relative;padding:34px 26px 26px;background:var(--encre);color:var(--sable);display:flex;flex-direction:column;align-items:flex-start;gap:14px;overflow:hidden;isolation:isolate;}
+.cr-pro-top::before{content:'';position:absolute;inset:0;z-index:-1;background:radial-gradient(320px 220px at 100% 0%,rgba(190,140,60,.55),transparent 65%),radial-gradient(260px 200px at 0% 110%,rgba(122,138,102,.45),transparent 65%);}
+.cr-pro-top .w-av{box-shadow:0 0 0 4px rgba(244,238,226,.18);}
+.cr-pro-top h2{font-family:var(--f-display);font-weight:300;font-size:clamp(30px,2.8vw,40px);line-height:1;letter-spacing:-.03em;}
+.cr-pro-top p{font-size:15px;color:rgba(244,238,226,.72);line-height:1.55;}
+.cr-pro-body{padding:22px 26px 26px;display:flex;flex-direction:column;gap:18px;}
+.cr-exp{display:flex;align-items:baseline;gap:10px;font-size:14.5px;color:var(--taupe);}
+.cr-exp b{font-family:var(--f-display);font-weight:300;font-size:44px;line-height:1;color:var(--encre);}
+.cr-bio{font-size:15.5px;line-height:1.7;color:var(--taupe);white-space:pre-line;}
+.cr-form{padding:clamp(22px,3vw,38px);}
+.cr-form h2{font-family:var(--f-display);font-weight:400;font-size:clamp(28px,2.8vw,38px);letter-spacing:-.025em;line-height:1.05;margin-bottom:6px;}
+.cr-count{font-size:12.5px;color:var(--pierre);text-align:right;}
+@media(max-width:900px){ .cr{grid-template-columns:1fr;} .cr-pro{position:static;} }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="crf-wrap">
+<div class="w-page">
+    <a href="{% url 'specialistes_categorie' psychologue.type_specialiste %}" class="w-back"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg>Retour aux profils</a>
 
-    <!-- HERO: profil du spécialiste -->
-    <div class="crf-hero">
-        <div class="crf-hero-bg"></div>
-        <div class="crf-hero-inner">
-            <!-- Avatar -->
-            <div class="crf-av-wrap">
-                <div class="crf-av-ring"></div>
-                <div class="crf-av">
-                    {% if psychologue.photo %}
-                        <img src="{{ psychologue.photo.url }}" alt="{{ psychologue.titre_nom }}">
-                    {% else %}
-                        <span class="crf-av-initials">{{ psychologue.user.pseudonyme|first|upper }}</span>
-                    {% endif %}
-                </div>
+    <div class="cr">
+        <aside class="w-card cr-pro" data-reveal>
+            <div class="cr-pro-top">
+                <span class="w-av w-av--xl">{% if psychologue.photo %}<img src="{{ psychologue.photo.url }}" alt="{{ psychologue.titre_nom }}">{% else %}{{ psychologue.user.pseudonyme|first|upper }}{% endif %}</span>
+                <span class="w-pill w-pill--glass">{{ psychologue.get_type_specialiste_display|sobre }}</span>
+                <h2>{{ psychologue.titre_nom }}</h2>
+                {% if psychologue.description_specialite %}<p>{{ psychologue.description_specialite }}</p>{% endif %}
             </div>
-
-            <!-- Text -->
-            <div class="crf-hero-text">
-                <div class="crf-hero-badge">{{ psychologue.icone_specialite }} {{ psychologue.get_type_specialiste_display }}</div>
-                <div class="crf-hero-name">{{ psychologue.titre_nom }}</div>
-                <div class="crf-hero-sub">{{ psychologue.description_specialite }}</div>
+            <div class="cr-pro-body">
+                <div class="cr-exp"><b>{{ psychologue.experience_ans }}</b><span>an{{ psychologue.experience_ans|pluralize }} d'expérience</span></div>
                 {% if psychologue.specialites %}
-                <div class="crf-specs">
-                    {% for spec in psychologue.specialites|split:',' %}
-                    <span class="crf-spec-pill">{{ spec|trim }}</span>
-                    {% endfor %}
-                </div>
+                <div class="w-row-flex" style="gap:6px;">{% for spec in psychologue.specialites|decoupe %}<span class="w-pill w-pill--or">{{ spec }}</span>{% endfor %}</div>
+                {% endif %}
+                {% if psychologue.biographie %}
+                <div><h3 style="margin-bottom:8px;">À propos</h3><p class="cr-bio">{{ psychologue.biographie }}</p></div>
                 {% endif %}
             </div>
+        </aside>
 
-            <!-- Exp -->
-            <div class="crf-hero-exp">
-                <strong>{{ psychologue.experience_ans }}</strong>
-                <span>ans d'exp.</span>
-            </div>
-        </div>
-    </div>
-
-    {% if psychologue.biographie %}
-    <!-- BIO -->
-    <div class="crf-card">
-        <div class="crf-card-header">
-            <div class="crf-card-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="#be8c3c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 2a10 10 0 100 20 10 10 0 000-20z"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
-                </svg>
-            </div>
+        {% if demande_en_cours %}
+        <div class="w-card cr-form w-form" data-reveal style="--d:.12s">
             <div>
-                <div class="crf-card-title">À propos de {{ psychologue.titre_nom }}</div>
-                <div class="crf-card-sub">Présentation du profil</div>
+                <h2>Vous avez déjà une demande en cours</h2>
+                <p class="w-text">Votre échange avec {{ psychologue.titre_nom }} est ouvert. Vous pouvez y écrire à tout moment, sans envoyer de nouvelle demande.</p>
+            </div>
+            <div class="w-row-flex">{% include 'application/partials/statut_pill.html' with statut=demande_en_cours.statut %}<span class="w-text">{{ demande_en_cours.sujet }}</span></div>
+            <div class="w-form-actions">
+                <a href="{% url 'consultation_detail' demande_en_cours.id %}" class="w-btn">Ouvrir ma consultation</a>
+                <a href="{% url 'mes_consultations' %}" class="w-btn w-btn--ghost">Toutes mes consultations</a>
             </div>
         </div>
-        <div class="crf-card-body">
-            <p style="margin:0;font-size:.92rem;line-height:1.75;color:var(--brown);white-space:pre-line;">{{ psychologue.biographie }}</p>
-        </div>
-    </div>
-    {% endif %}
-
-    <!-- TIP -->
-    <div class="crf-tip">
-        <div class="crf-tip-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#be8c3c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-            </svg>
-        </div>
-        <p><strong>Confidentialité garantie.</strong> Votre message est strictement confidentiel et ne sera visible que par {{ psychologue.titre_nom }}. Décrivez votre situation librement.</p>
-    </div>
-
-    <!-- FORM -->
-    <form method="post" class="crf-card">
-        {% csrf_token %}
-
-        <div class="crf-card-header">
-            <div class="crf-card-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="#be8c3c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
-                </svg>
-            </div>
+        {% else %}
+        <form method="post" class="w-card cr-form w-form" data-reveal style="--d:.12s">
+            {% csrf_token %}
             <div>
-                <div class="crf-card-title">Votre demande de consultation</div>
-                <div class="crf-card-sub">Remplissez le formulaire ci-dessous</div>
+                <h2>Votre demande</h2>
+                <p class="w-text">Dites simplement ce qui vous amène. Vous n'avez pas besoin de tout expliquer.</p>
             </div>
-        </div>
+            <div class="w-note">
+                <svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+                <span><strong>Confidentiel.</strong> Votre message ne sera lu que par {{ psychologue.titre_nom }}.</span>
+            </div>
 
-        <div class="crf-card-body">
-
-            <!-- Type de séance -->
-            <div class="crf-field">
-                <label class="crf-label">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-                    Type de séance
-                    <span class="crf-required"></span>
-                </label>
-                <input type="hidden" name="type_seance" id="typeSeanceInput" value="presentiel">
-                <div style="display:flex;gap:1rem;">
-                    <!-- Présentiel -->
-                    <button type="button" id="btn-presentiel" onclick="selectSeance('presentiel')"
-                        style="flex:1;padding:1.2rem 1rem;border-radius:16px;cursor:pointer;
-                               border:2px solid #be8c3c;background:linear-gradient(135deg,rgba(190,140,60,.18),rgba(190,140,60,.08));
-                               display:flex;flex-direction:column;align-items:center;gap:.6rem;transition:all .2s;">
-                        <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="#be8c3c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
-                        </svg>
-                        <div style="font-weight:800;font-size:.95rem;color:var(--brown-dark);">Présentiel</div>
-                        <div style="font-size:.75rem;color:#5e5044;text-align:center;">Rencontre physique au cabinet</div>
-                    </button>
-                    <!-- Visioconférence -->
-                    <button type="button" id="btn-visio" onclick="selectSeance('visio')"
-                        style="flex:1;padding:1.2rem 1rem;border-radius:16px;cursor:pointer;
-                               border:2px solid rgba(190,140,60,.25);background:rgba(244,238,226,.4);
-                               display:flex;flex-direction:column;align-items:center;gap:.6rem;transition:all .2s;">
-                        <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="#5e5044" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                            <polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
-                        </svg>
-                        <div style="font-weight:800;font-size:.95rem;color:var(--brown-dark);">Visioconférence</div>
-                        <div style="font-size:.75rem;color:#5e5044;text-align:center;">Appel vidéo sécurisé en ligne</div>
-                    </button>
+            <div class="w-field">
+                <span class="w-label">Type de séance</span>
+                <div class="w-choice">
+                    <label>
+                        <input type="radio" name="type_seance" value="presentiel" checked>
+                        <svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>
+                        <strong>Au cabinet</strong><small>Rencontre en personne</small>
+                    </label>
+                    <label>
+                        <input type="radio" name="type_seance" value="visio">
+                        <svg viewBox="0 0 24 24"><rect x="2" y="5" width="14" height="14" rx="3"/><path d="m22 8-6 4 6 4z"/></svg>
+                        <strong>En visioconférence</strong><small>Appel vidéo depuis chez vous</small>
+                    </label>
                 </div>
             </div>
 
-            <!-- Date et heure souhaitées -->
-            <div class="crf-field">
-                <label class="crf-label" for="date_souhaitee">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
-                    </svg>
-                    Date et heure souhaitées
-                    <span class="crf-required"></span>
-                </label>
-                <input
-                    class="crf-input" type="datetime-local" id="date_souhaitee" name="date_souhaitee"
-                    required
-                    style="cursor:pointer;"
-                >
-                <div style="font-size:.75rem;color:#9b8b7e;margin-top:.35rem;">
-                    Choisissez la date et l'heure de votre séance
-                </div>
+            <div class="w-field">
+                <label class="w-label" for="date_souhaitee">Date et heure souhaitées</label>
+                <input type="datetime-local" id="date_souhaitee" name="date_souhaitee" required>
+                <span class="w-hint">Le spécialiste confirmera ce créneau ou vous en proposera un autre.</span>
             </div>
 
-            <!-- Sujet -->
-            <div class="crf-field">
-                <label class="crf-label" for="sujet">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/>
-                        <line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
-                    </svg>
-                    Sujet de la consultation
-                    <span class="crf-required"></span>
-                </label>
-                <input
-                    class="crf-input" type="text" id="sujet" name="sujet"
-                    placeholder="Ex: Gestion de l'anxiété, Troubles du sommeil, Dépression…"
-                    required maxlength="200"
-                >
-                <div class="crf-count"><span id="sujet-count">0</span>/200</div>
+            <div class="w-field">
+                <label class="w-label" for="sujet">Sujet <small><span id="sujet-count">0</span> / 200</small></label>
+                <input type="text" id="sujet" name="sujet" placeholder="Ex. : anxiété, troubles du sommeil, période difficile…" required maxlength="200">
             </div>
 
-            <!-- Message -->
-            <div class="crf-field" style="margin-bottom:0">
-                <label class="crf-label" for="message">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
-                    </svg>
-                    Votre message
-                    <span class="crf-required"></span>
-                </label>
-                <textarea
-                    class="crf-textarea" id="message" name="message"
-                    placeholder="Décrivez votre situation, ce qui vous préoccupe et ce que vous attendez de cette consultation…"
-                    required maxlength="2000"
-                ></textarea>
-                <div class="crf-count"><span id="msg-count">0</span>/2000</div>
+            <div class="w-field">
+                <label class="w-label" for="message">Votre message <small><span id="msg-count">0</span> / 2000</small></label>
+                <textarea id="message" name="message" placeholder="Ce que vous vivez en ce moment, et ce que vous attendez de cette consultation." required maxlength="2000" style="min-height:180px;"></textarea>
             </div>
 
-        </div>
-
-        <div class="crf-actions">
-            <button type="submit" class="crf-btn-submit">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
-                </svg>
-                Envoyer la demande
-            </button>
-            <a href="{% url 'psychologues_list' %}" class="crf-btn-cancel">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
-                </svg>
-                Retour
-            </a>
-        </div>
-    </form>
-
+            <div class="w-form-actions">
+                <button type="submit" class="w-btn"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>Envoyer ma demande</button>
+                <a href="{% url 'psychologues_list' %}" class="w-btn w-btn--ghost">Annuler</a>
+            </div>
+        </form>
+        {% endif %}
+    </div>
 </div>
+{% endblock %}
 
+{% block extra_js %}
 <script>
 (function(){
-    // Date minimum = maintenant + 1h
     const dtInput = document.getElementById('date_souhaitee');
+    if (!dtInput) return;
     const minDate = new Date(Date.now() + 60 * 60 * 1000);
     const pad = n => String(n).padStart(2, '0');
     dtInput.min = `${minDate.getFullYear()}-${pad(minDate.getMonth()+1)}-${pad(minDate.getDate())}T${pad(minDate.getHours())}:${pad(minDate.getMinutes())}`;
-
-    const sujet = document.getElementById('sujet');
-    const msg   = document.getElementById('message');
+    const sujet = document.getElementById('sujet'), msg = document.getElementById('message');
     sujet.addEventListener('input', () => document.getElementById('sujet-count').textContent = sujet.value.length);
     msg.addEventListener('input',   () => document.getElementById('msg-count').textContent   = msg.value.length);
 })();
-
-function selectSeance(type) {
-    document.getElementById('typeSeanceInput').value = type;
-    const btnP = document.getElementById('btn-presentiel');
-    const btnV = document.getElementById('btn-visio');
-    if (type === 'presentiel') {
-        btnP.style.border = '2px solid #be8c3c';
-        btnP.style.background = 'linear-gradient(135deg,rgba(190,140,60,.18),rgba(190,140,60,.08))';
-        btnP.querySelector('svg').setAttribute('stroke','#be8c3c');
-        btnV.style.border = '2px solid rgba(190,140,60,.25)';
-        btnV.style.background = 'rgba(244,238,226,.4)';
-        btnV.querySelector('svg').setAttribute('stroke','#5e5044');
-    } else {
-        btnV.style.border = '2px solid #be8c3c';
-        btnV.style.background = 'linear-gradient(135deg,rgba(190,140,60,.18),rgba(190,140,60,.08))';
-        btnV.querySelector('svg').setAttribute('stroke','#be8c3c');
-        btnP.style.border = '2px solid rgba(190,140,60,.25)';
-        btnP.style.background = 'rgba(244,238,226,.4)';
-        btnP.querySelector('svg').setAttribute('stroke','#5e5044');
-    }
-}
 </script>
 {% endblock %}

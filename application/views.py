@@ -602,6 +602,11 @@ def consultation_request_form(request, psychologue_id):
     
     context = {
         'psychologue': psychologue,
+        'demande_en_cours': ConsultationRequest.objects.filter(
+            utilisateur=request.user,
+            psychologue=psychologue,
+            statut__in=['en_attente', 'confirmee'],
+        ).first(),
     }
     return render(request, 'application/consultation_request_form.html', context)
 

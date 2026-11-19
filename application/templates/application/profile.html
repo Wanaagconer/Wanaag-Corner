@@ -1,456 +1,147 @@
 {% extends 'application/base.html' %}
-{% load static %}
+{% load static wanaag %}
 
 {% block title %}{{ profile_user.pseudonyme }} — Wanaag Corner{% endblock %}
-{% block page_title %}Profil{% endblock %}
+{% block page_title %}{% if is_own_profile %}Mon profil{% else %}Profil{% endif %}{% endblock %}
 
 {% block extra_css %}
 <style>
-:root {
-    --gold: #be8c3c; --gold-light: #ddc092; --gold-glow: rgba(190,140,60,.35);
-    --dark: #231c16; --card: #ffffff; --radius: 22px;
-    --shadow: 0 4px 24px rgba(42,33,27,.10);
-}
+.pr-hero{grid-template-columns:auto minmax(0,1fr);align-items:center;}
+.pr-av{position:relative;}
+.pr-av .w-av{--s:clamp(104px,13vw,148px);box-shadow:0 0 0 5px rgba(244,238,226,.14),0 0 0 6px rgba(221,192,146,.5);}
+.pr-av::before{content:'';position:absolute;inset:-18px;border-radius:50%;border:1px solid rgba(221,192,146,.35);animation:markRing 7s var(--ease) infinite;}
+.pr-av-edit{position:absolute;right:2px;bottom:2px;width:40px;height:40px;border-radius:50%;background:var(--sable);color:var(--encre);display:grid;place-items:center;cursor:pointer;box-shadow:var(--shadow-md);transition:transform .5s var(--ease),background .3s;}
+.pr-av-edit:hover{transform:scale(1.1);background:var(--or-light);}
+.pr-av-edit svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+.pr-bio{margin-top:12px;font-size:16px;line-height:1.6;color:rgba(244,238,226,.78);max-width:34em;white-space:pre-line;}
+.pr-mail{font-size:14.5px;color:rgba(244,238,226,.55);margin-top:6px;}
+.pr-stats{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px;align-items:center;}
+#followBtn.following{background:rgba(244,238,226,.12);color:var(--sable);border-color:rgba(244,238,226,.25);box-shadow:none;}
 
-/* ===== LAYOUT ===== */
-.profile-wrap { max-width: 860px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.6rem; }
-
-/* ===== HERO CARD ===== */
-.profile-hero {
-    background: linear-gradient(135deg, #231c16 0%, #362b21 55%, #231c16 100%);
-    border-radius: var(--radius); overflow: hidden; position: relative;
-    box-shadow: 0 12px 48px rgba(0,0,0,.35); border: 1px solid rgba(190,140,60,.12);
-}
-.profile-hero::before {
-    content: ''; position: absolute; inset: 0;
-    background: linear-gradient(rgba(190,140,60,.04) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(190,140,60,.04) 1px, transparent 1px);
-    background-size: 36px 36px; pointer-events: none;
-}
-.profile-hero-glow {
-    position: absolute; top: -80px; right: -80px;
-    width: 300px; height: 300px;
-    background: radial-gradient(circle, rgba(190,140,60,.16) 0%, transparent 65%);
-    border-radius: 50%; pointer-events: none;
-}
-.profile-hero-inner {
-    position: relative; z-index: 1;
-    padding: 2.5rem 2.5rem 2rem; display: flex; align-items: flex-start; gap: 2rem;
-}
-
-/* Avatar */
-.profile-av-wrap { position: relative; flex-shrink: 0; }
-.profile-av-ring {
-    position: absolute; inset: -4px; border-radius: 50%;
-    background: conic-gradient(var(--gold), var(--gold-light), transparent 60%, var(--gold));
-    animation: spinRing 5s linear infinite;
-}
-@keyframes spinRing { to { transform: rotate(360deg); } }
-.profile-av {
-    position: relative; z-index: 1;
-    width: 100px; height: 100px; border-radius: 50%; overflow: hidden;
-    background: linear-gradient(135deg, var(--gold), #ab7e36);
-    display: flex; align-items: center; justify-content: center;
-    color: white; font-size: 2.5rem; font-weight: 800;
-    border: 3px solid rgba(190,140,60,.3);
-}
-.profile-av img { width: 100%; height: 100%; object-fit: cover; }
-.profile-av-edit {
-    position: absolute; bottom: 4px; right: 4px; z-index: 2;
-    width: 28px; height: 28px; border-radius: 50%;
-    background: var(--gold); border: 2px solid white;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer; transition: transform .2s;
-}
-.profile-av-edit:hover { transform: scale(1.15); }
-.profile-av-edit svg { width: 12px; height: 12px; fill: white; }
-
-/* Info */
-.profile-info { flex: 1; }
-.profile-badge {
-    display: inline-flex; align-items: center; gap: .4rem;
-    font-size: .7rem; font-weight: 700; letter-spacing: .5px; text-transform: uppercase;
-    padding: .2rem .7rem; border-radius: 20px; margin-bottom: .6rem;
-    background: rgba(190,140,60,.15); border: 1px solid rgba(190,140,60,.3); color: var(--gold);
-}
-.profile-name {
-    font-family: 'Newsreader', serif;
-    font-size: 2rem; font-weight: 800; color: white; margin: 0 0 .3rem;
-}
-.profile-email { font-size: .85rem; color: rgba(244,238,226,.45); margin-bottom: .7rem; }
-.profile-bio { font-size: .9rem; color: rgba(244,238,226,.65); line-height: 1.6; max-width: 480px; }
-
-/* Stats */
-.profile-stats {
-    display: flex; gap: 1.2rem; margin-top: 1.2rem; flex-wrap: wrap;
-}
-.pstat {
-    display: flex; flex-direction: column; align-items: center;
-    background: rgba(190,140,60,.1); border: 1px solid rgba(190,140,60,.2);
-    border-radius: 14px; padding: .7rem 1.4rem; min-width: 80px;
-    cursor: pointer; transition: all .2s; text-decoration: none;
-}
-.pstat:hover { background: rgba(190,140,60,.18); transform: translateY(-2px); }
-.pstat .n { font-size: 1.5rem; font-weight: 800; color: white; line-height: 1; }
-.pstat .l { font-size: .68rem; color: rgba(244,238,226,.5); text-transform: uppercase; letter-spacing: .5px; margin-top: .25rem; }
-
-/* Follow button */
-.btn-follow {
-    display: inline-flex; align-items: center; gap: .5rem;
-    padding: .7rem 1.8rem; border-radius: 50px; font-weight: 800; font-size: .88rem;
-    cursor: pointer; border: none; transition: all .22s; margin-top: 1rem;
-    background: linear-gradient(135deg, var(--gold), #ab7e36);
-    color: white; box-shadow: 0 4px 18px var(--gold-glow);
-}
-.btn-follow:hover { transform: translateY(-2px); box-shadow: 0 8px 28px var(--gold-glow); }
-.btn-follow.following {
-    background: rgba(190,140,60,.12); border: 1.5px solid rgba(190,140,60,.35);
-    color: var(--gold); box-shadow: none;
-}
-.btn-follow.following:hover { background: rgba(231,76,60,.1); border-color: #e74c3c; color: #e74c3c; }
-.btn-follow svg { width: 16px; height: 16px; fill: currentColor; }
-
-/* ===== TABS ===== */
-.profile-tabs {
-    display: flex; gap: .5rem; background: white; border-radius: 18px;
-    padding: .7rem .8rem; box-shadow: var(--shadow); border: 1px solid rgba(190,140,60,.1);
-}
-.ptab {
-    flex: 1; padding: .6rem 1rem; border-radius: 12px; border: none; background: none;
-    cursor: pointer; font-size: .85rem; font-weight: 700; color: var(--brown-light);
-    transition: all .18s; display: flex; align-items: center; justify-content: center; gap: .4rem;
-}
-.ptab:hover { background: rgba(190,140,60,.08); color: var(--brown-dark); }
-.ptab.active { background: linear-gradient(135deg, var(--gold), #ab7e36); color: white; box-shadow: 0 4px 14px var(--gold-glow); }
-.ptab svg { width: 15px; height: 15px; fill: currentColor; }
-
-/* ===== TAB CONTENT ===== */
-.tab-pane { display: none; }
-.tab-pane.active { display: block; }
-
-/* ===== EDIT FORM ===== */
-.edit-card {
-    background: white; border-radius: var(--radius); padding: 2rem;
-    box-shadow: var(--shadow); border: 1px solid rgba(190,140,60,.12);
-}
-.edit-section-title {
-    font-size: .72rem; font-weight: 800; letter-spacing: .7px; text-transform: uppercase;
-    color: var(--brown-light); margin-bottom: 1.2rem; padding-bottom: .6rem;
-    border-bottom: 1px solid rgba(190,140,60,.15);
-}
-.edit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-.edit-row { display: flex; flex-direction: column; gap: .4rem; }
-.edit-row.full { grid-column: 1 / -1; }
-.edit-row label { font-size: .78rem; font-weight: 700; color: var(--brown-light); text-transform: uppercase; letter-spacing: .4px; }
-.edit-row input, .edit-row textarea {
-    padding: .75rem 1rem; border: 1.5px solid rgba(190,140,60,.2);
-    border-radius: 12px; font-size: .92rem; font-family: inherit;
-    color: var(--brown-dark); background: rgba(248,243,238,.5); outline: none;
-    transition: all .18s;
-}
-.edit-row input:focus, .edit-row textarea:focus {
-    border-color: var(--gold); background: white;
-    box-shadow: 0 0 0 3px rgba(190,140,60,.15);
-}
-.edit-row textarea { resize: vertical; min-height: 80px; }
-.edit-submit {
-    display: inline-flex; align-items: center; gap: .5rem;
-    padding: .75rem 2rem; border-radius: 50px; border: none; cursor: pointer;
-    background: linear-gradient(135deg, var(--gold), #ab7e36);
-    color: white; font-weight: 800; font-size: .9rem;
-    box-shadow: 0 4px 16px var(--gold-glow); transition: all .2s; margin-top: 1.2rem;
-}
-.edit-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 24px var(--gold-glow); }
-.edit-submit svg { width: 16px; height: 16px; fill: currentColor; }
-
-/* Toast */
-.profile-toast {
-    position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(80px);
-    background: #231c16; color: white; padding: .75rem 1.5rem; border-radius: 50px;
-    font-size: .88rem; font-weight: 700; z-index: 9999;
-    box-shadow: 0 8px 30px rgba(0,0,0,.3); border: 1px solid rgba(190,140,60,.2);
-    transition: transform .3s cubic-bezier(.34,1.56,.64,1); pointer-events: none;
-}
-.profile-toast.show { transform: translateX(-50%) translateY(0); }
-.profile-toast.error { border-color: rgba(231,76,60,.4); }
-
-/* ===== POSTS GRID ===== */
-.posts-grid {
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1.2rem;
-}
-.post-thumb {
-    border-radius: 18px; overflow: hidden; background: white;
-    box-shadow: var(--shadow); border: 1px solid rgba(190,140,60,.1);
-    transition: all .25s; cursor: pointer; text-decoration: none; display: block;
-    position: relative;
-}
-.post-thumb:hover { transform: translateY(-4px); box-shadow: 0 14px 40px rgba(42,33,27,.18); }
-.post-thumb-img {
-    width: 100%; height: 200px; object-fit: cover; background: linear-gradient(135deg, #fcfaf4, #e4dbcb);
-    display: block;
-}
-.post-thumb-no-img {
-    width: 100%; height: 200px;
-    background: linear-gradient(135deg, rgba(190,140,60,.12), rgba(190,140,60,.04));
-    display: flex; align-items: center; justify-content: center;
-}
-.post-thumb-no-img svg { width: 44px; height: 44px; fill: rgba(190,140,60,.35); }
-.post-thumb-body { padding: .9rem 1rem; }
-.post-thumb-text { font-size: .85rem; color: var(--brown-dark); line-height: 1.5; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.post-thumb-meta { display: flex; align-items: center; gap: .8rem; margin-top: .5rem; font-size: .75rem; color: #b1a59a; }
-.post-thumb-meta svg { width: 13px; height: 13px; fill: currentColor; }
-
-/* No posts */
-.no-posts {
-    text-align: center; padding: 4rem 2rem;
-    background: white; border-radius: var(--radius);
-    box-shadow: var(--shadow); border: 1px solid rgba(190,140,60,.1);
-}
-.no-posts-icon {
-    width: 70px; height: 70px; border-radius: 22px;
-    background: rgba(190,140,60,.08); border: 1.5px solid rgba(190,140,60,.18);
-    display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;
-}
-.no-posts-icon svg { width: 32px; height: 32px; fill: rgba(190,140,60,.4); }
-.no-posts h3 { color: var(--brown-dark); margin-bottom: .4rem; }
-.no-posts p { color: #b1a59a; font-size: .88rem; }
-
-@media(max-width: 600px) {
-    .profile-hero-inner { flex-direction: column; align-items: center; text-align: center; padding:1.8rem 1.4rem 1.6rem; gap:1.2rem; }
-    .profile-av { width:80px; height:80px; font-size:2rem; }
-    .profile-name { font-size:1.5rem; }
-    .edit-grid { grid-template-columns: 1fr; }
-    .edit-card { padding:1.4rem; }
-    .profile-stats { justify-content: center; }
-    .profile-tabs { flex-wrap:wrap; gap:.4rem; padding:.6rem; }
-    .ptab { flex:1 1 45%; font-size:.8rem; padding:.6rem .5rem; }
-    .btn-follow { width:100%; justify-content:center; }
-    .edit-row input, .edit-row textarea { font-size:16px; }
-}
-@media(max-width: 480px) {
-    .profile-hero-inner { padding:1.4rem 1rem 1.3rem; }
-    .profile-av { width:70px; height:70px; font-size:1.7rem; }
-    .profile-name { font-size:1.3rem; }
-    .pstat { padding:.6rem 1rem; min-width:70px; }
-    .pstat .n { font-size:1.2rem; }
-    .post-thumb-img, .post-thumb-no-img { height:150px; }
-    .edit-card { padding:1.1rem; }
-}
+.tab-pane{display:none;}
+.tab-pane.active{display:block;animation:wMsg .6s var(--ease);}
+.pr-post{display:flex !important;flex-direction:column;overflow:hidden;height:100%;}
+.pr-post-body{padding:16px 18px 18px;display:flex;flex-direction:column;gap:10px;flex:1;}
+.pr-post-text{flex:1;font-size:15px;line-height:1.55;color:var(--encre);display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;}
+.pr-post-text strong{font-family:var(--f-display);font-weight:400;font-size:20px;line-height:1.2;display:block;margin-bottom:4px;}
+.pr-post--text .pr-post-body{padding-top:22px;}
+.pr-post--text .pr-post-text{font-family:var(--f-display);font-size:19px;line-height:1.35;-webkit-line-clamp:7;}
+.pr-form{padding:clamp(22px,3vw,36px);max-width:760px;}
+.pr-form h2{font-family:var(--f-display);font-weight:400;font-size:clamp(26px,2.6vw,34px);letter-spacing:-.02em;margin-bottom:4px;}
+.profile-toast{position:fixed;left:50%;bottom:30px;z-index:9200;transform:translate(-50%,24px);opacity:0;pointer-events:none;padding:12px 20px;border-radius:999px;background:var(--encre);color:var(--sable);font-size:14.5px;font-weight:500;box-shadow:var(--shadow-lg);transition:opacity .4s,transform .5s var(--ease);max-width:92vw;text-align:center;}
+.profile-toast.show{opacity:1;transform:translate(-50%,0);}
+.profile-toast.error{background:var(--danger);color:#fff;}
+@media(max-width:700px){ .pr-hero{grid-template-columns:1fr;justify-items:start;} }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="profile-wrap">
+<div class="w-page">
 
-  <!-- ===== HERO ===== -->
-  <div class="profile-hero">
-    <div class="profile-hero-glow"></div>
-    <div class="profile-hero-inner">
-
-      <!-- Avatar -->
-      <div class="profile-av-wrap">
-        <div class="profile-av-ring"></div>
-        <div class="profile-av" id="avatarDisplay">
-          {% if profile_user.photo %}
-            <img src="{{ profile_user.photo.url }}" alt="{{ profile_user.pseudonyme }}" id="avatarImg">
-          {% else %}
-            <img src="{% static 'images/photo-de-profil.jpg' %}" alt="{{ profile_user.pseudonyme }}" id="avatarImg" style="width:100%;height:100%;object-fit:cover;">
-          {% endif %}
-        </div>
-        {% if is_own_profile %}
-        <label class="profile-av-edit" for="photoInput" title="Changer la photo">
-          <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
-        </label>
-        <input type="file" id="photoInput" accept="image/*" style="display:none;" onchange="previewAndUploadPhoto(event)">
-        {% endif %}
-      </div>
-
-      <!-- Info -->
-      <div class="profile-info">
-        <div class="profile-badge">
-          {% if profile_user.psychologue_profile %}
-            <svg viewBox="0 0 24 24" width="10" height="10" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
-            {{ profile_user.psychologue_profile.get_type_specialiste_display }}
-          {% else %}
-            <svg viewBox="0 0 24 24" width="10" height="10" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-            Membre
-          {% endif %}
-        </div>
-        <div class="profile-name">{{ profile_user.pseudonyme }}</div>
-        {% if is_own_profile %}
-        <div class="profile-email">{{ profile_user.email }}</div>
-        {% endif %}
-        {% if profile_user.bio %}
-        <div class="profile-bio">{{ profile_user.bio }}</div>
-        {% endif %}
-
-        <div class="profile-stats">
-          <div class="pstat">
-            <span class="n">{{ posts|length }}</span>
-            <span class="l">Posts</span>
-          </div>
-          <div class="pstat" id="stat-abonnes">
-            <span class="n" id="nb-abonnes">{{ nb_abonnes }}</span>
-            <span class="l">Abonnés</span>
-          </div>
-          <div class="pstat">
-            <span class="n">{{ nb_abonnements }}</span>
-            <span class="l">Abonnements</span>
-          </div>
-        </div>
-
+  <header class="w-banner pr-hero">
+    <span class="w-orb" aria-hidden="true" style="opacity:.22;"></span>
+    <div class="pr-av">
+      <span class="w-av" id="avatarDisplay">{% if profile_user.photo %}<img src="{{ profile_user.photo.url }}" alt="{{ profile_user.pseudonyme }}" id="avatarImg">{% else %}{{ profile_user.pseudonyme|first|upper }}{% endif %}</span>
+      {% if is_own_profile %}
+      <label class="pr-av-edit" for="photoInput" title="Changer la photo">
+        <svg viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>
+      </label>
+      <input type="file" id="photoInput" accept="image/*" style="display:none;" onchange="previewAndUploadPhoto(event)">
+      {% endif %}
+    </div>
+    <div>
+      <span class="w-pill w-pill--glass" style="margin-bottom:12px;">{% if profile_user.psychologue_profile %}{{ profile_user.psychologue_profile.get_type_specialiste_display|sobre }}{% else %}Membre{% endif %}</span>
+      <h1 class="profile-name">{{ profile_user.pseudonyme }}</h1>
+      {% if is_own_profile %}<div class="pr-mail">{{ profile_user.email }} · visible par vous seul·e</div>{% endif %}
+      {% if profile_user.bio %}<p class="pr-bio">{{ profile_user.bio }}</p>{% endif %}
+      <div class="pr-stats">
+        <span class="w-stat"><b>{{ posts|length }}</b><span>publication{{ posts|length|pluralize }}</span></span>
+        <span class="w-stat"><b id="nb-abonnes">{{ nb_abonnes }}</b><span>abonné{{ nb_abonnes|pluralize }}</span></span>
+        <span class="w-stat"><b>{{ nb_abonnements }}</b><span>abonnement{{ nb_abonnements|pluralize }}</span></span>
         {% if not is_own_profile %}
-        <button class="btn-follow {% if is_following %}following{% endif %}"
-                id="followBtn" onclick="toggleFollow({{ profile_user.id }})">
-          {% if is_following %}
-            <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-            Abonné
-          {% else %}
-            <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
-            S'abonner
-          {% endif %}
-        </button>
+        <button class="w-btn w-btn--light {% if is_following %}following{% endif %}" id="followBtn" onclick="toggleFollow({{ profile_user.id }})">{% if is_following %}Abonné·e{% else %}Suivre{% endif %}</button>
         {% endif %}
       </div>
     </div>
-  </div>
+  </header>
 
-  <!-- ===== TABS ===== -->
-  <div class="profile-tabs">
-    <button class="ptab active" onclick="switchTab('posts', this)">
-      <svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
-      Posts
-    </button>
+  <nav class="w-tabs" role="tablist">
+    <button class="w-tab ptab active" onclick="switchTab('posts', this)">Publications</button>
     {% if is_own_profile %}
-    <button class="ptab" onclick="switchTab('edit', this)">
-      <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
-      Modifier le profil
-    </button>
-    <button class="ptab" onclick="switchTab('password', this)">
-      <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
-      Mot de passe
-    </button>
+    <button class="w-tab ptab" onclick="switchTab('edit', this)">Modifier mon profil</button>
+    <button class="w-tab ptab" onclick="switchTab('password', this)">Mot de passe</button>
     {% endif %}
-  </div>
+  </nav>
 
-  <!-- ===== TAB: POSTS ===== -->
-  <div class="tab-pane active" id="tab-posts">
+  <div class="tab-pane active" id="tab-posts" data-no-auto>
     {% if posts %}
-    <div class="posts-grid">
+    <div class="w-grid">
       {% for post in posts %}
-      <a href="{% if post.est_long_format %}{% url 'post_detail' post.id %}{% else %}{% url 'posts_feed' %}#post-{{ post.id }}{% endif %}" class="post-thumb">
-        {% if post.image %}
-          <img src="{{ post.image.url }}" alt="" class="post-thumb-img">
-        {% elif post.video %}
-          <div class="post-thumb-no-img">
-            <svg viewBox="0 0 24 24"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/></svg>
-          </div>
-        {% else %}
-          <div class="post-thumb-no-img">
-            <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
-          </div>
-        {% endif %}
-        <div class="post-thumb-body">
-          {% if post.est_long_format %}
-          <div class="post-thumb-text"><strong>{{ post.titre }}</strong>{% if post.sous_titre %} — {{ post.sous_titre }}{% endif %}</div>
-          {% elif post.contenu %}
-          <div class="post-thumb-text">{{ post.contenu }}</div>
-          {% else %}
-          <div class="post-thumb-text" style="color:#b1a59a;">Post sans texte</div>
-          {% endif %}
-          <div class="post-thumb-meta">
-            <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-            {{ post.nb_likes }}
-            <svg viewBox="0 0 24 24" style="margin-left:.3rem;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-            {{ post.nb_commentaires }}
-            <span style="margin-left:auto;">{{ post.date_creation|date:"d/m/Y" }}</span>
+      <a href="{% if post.est_long_format %}{% url 'post_detail' post.id %}{% else %}{% url 'posts_feed' %}#post-{{ post.id }}{% endif %}" class="w-card w-card--lift pr-post {% if not post.image and not post.video %}pr-post--text{% endif %}">
+        {% if post.image %}<div class="w-media w-media--4x3 w-media--top"><img src="{{ post.image.url }}" alt="" loading="lazy"></div>
+        {% elif post.video %}<div class="w-media w-media--4x3 w-media--top"><span class="w-media-ph" style="background:linear-gradient(135deg,#3A2E25,#5E5044);"><span class="w-orb"></span></span></div>{% endif %}
+        <div class="pr-post-body">
+          {% if post.est_long_format %}<span class="w-pill {% if post.type == 'article' %}w-pill--sauge{% else %}w-pill--or{% endif %}" style="align-self:flex-start;">{{ post.get_type_display }}</span>{% endif %}
+          <div class="pr-post-text">{% if post.est_long_format %}<strong>{{ post.titre }}</strong>{{ post.sous_titre|default:"" }}{% elif post.contenu %}{{ post.contenu }}{% else %}<span style="color:var(--pierre);">Publication sans texte</span>{% endif %}</div>
+          <div class="w-meta">
+            <span><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21.2l7.8-7.7 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg>{{ post.nb_likes }}</span>
+            <span><svg viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 0 1-12.3 7.5L3 21l2-5.7A8.4 8.4 0 1 1 21 11.5z"/></svg>{{ post.nb_commentaires }}</span>
+            <span style="margin-left:auto;">{{ post.date_creation|date:"j F Y" }}</span>
           </div>
         </div>
       </a>
       {% endfor %}
     </div>
     {% else %}
-    <div class="no-posts">
-      <div class="no-posts-icon">
-        <svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
-      </div>
-      <h3>Aucun post pour l'instant</h3>
-      <p>{% if is_own_profile %}Partagez quelque chose avec la communauté !{% else %}Cet utilisateur n'a pas encore posté.{% endif %}</p>
+    <div class="w-void">
+      <span class="w-orb"></span>
+      <h3>Aucune publication pour l'instant</h3>
+      {% if is_own_profile %}
+      <p>Ce que vous partagez peut aider quelqu'un qui traverse la même chose.</p>
+      <a class="w-btn" href="{% url 'posts_feed' %}">Écrire ma première publication</a>
+      {% else %}<p>{{ profile_user.pseudonyme }} n'a encore rien publié.</p>{% endif %}
     </div>
     {% endif %}
   </div>
 
   {% if is_own_profile %}
-  <!-- ===== TAB: MODIFIER PROFIL ===== -->
-  <div class="tab-pane" id="tab-edit">
-    <div class="edit-card">
-      <div class="edit-section-title">Informations personnelles</div>
-      <form id="editForm" enctype="multipart/form-data">
-        {% csrf_token %}
-        <input type="hidden" name="action" value="update_info">
-        <div class="edit-grid">
-          <div class="edit-row">
-            <label>Pseudonyme</label>
-            <input type="text" name="pseudonyme" value="{{ profile_user.pseudonyme }}" placeholder="Ton pseudonyme">
-          </div>
-          <div class="edit-row">
-            <label>Adresse e-mail</label>
-            <input type="email" name="email" value="{{ profile_user.email }}" placeholder="ton@email.com">
-          </div>
-          <div class="edit-row full">
-            <label>Bio (max 300 caractères)</label>
-            <textarea name="bio" maxlength="300" placeholder="Parle un peu de toi...">{{ profile_user.bio }}</textarea>
-          </div>
-        </div>
-        <button type="submit" class="edit-submit">
-          <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-          Enregistrer les modifications
-        </button>
-      </form>
-    </div>
+  <div class="tab-pane" id="tab-edit" data-no-auto>
+    <form id="editForm" enctype="multipart/form-data" class="w-card pr-form w-form">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="update_info">
+      <div><h2>Vos informations</h2><p class="w-text">Seuls votre pseudonyme, votre photo et votre présentation sont visibles par la communauté.</p></div>
+      <div class="w-form-row">
+        <div class="w-field"><label class="w-label" for="pfPseudo">Pseudonyme</label><input type="text" id="pfPseudo" name="pseudonyme" value="{{ profile_user.pseudonyme }}"></div>
+        <div class="w-field"><label class="w-label" for="pfMail">Adresse email <small>privée</small></label><input type="email" id="pfMail" name="email" value="{{ profile_user.email }}"></div>
+      </div>
+      <div class="w-field"><label class="w-label" for="pfBio">Présentation <small>300 caractères au maximum</small></label>
+        <textarea id="pfBio" name="bio" maxlength="300" placeholder="Quelques mots sur vous, si vous le souhaitez.">{{ profile_user.bio }}</textarea></div>
+      <div class="w-form-actions"><button type="submit" class="w-btn">Enregistrer les modifications</button></div>
+    </form>
   </div>
 
-  <!-- ===== TAB: MOT DE PASSE ===== -->
-  <div class="tab-pane" id="tab-password">
-    <div class="edit-card">
-      <div class="edit-section-title">Changer le mot de passe</div>
-      <form id="pwdForm">
-        {% csrf_token %}
-        <input type="hidden" name="action" value="change_password">
-        <div class="edit-grid">
-          <div class="edit-row full">
-            <label>Mot de passe actuel</label>
-            <input type="password" name="old_password" placeholder="••••••••">
-          </div>
-          <div class="edit-row">
-            <label>Nouveau mot de passe</label>
-            <input type="password" name="new_password1" placeholder="••••••••">
-          </div>
-          <div class="edit-row">
-            <label>Confirmer le nouveau</label>
-            <input type="password" name="new_password2" placeholder="••••••••">
-          </div>
-        </div>
-        <button type="submit" class="edit-submit">
-          <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
-          Changer le mot de passe
-        </button>
-      </form>
-    </div>
+  <div class="tab-pane" id="tab-password" data-no-auto>
+    <form id="pwdForm" class="w-card pr-form w-form">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="change_password">
+      <div><h2>Changer de mot de passe</h2><p class="w-text">Choisissez un mot de passe que vous n'utilisez nulle part ailleurs.</p></div>
+      <div class="w-field"><label class="w-label" for="pfOld">Mot de passe actuel</label><input type="password" id="pfOld" name="old_password" autocomplete="current-password"></div>
+      <div class="w-form-row">
+        <div class="w-field"><label class="w-label" for="pfNew1">Nouveau mot de passe</label><input type="password" id="pfNew1" name="new_password1" autocomplete="new-password"></div>
+        <div class="w-field"><label class="w-label" for="pfNew2">Confirmer</label><input type="password" id="pfNew2" name="new_password2" autocomplete="new-password"></div>
+      </div>
+      <div class="w-form-actions"><button type="submit" class="w-btn">Changer le mot de passe</button></div>
+    </form>
   </div>
   {% endif %}
-
 </div>
-
-<!-- Toast -->
-<div class="profile-toast" id="profileToast"></div>
+<div class="profile-toast" id="profileToast" role="status"></div>
 {% endblock %}
 
 {% block extra_js %}
 <script>
 const CSRF = '{{ csrf_token }}';
 
-/* ===== TABS ===== */
 function switchTab(name, btn) {
     document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.ptab').forEach(b => b.classList.remove('active'));
@@ -458,75 +149,65 @@ function switchTab(name, btn) {
     btn.classList.add('active');
 }
 
-/* ===== TOAST ===== */
 function showToast(msg, type='success') {
     const t = document.getElementById('profileToast');
-    t.textContent = (type === 'success' ? '✓ ' : '✗ ') + msg;
+    t.textContent = msg;
     t.className = 'profile-toast show' + (type === 'error' ? ' error' : '');
     setTimeout(() => t.classList.remove('show'), 3000);
 }
 
-/* ===== PHOTO PREVIEW & UPLOAD ===== */
+{% if is_own_profile %}
 function previewAndUploadPhoto(e) {
     const file = e.target.files[0]; if (!file) return;
-    // Preview immediately
     const reader = new FileReader();
     reader.onload = ev => {
         const av = document.getElementById('avatarDisplay');
-        av.innerHTML = `<img src="${ev.target.result}" style="width:100%;height:100%;object-fit:cover;">`;
+        av.textContent = '';
+        const img = document.createElement('img'); img.src = ev.target.result; img.alt = '';
+        av.appendChild(img);
     };
     reader.readAsDataURL(file);
-    // Upload
     const fd = new FormData();
     fd.append('action', 'update_info');
-    fd.append('pseudonyme', '{{ profile_user.pseudonyme }}');
-    fd.append('email', '{{ profile_user.email }}');
-    fd.append('bio', '{{ profile_user.bio }}');
+    fd.append('pseudonyme', document.getElementById('pfPseudo').value);
+    fd.append('email', document.getElementById('pfMail').value);
+    fd.append('bio', document.getElementById('pfBio').value);
     fd.append('photo', file);
     fd.append('csrfmiddlewaretoken', CSRF);
     fetch('{% url "profile" %}', { method: 'POST', body: fd })
-        .then(r => r.json()).then(d => showToast(d.message, d.success ? 'success' : 'error'));
+        .then(r => r.json()).then(d => showToast(d.message, d.success ? 'success' : 'error'))
+        .catch(() => showToast('La photo n\'a pas pu être envoyée. Vérifiez votre connexion.', 'error'));
 }
 
-/* ===== EDIT FORM ===== */
 document.getElementById('editForm').addEventListener('submit', async e => {
     e.preventDefault();
     const fd = new FormData(e.target);
-    const r = await fetch('{% url "profile" %}', { method: 'POST', body: fd });
-    const d = await r.json();
-    showToast(d.message, d.success ? 'success' : 'error');
-    if (d.success) {
-        // Update displayed name
-        const nameEl = document.querySelector('.profile-name');
-        if (nameEl) nameEl.textContent = fd.get('pseudonyme');
-    }
+    try {
+        const r = await fetch('{% url "profile" %}', { method: 'POST', body: fd });
+        const d = await r.json();
+        showToast(d.message, d.success ? 'success' : 'error');
+        if (d.success) { const nameEl = document.querySelector('.profile-name'); if (nameEl) nameEl.textContent = fd.get('pseudonyme'); }
+    } catch { showToast('Enregistrement impossible. Vérifiez votre connexion.', 'error'); }
 });
 
-/* ===== PASSWORD FORM ===== */
 document.getElementById('pwdForm').addEventListener('submit', async e => {
     e.preventDefault();
     const fd = new FormData(e.target);
-    const r = await fetch('{% url "profile" %}', { method: 'POST', body: fd });
-    const d = await r.json();
-    showToast(d.message, d.success ? 'success' : 'error');
-    if (d.success) e.target.reset();
+    try {
+        const r = await fetch('{% url "profile" %}', { method: 'POST', body: fd });
+        const d = await r.json();
+        showToast(d.message, d.success ? 'success' : 'error');
+        if (d.success) e.target.reset();
+    } catch { showToast('Changement impossible. Vérifiez votre connexion.', 'error'); }
 });
-
-/* ===== FOLLOW ===== */
-{% if not is_own_profile %}
+{% else %}
 function toggleFollow(userId) {
     fetch(`/follow/${userId}/`, { method: 'POST', headers: { 'X-CSRFToken': CSRF } })
         .then(r => r.json()).then(d => {
             if (!d.success) return;
-            const btn = document.getElementById('followBtn');
-            const nbEl = document.getElementById('nb-abonnes');
-            if (d.following) {
-                btn.className = 'btn-follow following';
-                btn.innerHTML = `<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Abonné`;
-            } else {
-                btn.className = 'btn-follow';
-                btn.innerHTML = `<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg> S'abonner`;
-            }
+            const btn = document.getElementById('followBtn'), nbEl = document.getElementById('nb-abonnes');
+            btn.classList.toggle('following', !!d.following);
+            btn.textContent = d.following ? 'Abonné·e' : 'Suivre';
             if (nbEl) nbEl.textContent = d.nb_abonnes;
         });
 }

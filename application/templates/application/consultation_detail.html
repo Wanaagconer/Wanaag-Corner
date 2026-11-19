@@ -1,427 +1,123 @@
 {% extends 'application/base.html' %}
-{% load static %}
+{% load static wanaag %}
 
-{% block title %}Consultation — {{ consultation.utilisateur.pseudonyme }}{% endblock %}
-{% block page_title %}Détail consultation{% endblock %}
+{% block title %}Consultation — {{ consultation.sujet }}{% endblock %}
+{% block page_title %}Consultation{% endblock %}
 
 {% block extra_css %}
 <style>
-.cd-wrap { max-width: 820px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.4rem; }
-
-/* ===== HERO ===== */
-.cd-hero {
-    background: linear-gradient(135deg, #231c16 0%, #362b21 55%, #594836 100%);
-    border-radius: 22px; padding: 2rem 2.5rem;
-    position: relative; overflow: hidden;
-    box-shadow: 0 10px 40px rgba(0,0,0,.35);
-    display: flex; align-items: center; gap: 1.8rem;
-}
-.cd-hero::before {
-    content: ''; position: absolute; inset: 0;
-    background: radial-gradient(ellipse at 15% 50%, rgba(190,140,60,.16) 0%, transparent 60%),
-                radial-gradient(ellipse at 85% 10%, rgba(190,140,60,.09) 0%, transparent 55%);
-    pointer-events: none;
-}
-.cd-hero-avatars { position: relative; z-index: 1; flex-shrink: 0; display: flex; align-items: center; }
-.cd-av {
-    width: 52px; height: 52px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    color: white; font-weight: 800; font-size: 1.1rem;
-    border: 2px solid rgba(190,140,60,.4);
-    box-shadow: 0 4px 14px rgba(0,0,0,.3);
-}
-.cd-av-patient  { background: linear-gradient(135deg, #be8c3c, #ab7e36); }
-.cd-av-psy      { background: linear-gradient(135deg, #594836, #231c16); margin-left: -14px; }
-.cd-av-arrow    { color: rgba(190,140,60,.5); font-size: .9rem; margin: 0 .4rem; }
-
-.cd-hero-text { position: relative; z-index: 1; flex: 1; }
-.cd-hero-badge {
-    display: inline-block; font-size: .7rem; font-weight: 700; letter-spacing: .5px;
-    padding: .2rem .7rem; border-radius: 20px; margin-bottom: .5rem; text-transform: uppercase;
-    background: rgba(190,140,60,.15); border: 1px solid rgba(190,140,60,.3); color: #be8c3c;
-}
-.cd-hero-title { font-size: 1.45rem; font-weight: 800; color: white; margin: 0 0 .25rem; font-family: 'Newsreader', serif; }
-.cd-hero-sub { font-size: .83rem; color: rgba(244,238,226,.45); margin: 0; }
-.cd-status-pill {
-    position: relative; z-index: 1; flex-shrink: 0;
-    padding: .5rem 1.1rem; border-radius: 20px; font-size: .8rem; font-weight: 700;
-    display: flex; align-items: center; gap: .4rem;
-}
-.cd-status-pill svg { width: 13px; height: 13px; }
-.cd-status-pill.en-attente { background: rgba(243,156,18,.18); color: #f39c12; border: 1px solid rgba(243,156,18,.3); }
-.cd-status-pill.confirmee  { background: rgba(39,174,96,.15);  color: #2ecc71;  border: 1px solid rgba(39,174,96,.25); }
-.cd-status-pill.rejetee    { background: rgba(231,76,60,.15);  color: #e74c3c;  border: 1px solid rgba(231,76,60,.25); }
-
-/* ===== INFO CARD ===== */
-.cd-info-card {
-    background: white; border-radius: 18px; overflow: hidden;
-    box-shadow: 0 3px 20px rgba(42,33,27,.09); border: 1px solid rgba(190,140,60,.1);
-}
-.cd-info-header {
-    padding: 1rem 1.6rem; border-bottom: 1px solid rgba(190,140,60,.1);
-    background: rgba(244,238,226,.4);
-    display: flex; align-items: center; gap: .7rem;
-}
-.cd-info-icon {
-    width: 32px; height: 32px; border-radius: 9px; flex-shrink: 0;
-    background: rgba(190,140,60,.12); border: 1px solid rgba(190,140,60,.22);
-    display: flex; align-items: center; justify-content: center;
-}
-.cd-info-icon svg { width: 15px; height: 15px; }
-.cd-info-label { font-size: .88rem; font-weight: 700; color: var(--brown-dark); }
-
-.cd-info-body {
-    padding: 1.3rem 1.6rem;
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: .9rem;
-}
-.cd-field { background: rgba(244,238,226,.5); border-radius: 10px; padding: .8rem 1rem; border: 1px solid rgba(190,140,60,.1); }
-.cd-field-lbl { font-size: .7rem; font-weight: 700; color: #be8c3c; text-transform: uppercase; letter-spacing: .4px; margin-bottom: .25rem; }
-.cd-field-val { font-size: .88rem; color: var(--brown-dark); font-weight: 500; line-height: 1.5; }
-.cd-field.full { grid-column: 1 / -1; }
-
-/* ===== CHAT ===== */
-.cd-chat-card {
-    background: white; border-radius: 18px; overflow: hidden;
-    box-shadow: 0 3px 20px rgba(42,33,27,.09); border: 1px solid rgba(190,140,60,.1);
-}
-.cd-chat-header {
-    padding: 1rem 1.6rem; border-bottom: 1px solid rgba(190,140,60,.1);
-    background: rgba(244,238,226,.4);
-    display: flex; align-items: center; gap: .7rem;
-}
-.cd-chat-messages {
-    padding: 1.3rem 1.6rem;
-    display: flex; flex-direction: column; gap: .9rem;
-    max-height: 420px; overflow-y: auto;
-    scrollbar-width: thin; scrollbar-color: rgba(190,140,60,.2) transparent;
-}
-.cd-chat-messages::-webkit-scrollbar { width: 4px; }
-.cd-chat-messages::-webkit-scrollbar-thumb { background: rgba(190,140,60,.25); border-radius: 4px; }
-
-.cd-msg {
-    display: flex; gap: .75rem; align-items: flex-start;
-}
-.cd-msg.mine { flex-direction: row-reverse; }
-.cd-msg-av {
-    width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
-    display: flex; align-items: center; justify-content: center;
-    color: white; font-weight: 700; font-size: .85rem;
-}
-.cd-msg-av.patient { background: linear-gradient(135deg, #be8c3c, #ab7e36); }
-.cd-msg-av.psy     { background: linear-gradient(135deg, #594836, #362b21); }
-
-.cd-msg-bubble {
-    max-width: 70%; padding: .75rem 1rem; border-radius: 16px;
-    font-size: .88rem; line-height: 1.55; position: relative;
-}
-.cd-msg:not(.mine) .cd-msg-bubble {
-    background: rgba(244,238,226,.9); color: var(--brown-dark);
-    border: 1px solid rgba(190,140,60,.15);
-    border-radius: 4px 16px 16px 16px;
-}
-.cd-msg.mine .cd-msg-bubble {
-    background: linear-gradient(135deg, #be8c3c, #ab7e36);
-    color: white; border-radius: 16px 4px 16px 16px;
-}
-.cd-msg-meta {
-    font-size: .7rem; margin-top: .3rem;
-    color: rgba(42,33,27,.4);
-}
-.cd-msg.mine .cd-msg-meta { text-align: right; color: rgba(255,255,255,.6); }
-
-.cd-chat-empty {
-    text-align: center; padding: 2.5rem 1rem; color: #9b8b7e; font-size: .88rem;
-}
-
-/* ===== SEND FORM ===== */
-.cd-send-wrap {
-    padding: 1rem 1.6rem; border-top: 1px solid rgba(190,140,60,.1);
-    background: rgba(244,238,226,.3);
-}
-.cd-send-form { display: flex; gap: .8rem; align-items: flex-end; }
-.cd-send-textarea {
-    flex: 1; padding: .75rem 1rem; border: 1.5px solid rgba(190,140,60,.25); border-radius: 12px;
-    font-family: inherit; font-size: .9rem; color: var(--brown-dark);
-    background: rgba(244,238,226,.4); resize: none; outline: none;
-    transition: all .2s; min-height: 44px; max-height: 120px; line-height: 1.5;
-}
-.cd-send-textarea:focus { border-color: #be8c3c; background: white; box-shadow: 0 0 0 3px rgba(190,140,60,.1); }
-.cd-send-btn {
-    padding: .75rem 1.3rem; border-radius: 12px;
-    background: linear-gradient(135deg, #be8c3c, #ab7e36);
-    color: white; border: none; cursor: pointer; font-weight: 700; font-family: inherit;
-    box-shadow: 0 3px 12px rgba(190,140,60,.35); transition: all .2s;
-    display: flex; align-items: center; gap: .4rem; flex-shrink: 0;
-}
-.cd-send-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(190,140,60,.5); }
-.cd-send-btn svg { width: 16px; height: 16px; }
-
-/* Locked state */
-.cd-locked {
-    padding: 1rem 1.6rem; border-top: 1px solid rgba(190,140,60,.1);
-    display: flex; align-items: center; gap: .7rem;
-    font-size: .82rem; color: #9b8b7e; background: rgba(244,238,226,.2);
-}
-.cd-locked svg { width: 16px; height: 16px; flex-shrink: 0; color: #be8c3c; }
-
-/* Visio button */
-.cd-visio-banner {
-    background: linear-gradient(135deg, #0d1f2d 0%, #1a3040 60%, #0d1f2d 100%);
-    border-radius: 18px; padding: 1.4rem 2rem;
-    display: flex; align-items: center; gap: 1.2rem;
-    border: 1px solid rgba(56,182,255,.2);
-    box-shadow: 0 6px 30px rgba(0,0,0,.25), 0 0 0 1px rgba(56,182,255,.1);
-    position: relative; overflow: hidden;
-}
-.cd-visio-banner::before {
-    content: ''; position: absolute; inset: 0;
-    background: radial-gradient(ellipse at 10% 50%, rgba(56,182,255,.12) 0%, transparent 55%);
-    pointer-events: none;
-}
-.cd-visio-icon {
-    width: 54px; height: 54px; border-radius: 16px; flex-shrink: 0;
-    background: rgba(56,182,255,.15); border: 1px solid rgba(56,182,255,.3);
-    display: flex; align-items: center; justify-content: center;
-    position: relative; z-index: 1;
-    animation: visio-pulse 2.5s ease-in-out infinite;
-}
-@keyframes visio-pulse {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(56,182,255,.4); }
-    50% { box-shadow: 0 0 0 10px rgba(56,182,255,.0); }
-}
-.cd-visio-icon svg { width: 26px; height: 26px; }
-.cd-visio-text { flex: 1; position: relative; z-index: 1; }
-.cd-visio-text strong { display: block; font-size: 1rem; font-weight: 800; color: white; margin-bottom: .2rem; }
-.cd-visio-text span { font-size: .8rem; color: rgba(200,230,255,.55); }
-.cd-visio-btn {
-    position: relative; z-index: 1; flex-shrink: 0;
-    padding: .8rem 1.6rem; border-radius: 12px;
-    background: linear-gradient(135deg, #7A8A66, #1a8fd4);
-    color: white; text-decoration: none; font-weight: 800; font-size: .9rem;
-    display: flex; align-items: center; gap: .6rem;
-    box-shadow: 0 4px 18px rgba(56,182,255,.45);
-    transition: all .2s;
-}
-.cd-visio-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(56,182,255,.6); color: white; }
-.cd-visio-btn svg { width: 17px; height: 17px; }
-
-/* Back link */
-.cd-back {
-    display: inline-flex; align-items: center; gap: .5rem;
-    color: #be8c3c; text-decoration: none; font-weight: 600; font-size: .85rem;
-    transition: gap .2s;
-}
-.cd-back:hover { gap: .8rem; }
-.cd-back svg { width: 15px; height: 15px; }
-
-@media(max-width:600px) {
-    .cd-hero { flex-wrap: wrap; padding: 1.6rem 1.4rem; gap: 1.2rem; }
-    .cd-info-body { grid-template-columns: 1fr; }
-    .cd-msg-bubble { max-width: 85%; }
-    .cd-visio-banner { flex-wrap: wrap; padding: 1.2rem 1.4rem; }
-    .cd-visio-btn { width: 100%; justify-content: center; }
-}
-
-@media(max-width:480px) {
-    .cd-hero { padding: 1.3rem 1.1rem; gap: 1rem; }
-    .cd-av { width: 42px; height: 42px; font-size: .95rem; }
-    .cd-hero-title { font-size: 1.1rem; }
-    .cd-hero-sub { font-size: .78rem; }
-    .cd-status-pill { padding: .4rem .8rem; font-size: .74rem; }
-    .cd-info-header, .cd-chat-header { padding: .9rem 1.1rem; }
-    .cd-info-body { padding: 1rem 1.1rem; }
-    .cd-field { padding: .7rem .85rem; }
-    .cd-chat-messages { padding: 1rem 1.1rem; }
-    .cd-msg-bubble { max-width: 92%; font-size: .85rem; }
-    .cd-send-wrap { padding: .9rem 1.1rem; }
-    .cd-send-form { flex-wrap: wrap; }
-    .cd-send-textarea { min-width: 0; width: 100%; font-size: 16px; }
-    .cd-send-btn { width: 100%; justify-content: center; }
-    .cd-visio-icon { width: 44px; height: 44px; }
-    .cd-visio-banner { padding: 1.1rem 1.2rem; gap: .9rem; }
-}
+.cd{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,360px);gap:clamp(18px,2.2vw,28px);align-items:start;}
+.cd .w-chat{height:min(680px,calc(100dvh - var(--topbar-height) - 3rem));min-height:420px;}
+.cd-side{display:flex;flex-direction:column;gap:16px;}
+.cd-info{padding:22px;display:flex;flex-direction:column;gap:14px;}
+.cd-quote{padding:16px 18px;border-radius:18px;background:var(--sable);font-size:15px;line-height:1.6;color:var(--encre);white-space:pre-line;overflow-wrap:anywhere;}
+.cd-quote small{display:block;font-size:12.5px;font-weight:500;color:var(--pierre);margin-bottom:6px;}
+.cd-quote--reply{background:rgba(122,138,102,.13);}
+.cd-visio{padding:24px;display:flex;flex-direction:column;gap:12px;overflow:hidden;isolation:isolate;}
+.cd-visio::before{content:'';position:absolute;inset:0;z-index:-1;background:radial-gradient(300px 200px at 100% 0%,rgba(190,140,60,.6),transparent 65%);}
+.cd-visio p{color:rgba(244,238,226,.72);font-size:14.5px;}
+.cd-live{display:inline-flex;align-items:center;gap:8px;font-size:13.5px;color:var(--or-light);}
+.cd-live i{width:8px;height:8px;border-radius:50%;background:var(--or-light);animation:wKickGold 2s infinite;}
+.cd-row{display:flex;gap:10px;align-items:flex-end;max-width:100%;margin-top:10px;animation:wMsg .5s var(--ease) both;}
+.cd-row.mine{flex-direction:row-reverse;}
+.cd-row > div{display:flex;flex-direction:column;gap:4px;align-items:flex-start;min-width:0;max-width:min(76%,560px);}
+.cd-row.mine > div{align-items:flex-end;}
+.cd-row .w-bubble{max-width:100%;white-space:pre-line;animation:none;}
+.cd-when{font-size:12px;color:var(--pierre);padding:0 6px;}
+.cd-none{margin:auto;text-align:center;color:var(--taupe);max-width:24em;display:flex;flex-direction:column;align-items:center;gap:12px;}
+.cd-none .w-orb{width:60px;height:60px;}
+.cd-locked{display:flex;align-items:center;gap:10px;justify-content:center;padding:16px;border-top:1px solid var(--trait);font-size:14.5px;color:var(--taupe);background:var(--sable);}
+.cd-locked svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+@media(max-width:1000px){ .cd{grid-template-columns:1fr;} .cd-side{order:-1;} .cd .w-chat{height:70dvh;} }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="cd-wrap">
-
-    <!-- Back -->
+<div class="w-page">
     {% if request.user.psychologue_profile %}
-    <a href="{% url 'consultation_requests_list' %}" class="cd-back">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-        Retour aux demandes reçues
-    </a>
+    <a href="{% url 'consultation_requests_list' %}" class="w-back"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg>Demandes reçues</a>
     {% else %}
-    <a href="{% url 'mes_consultations' %}" class="cd-back">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-        Retour à mes consultations
-    </a>
+    <a href="{% url 'mes_consultations' %}" class="w-back"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg>Mes consultations</a>
     {% endif %}
 
-    <!-- HERO -->
-    <div class="cd-hero">
-        <div class="cd-hero-avatars">
-            <div class="cd-av cd-av-patient">{{ consultation.utilisateur.pseudonyme|first|upper }}</div>
-            <div class="cd-av cd-av-psy">{{ consultation.psychologue.user.pseudonyme|first|upper }}</div>
+    <header class="w-head">
+        <div>
+            <span class="w-kicker">Consultation {% if consultation.type_seance == 'visio' %}en visioconférence{% else %}au cabinet{% endif %}</span>
+            <h1 style="font-size:clamp(32px,4vw,56px);">{{ consultation.sujet }}</h1>
         </div>
-        <div class="cd-hero-text">
-            <div class="cd-hero-badge">Consultation</div>
-            <div class="cd-hero-title">{{ consultation.utilisateur.pseudonyme }} · {{ consultation.psychologue.titre_nom }}</div>
-            <div class="cd-hero-sub">{{ consultation.sujet }}</div>
-        </div>
-        <div class="cd-status-pill {{ consultation.statut }}">
-            {% if consultation.statut == 'en_attente' %}
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            En attente
-            {% elif consultation.statut == 'confirmee' %}
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-            Confirmée
-            {% else %}
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-            Rejetée
-            {% endif %}
-        </div>
-    </div>
+        <div class="w-head-side">{% include 'application/partials/statut_pill.html' with statut=consultation.statut %}</div>
+    </header>
 
-    <!-- INFO -->
-    <div class="cd-info-card">
-        <div class="cd-info-header">
-            <div class="cd-info-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="#be8c3c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-            </div>
-            <div class="cd-info-label">Détails de la consultation</div>
-        </div>
-        <div class="cd-info-body">
-            <div class="cd-field">
-                <div class="cd-field-lbl">Patient</div>
-                <div class="cd-field-val">{{ consultation.utilisateur.pseudonyme }}</div>
-            </div>
-            <div class="cd-field">
-                <div class="cd-field-lbl">{{ consultation.psychologue.get_type_specialiste_display }}</div>
-                <div class="cd-field-val">{{ consultation.psychologue.titre_nom }}</div>
-            </div>
-            <div class="cd-field">
-                <div class="cd-field-lbl">Type de séance</div>
-                <div class="cd-field-val">
-                    {% if consultation.type_seance == 'visio' %}
-                    📹 Visioconférence
-                    {% else %}
-                    🏠 Présentiel
-                    {% endif %}
+    <div class="cd">
+        <section class="w-chat" data-no-auto>
+            <div class="w-chat-head">
+                <span class="w-av-stack">
+                    <span class="w-av" style="box-shadow:0 0 0 3px var(--papier);">{{ consultation.utilisateur.pseudonyme|first|upper }}</span>
+                    <span class="w-av w-av--sauge" style="box-shadow:0 0 0 3px var(--papier);">{% if consultation.psychologue.photo %}<img src="{{ consultation.psychologue.photo.url }}" alt="">{% else %}{{ consultation.psychologue.user.pseudonyme|first|upper }}{% endif %}</span>
+                </span>
+                <div style="min-width:0;">
+                    <h2>{% if request.user.psychologue_profile %}{{ consultation.utilisateur.pseudonyme }}{% else %}{{ consultation.psychologue.titre_nom }}{% endif %}</h2>
+                    <p>Échange privé entre vous deux</p>
                 </div>
             </div>
-            <div class="cd-field">
-                <div class="cd-field-lbl">Demande envoyée</div>
-                <div class="cd-field-val">{{ consultation.date_demande|date:"d/m/Y à H:i" }}</div>
-            </div>
-            {% if consultation.date_reponse %}
-            <div class="cd-field">
-                <div class="cd-field-lbl">Réponse reçue</div>
-                <div class="cd-field-val">{{ consultation.date_reponse|date:"d/m/Y à H:i" }}</div>
-            </div>
-            {% endif %}
-            {% if consultation.date_prochaine_session %}
-            <div class="cd-field">
-                <div class="cd-field-lbl">Date de la séance</div>
-                <div class="cd-field-val" style="font-weight:700;color:#2ecc71;">
-                    {{ consultation.date_prochaine_session|date:"d/m/Y à H:i" }}
-                </div>
-            </div>
-            {% endif %}
-            <div class="cd-field full">
-                <div class="cd-field-lbl">Message initial</div>
-                <div class="cd-field-val">{{ consultation.message }}</div>
-            </div>
-            {% if consultation.reponse_psychologue %}
-            <div class="cd-field full">
-                <div class="cd-field-lbl">Réponse du psychologue</div>
-                <div class="cd-field-val">{{ consultation.reponse_psychologue }}</div>
-            </div>
-            {% endif %}
-        </div>
-    </div>
-
-    <!-- VISIO BANNER (only when confirmed visio) -->
-    {% if can_join_visio %}
-    <div class="cd-visio-banner">
-        <div class="cd-visio-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#7A8A66" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
-            </svg>
-        </div>
-        <div class="cd-visio-text">
-            <strong>Votre consultation est confirmée en visioconférence</strong>
-            <span>Rejoignez la salle dès que vous êtes prêt — caméra et micro intégrés</span>
-        </div>
-        <a href="{% url 'visio_room' consultation.id %}" class="cd-visio-btn">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
-            </svg>
-            Rejoindre la consultation en visio
-        </a>
-    </div>
-    {% endif %}
-
-    <!-- CHAT -->
-    <div class="cd-chat-card">
-        <div class="cd-chat-header">
-            <div class="cd-info-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="#be8c3c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-            </div>
-            <div class="cd-info-label">Conversation</div>
-        </div>
-
-        <div class="cd-chat-messages" id="chatMessages">
-            {% if chat_messages %}
-                {% for msg in chat_messages %}
-                <div class="cd-msg {% if msg.auteur == request.user %}mine{% endif %}">
-                    <div class="cd-msg-av {% if msg.auteur == consultation.utilisateur %}patient{% else %}psy{% endif %}">
-                        {{ msg.auteur.pseudonyme|first|upper }}
-                    </div>
-                    <div>
-                        <div class="cd-msg-bubble">{{ msg.contenu }}</div>
-                        <div class="cd-msg-meta">
-                            {{ msg.auteur.pseudonyme }} · {{ msg.date_envoi|date:"d/m H:i" }}
+            <div class="w-chat-body" id="chatMessages">
+                {% if chat_messages %}
+                    {% for msg in chat_messages %}
+                    <div class="cd-row {% if msg.auteur == request.user %}mine{% endif %}">
+                        {% if msg.auteur != request.user %}<span class="w-av w-av--sm {% if msg.auteur != consultation.utilisateur %}w-av--sauge{% endif %}">{{ msg.auteur.pseudonyme|first|upper }}</span>{% endif %}
+                        <div>
+                            <div class="w-bubble {% if msg.auteur == request.user %}w-bubble--me{% endif %}">{{ msg.contenu }}</div>
+                            <span class="cd-when">{{ msg.date_envoi|date:"j F, H:i" }}</span>
                         </div>
                     </div>
-                </div>
-                {% endfor %}
-            {% else %}
-                <div class="cd-chat-empty">Aucun message pour l'instant. Commencez la conversation !</div>
-            {% endif %}
-        </div>
-
-        {% if consultation.statut in 'confirmee,en_attente' %}
-        <div class="cd-send-wrap">
-            <form method="post" class="cd-send-form">
+                    {% endfor %}
+                {% else %}
+                    <div class="cd-none"><span class="w-orb"></span><p>Aucun message pour l'instant. Vous pouvez écrire dès maintenant, même avant la confirmation du rendez-vous.</p></div>
+                {% endif %}
+            </div>
+            {% if consultation.statut in 'confirmee,en_attente' %}
+            <form method="post" class="w-chat-foot">
                 {% csrf_token %}
-                <textarea
-                    name="contenu" class="cd-send-textarea"
-                    placeholder="Écrivez votre message…"
-                    rows="1" required
-                    oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"
-                ></textarea>
-                <button type="submit" class="cd-send-btn">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
-                    </svg>
-                    Envoyer
-                </button>
+                <textarea name="contenu" placeholder="Écrivez votre message…" rows="1" required aria-label="Votre message"
+                    oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,140)+'px'"></textarea>
+                <button type="submit" class="w-send" aria-label="Envoyer"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
             </form>
-        </div>
-        {% else %}
-        <div class="cd-locked">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-            Cette consultation est fermée — la messagerie est désactivée.
-        </div>
-        {% endif %}
+            {% else %}
+            <div class="cd-locked"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Cette consultation est close, la messagerie est fermée.</div>
+            {% endif %}
+        </section>
+
+        <aside class="cd-side" data-reveal style="--d:.12s">
+            {% if can_join_visio %}
+            <div class="w-card w-card--dark cd-visio">
+                <span class="cd-live"><i></i>Salle ouverte</span>
+                <h3>Votre rendez-vous a lieu en visioconférence</h3>
+                <p>Installez-vous dans un endroit calme. Votre caméra et votre micro vous seront demandés à l'entrée.</p>
+                <a href="{% url 'visio_room' consultation.id %}" class="w-btn w-btn--light w-btn--block"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="14" height="14" rx="3"/><path d="m22 8-6 4 6 4z"/></svg>Rejoindre la salle</a>
+            </div>
+            {% endif %}
+
+            <div class="w-card cd-info">
+                <h3>En résumé</h3>
+                <dl class="w-dl">
+                    <div><dt>Patient</dt><dd>{{ consultation.utilisateur.pseudonyme }}</dd></div>
+                    <div><dt>{{ consultation.psychologue.get_type_specialiste_display|sobre }}</dt><dd>{{ consultation.psychologue.titre_nom }}</dd></div>
+                    <div><dt>Demande envoyée</dt><dd>{{ consultation.date_demande|date:"j F Y, H:i" }}</dd></div>
+                    {% if consultation.date_reponse %}<div><dt>Réponse</dt><dd>{{ consultation.date_reponse|date:"j F Y, H:i" }}</dd></div>{% endif %}
+                    {% if consultation.date_prochaine_session %}<div style="grid-column:1/-1;background:rgba(122,138,102,.14);border-color:transparent;"><dt>Rendez-vous</dt><dd style="color:var(--foret);font-weight:600;">{{ consultation.date_prochaine_session|date:"l j F Y à H:i" }}</dd></div>{% endif %}
+                </dl>
+                <div class="cd-quote"><small>Message initial</small>{{ consultation.message }}</div>
+                {% if consultation.reponse_psychologue %}
+                <div class="cd-quote cd-quote--reply"><small>Réponse du spécialiste</small>{{ consultation.reponse_psychologue }}</div>
+                {% endif %}
+            </div>
+        </aside>
     </div>
-
 </div>
+{% endblock %}
 
+{% block extra_js %}
 <script>
-// Scroll to bottom of chat
 const chatBox = document.getElementById('chatMessages');
 if (chatBox) chatBox.scrollTop = chatBox.scrollHeight;
 </script>

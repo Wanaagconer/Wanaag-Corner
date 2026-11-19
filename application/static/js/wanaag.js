@@ -261,8 +261,20 @@
   if (!REDUCED) {
     var auto = [];
     document.querySelectorAll('.app-content > *, .public-page-content > *').forEach(function (el) {
-      if (el.matches('script, style, [data-no-auto], [data-hero], .django-messages') || el.querySelector('[data-reveal], [data-split], [data-clip]')) return;
+      if (el.matches('script, style, [data-no-auto], [data-hero], .django-messages, .w-modal, .w-page') || el.querySelector('[data-reveal], [data-split], [data-clip], [data-stagger], .w-grid')) return;
       auto.push(el);
+    });
+    // pages construites avec les composants : chaque bloc de la page, puis les grilles en cascade
+    document.querySelectorAll('.w-page > *').forEach(function (el) {
+      if (el.matches('script, style, .w-modal, [data-no-auto], .w-grid, [data-stagger]') || el.hasAttribute('data-reveal')) return;
+      auto.push(el);
+    });
+    document.querySelectorAll('.w-grid, [data-stagger]').forEach(function (g) {
+      if (g.closest('[data-no-auto]')) return;
+      Array.prototype.forEach.call(g.children, function (el, i) {
+        if (el.matches('script, style, template')) return;
+        el.classList.add('w-stagger-item'); el.style.setProperty('--si', Math.min(i, 9)); auto.push(el);
+      });
     });
     ['.psy-grid > *', '.dash-grid > *', '.adm-stats-grid > *', '.forum-groups-grid > *', '.ressources-grid > *',
      '.consultations-list > *', '.requests-list > *', '.posts-grid > *', '.modules-grid > *', '.annonces-row > *'].forEach(function (sel) {
@@ -287,6 +299,17 @@
   }
   window.addEventListener('scroll', function () { clearTimeout(sweepT); sweepT = setTimeout(sweep, 140); }, { passive: true });
   window.addEventListener('load', function () { setTimeout(sweep, 600); });
+
+  /* ── Photo de profil introuvable : on retombe sur un avatar neutre ── */
+  document.addEventListener('error', function (e) {
+    var img = e.target;
+    if (!img || img.tagName !== 'IMG') return;
+    var av = img.closest('.w-av');
+    if (!av) return;
+    var letter = (img.alt || '').trim().charAt(0).toUpperCase();
+    img.remove();
+    if (!av.textContent.trim()) av.textContent = letter || '';
+  }, true);
 
   /* ── Compteurs ── */
   var countIO = new IntersectionObserver(function (entries) {

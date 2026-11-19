@@ -1,226 +1,83 @@
 {% extends 'application/base.html' %}
-{% load static %}
+{% load static wanaag %}
 
-{% block title %}Dashboard Psychologue — Wanaag Corner{% endblock %}
+{% block title %}Mon activité — Wanaag Corner{% endblock %}
 {% block page_title %}Mon activité{% endblock %}
 
 {% block extra_css %}
 <style>
-    /* HERO PSY */
-    .psy-hero{
-        background:linear-gradient(135deg,#1E3A4A 0%,#0F2535 60%,#091D2A 100%);
-        border-radius:22px;padding:2.2rem 2.5rem;
-        margin-bottom:1.8rem;
-        display:flex;align-items:center;justify-content:space-between;gap:2rem;
-        position:relative;overflow:hidden;
-    }
-    .psy-hero::before{content:'';position:absolute;right:-60px;top:-60px;width:220px;height:220px;background:radial-gradient(circle,rgba(52,152,219,.18),transparent 70%);pointer-events:none;}
-    .psy-hero::after{content:'';position:absolute;left:30%;bottom:-60px;width:180px;height:180px;background:radial-gradient(circle,rgba(26,111,168,.1),transparent 70%);pointer-events:none;}
-    .psy-hero-left{position:relative;z-index:1;}
-    .psy-hero-eyebrow{font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(100,180,240,.8);margin-bottom:.5rem;}
-    .psy-hero-title{font-family:'Newsreader',serif;font-size:1.65rem;font-weight:700;color:white;margin-bottom:.4rem;}
-    .psy-hero-sub{font-size:.85rem;color:rgba(255,255,255,.5);line-height:1.5;max-width:400px;}
-    .psy-hero-right{display:flex;gap:1rem;flex-shrink:0;position:relative;z-index:1;}
-    .psy-stat{
-        background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.09);
-        border-radius:14px;padding:.9rem 1.2rem;text-align:center;min-width:90px;
-    }
-    .psy-stat .num{font-family:'Newsreader',serif;font-size:1.6rem;font-weight:700;}
-    .psy-stat .lbl{font-size:.68rem;color:rgba(255,255,255,.4);margin-top:.15rem;}
-    .psy-stat.warning .num{color:#F39C12;}
-    .psy-stat.success .num{color:#2ECC71;}
-    .psy-stat.info .num{color:#7A8A66;}
-
-    /* QUICK ACTIONS */
-    .quick-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.3rem;margin-bottom:1.8rem;}
-    .quick-card{
-        background:white;border-radius:18px;
-        overflow:hidden;text-decoration:none;
-        box-shadow:0 4px 18px rgba(42,33,27,.09);
-        transition:all .28s cubic-bezier(.4,0,.2,1);
-        border:1px solid rgba(190,140,60,.08);
-        display:block;
-    }
-    .quick-card:hover{transform:translateY(-6px);box-shadow:0 16px 40px rgba(42,33,27,.16);}
-    .quick-card-top{
-        height:110px;position:relative;overflow:hidden;
-        display:flex;align-items:center;justify-content:center;font-size:2rem;
-    }
-    .quick-card-top img{width:100%;height:100%;object-fit:cover;transition:transform .4s;}
-    .quick-card:hover .quick-card-top img{transform:scale(1.08);}
-    .quick-card-top::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(0,0,0,.35));}
-    .bg-blue{background:linear-gradient(135deg,#AED6F1,#2E86C1);}
-    .bg-teal{background:linear-gradient(135deg,#A3E4D7,#1ABC9C);}
-    .bg-brown{background:linear-gradient(135deg,#e4dbcb,#be8c3c);}
-    .quick-card-body{padding:1rem 1.2rem;}
-    .quick-card-title{font-size:.92rem;font-weight:700;color:var(--brown-dark);margin-bottom:.25rem;}
-    .quick-card-desc{font-size:.76rem;color:var(--brown-light);}
-
-    /* SECTION TITLE */
-    .sec-head{
-        display:flex;align-items:center;justify-content:space-between;
-        margin-bottom:1.1rem;
-    }
-    .sec-head-title{font-family:'Newsreader',serif;font-size:1.1rem;font-weight:700;color:var(--brown-dark);}
-    .sec-head-link{font-size:.8rem;font-weight:600;color:var(--accent-dark);text-decoration:none;}
-    .sec-head-link:hover{text-decoration:underline;}
-
-    /* CONSULTATIONS LIST */
-    .consultations-list{background:white;border-radius:18px;overflow:hidden;box-shadow:0 2px 12px rgba(42,33,27,.07);}
-    .consult-item{
-        display:flex;align-items:center;gap:1rem;
-        padding:1rem 1.3rem;
-        border-bottom:1px solid var(--beige-light);
-        transition:background .15s;
-    }
-    .consult-item:last-child{border-bottom:none;}
-    .consult-item:hover{background:rgba(244,238,226,.3);}
-    .consult-avatar{
-        width:40px;height:40px;border-radius:50%;flex-shrink:0;
-        background:linear-gradient(135deg,var(--accent),var(--accent-dark));
-        display:flex;align-items:center;justify-content:center;
-        color:white;font-weight:700;font-size:.9rem;
-    }
-    .consult-info{flex:1;min-width:0;}
-    .consult-user{font-weight:700;font-size:.88rem;color:var(--brown-dark);}
-    .consult-subject{font-size:.8rem;color:var(--brown-light);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:.15rem;}
-    .consult-date{font-size:.72rem;color:#bbb;margin-top:.1rem;}
-    .consult-right{display:flex;flex-direction:column;align-items:flex-end;gap:.5rem;flex-shrink:0;}
-    .status-badge{
-        font-size:.7rem;font-weight:700;padding:.25rem .65rem;border-radius:20px;white-space:nowrap;
-    }
-    .status-en_attente{background:rgba(243,156,18,.12);color:#9b7a08;}
-    .status-confirmee{background:rgba(39,174,96,.1);color:#1e8449;}
-    .status-rejetee{background:rgba(231,76,60,.08);color:#b03030;}
-    .status-completee{background:rgba(52,152,219,.08);color:#1a6fa8;}
-    .btn-respond{
-        padding:.4rem .9rem;border-radius:8px;
-        background:var(--brown-dark);color:white;
-        font-size:.75rem;font-weight:600;text-decoration:none;
-        transition:all .2s;
-    }
-    .btn-respond:hover{background:var(--brown);}
-    .empty-state{padding:3rem;text-align:center;color:var(--brown-light);}
-    .empty-icon{font-size:2.5rem;margin-bottom:.75rem;}
-
-    /* POST SECTION */
-    .post-action{
-        background:white;border-radius:18px;padding:1.3rem 1.5rem;
-        box-shadow:0 2px 12px rgba(42,33,27,.07);margin-bottom:1.8rem;
-        display:flex;align-items:center;gap:1rem;flex-wrap:wrap;
-    }
-    .post-action-text{flex:1;}
-    .post-action-text h3{font-size:.95rem;font-weight:700;color:var(--brown-dark);margin-bottom:.2rem;}
-    .post-action-text p{font-size:.8rem;color:var(--brown-light);}
-    .btn-post-link{
-        background:linear-gradient(135deg,var(--accent),var(--accent-dark));
-        color:white;padding:.6rem 1.3rem;border-radius:50px;
-        font-size:.82rem;font-weight:700;text-decoration:none;
-        transition:all .2s;white-space:nowrap;
-    }
-    .btn-post-link:hover{transform:translateY(-2px);}
-
-    @media(max-width:900px){
-        .psy-hero{flex-direction:column;align-items:flex-start;padding:1.8rem 1.6rem;}
-        .psy-hero-right{flex-wrap:wrap;width:100%;}
-        .psy-stat{flex:1;min-width:90px;}
-    }
-    @media(max-width:600px){
-        .quick-grid{grid-template-columns:1fr 1fr;gap:1rem;}
-        .consult-item{flex-wrap:wrap;padding:1rem;}
-        .consult-right{align-items:flex-start;flex-direction:row;width:100%;justify-content:space-between;}
-        .post-action{padding:1.1rem;text-align:left;}
-        .btn-post-link{width:100%;text-align:center;}
-        .psy-hero-title{font-size:1.4rem;}
-    }
-    @media(max-width:480px){
-        .quick-grid{grid-template-columns:1fr;}
-        .psy-stat{min-width:80px;padding:.7rem .9rem;}
-        .psy-stat .num{font-size:1.3rem;}
-        .consult-avatar{width:36px;height:36px;font-size:.8rem;}
-        .consult-subject{white-space:normal;}
-        .post-action img{width:44px;height:44px;}
-    }
+.pd-quick{position:relative;display:flex;flex-direction:column;justify-content:flex-end;gap:6px;min-height:210px;padding:22px;border-radius:26px;overflow:hidden;isolation:isolate;text-decoration:none;color:var(--sable);background:var(--encre);transition:transform .8s var(--ease),box-shadow .8s var(--ease);}
+.pd-quick:hover{transform:translateY(-6px);box-shadow:0 36px 64px -34px rgba(42,33,27,.7);}
+.pd-quick img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2;transition:transform 1.4s var(--ease);}
+.pd-quick:hover img{transform:scale(1.07);}
+.pd-quick::after{content:'';position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(42,33,27,.05) 25%,rgba(42,33,27,.9));}
+.pd-quick h3{font-family:var(--f-display);font-weight:400;font-size:25px;letter-spacing:-.02em;color:var(--sable);}
+.pd-quick p{font-size:14.5px;color:rgba(244,238,226,.76);}
+.pd-share{display:flex;align-items:center;gap:18px;flex-wrap:wrap;padding:clamp(20px,2.6vw,30px);}
+.pd-share > div{flex:1;min-width:220px;}
 </style>
 {% endblock %}
 
 {% block content %}
-
-<!-- HERO -->
-<div class="psy-hero">
-    <div class="psy-hero-left">
-        <div class="psy-hero-eyebrow">{{ psychologue.icone_specialite }} Tableau de bord {{ psychologue.get_type_specialiste_display }}</div>
-        <div class="psy-hero-title">{{ psychologue.titre_nom }}</div>
-        <div class="psy-hero-sub">
-            Bienvenue dans votre espace professionnel. Gérez vos consultations
-            et accompagnez vos patients.
+<div class="w-page">
+    <header class="w-banner">
+        <span class="w-orb" aria-hidden="true"></span>
+        <div>
+            <span class="w-kicker">Espace professionnel · {{ psychologue.get_type_specialiste_display|sobre }}</span>
+            <h1><span data-greet>Bonjour</span>, <em>{{ psychologue.titre_nom }}</em></h1>
+            <p class="w-lede">Vos demandes en cours et vos rendez-vous confirmés. Prenez le temps de répondre : chaque message compte pour la personne qui l'attend.</p>
         </div>
+        <div class="w-banner-side">
+            <a class="w-stat" href="{% url 'consultation_requests_list' %}?status=en_attente"><b data-count="{{ consultations_en_attente }}">{{ consultations_en_attente }}</b><span>en attente</span></a>
+            <a class="w-stat" href="{% url 'consultation_requests_list' %}?status=confirmee"><b data-count="{{ consultations_confirmees }}">{{ consultations_confirmees }}</b><span>confirmée{{ consultations_confirmees|pluralize }}</span></a>
+            <span class="w-stat"><b>{{ psychologue.experience_ans }}</b><span>an{{ psychologue.experience_ans|pluralize }} d'expérience</span></span>
+        </div>
+    </header>
+
+    <section class="w-stack">
+        <div class="w-sec"><h2>Dernières demandes</h2><a class="w-link" href="{% url 'consultation_requests_list' %}">Tout voir</a></div>
+        {% if consultations %}
+        <div class="w-list w-list--card" data-stagger>
+            {% for c in consultations|slice:":5" %}
+            <a class="w-item" href="{% if c.statut == 'en_attente' %}{% url 'consultation_respond' c.id %}{% else %}{% url 'consultation_detail' c.id %}{% endif %}">
+                <span class="w-av">{{ c.utilisateur.pseudonyme|first|upper }}</span>
+                <span class="w-item-main">
+                    <span class="w-item-title" style="display:block;">{{ c.utilisateur.pseudonyme }}</span>
+                    <span class="w-item-sub" style="display:block;">{{ c.sujet }}</span>
+                </span>
+                <span class="w-item-side">
+                    {% include 'application/partials/statut_pill.html' with statut=c.statut %}
+                    <span>{{ c.date_demande|date:"j F" }}</span>
+                </span>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="w-void">
+            <span class="w-orb"></span>
+            <h3>Aucune demande pour le moment</h3>
+            <p>Les nouvelles demandes de consultation apparaîtront ici dès qu'un membre vous écrira.</p>
+        </div>
+        {% endif %}
+    </section>
+
+    <div class="w-card w-card--tint pd-share">
+        <span class="w-orb w-orb--sauge" style="width:54px;height:54px;"></span>
+        <div>
+            <h3>Partagez votre expertise</h3>
+            <p class="w-text" style="margin-top:4px;">Un conseil, un article ou une pensée : ce que vous publiez aide bien au-delà de vos consultations.</p>
+        </div>
+        <a href="{% url 'post_write' %}?type=article" class="w-btn">Écrire un article</a>
     </div>
-    <div class="psy-hero-right">
-        <div class="psy-stat warning">
-            <div class="num">{{ consultations_en_attente }}</div>
-            <div class="lbl">En attente</div>
-        </div>
-        <div class="psy-stat success">
-            <div class="num">{{ consultations_confirmees }}</div>
-            <div class="lbl">Confirmées</div>
-        </div>
-        <div class="psy-stat info">
-            <div class="num">{{ psychologue.experience_ans }}</div>
-            <div class="lbl">Ans d'exp.</div>
-        </div>
-    </div>
-</div>
 
-<!-- POST ACTION -->
-<div class="post-action">
-    <img src="{% static 'images/posts.jpg' %}" alt="Posts" style="width:56px;height:56px;border-radius:12px;object-fit:cover;flex-shrink:0;">
-    <div class="post-action-text">
-        <h3>Partagez avec la communauté</h3>
-        <p>Publiez des conseils, des ressources ou des pensées inspirantes pour vos patients.</p>
-    </div>
-    <a href="{% url 'posts_feed' %}" class="btn-post-link">Créer un post</a>
+    <section class="w-stack">
+        <div class="w-sec"><h2>Accès rapides</h2></div>
+        <div class="w-grid w-grid--4">
+            <a href="{% url 'consultation_requests_list' %}" class="pd-quick"><img src="{% static 'images/consultation.jpg' %}" alt="" loading="lazy"><h3>Demandes</h3><p>Répondre et suivre vos patients</p></a>
+            <a href="{% url 'posts_feed' %}" class="pd-quick"><img src="{% static 'images/solidarite.jpg' %}" alt="" loading="lazy"><h3>Publications</h3><p>Lire et publier</p></a>
+            <a href="{% url 'ressources_home' %}" class="pd-quick"><img src="{% static 'images/espace-bien-etre.jpg' %}" alt="" loading="lazy"><h3>Ressources</h3><p>La bibliothèque</p></a>
+            <a href="{% url 'forum_home' %}" class="pd-quick"><img src="{% static 'images/inclusivite.jpg' %}" alt="" loading="lazy"><h3>Groupes de parole</h3><p>Les cercles de la communauté</p></a>
+        </div>
+    </section>
 </div>
-
-<!-- QUICK ACTIONS -->
-<div class="sec-head"><span class="sec-head-title">Actions rapides</span></div>
-<div class="quick-grid">
-    <a href="{% url 'consultation_requests_list' %}" class="quick-card">
-        <div class="quick-card-top">
-            <img src="{% static 'images/consultation.jpg' %}" alt="Consultations">
-        </div>
-        <div class="quick-card-body">
-            <div class="quick-card-title">Mes demandes</div>
-            <div class="quick-card-desc">Gérer toutes les consultations</div>
-        </div>
-    </a>
-    <a href="{% url 'posts_feed' %}" class="quick-card">
-        <div class="quick-card-top">
-            <img src="{% static 'images/posts.jpg' %}" alt="Posts">
-        </div>
-        <div class="quick-card-body">
-            <div class="quick-card-title">Posts communauté</div>
-            <div class="quick-card-desc">Voir et publier des posts</div>
-        </div>
-    </a>
-    <a href="{% url 'ressources_home' %}" class="quick-card">
-        <div class="quick-card-top">
-            <img src="{% static 'images/ressources.jpg' %}" alt="Ressources">
-        </div>
-        <div class="quick-card-body">
-            <div class="quick-card-title">Ressources</div>
-            <div class="quick-card-desc">Consulter les ressources</div>
-        </div>
-    </a>
-    <a href="{% url 'forum_home' %}" class="quick-card">
-        <div class="quick-card-top">
-            <img src="{% static 'images/forum.jpg' %}" alt="Forum">
-        </div>
-        <div class="quick-card-body">
-            <div class="quick-card-title">Forum communautaire</div>
-            <div class="quick-card-desc">Rejoindre les groupes de soutien</div>
-        </div>
-    </a>
-</div>
-
 {% endblock %}

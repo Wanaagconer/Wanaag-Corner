@@ -1,0 +1,34 @@
+{# Carte d'une ressource. Variable attendue : ressource #}
+<a class="w-card w-card--lift rs-card" href="{% url 'ressource_detail' ressource.slug %}">
+    <div class="w-media w-media--16x10 w-media--top">
+        {% if ressource.image_couverture %}<img src="{{ ressource.image_couverture.url }}" alt="" loading="lazy">
+        {% else %}<span class="w-media-ph rs-ph rs-ph--{{ ressource.type_ressource }}"><span class="w-orb"></span></span>{% endif %}
+        <span class="rs-flags">
+            <span class="w-pill w-pill--dark">{{ ressource.get_type_ressource_display }}</span>
+            {% if ressource.is_evenement %}{% if ressource.is_complet %}<span class="w-pill rs-full">Complet</span>{% else %}<span class="w-pill rs-event">Événement</span>{% endif %}{% endif %}
+        </span>
+    </div>
+    <div class="rs-body">
+        <h3>{{ ressource.titre }}</h3>
+        <p class="w-text w-clamp-3">{{ ressource.description }}</p>
+        {% if ressource.is_evenement %}{% if ressource.date_debut or ressource.lieu or ressource.intervenant or ressource.places_disponibles %}
+        <div class="rs-event-info">
+            {% if ressource.date_debut %}<span><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>{{ ressource.date_debut|date:"j F Y à H:i" }}</span>{% endif %}
+            {% if ressource.lieu %}<span><svg viewBox="0 0 24 24"><path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.800 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>{{ ressource.lieu }}</span>{% endif %}
+            {% if ressource.intervenant %}<span><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>{{ ressource.intervenant }}</span>{% endif %}
+            {% if ressource.places_disponibles %}{% with places=ressource.places_restantes %}
+                {% if places == 0 %}<span class="rs-places is-full">Plus de place</span>
+                {% elif places and places <= 5 %}<span class="rs-places is-low">{{ places }} place{{ places|pluralize }} restante{{ places|pluralize }}</span>
+                {% elif places %}<span class="rs-places">{{ places }} places disponibles</span>{% endif %}
+            {% endwith %}{% endif %}
+        </div>
+        {% endif %}{% endif %}
+        <div class="rs-foot">
+            <span class="w-meta">
+                <span><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>{{ ressource.duree_lecture }} min</span>
+                <span><svg viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>{{ ressource.vues }} vue{{ ressource.vues|pluralize }}</span>
+            </span>
+            <span class="rs-go" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </div>
+    </div>
+</a>

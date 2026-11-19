@@ -1,0 +1,53 @@
+{% extends 'application/base.html' %}
+{% load static wanaag %}
+
+{% block title %}Mes ressources — Wanaag Corner{% endblock %}
+{% block page_title %}Mes ressources{% endblock %}
+
+{% block extra_css %}{% include 'application/partials/ressource_styles.html' %}{% endblock %}
+
+{% block content %}
+<div class="w-page">
+    <a class="w-back" href="{% url 'ressources_home' %}"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg>Toute la bibliothèque</a>
+
+    <header class="w-head">
+        <div>
+            <span class="w-kicker">Votre sélection</span>
+            <h1>Mes <em>ressources</em></h1>
+            <p class="w-lede">Ce que vous avez mis de côté, commencé ou terminé. Rien ne presse : reprenez là où vous vous étiez arrêté·e.</p>
+        </div>
+        <div class="w-head-side">
+            <span class="w-stat w-stat--light"><b>{{ mes_favoris|length }}</b><span>en favori{{ mes_favoris|length|pluralize }}</span></span>
+            <span class="w-stat w-stat--light"><b>{{ mes_completions|length }}</b><span>terminée{{ mes_completions|length|pluralize }}</span></span>
+        </div>
+    </header>
+
+    {% if mes_en_cours %}
+    <section class="w-stack">
+        <div class="w-sec"><h2>En cours</h2></div>
+        <div class="w-grid">{% for p in mes_en_cours %}{% with ressource=p.ressource %}{% include 'application/partials/ressource_card.html' %}{% endwith %}{% endfor %}</div>
+    </section>
+    {% endif %}
+
+    <section class="w-stack">
+        <div class="w-sec"><h2>Favoris</h2></div>
+        {% if mes_favoris %}
+        <div class="w-grid">{% for ressource in mes_favoris %}{% include 'application/partials/ressource_card.html' %}{% endfor %}</div>
+        {% else %}
+        <div class="w-void">
+            <span class="w-orb"></span>
+            <h3>Aucun favori pour l'instant</h3>
+            <p>Sur chaque ressource, le bouton « Ajouter aux favoris » la range ici pour plus tard.</p>
+            <a class="w-btn" href="{% url 'ressources_home' %}">Parcourir la bibliothèque</a>
+        </div>
+        {% endif %}
+    </section>
+
+    {% if mes_completions %}
+    <section class="w-stack">
+        <div class="w-sec"><h2>Terminées</h2><p>Chaque lecture est un pas de plus.</p></div>
+        <div class="w-grid">{% for p in mes_completions %}{% with ressource=p.ressource %}{% include 'application/partials/ressource_card.html' %}{% endwith %}{% endfor %}</div>
+    </section>
+    {% endif %}
+</div>
+{% endblock %}

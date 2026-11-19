@@ -759,6 +759,30 @@
     .writer-title-input { font-size: 1.3rem; }
     .writer-textarea, .writer-mirror { font-size: 1.1rem; }
 }
+
+/* ── Harmonisation avec le reste de l'espace membre ── */
+.jnl-hero{border-radius:32px;padding:clamp(28px,4vw,52px);box-shadow:0 40px 80px -52px rgba(42,33,27,.75);
+  background-image:radial-gradient(560px 400px at 88% 8%,rgba(190,140,60,.42),transparent 62%),radial-gradient(460px 340px at -4% 118%,rgba(122,138,102,.34),transparent 62%);}
+.jnl-hero-eyebrow{text-transform:none;letter-spacing:0;font-size:14px;font-weight:500;color:var(--or-light);margin-bottom:12px;}
+.jnl-hero-title{font-family:var(--f-display);font-weight:300;font-size:clamp(44px,5.2vw,74px);line-height:.95;letter-spacing:-.04em;}
+.jnl-hero-title span{font-style:italic;}
+.jnl-hero-sub{font-size:16px;color:rgba(244,238,226,.72);margin-top:14px;}
+.jnl-weather-head,.jnl-release-eyebrow,.jnl-pages-label{text-transform:none;letter-spacing:0;font-size:13.5px;font-weight:500;}
+.jnl-write-btn{border-radius:999px;background:var(--sable);color:var(--encre);box-shadow:none;font-weight:500;transition:transform .5s var(--ease),background .4s;}
+.jnl-write-btn:hover{background:var(--or-light);transform:translateY(-2px);}
+.jnl-stat-pill{border-radius:999px;font-size:14px;}
+.jnl-page-card{border-radius:22px;transition:transform .7s var(--ease),box-shadow .7s var(--ease);}
+.jnl-page-card:hover{transform:translateY(-6px) rotate(-.4deg);}
+.jnl-empty{border-radius:26px;}
+.jnl-empty-icon{font-size:0;width:72px;height:72px;margin:0 auto 18px;border-radius:50%;filter:none;
+  background:radial-gradient(circle at 35% 30%,#FBF1DD,var(--or-light) 35%,var(--or) 80%);animation:markBreath 6s var(--ease) infinite;}
+.jnl-empty h3{font-family:var(--f-display);font-weight:400;font-size:clamp(24px,2.4vw,30px);}
+.jnl-release-card{border-radius:26px;}
+.jnl-release-title{font-family:var(--f-display);font-size:clamp(22px,2.2vw,28px);}
+.jnl-fab{box-shadow:0 18px 36px -14px rgba(171,126,54,.9);transition:transform .5s var(--ease);}
+.jnl-fab:hover{transform:scale(1.08) rotate(90deg);}
+@media(max-width:700px){ .jnl-hero{border-radius:26px;} }
+@media(max-width:480px){ .jnl-hero-title{font-size:44px;} }
 </style>
 
 <!-- ═══ HERO ═══ -->

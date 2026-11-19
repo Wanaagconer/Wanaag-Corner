@@ -1,137 +1,69 @@
 {% extends 'application/base.html' %}
-{% load static %}
+{% load static custom_filters wanaag %}
 
-{% block title %}Les spécialistes — Wanaag Corner{% endblock %}
+{% block title %}Spécialistes — Wanaag Corner{% endblock %}
 {% block page_title %}Spécialistes{% endblock %}
 
 {% block extra_css %}
 <style>
-/* ===== HERO ===== */
-.psy-hero {
-    background: linear-gradient(135deg, var(--brown-dark) 0%, #362b21 60%, #231c16 100%);
-    border-radius: 22px; padding: 2.4rem 2.5rem; margin-bottom: 2rem;
-    position: relative; overflow: hidden;
-    box-shadow: 0 10px 40px rgba(0,0,0,.3);
-}
-.psy-hero::before {
-    content: ''; position: absolute; inset: 0;
-    background: radial-gradient(ellipse at 15% 50%, rgba(190,140,60,.18) 0%, transparent 60%),
-                radial-gradient(ellipse at 85% 20%, rgba(190,140,60,.10) 0%, transparent 55%);
-    pointer-events: none;
-}
-.psy-hero-inner { position: relative; z-index: 1; display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap; }
-.psy-hero-img {
-    width: 72px; height: 72px; border-radius: 18px; overflow: hidden; flex-shrink: 0;
-    box-shadow: 0 0 0 2px rgba(190,140,60,.4), 0 8px 24px rgba(0,0,0,.4);
-}
-.psy-hero-img img { width: 100%; height: 100%; object-fit: cover; }
-.psy-hero-text h1 {
-    font-size: 2rem; font-weight: 800; color: white; margin: 0 0 .4rem;
-    font-family: 'Newsreader', serif;
-}
-.psy-hero-text p { font-size: .92rem; color: rgba(244,238,226,.65); margin: 0; }
-.psy-hero-count {
-    margin-left: auto; background: rgba(190,140,60,.15); border: 1px solid rgba(190,140,60,.3);
-    border-radius: 50px; padding: .5rem 1.2rem; color: rgba(244,238,226,.8);
-    font-size: .82rem; font-weight: 700; white-space: nowrap;
-}
-
-/* ===== CATEGORY GRID ===== */
-.cat-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1.4rem;
-}
-.cat-card {
-    background: white; border-radius: 20px; overflow: hidden;
-    box-shadow: 0 4px 22px rgba(42,33,27,.08);
-    border: 1px solid rgba(190,140,60,.12);
-    text-decoration: none; display: block; position: relative;
-    transition: transform .25s, box-shadow .25s;
-    animation: cardIn .35s ease both;
-}
-@keyframes cardIn { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
-.cat-card:hover { transform: translateY(-5px); box-shadow: 0 14px 40px rgba(42,33,27,.16); }
-.cat-img-wrap { height: 140px; position: relative; overflow: hidden; }
-.cat-img-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .5s ease; }
-.cat-card:hover .cat-img-wrap img { transform: scale(1.06); }
-.cat-img-wrap::after {
-    content: ''; position: absolute; inset: 0;
-    background: linear-gradient(180deg, rgba(42,33,27,0) 55%, rgba(42,33,27,.55) 100%);
-}
-.cat-body { padding: 1.5rem 1.5rem 1.5rem; }
-.cat-label {
-    font-size: 1.08rem; font-weight: 800; color: var(--brown-dark);
-    font-family: 'Newsreader', serif; margin-bottom: .45rem;
-}
-.cat-desc { font-size: .84rem; color: var(--brown-light); line-height: 1.55; margin-bottom: 1.1rem; min-height: 2.7em; }
-.cat-foot { display: flex; align-items: center; justify-content: space-between; }
-.cat-count {
-    font-size: .76rem; font-weight: 700; padding: .25rem .7rem; border-radius: 20px;
-    background: rgba(39,174,96,.1); color: #1e8449;
-}
-.cat-count.empty { background: rgba(42,33,27,.06); color: var(--brown-light); }
-.cat-arrow {
-    width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-    background: rgba(190,140,60,.1); color: #ab7e36; transition: background .2s, transform .2s;
-}
-.cat-card:hover .cat-arrow { background: #be8c3c; color: white; transform: translateX(3px); }
-
-@media(max-width:600px) {
-    .cat-grid { grid-template-columns: 1fr; gap: 1.1rem; }
-    .psy-hero-count { display: none; }
-    .psy-hero { padding: 1.8rem 1.5rem; }
-    .psy-hero-text h1 { font-size: 1.5rem; }
-    .psy-hero-img { width: 56px; height: 56px; border-radius: 14px; }
-}
-@media(max-width:480px) {
-    .psy-hero { padding: 1.5rem 1.1rem; border-radius: 18px; }
-    .psy-hero-inner { gap: 1rem; }
-    .psy-hero-text h1 { font-size: 1.3rem; }
-    .psy-hero-text p { font-size: .82rem; }
-}
+.sp-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;padding:0;overflow:hidden;}
+.sp-step{padding:22px 24px;display:flex;gap:16px;align-items:flex-start;}
+.sp-step + .sp-step{border-left:1px solid var(--trait);}
+.sp-step b{font-family:var(--f-display);font-style:italic;font-weight:300;font-size:34px;line-height:1;color:var(--or-dark);}
+.sp-step strong{display:block;font-weight:600;font-size:15.5px;margin-bottom:2px;}
+.sp-step span{font-size:14.5px;color:var(--taupe);line-height:1.5;}
+.sp-cat{display:flex !important;flex-direction:column;overflow:hidden;height:100%;}
+.sp-cat-body{padding:20px 22px;display:flex;flex-direction:column;gap:8px;flex:1;}
+.sp-cat-body p{flex:1;}
+.sp-cat-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-top:12px;}
+.sp-go{width:38px;height:38px;border-radius:50%;background:var(--sable);display:grid;place-items:center;transition:background .5s var(--ease),transform .6s var(--ease);}
+.sp-go svg{width:16px;height:16px;stroke:var(--encre);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;transition:stroke .4s;}
+.sp-cat:hover .sp-go{background:var(--encre);transform:rotate(-45deg);}
+.sp-cat:hover .sp-go svg{stroke:var(--sable);}
+.sp-cat.is-soon .w-media img{filter:saturate(.5) opacity(.8);}
+@media(max-width:760px){ .sp-steps{grid-template-columns:1fr;} .sp-step + .sp-step{border-left:none;border-top:1px solid var(--trait);} }
 </style>
 {% endblock %}
 
 {% block content %}
+<div class="w-page">
+    <header class="w-head">
+        <div>
+            <span class="w-kicker">Accompagnement</span>
+            <h1>Trouver <em>la bonne personne</em></h1>
+            <p class="w-lede">Des professionnels de la santé mentale et du corps, à Djibouti. Choisissez une discipline, lisez les profils, puis envoyez votre demande quand vous vous sentez prêt·e.</p>
+        </div>
+        <div class="w-head-side">
+            <span class="w-stat w-stat--light"><b data-count="{{ total_specialistes }}">{{ total_specialistes }}</b><span>spécialiste{{ total_specialistes|pluralize }} disponible{{ total_specialistes|pluralize }}</span></span>
+        </div>
+    </header>
 
-<!-- HERO -->
-<div class="psy-hero">
-    <div class="psy-hero-inner">
-        <div class="psy-hero-img">
-            <img src="{% static 'images/psychologue.jpg' %}" alt="Spécialistes">
-        </div>
-        <div class="psy-hero-text">
-            <h1>Les spécialistes</h1>
-            <p>Choisissez une catégorie pour découvrir les professionnels disponibles et prendre rendez-vous</p>
-        </div>
-        <div class="psy-hero-count">{{ total_specialistes }} disponible{{ total_specialistes|pluralize }}</div>
+    <div class="w-card sp-steps">
+        <div class="sp-step"><b>1</b><div><strong>Choisissez une discipline</strong><span>Psychologie, psychiatrie, nutrition, kinésithérapie…</span></div></div>
+        <div class="sp-step"><b>2</b><div><strong>Écrivez votre demande</strong><span>Quelques lignes suffisent. Seul le spécialiste les lira.</span></div></div>
+        <div class="sp-step"><b>3</b><div><strong>Échangez</strong><span>Par message, en visioconférence ou au cabinet.</span></div></div>
+    </div>
+
+    <div class="w-grid">
+        {% for cat in categories %}
+        <a href="{% url 'specialistes_categorie' cat.value %}" class="w-card w-card--lift sp-cat {% if not cat.count %}is-soon{% endif %}">
+            <div class="w-media w-media--16x10 w-media--top"><img src="{% static 'images/' %}{{ cat.value|specialiste_img }}" alt="" loading="lazy"></div>
+            <div class="sp-cat-body">
+                <h3>{{ cat.label|sobre }}</h3>
+                <p class="w-text">{{ cat.description }}</p>
+                <div class="sp-cat-foot">
+                    {% if cat.count %}<span class="w-pill w-pill--sauge w-pill--dot">{{ cat.count }} disponible{{ cat.count|pluralize }}</span>
+                    {% else %}<span class="w-pill">Bientôt disponible</span>{% endif %}
+                    <span class="sp-go" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+
+    <div class="w-note w-note--or">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/></svg>
+        <span>Vous ne savez pas vers qui vous tourner ? <a class="w-link" href="{% url 'chatbot' %}" style="color:inherit;">Parlez-en d'abord à Wana</a>, qui vous aidera à y voir plus clair.</span>
     </div>
 </div>
-
-<!-- CATEGORY GRID -->
-<div class="cat-grid">
-    {% for cat in categories %}
-    <a href="{% url 'specialistes_categorie' cat.value %}" class="cat-card" style="animation-delay:{{ forloop.counter0 }}60ms">
-        <div class="cat-img-wrap">
-            <img src="{% static 'images/' %}{{ cat.value|specialiste_img }}" alt="{{ cat.label }}">
-        </div>
-        <div class="cat-body">
-            <div class="cat-label">{{ cat.label }}</div>
-            <div class="cat-desc">{{ cat.description }}</div>
-            <div class="cat-foot">
-                {% if cat.count %}
-                    <span class="cat-count">{{ cat.count }} disponible{{ cat.count|pluralize }}</span>
-                {% else %}
-                    <span class="cat-count empty">Bientôt disponible</span>
-                {% endif %}
-                <span class="cat-arrow">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-                </span>
-            </div>
-        </div>
-    </a>
-    {% endfor %}
-</div>
-
 {% endblock %}

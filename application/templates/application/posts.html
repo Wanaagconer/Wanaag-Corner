@@ -1,526 +1,208 @@
 {% extends 'application/base.html' %}
-{% load static %}
+{% load static wanaag %}
 
-{% block title %}Posts — Wanaag Corner{% endblock %}
+{% block title %}Publications — Wanaag Corner{% endblock %}
 {% block page_title %}Publications{% endblock %}
 
 {% block extra_css %}
 <style>
-:root {
-    --gold: #be8c3c; --gold-light: #ddc092; --gold-glow: rgba(190,140,60,.4);
-    --card-bg: #ffffff; --card-border: rgba(190,140,60,.13);
-    --shadow-soft: 0 2px 24px rgba(42,33,27,.07);
-    --shadow-hover: 0 20px 60px rgba(42,33,27,.15);
-    --radius-lg: 26px; --radius-md: 18px;
-}
+.pf{display:grid;grid-template-columns:minmax(0,680px) minmax(260px,320px);gap:clamp(20px,2.6vw,36px);justify-content:center;align-items:start;max-width:1080px;margin:0 auto;}
+.pf-main{display:flex;flex-direction:column;gap:18px;min-width:0;}
+.pf-side{display:flex;flex-direction:column;gap:18px;position:sticky;top:calc(var(--topbar-height) + 16px);}
 
-/* ===== LAYOUT ===== */
-.feed-wrap { display: grid; grid-template-columns: 1fr 300px; gap: 2rem; max-width: 980px; margin: 0 auto; }
-@media(max-width:900px){ .feed-wrap { grid-template-columns: 1fr; } .sidebar-col { display: none; } }
+/* compositeur */
+.pf-compose{padding:18px;display:flex;flex-direction:column;gap:14px;}
+.pf-compose-row{display:flex;gap:12px;align-items:center;}
+.pf-compose-open{flex:1;text-align:left;padding:13px 20px;border-radius:999px;border:1px solid var(--trait);background:var(--sable);color:var(--pierre);font:400 16px var(--f-body);cursor:pointer;transition:border-color .3s,background .3s,color .3s;}
+.pf-compose-open:hover{border-color:var(--or);background:var(--papier);color:var(--taupe);}
+.pf-compose-acts{display:flex;gap:6px;flex-wrap:wrap;}
+.pf-act{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;border:none;background:none;color:var(--taupe);font:500 14px var(--f-body);cursor:pointer;text-decoration:none;transition:background .3s,color .3s;}
+.pf-act:hover{background:rgba(221,192,146,.28);color:var(--encre);}
+.pf-act svg{width:17px;height:17px;stroke:var(--or-dark);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;}
 
-/* ===== CREATE BAR ===== */
-.posts-hero {
-    background: linear-gradient(135deg, #2c241b 0%, #2a211b 50%, #362b21 100%);
-    border-radius: var(--radius-lg); margin-bottom: 1.5rem;
-    position: relative; overflow: hidden;
-    box-shadow: 0 16px 56px rgba(0,0,0,.4), inset 0 1px 0 rgba(190,140,60,.12);
-    border: 1px solid rgba(190,140,60,.1);
-}
-.posts-hero::before {
-    content: ''; position: absolute; inset: 0;
-    background: linear-gradient(rgba(190,140,60,.035) 1px,transparent 1px),
-                linear-gradient(90deg,rgba(190,140,60,.035) 1px,transparent 1px);
-    background-size: 36px 36px;
-}
-.posts-hero::after {
-    content: ''; position: absolute; top: -80px; right: -80px;
-    width: 280px; height: 280px; border-radius: 50%;
-    background: radial-gradient(circle, rgba(190,140,60,.14) 0%, transparent 65%);
-}
-.posts-hero::before, .posts-hero::after { pointer-events: none; }
-.hero-inner { position: relative; z-index: 1; display: flex; align-items: center; gap: 1.1rem; padding: 1.4rem 1.6rem 1rem; }
-.hero-av {
-    width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0;
-    background: linear-gradient(135deg, var(--gold), #ab7e36);
-    display: flex; align-items: center; justify-content: center;
-    color: white; font-weight: 800; font-size: 1rem; position: relative; z-index: 1;
-}
-.hero-av::before {
-    content: ''; position: absolute; inset: -3px; border-radius: 50%;
-    background: conic-gradient(var(--gold), transparent 60%, var(--gold)); z-index: -1;
-    animation: spinRing 4s linear infinite;
-}
-@keyframes spinRing { to { transform: rotate(360deg); } }
-.hero-input {
-    flex: 1; background: rgba(255,255,255,.05); border: 1.5px solid rgba(190,140,60,.18);
-    border-radius: 50px; padding: .8rem 1.4rem; font-size: .9rem;
-    color: rgba(244,238,226,.55); cursor: pointer; outline: none; font-family: inherit;
-    transition: all .22s; text-align: left;
-}
-.hero-input:hover { background: rgba(255,255,255,.09); border-color: rgba(190,140,60,.45); color: rgba(244,238,226,.85); box-shadow: 0 0 0 4px rgba(190,140,60,.06); }
-.hero-actions { display: flex; border-top: 1px solid rgba(190,140,60,.08); }
-.hero-action-btn {
-    flex: 1; display: flex; align-items: center; justify-content: center; gap: .45rem;
-    background: transparent; border: none; border-right: 1px solid rgba(190,140,60,.08);
-    cursor: pointer; padding: .9rem 1rem; font-size: .8rem; font-weight: 700;
-    transition: all .15s; color: rgba(244,238,226,.55); position: relative; overflow: hidden;
-}
-.hero-action-btn:last-child { border-right: none; }
-.hero-action-btn:hover { color: white; background: rgba(190,140,60,.07); }
-.hero-action-btn svg { width: 16px; height: 16px; fill: currentColor; flex-shrink: 0; }
-.hero-action-btn:nth-child(1) { color: #5dade2; }
-.hero-action-btn:nth-child(2) { color: #a569bd; }
-.hero-action-btn:nth-child(3) { color: var(--gold); }
-.hero-action-btn:nth-child(4) { color: #e0a458; }
-.hero-action-btn:nth-child(5) { color: #7fb98a; }
-a.hero-action-btn { text-decoration: none; font-family: inherit; }
-.hero-action-btn svg.stroke { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.tag-banner{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 18px;border-radius:18px;background:rgba(190,140,60,.1);font-size:14.5px;color:var(--taupe);}
 
-/* ===== ONGLETS Tout / Posts / Blogs / Articles ===== */
-.feed-tabs { display: flex; gap: .15rem; margin: 0 0 1.3rem; border-bottom: 1px solid rgba(58,42,29,.1); overflow-x: auto; scrollbar-width: none; }
-.feed-tabs::-webkit-scrollbar { display: none; }
-.feed-tab { flex: none; padding: .8rem 1.05rem; font-size: .88rem; font-weight: 700; color: #9b8b7e; text-decoration: none; border-bottom: 2.5px solid transparent; margin-bottom: -1px; transition: color .15s, border-color .15s; white-space: nowrap; }
-.feed-tab:hover { color: var(--brown-dark); }
-.feed-tab.active { color: var(--brown-dark); border-bottom-color: var(--gold); }
-.feed-tab small { font-weight: 700; font-size: .72rem; color: #b1a59a; margin-left: .3rem; }
-.tag-banner { display: flex; align-items: center; gap: .6rem; margin: -.3rem 0 1.2rem; font-size: .86rem; color: var(--brown-dark); }
-.tag-banner .chip { font-weight: 700; padding: .25rem .8rem; border-radius: 50px; background: rgba(190,140,60,.14); color: #7a5218; }
-.tag-banner a { color: #9b8b7e; text-decoration: none; font-weight: 700; }
-.tag-banner a:hover { color: var(--brown-dark); }
+/* carte de publication */
+.post-card{overflow:hidden;}
+.post-header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 20px 12px;}
+.post-author{display:flex;align-items:center;gap:12px;min-width:0;text-decoration:none;color:inherit;}
+.author-name{font-weight:600;font-size:15.5px;color:var(--encre);text-decoration:none;}
+.author-name:hover{color:var(--or-dark);}
+.post-date{font-size:13px;color:var(--pierre);margin-top:2px;}
+.follow-post-btn{padding:6px 14px;border-radius:999px;border:1px solid rgba(42,33,27,.2);background:transparent;color:var(--encre);font:500 13.5px var(--f-body);cursor:pointer;transition:all .4s var(--ease);white-space:nowrap;}
+.follow-post-btn:hover{background:var(--encre);color:var(--sable);border-color:var(--encre);}
+.follow-post-btn.following{background:rgba(122,138,102,.16);border-color:transparent;color:var(--foret);}
+.post-menu-wrap{position:relative;}
+.post-more-btn{width:36px;height:36px;border-radius:50%;border:none;background:none;cursor:pointer;color:var(--taupe);display:grid;place-items:center;transition:background .3s;}
+.post-more-btn:hover{background:rgba(42,33,27,.07);}
+.post-more-btn svg{width:18px;height:18px;fill:currentColor;}
+.post-dropdown{position:absolute;right:0;top:calc(100% + 6px);min-width:210px;padding:6px;border-radius:18px;background:var(--papier);border:1px solid var(--trait);box-shadow:var(--shadow-lg);z-index:20;
+  opacity:0;transform:translateY(-8px) scale(.97);transform-origin:top right;pointer-events:none;transition:opacity .3s,transform .4s var(--ease);}
+.post-dropdown.open{opacity:1;transform:none;pointer-events:auto;}
+.dropdown-item{display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px;border-radius:12px;border:none;background:none;font:500 14.5px var(--f-body);color:var(--encre);cursor:pointer;text-decoration:none;text-align:left;}
+.dropdown-item:hover{background:var(--sable);}
+.dropdown-item.danger{color:var(--danger);}
+.dropdown-item svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
 
-/* ===== AVATAR ===== */
-.av { border-radius: 50%; background: linear-gradient(135deg,var(--gold),var(--brown-dark)); display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; flex-shrink: 0; }
-.av-lg { width: 54px; height: 54px; font-size: 1.1rem; }
-.av-md { width: 44px; height: 44px; font-size: .92rem; }
-.av-sm { width: 32px; height: 32px; font-size: .74rem; }
-.av-psy { background: linear-gradient(135deg,#2e86c1,#1a5276); }
+.post-img-wrap{margin:0 12px;border-radius:20px;overflow:hidden;background:var(--brume);}
+.post-img-wrap img{width:100%;max-height:640px;object-fit:cover;display:block;}
+.post-video-wrap{margin:0 12px;border-radius:20px;overflow:hidden;background:#000;}
+.post-video-wrap video{width:100%;max-height:600px;display:block;}
+.post-body{padding:14px 22px 4px;font-size:16px;line-height:1.65;color:var(--encre);white-space:pre-line;overflow-wrap:anywhere;}
+.post-body strong{font-weight:600;}
+.post-likes{padding:10px 22px 0;font-size:13.5px;color:var(--taupe);}
+.likes-emojis{color:var(--danger);}
 
-/* ===== POST CARD ===== */
-.post-card {
-    background: var(--card-bg); border-radius: var(--radius-lg);
-    margin-bottom: 1.4rem; box-shadow: var(--shadow-soft);
-    border: 1px solid var(--card-border); overflow: visible;
-    transition: box-shadow .3s, transform .3s;
-    position: relative; animation: cardIn .38s cubic-bezier(.25,.46,.45,.94) both;
-}
-@keyframes cardIn { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
-.post-card::before {
-    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-    background: linear-gradient(90deg,transparent,var(--gold),var(--gold-light),transparent);
-    opacity: .35; transition: opacity .3s; border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-}
-.post-card:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
-.post-card:hover::before { opacity: .9; }
+/* format long */
+.art-body{display:grid;grid-template-columns:minmax(0,1fr) 190px;gap:20px;padding:6px 22px 8px;align-items:center;}
+.art-body.no-cover{grid-template-columns:1fr;}
+.art-link{display:block;text-decoration:none;color:inherit;}
+.art-kind{display:inline-flex;margin-bottom:10px;}
+.art-title{font-family:var(--f-display);font-weight:400;font-size:clamp(24px,2.4vw,31px);line-height:1.1;letter-spacing:-.022em;color:var(--encre);transition:color .3s;}
+.art-link:hover .art-title{color:var(--or-dark);}
+.art-sub{margin-top:8px;color:var(--taupe);font-size:15.5px;line-height:1.55;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+.art-info{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:14px;font-size:13.5px;color:var(--pierre);}
+.art-chip{padding:3px 11px;border-radius:999px;background:rgba(42,33,27,.06);color:var(--taupe);font-size:13px;text-decoration:none;transition:background .3s,color .3s;}
+.art-chip:hover,.art-chip.is-on{background:var(--encre);color:var(--sable);}
+.art-cover{display:block;aspect-ratio:1;border-radius:20px;overflow:hidden;background:var(--brume);}
+.art-cover img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 1.2s var(--ease);}
+.post-card:hover .art-cover img{transform:scale(1.06);}
 
-/* Header */
-.post-header { display: flex; align-items: center; justify-content: space-between; padding: 1.1rem 1.3rem .7rem; }
-.post-author { display: flex; align-items: center; gap: .9rem; }
-.post-av-wrap { position: relative; }
-.post-av-ring {
-    position: absolute; inset: -2px; border-radius: 50%;
-    background: conic-gradient(var(--gold) 0%,var(--gold-light) 50%,transparent 65%);
-    z-index: 0; animation: spinRing 7s linear infinite;
-}
-.post-av-wrap .av, .post-av-wrap img { position: relative; z-index: 1; }
-.author-name { font-weight: 800; font-size: .95rem; color: var(--brown-dark); }
-.author-role {
-    font-size: .67rem; font-weight: 700; padding: .12rem .52rem;
-    border-radius: 20px; display: inline-block; margin-left: .35rem; letter-spacing: .2px;
-}
-.role-membre { background: rgba(171,126,54,.1); color: #5e5044; }
-.role-psy { background: linear-gradient(135deg,rgba(41,128,185,.12),rgba(26,82,118,.08)); color: #1a6fa8; border: 1px solid rgba(41,128,185,.2); }
-.post-date { font-size: .71rem; color: #9b8b7e; margin-top: .1rem; }
-.post-edited-badge { font-size: .67rem; color: #be8c3c; margin-left: .3rem; font-style: italic; }
+/* réactions */
+.post-reactions-bar{display:flex;gap:4px;padding:10px 12px;margin-top:12px;border-top:1px solid var(--trait);}
+.react-btn{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px;border-radius:999px;border:none;background:none;color:var(--taupe);font:500 14.5px var(--f-body);cursor:pointer;text-decoration:none;transition:background .3s,color .3s;}
+.react-btn:hover{background:rgba(221,192,146,.26);color:var(--encre);}
+.react-btn svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;transition:transform .3s var(--ease);}
+.react-btn.liked{color:var(--danger);}
+.react-btn.liked svg{fill:currentColor;}
+.heart-anim{animation:pfHeart .32s var(--ease);}
+@keyframes pfHeart{50%{transform:scale(1.5)}}
+.see-comments-btn{margin:0 22px 12px;padding:0;border:none;background:none;color:var(--taupe);font:500 14px var(--f-body);cursor:pointer;}
+.see-comments-btn:hover{color:var(--or-dark);}
 
-/* Follow */
-.follow-post-btn { display: inline-flex; align-items: center; gap: .32rem; padding: .32rem .85rem; border-radius: 50px; font-size: .74rem; font-weight: 800; cursor: pointer; transition: all .18s; }
+/* commentaires */
+.comments-section{display:none;flex-direction:column;gap:12px;padding:16px 20px 18px;background:var(--sable);border-top:1px solid var(--trait);}
+.comments-section.open{display:flex;animation:wMsg .5s var(--ease);}
+.comment-item{display:flex;gap:10px;align-items:flex-start;animation:wMsg .5s var(--ease);}
+.comment-bubble{padding:10px 14px;border-radius:6px 18px 18px 18px;background:var(--papier);border:1px solid rgba(42,33,27,.07);min-width:0;}
+.comment-author{font-weight:600;font-size:14px;}
+.comment-text{font-size:15px;line-height:1.5;overflow-wrap:anywhere;}
+.comment-time{font-size:12px;color:var(--pierre);margin-top:3px;}
+.comment-form{display:flex;gap:10px;align-items:center;}
+.comment-input{flex:1;min-width:0;padding:11px 16px;border-radius:999px;border:1px solid var(--trait);background:var(--papier);font:400 16px var(--f-body);color:var(--encre);outline:none;transition:border-color .3s,box-shadow .3s;}
+.comment-input:focus{border-color:var(--or);box-shadow:0 0 0 4px rgba(190,140,60,.14);}
 
-/* 3-dots menu */
-.post-menu-wrap { position: relative; }
-.post-more-btn { background: none; border: none; cursor: pointer; padding: .35rem .5rem; border-radius: 10px; color: #b1a59a; transition: all .15s; display: flex; }
-.post-more-btn:hover { background: rgba(171,126,54,.08); color: var(--brown-dark); }
-.post-more-btn svg { width: 20px; height: 20px; fill: currentColor; }
-.post-dropdown {
-    position: absolute; right: 0; top: calc(100% + 8px); z-index: 300;
-    background: white; border-radius: 18px; min-width: 185px; padding: .4rem 0;
-    box-shadow: 0 20px 60px rgba(0,0,0,.18); border: 1px solid rgba(171,126,54,.1);
-    display: none;
-}
-.post-dropdown.open { display: block; animation: dropIn .15s ease; }
-@keyframes dropIn { from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)} }
-.dropdown-item {
-    display: flex; align-items: center; gap: .65rem; padding: .7rem 1.1rem;
-    font-size: .84rem; color: var(--brown-dark); cursor: pointer;
-    transition: background .1s; border: none; background: none; width: 100%; text-align: left;
-}
-.dropdown-item:hover { background: #fcfaf4; }
-.dropdown-item.danger { color: #e74c3c; }
-.dropdown-item.danger:hover { background: #fdf0ef; }
-.dropdown-item svg { width: 15px; height: 15px; fill: currentColor; flex-shrink: 0; }
+/* colonne latérale */
+.pf-me{padding:22px;display:flex;flex-direction:column;gap:16px;}
+.pf-me-top{display:flex;align-items:center;gap:14px;}
+.pf-me-name{font-family:var(--f-display);font-size:24px;line-height:1.1;letter-spacing:-.015em;}
+.pf-nums{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.pf-nums div{padding:12px 14px;border-radius:16px;background:var(--sable);}
+.pf-nums b{display:block;font-family:var(--f-display);font-weight:300;font-size:28px;line-height:1;}
+.pf-nums span{font-size:13px;color:var(--taupe);}
+.pf-write{padding:22px;display:flex;flex-direction:column;gap:12px;}
+.pf-write p{color:rgba(244,238,226,.7);font-size:14.5px;line-height:1.5;}
+.pf-tags{padding:22px;display:flex;flex-direction:column;gap:14px;}
+.pf-tags > div{display:flex;flex-wrap:wrap;gap:8px;}
 
-/* Media */
-.post-img-wrap { overflow: hidden; }
-.post-img-wrap img { width: 100%; max-height: 540px; object-fit: cover; display: block; transition: transform .6s ease; }
-.post-card:hover .post-img-wrap img { transform: scale(1.02); }
-.post-video-wrap { background: #231c16; }
-.post-video-wrap video { width: 100%; max-height: 540px; display: block; outline: none; }
+/* fenêtres */
+.pf-modal-author{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+.pf-modal-author strong{display:block;font-size:15px;}
+.pf-modal-author small{color:var(--pierre);font-size:13px;}
+.modal-textarea{width:100%;min-height:150px;border:none;background:transparent;resize:none;outline:none;font:400 18px/1.55 var(--f-body);color:var(--encre);}
+.modal-textarea::placeholder{color:var(--pierre);}
+.char-count{text-align:right;font-size:12.5px;color:var(--pierre);}
+.char-count.warn{color:var(--or-dark);}
+.char-count.over{color:var(--danger);font-weight:600;}
+.media-preview-wrap{display:none;position:relative;margin-top:12px;border-radius:18px;overflow:hidden;background:var(--brume);}
+.media-preview-wrap img,.media-preview-wrap video{width:100%;max-height:320px;object-fit:cover;display:block;}
+.media-remove-btn{position:absolute;top:10px;right:10px;width:34px;height:34px;border-radius:50%;border:none;background:rgba(42,33,27,.7);color:#fff;cursor:pointer;}
+.pf-modal-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:16px;padding-top:16px;border-top:1px solid var(--trait);}
 
-/* Body */
-.post-body { padding: .85rem 1.3rem .3rem; font-size: .94rem; color: var(--brown-dark); line-height: 1.72; white-space: pre-wrap; }
+.toast{position:fixed;left:50%;bottom:30px;z-index:9200;transform:translate(-50%,24px);opacity:0;pointer-events:none;padding:12px 20px;border-radius:999px;background:var(--encre);color:var(--sable);font-size:14.5px;font-weight:500;box-shadow:var(--shadow-lg);transition:opacity .4s,transform .5s var(--ease);}
+.toast.show{opacity:1;transform:translate(-50%,0);}
 
-/* Blog / article : carte éditoriale (titre, sous-titre, couverture) */
-.art-body { display: grid; grid-template-columns: 1fr 190px; gap: 1.4rem; padding: .3rem 1.3rem 1rem; align-items: start; }
-.art-body.no-cover { grid-template-columns: 1fr; }
-.art-link { display: block; text-decoration: none; color: inherit; }
-.art-type { display: inline-block; font-size: .64rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; padding: .2rem .6rem; border-radius: 50px; margin-bottom: .6rem; }
-.art-type-blog { background: rgba(190,140,60,.14); color: #8a622a; }
-.art-type-article { background: rgba(96,122,92,.16); color: #3f5a3c; }
-.art-title { font-family: 'Newsreader', serif; font-weight: 800; font-size: 1.55rem; line-height: 1.2; letter-spacing: -.01em; color: var(--brown-dark); margin: 0 0 .5rem; text-wrap: balance; transition: color .15s; }
-.art-link:hover .art-title { color: #9c6f2f; }
-.art-sub { font-size: .95rem; line-height: 1.55; color: #7a6856; margin: 0 0 .8rem; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-.art-info { display: flex; flex-wrap: wrap; align-items: center; gap: .45rem; font-size: .76rem; color: #9b8b7e; }
-.art-tag { text-decoration: none; padding: .14rem .6rem; border-radius: 50px; background: rgba(58,42,29,.06); color: #7a6856; font-weight: 600; transition: all .15s; }
-.art-tag:hover { background: rgba(190,140,60,.18); color: #7a5218; }
-.art-cover { display: block; border-radius: 14px; overflow: hidden; aspect-ratio: 4 / 3; background: #231c16; }
-.art-cover img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .5s ease; }
-.post-card:hover .art-cover img { transform: scale(1.04); }
-a.react-btn { text-decoration: none; }
-
-/* ===== REACTIONS BAR ===== */
-.post-reactions-bar {
-    display: flex; align-items: center; padding: .15rem .8rem;
-    border-top: 1px solid rgba(171,126,54,.06);
-    gap: .1rem;
+@media(max-width:980px){
+  .pf{grid-template-columns:minmax(0,680px);}
+  .pf-side{position:static;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));}
 }
-.react-btn {
-    display: flex; align-items: center; gap: .42rem;
-    background: none; border: none; cursor: pointer;
-    padding: .6rem .75rem; border-radius: 12px; transition: all .15s;
-    color: #9b8b7e; font-size: .82rem; font-weight: 700; position: relative;
-}
-.react-btn:hover { background: rgba(171,126,54,.07); color: var(--brown-dark); }
-.react-btn svg { width: 21px; height: 21px; transition: transform .2s; }
-.react-btn .heart-icon { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-.react-btn.liked .heart-icon { fill: #e74c3c; stroke: #e74c3c; }
-.react-btn.liked { color: #e74c3c; }
-.react-btn .comment-icon { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-@keyframes heartPop { 0%{transform:scale(1)} 30%{transform:scale(1.55)} 60%{transform:scale(.9)} 100%{transform:scale(1)} }
-.heart-anim { animation: heartPop .32s ease; }
-
-/* Emoji reactions floating */
-.emoji-reactions {
-    display: flex; gap: .3rem; padding: .5rem .7rem;
-    background: white; border-radius: 50px; box-shadow: 0 8px 32px rgba(0,0,0,.14);
-    border: 1px solid rgba(171,126,54,.1);
-    position: absolute; bottom: calc(100% + 8px); left: 0; z-index: 200;
-    display: none; animation: popUp .18s cubic-bezier(.34,1.56,.64,1);
-}
-@keyframes popUp { from{opacity:0;transform:scale(.7)translateY(8px)} to{opacity:1;transform:scale(1)translateY(0)} }
-.emoji-btn { background: none; border: none; cursor: pointer; font-size: 1.4rem; padding: .15rem .22rem; border-radius: 50%; transition: transform .15s; }
-.emoji-btn:hover { transform: scale(1.35); }
-
-/* Reactions summary */
-.post-likes { padding: .08rem 1.3rem .1rem; font-size: .82rem; font-weight: 700; color: var(--brown-dark); display: flex; align-items: center; gap: .4rem; }
-.likes-emojis { font-size: .88rem; }
-
-/* ===== COMMENTS ===== */
-.comments-section { padding: 0 1.3rem .9rem; display: none; }
-.comments-section.open { display: block; animation: fadeUp .2s ease; }
-@keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
-.comment-item { display: flex; gap: .65rem; margin-bottom: .75rem; align-items: flex-start; }
-.comment-bubble {
-    background: linear-gradient(135deg, #f4eee2, #fcfaf4);
-    border-radius: 0 18px 18px 18px; padding: .6rem 1rem; flex: 1;
-    border: 1px solid rgba(190,140,60,.08);
-}
-.comment-author { font-weight: 800; font-size: .8rem; color: var(--brown-dark); }
-.comment-text { font-size: .85rem; color: var(--brown); line-height: 1.55; margin-top: .1rem; }
-.comment-time { font-size: .69rem; color: #9b8b7e; margin-top: .15rem; }
-.comment-form {
-    display: flex; gap: .6rem; align-items: center;
-    margin-top: .8rem; padding-top: .7rem; border-top: 1px solid rgba(171,126,54,.07);
-}
-.comment-input {
-    flex: 1; background: #f4eee2; border: 1.5px solid rgba(190,140,60,.15);
-    border-radius: 50px; padding: .58rem 1.1rem; font-size: .84rem;
-    outline: none; font-family: inherit; color: var(--brown-dark); transition: all .18s;
-}
-.comment-input:focus { background: white; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(190,140,60,.1); }
-.comment-send-btn {
-    width: 38px; height: 38px; border-radius: 50%; border: none; cursor: pointer;
-    background: linear-gradient(135deg,var(--gold),#ab7e36); color: white;
-    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-    transition: all .18s; box-shadow: 0 3px 14px var(--gold-glow);
-}
-.comment-send-btn:hover { transform: scale(1.12); box-shadow: 0 6px 22px var(--gold-glow); }
-.comment-send-btn svg { width: 15px; height: 15px; fill: white; }
-.see-comments-btn {
-    background: none; border: none; cursor: pointer; font-size: .79rem;
-    color: #b1a59a; font-weight: 700; padding: .05rem 1.3rem .75rem; display: block; transition: color .15s;
-}
-.see-comments-btn:hover { color: var(--brown-dark); }
-
-/* ===== EMPTY STATE ===== */
-.empty-feed { text-align: center; padding: 5rem 2rem; background: var(--card-bg); border-radius: var(--radius-lg); box-shadow: var(--shadow-soft); border: 1px solid var(--card-border); }
-.empty-feed-icon { width: 80px; height: 80px; border-radius: 24px; background: linear-gradient(135deg,rgba(190,140,60,.1),rgba(190,140,60,.05)); border: 1.5px solid rgba(190,140,60,.2); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.2rem; }
-.empty-feed-icon svg { width: 38px; height: 38px; fill: rgba(190,140,60,.5); }
-.empty-feed h3 { color: var(--brown-dark); margin-bottom: .5rem; font-size: 1.15rem; }
-.empty-feed p { color: #b1a59a; font-size: .9rem; }
-
-/* ===== SIDEBAR ===== */
-.sidebar-col { display: flex; flex-direction: column; gap: 1.3rem; }
-.side-card { background: var(--card-bg); border-radius: var(--radius-lg); padding: 1.5rem; box-shadow: var(--shadow-soft); border: 1px solid var(--card-border); position: relative; overflow: hidden; }
-.side-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg,transparent,var(--gold),transparent); opacity: .45; }
-.profile-card-top { display: flex; gap: 1rem; align-items: center; margin-bottom: 1.4rem; }
-.profile-av-wrap { position: relative; }
-.profile-av-ring { position: absolute; inset: -3px; border-radius: 50%; background: conic-gradient(var(--gold),var(--gold-light),transparent 55%,var(--gold)); animation: spinRing 5s linear infinite; }
-.profile-av-inner { position: relative; z-index: 1; }
-.profile-name { font-weight: 800; font-size: .98rem; color: var(--brown-dark); }
-.profile-role-tag { display: inline-block; font-size: .7rem; font-weight: 700; padding: .18rem .58rem; border-radius: 20px; margin-top: .32rem; }
-.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; margin-top: .5rem; }
-.stats-item { background: linear-gradient(135deg,rgba(190,140,60,.06),rgba(190,140,60,.02)); border: 1px solid rgba(190,140,60,.15); border-radius: 14px; text-align: center; padding: 1rem .5rem; }
-.stats-item .n { font-size: 1.6rem; font-weight: 800; color: var(--brown-dark); line-height: 1; }
-.stats-item .l { font-size: .68rem; color: #9b8b7e; text-transform: uppercase; letter-spacing: .5px; margin-top: .3rem; }
-.side-section-title { font-size: .72rem; font-weight: 800; color: var(--brown-light); text-transform: uppercase; letter-spacing: .8px; margin-bottom: .9rem; }
-.side-nav-link { display: flex; align-items: center; gap: .85rem; padding: .65rem .8rem; border-radius: 14px; text-decoration: none; color: var(--brown-dark); font-weight: 600; font-size: .86rem; transition: all .18s; margin-bottom: .2rem; }
-.side-nav-link:hover { background: rgba(190,140,60,.08); transform: translateX(4px); box-shadow: inset 3px 0 0 var(--gold); }
-.nav-img-icon { width: 34px; height: 34px; border-radius: 10px; overflow: hidden; flex-shrink: 0; box-shadow: 0 2px 10px rgba(0,0,0,.12); }
-.nav-img-icon img { width: 100%; height: 100%; object-fit: cover; }
-
-/* ===== MODAL BASE ===== */
-.modal-overlay { position: fixed; inset: 0; background: rgba(8,4,0,.75); z-index: 2000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(12px); }
-.modal-overlay.active { display: flex; }
-@keyframes modalIn { from{opacity:0;transform:translateY(30px)scale(.92)} to{opacity:1;transform:translateY(0)scale(1)} }
-
-/* ===== CREATE / EDIT MODAL ===== */
-.modal-box {
-    background: white; border-radius: 28px; width: 95%; max-width: 540px;
-    overflow: hidden; box-shadow: 0 48px 120px rgba(0,0,0,.35), 0 0 0 1px rgba(190,140,60,.12);
-    animation: modalIn .28s cubic-bezier(.34,1.56,.64,1);
-}
-.modal-head {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 1.2rem 1.5rem; border-bottom: 1px solid rgba(171,126,54,.1);
-    background: linear-gradient(135deg,#f4eee2,white);
-}
-.modal-head h4 { font-size: 1.05rem; font-weight: 800; color: var(--brown-dark); margin: 0; font-family: 'Newsreader',serif; }
-.modal-close-btn { width: 32px; height: 32px; border-radius: 50%; background: #fcfaf4; border: none; cursor: pointer; font-size: 1rem; color: var(--brown); display: flex; align-items: center; justify-content: center; transition: all .15s; }
-.modal-close-btn:hover { background: #fde8e8; color: #e74c3c; transform: rotate(90deg); }
-.modal-author-row { display: flex; align-items: center; gap: .9rem; padding: 1.1rem 1.5rem .5rem; }
-.modal-author-row .m-name { font-weight: 700; font-size: .9rem; color: var(--brown-dark); }
-.modal-author-row .m-sub { font-size: .72rem; color: #9b8b7e; }
-.modal-textarea {
-    width: 100%; min-height: 130px; border: none; resize: none;
-    padding: .4rem 1.5rem 1rem; font-size: 1rem; color: var(--brown-dark);
-    outline: none; font-family: inherit; box-sizing: border-box; line-height: 1.7;
-}
-.modal-textarea::placeholder { color: #b1a59a; }
-.char-count { text-align: right; font-size: .75rem; color: #9b8b7e; padding: 0 1.5rem .4rem; }
-.char-count.warn { color: #e67e22; }
-.char-count.over { color: #e74c3c; }
-
-/* Media preview */
-.media-preview-wrap { position: relative; margin: 0 1.4rem .9rem; display: none; border-radius: 18px; overflow: hidden; }
-.media-preview-wrap img { width: 100%; max-height: 260px; object-fit: cover; display: block; }
-.media-preview-wrap video { width: 100%; max-height: 260px; display: block; background: #000; }
-.media-remove-btn { position: absolute; top: 8px; right: 8px; width: 30px; height: 30px; background: rgba(0,0,0,.6); color: white; border: none; border-radius: 50%; cursor: pointer; font-size: .9rem; display: flex; align-items: center; justify-content: center; transition: background .15s; }
-.media-remove-btn:hover { background: rgba(231,76,60,.85); }
-
-.modal-footer {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: .9rem 1.5rem; border-top: 1px solid rgba(171,126,54,.08);
-    background: rgba(250,246,240,.65);
-}
-.upload-label {
-    display: flex; align-items: center; gap: .45rem; cursor: pointer; padding: .48rem .85rem;
-    border-radius: 50px; font-size: .8rem; font-weight: 700;
-    transition: all .15s;
-}
-.upload-label.photo { color: #4F5C3D; background: rgba(41,128,185,.08); border: 1px solid rgba(41,128,185,.18); }
-.upload-label.video { color: #8e44ad; background: rgba(142,68,173,.08); border: 1px solid rgba(142,68,173,.18); }
-.upload-label:hover { opacity: .85; transform: translateY(-1px); }
-.upload-label svg { width: 15px; height: 15px; fill: currentColor; }
-.btn-publish {
-    background: linear-gradient(135deg,#be8c3c,#ab7e36); color: white; border: none;
-    padding: .7rem 2.2rem; border-radius: 50px; font-weight: 800; font-size: .9rem;
-    cursor: pointer; transition: all .22s;
-    box-shadow: 0 4px 18px var(--gold-glow), inset 0 1px 0 rgba(255,255,255,.2);
-}
-.btn-publish:hover { transform: translateY(-2px); box-shadow: 0 10px 32px var(--gold-glow); }
-.btn-publish:disabled { background: #e4dbcb; color: #9b8b7e; cursor: not-allowed; transform: none; box-shadow: none; }
-
-/* ===== DELETE MODAL ===== */
-.delete-box { background: white; border-radius: 24px; width: 90%; max-width: 360px; overflow: hidden; box-shadow: 0 24px 70px rgba(0,0,0,.22); animation: modalIn .22s cubic-bezier(.34,1.56,.64,1); }
-.delete-box-body { padding: 2.2rem 1.8rem 1rem; text-align: center; }
-.del-icon-wrap { width: 58px; height: 58px; border-radius: 50%; background: #fde8e8; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.1rem; }
-.del-icon-wrap svg { width: 26px; height: 26px; fill: #e74c3c; }
-.delete-box-body h4 { color: var(--brown-dark); font-size: 1.05rem; margin-bottom: .4rem; }
-.delete-box-body p { color: #9b8b7e; font-size: .84rem; }
-.delete-box-footer { display: flex; gap: .8rem; padding: 1rem 1.8rem 1.6rem; justify-content: center; }
-.btn-cancel-del { background: #f4eee2; color: var(--brown-dark); border: none; padding: .68rem 1.6rem; border-radius: 50px; font-weight: 700; cursor: pointer; font-size: .86rem; transition: background .15s; }
-.btn-cancel-del:hover { background: #e4dbcb; }
-.btn-confirm-del { background: linear-gradient(135deg,#e74c3c,#b03a2e); color: white; border: none; padding: .68rem 1.6rem; border-radius: 50px; font-weight: 700; cursor: pointer; font-size: .86rem; box-shadow: 0 4px 14px rgba(231,76,60,.3); transition: all .15s; }
-.btn-confirm-del:hover { transform: translateY(-1px); box-shadow: 0 8px 22px rgba(231,76,60,.4); }
-
-/* ===== TOAST NOTIFICATION ===== */
-.toast {
-    position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(80px);
-    background: linear-gradient(135deg,#231c16,#362b21); color: #ddc092;
-    padding: .75rem 1.6rem; border-radius: 50px; font-size: .87rem; font-weight: 700;
-    box-shadow: 0 8px 32px rgba(0,0,0,.35); z-index: 9999;
-    transition: transform .35s cubic-bezier(.34,1.56,.64,1), opacity .35s;
-    opacity: 0; border: 1px solid rgba(190,140,60,.25);
-}
-.toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-
-/* ===== RESPONSIVE ===== */
 @media(max-width:600px){
-    .hero-inner { padding:1.1rem 1.1rem .8rem; gap:.8rem; }
-    .hero-av { width:40px; height:40px; font-size:.85rem; }
-    .hero-input { padding:.7rem 1.1rem; font-size:.85rem; }
-    .hero-action-btn { font-size:.66rem; padding:.75rem .2rem; gap:.25rem; flex-direction:column; }
-    .hero-action-btn svg { width:18px; height:18px; }
-    .art-body { grid-template-columns: 1fr 96px; gap: .9rem; padding: .2rem 1rem .8rem; }
-    .art-title { font-size: 1.22rem; }
-    .art-sub { font-size: .86rem; -webkit-line-clamp: 2; }
-    .art-cover { aspect-ratio: 1; }
-    .post-header { padding:1rem 1rem .6rem; flex-wrap:wrap; gap:.5rem; }
-    .post-body { padding:.75rem 1rem .3rem; font-size:.9rem; }
-    .post-reactions-bar { padding:.1rem .5rem; }
-    .react-btn { padding:.55rem .5rem; font-size:.78rem; }
-    .comments-section { padding:0 1rem .8rem; }
-    .comment-form { flex-wrap:nowrap; }
-    .modal-box { width:96%; }
-    .modal-author-row { padding:1rem 1.1rem .5rem; }
-    .modal-textarea { padding:.4rem 1.1rem 1rem; }
-    .char-count { padding:0 1.1rem .4rem; }
-    .modal-footer { flex-wrap:wrap; gap:.7rem; padding:.9rem 1.1rem; }
-    .modal-footer > div:first-child { width:100%; }
-    .upload-label { flex:1; justify-content:center; }
-    .btn-publish { width:100%; text-align:center; }
-    .toast { width:90%; max-width:340px; text-align:center; }
-}
-@media(max-width:480px){
-    .post-av-wrap .av, .post-av-wrap img { width:38px !important; height:38px !important; }
-    .author-name { font-size:.87rem; }
-    .post-date { font-size:.66rem; }
-    .follow-post-btn { padding:.28rem .65rem; font-size:.68rem; }
-    .stats-grid { gap:.5rem; }
-    .stats-item { padding:.75rem .3rem; }
-    .stats-item .n { font-size:1.3rem; }
-    .comment-input { font-size:16px; }
-    .side-card { padding:1.1rem; }
+  .art-body{grid-template-columns:1fr;}
+  .art-cover{aspect-ratio:16/9;order:-1;}
+  .react-btn span{display:none;}
+  .pf-act span{display:none;}
+  .pf-act{padding:10px 12px;}
 }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="feed-wrap">
+<div class="pf">
 
-  <!-- ====== MAIN FEED ====== -->
-  <div class="main-col">
+  <div class="pf-main" data-stagger>
 
-    <!-- CREATE BAR -->
-    <div class="posts-hero">
-      <div class="hero-inner">
-        <div class="hero-av">{{ user.pseudonyme|first|upper }}</div>
-        <button class="hero-input" onclick="openCreateModal()">Quoi de neuf, {{ user.pseudonyme }} ?</button>
+    <div class="w-card pf-compose">
+      <div class="pf-compose-row">
+        <span class="w-av">{% if user.photo %}<img src="{{ user.photo.url }}" alt="">{% else %}{{ user.pseudonyme|first|upper }}{% endif %}</span>
+        <button class="pf-compose-open" onclick="openCreateModal()">Qu'aimeriez-vous partager, {{ user.pseudonyme }} ?</button>
       </div>
-      <div class="hero-actions">
-        <button class="hero-action-btn" onclick="openCreateModal(); setTimeout(()=>document.getElementById('postImageInput').click(),300)">
-          <svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
-          Photo
+      <div class="pf-compose-acts">
+        <button class="pf-act" onclick="openCreateModal(); setTimeout(()=>document.getElementById('postImageInput').click(),300)">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="9" cy="9" r="2"/><path d="m21 15-4.5-4.5L6 21"/></svg><span>Photo</span>
         </button>
-        <button class="hero-action-btn" onclick="openCreateModal(); setTimeout(()=>document.getElementById('postVideoInput').click(),300)">
-          <svg viewBox="0 0 24 24"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/></svg>
-          Vidéo
+        <button class="pf-act" onclick="openCreateModal(); setTimeout(()=>document.getElementById('postVideoInput').click(),300)">
+          <svg viewBox="0 0 24 24"><rect x="2" y="5" width="14" height="14" rx="3"/><path d="m22 8-6 4 6 4z"/></svg><span>Vidéo</span>
         </button>
-        <button class="hero-action-btn" onclick="openCreateModal()">
-          <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
-          Texte
-        </button>
-        <a class="hero-action-btn" href="{% url 'post_write' %}?type=blog">
-          <svg class="stroke" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-          Blog
+        <a class="pf-act" href="{% url 'post_write' %}?type=blog">
+          <svg viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg><span>Écrire un blog</span>
         </a>
-        <a class="hero-action-btn" href="{% url 'post_write' %}?type=article">
-          <svg class="stroke" viewBox="0 0 24 24"><path d="M4 22h14a2 2 0 0 0 2-2V7l-5-5H6a2 2 0 0 0-2 2v4"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M3 15h6"/><path d="M3 18h6"/><path d="M3 12h6"/></svg>
-          Article
+        <a class="pf-act" href="{% url 'post_write' %}?type=article">
+          <svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h7M9 17h5"/></svg><span>Écrire un article</span>
         </a>
       </div>
     </div>
 
-    <!-- ONGLETS -->
-    <nav class="feed-tabs">
-      <a class="feed-tab {% if not active_type %}active{% endif %}" href="{% url 'posts_feed' %}{% if active_tag %}?tag={{ active_tag|urlencode }}{% endif %}">Tout<small>{{ type_counts.all }}</small></a>
-      <a class="feed-tab {% if active_type == 'post' %}active{% endif %}" href="?type=post{% if active_tag %}&tag={{ active_tag|urlencode }}{% endif %}">Posts<small>{{ type_counts.post }}</small></a>
-      <a class="feed-tab {% if active_type == 'blog' %}active{% endif %}" href="?type=blog{% if active_tag %}&tag={{ active_tag|urlencode }}{% endif %}">Blogs<small>{{ type_counts.blog }}</small></a>
-      <a class="feed-tab {% if active_type == 'article' %}active{% endif %}" href="?type=article{% if active_tag %}&tag={{ active_tag|urlencode }}{% endif %}">Articles<small>{{ type_counts.article }}</small></a>
+    <nav class="w-tabs" aria-label="Types de publications">
+      <a class="w-tab {% if not active_type %}active{% endif %}" href="{% url 'posts_feed' %}{% if active_tag %}?tag={{ active_tag|urlencode }}{% endif %}">Tout <b>{{ type_counts.all }}</b></a>
+      <a class="w-tab {% if active_type == 'post' %}active{% endif %}" href="?type=post{% if active_tag %}&tag={{ active_tag|urlencode }}{% endif %}">Publications <b>{{ type_counts.post }}</b></a>
+      <a class="w-tab {% if active_type == 'blog' %}active{% endif %}" href="?type=blog{% if active_tag %}&tag={{ active_tag|urlencode }}{% endif %}">Blogs <b>{{ type_counts.blog }}</b></a>
+      <a class="w-tab {% if active_type == 'article' %}active{% endif %}" href="?type=article{% if active_tag %}&tag={{ active_tag|urlencode }}{% endif %}">Articles <b>{{ type_counts.article }}</b></a>
     </nav>
     {% if active_tag %}
-    <div class="tag-banner">Sujet : <span class="chip">{{ active_tag }}</span> <a href="{% url 'posts_feed' %}{% if active_type %}?type={{ active_type }}{% endif %}">Retirer le filtre</a></div>
+    <div class="tag-banner">Sujet affiché : <span class="w-pill w-pill--dark">{{ active_tag }}</span> <a class="w-link" href="{% url 'posts_feed' %}{% if active_type %}?type={{ active_type }}{% endif %}">Retirer le filtre</a></div>
     {% endif %}
 
-    <!-- POSTS FEED -->
     {% if posts %}
     {% for post in posts %}
-    <div class="post-card" id="post-{{ post.id }}" style="animation-delay:{{ forloop.counter0 }}00ms">
+    <article class="w-card post-card" id="post-{{ post.id }}">
 
-      <!-- Header -->
       <div class="post-header">
-        <div class="post-author">
-          <a href="{% url 'user_profile' post.auteur.id %}" style="text-decoration:none;">
-            <div class="post-av-wrap">
-              <div class="post-av-ring"></div>
-              {% if post.auteur.photo %}
-              <img src="{{ post.auteur.photo.url }}" class="av av-md" style="object-fit:cover;" alt="">
-              {% else %}
-              <div class="av av-md {% if post.auteur.psychologue_profile %}av-psy{% endif %}">{{ post.auteur.pseudonyme|first|upper }}</div>
-              {% endif %}
-            </div>
-          </a>
-          <div>
-            <div>
-              <a href="{% url 'user_profile' post.auteur.id %}" class="author-name" style="text-decoration:none;color:inherit;">{{ post.auteur.pseudonyme }}</a>
-              {% if post.auteur.psychologue_profile %}<span class="author-role role-psy">{{ post.auteur.psychologue_profile.get_type_specialiste_display }}</span>
-              {% else %}<span class="author-role role-membre">Membre</span>{% endif %}
-            </div>
-            <div class="post-date">
-              {{ post.date_creation|date:"d M Y à H:i" }}
-              {% if post.est_modifie %}<span class="post-edited-badge">· modifié</span>{% endif %}
-            </div>
-          </div>
-        </div>
-        <div style="display:flex;align-items:center;gap:.5rem;">
+        <a class="post-author" href="{% url 'user_profile' post.auteur.id %}">
+          <span class="w-av {% if post.auteur.psychologue_profile %}w-av--sauge{% endif %}">{% if post.auteur.photo %}<img src="{{ post.auteur.photo.url }}" alt="">{% else %}{{ post.auteur.pseudonyme|first|upper }}{% endif %}</span>
+          <span style="min-width:0;">
+            <span class="w-row-flex" style="gap:8px;">
+              <span class="author-name">{{ post.auteur.pseudonyme }}</span>
+              {% if post.auteur.psychologue_profile %}<span class="w-pill w-pill--sauge">{{ post.auteur.psychologue_profile.get_type_specialiste_display|sobre }}</span>{% endif %}
+            </span>
+            <span class="post-date" style="display:block;">{{ post.date_creation|date:"j F Y à H:i" }}{% if post.est_modifie %} · modifié{% endif %}</span>
+          </span>
+        </a>
+        <div class="w-row-flex" style="gap:6px;flex-wrap:nowrap;">
           {% if post.auteur != user %}
-          <button class="follow-post-btn {% if post.auteur.id in following_ids %}following{% endif %}"
-                  id="fpost-{{ post.auteur.id }}"
-                  onclick="followFromPost({{ post.auteur.id }}, this)"
-                  style="border:1.5px solid rgba(190,140,60,.3);background:{% if post.auteur.id in following_ids %}rgba(190,140,60,.1){% else %}transparent{% endif %};color:{% if post.auteur.id in following_ids %}#ab7e36{% else %}var(--brown-light){% endif %};">
-            {% if post.auteur.id in following_ids %}✓ Abonné{% else %}+ Suivre{% endif %}
-          </button>
+          <button class="follow-post-btn {% if post.auteur.id in following_ids %}following{% endif %}" id="fpost-{{ post.auteur.id }}" onclick="followFromPost({{ post.auteur.id }}, this)">{% if post.auteur.id in following_ids %}Abonné·e{% else %}Suivre{% endif %}</button>
           {% endif %}
           {% if post.auteur == user %}
           <div class="post-menu-wrap">
-            <button class="post-more-btn" onclick="toggleDropdown({{ post.id }})">
+            <button class="post-more-btn" onclick="toggleDropdown({{ post.id }})" aria-label="Options">
               <svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/></svg>
             </button>
             <div class="post-dropdown" id="dropdown-{{ post.id }}">
               {% if post.est_long_format %}
-              <a class="dropdown-item" href="{% url 'post_rewrite' post.id %}" style="text-decoration:none;">
-                <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
-                Modifier
-              </a>
+              <a class="dropdown-item" href="{% url 'post_rewrite' post.id %}"><svg viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>Modifier</a>
               {% else %}
-              <button class="dropdown-item" onclick="openEditModal({{ post.id }}, `{{ post.contenu|escapejs }}`)">
-                <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
-                Modifier le post
-              </button>
+              <button class="dropdown-item" onclick="openEditModal({{ post.id }}, `{{ post.contenu|escapejs }}`)"><svg viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>Modifier</button>
               {% endif %}
-              <button class="dropdown-item danger" onclick="confirmDelete({{ post.id }})">
-                <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
-                Supprimer
-              </button>
+              <button class="dropdown-item danger" onclick="confirmDelete({{ post.id }})"><svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg>Supprimer</button>
             </div>
           </div>
           {% endif %}
@@ -528,17 +210,16 @@ a.react-btn { text-decoration: none; }
       </div>
 
       {% if post.est_long_format %}
-      <!-- Blog / article : carte éditoriale -->
       <div class="art-body {% if not post.image %}no-cover{% endif %}">
         <div>
           <a class="art-link" href="{% url 'post_detail' post.id %}">
-            <span class="art-type art-type-{{ post.type }}">{{ post.get_type_display }}</span>
+            <span class="w-pill {% if post.type == 'article' %}w-pill--sauge{% else %}w-pill--or{% endif %} art-kind">{{ post.get_type_display }}</span>
             <h2 class="art-title">{{ post.titre }}</h2>
             <p class="art-sub">{% if post.sous_titre %}{{ post.sous_titre }}{% else %}{{ post.extrait }}{% endif %}</p>
           </a>
           <div class="art-info">
             <span>{{ post.temps_lecture }} min de lecture</span>
-            {% for tag in post.liste_tags %}<a class="art-tag" href="?tag={{ tag|urlencode }}{% if active_type %}&type={{ active_type }}{% endif %}">{{ tag }}</a>{% endfor %}
+            {% for tag in post.liste_tags %}<a class="art-chip" href="?tag={{ tag|urlencode }}{% if active_type %}&type={{ active_type }}{% endif %}">{{ tag }}</a>{% endfor %}
           </div>
         </div>
         {% if post.image %}
@@ -546,239 +227,183 @@ a.react-btn { text-decoration: none; }
         {% endif %}
       </div>
       {% else %}
-      <!-- Media -->
+      {% if post.contenu %}
+      <div class="post-body" id="post-body-{{ post.id }}" style="padding-top:0;padding-bottom:14px;"><strong>{{ post.auteur.pseudonyme }}</strong> {{ post.contenu }}</div>
+      {% endif %}
       {% if post.image %}
-      <div class="post-img-wrap"><img src="{{ post.image.url }}" alt=""></div>
+      <div class="post-img-wrap"><img src="{{ post.image.url }}" alt="" loading="lazy"></div>
       {% endif %}
       {% if post.video %}
       <div class="post-video-wrap">
-        <video controls preload="metadata" playsinline><source src="{{ post.video.url }}">Votre navigateur ne supporte pas la vidéo.</video>
+        <video controls preload="metadata" playsinline><source src="{{ post.video.url }}">Votre navigateur ne peut pas lire cette vidéo.</video>
       </div>
       {% endif %}
       {% endif %}
 
-      <!-- Likes count -->
       <div class="post-likes" id="like-count-{{ post.id }}" {% if not post.nb_likes %}style="display:none"{% endif %}>
-        {% if post.nb_likes %}<span class="likes-emojis">❤️</span> {{ post.nb_likes }} j'aime{% endif %}
+        {% if post.nb_likes %}<span class="likes-emojis">&#9829;</span> {{ post.nb_likes }} j'aime{% endif %}
       </div>
 
-      <!-- Text -->
-      {% if not post.est_long_format and post.contenu %}
-      <div class="post-body" id="post-body-{{ post.id }}"><strong>{{ post.auteur.pseudonyme }}</strong> {{ post.contenu }}</div>
-      {% endif %}
-
-      <!-- Reactions bar -->
       <div class="post-reactions-bar">
         <button class="react-btn {% if post.id in liked_ids %}liked{% endif %}" id="like-btn-{{ post.id }}" onclick="toggleLike({{ post.id }})">
-          <svg class="heart-icon" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-          J'aime
+          <svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21.2l7.8-7.7 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg><span>J'aime</span>
         </button>
         {% if post.est_long_format %}
         <a class="react-btn" href="{% url 'post_detail' post.id %}#commentaires">
-          <svg class="comment-icon" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-          {% if post.nb_commentaires %}{{ post.nb_commentaires }} commentaire{{ post.nb_commentaires|pluralize }}{% else %}Commenter{% endif %}
+          <svg viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 0 1-12.3 7.5L3 21l2-5.7A8.4 8.4 0 1 1 21 11.5z"/></svg><span>{% if post.nb_commentaires %}{{ post.nb_commentaires }} commentaire{{ post.nb_commentaires|pluralize }}{% else %}Commenter{% endif %}</span>
         </a>
         {% else %}
         <button class="react-btn" onclick="toggleComments({{ post.id }})">
-          <svg class="comment-icon" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-          Commenter
+          <svg viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 0 1-12.3 7.5L3 21l2-5.7A8.4 8.4 0 1 1 21 11.5z"/></svg><span>Commenter</span>
         </button>
         {% endif %}
         <button class="react-btn" onclick="sharePost({{ post.id }}{% if post.est_long_format %}, '{% url 'post_detail' post.id %}'{% endif %})">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-          Partager
+          <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg><span>Partager</span>
         </button>
       </div>
 
       {% if not post.est_long_format %}
-      <!-- See comments -->
       {% if post.nb_commentaires > 0 %}
-      <button class="see-comments-btn" onclick="toggleComments({{ post.id }})">
-        Voir les {{ post.nb_commentaires }} commentaire{{ post.nb_commentaires|pluralize }}
-      </button>
+      <button class="see-comments-btn" onclick="toggleComments({{ post.id }})">Voir {% if post.nb_commentaires > 1 %}les {{ post.nb_commentaires }} commentaires{% else %}le commentaire{% endif %}</button>
       {% endif %}
-
-      <!-- Comments section -->
       <div class="comments-section" id="comments-{{ post.id }}">
         {% for com in post.commentaires_post.all %}
         <div class="comment-item">
-          <div class="av av-sm {% if com.auteur.psychologue_profile %}av-psy{% endif %}">{{ com.auteur.pseudonyme|first|upper }}</div>
+          <span class="w-av w-av--sm {% if com.auteur.psychologue_profile %}w-av--sauge{% endif %}">{{ com.auteur.pseudonyme|first|upper }}</span>
           <div class="comment-bubble">
             <span class="comment-author">{{ com.auteur.pseudonyme }}</span>
             <div class="comment-text">{{ com.contenu }}</div>
-            <div class="comment-time">{{ com.date_creation|date:"d/m/Y H:i" }}</div>
+            <div class="comment-time">{{ com.date_creation|date:"j F Y, H:i" }}</div>
           </div>
         </div>
         {% endfor %}
         <div class="comment-form">
-          <div class="av av-sm {% if user.psychologue_profile %}av-psy{% endif %}">{{ user.pseudonyme|first|upper }}</div>
-          <input class="comment-input" id="comment-input-{{ post.id }}"
-                 placeholder="Ajouter un commentaire..."
+          <span class="w-av w-av--sm">{{ user.pseudonyme|first|upper }}</span>
+          <input class="comment-input" id="comment-input-{{ post.id }}" placeholder="Écrire un commentaire…" aria-label="Écrire un commentaire"
                  onkeydown="if(event.key==='Enter'){event.preventDefault();submitComment({{ post.id }})}">
-          <button class="comment-send-btn" onclick="submitComment({{ post.id }})">
-            <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
-          </button>
+          <button class="w-send" style="width:42px;height:42px;" onclick="submitComment({{ post.id }})" aria-label="Envoyer"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
         </div>
       </div>
       {% endif %}
 
-    </div>
+    </article>
     {% endfor %}
 
     {% else %}
-    <div class="empty-feed">
-      <div class="empty-feed-icon"><svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg></div>
+    <div class="w-void">
+      <span class="w-orb"></span>
       {% if active_type or active_tag %}
-      <h3>Rien à afficher ici pour l'instant</h3>
-      <p>Aucune publication ne correspond à ce filtre. <a href="{% url 'posts_feed' %}" style="color:#9c6f2f;font-weight:700;">Voir toutes les publications</a></p>
+      <h3>Rien ne correspond à ce filtre</h3>
+      <p>Essayez un autre type de publication ou un autre sujet.</p>
+      <a class="w-btn w-btn--ghost" href="{% url 'posts_feed' %}">Voir toutes les publications</a>
       {% else %}
-      <h3>Aucune publication pour l'instant</h3>
-      <p>Soyez le premier à partager quelque chose avec la communauté !</p>
+      <h3>Le fil est encore vide</h3>
+      <p>Une pensée, une photo, un petit progrès : ce que vous partagez peut aider quelqu'un d'autre.</p>
+      <button class="w-btn" onclick="openCreateModal()">Écrire la première publication</button>
       {% endif %}
     </div>
     {% endif %}
   </div>
 
-  <!-- ====== SIDEBAR ====== -->
-  <div class="sidebar-col">
-    <div class="side-card">
-      <div class="profile-card-top">
-        <div class="profile-av-wrap">
-          <div class="profile-av-ring"></div>
-          <div class="profile-av-inner">
-            {% if user.photo %}<img src="{{ user.photo.url }}" class="av av-lg" style="object-fit:cover;" alt="">
-            {% else %}<img src="{% static 'images/photo-de-profil.jpg' %}" class="av av-lg" style="object-fit:cover;" alt="">{% endif %}
-          </div>
-        </div>
+  <aside class="pf-side" data-reveal style="--d:.2s">
+    <div class="w-card pf-me">
+      <div class="pf-me-top">
+        <span class="w-av w-av--lg w-av--ring">{% if user.photo %}<img src="{{ user.photo.url }}" alt="">{% else %}{{ user.pseudonyme|first|upper }}{% endif %}</span>
         <div>
-          <div class="profile-name">{{ user.pseudonyme }}</div>
-          {% if user.psychologue_profile %}<span class="profile-role-tag role-psy">Psychologue</span>
-          {% else %}<span class="profile-role-tag role-membre">Membre</span>{% endif %}
+          <div class="pf-me-name">{{ user.pseudonyme }}</div>
+          <span class="w-pill {% if user.psychologue_profile %}w-pill--sauge{% endif %}" style="margin-top:6px;">{% if user.psychologue_profile %}{{ user.psychologue_profile.get_type_specialiste_display|sobre }}{% else %}Membre{% endif %}</span>
         </div>
       </div>
-      <div class="stats-grid">
-        <div class="stats-item"><div class="n">{{ user.posts.count }}</div><div class="l">Publications</div></div>
-        <div class="stats-item"><div class="n">{{ user.nb_abonnes }}</div><div class="l">Abonnés</div></div>
-        <div class="stats-item"><div class="n">{{ user.nb_abonnements }}</div><div class="l">Abonnements</div></div>
-        <div class="stats-item"><div class="n">{{ user.posts_aimes.count }}</div><div class="l">J'aime</div></div>
+      <div class="pf-nums">
+        <div><b>{{ user.posts.count }}</b><span>publication{{ user.posts.count|pluralize }}</span></div>
+        <div><b>{{ user.nb_abonnes }}</b><span>abonné{{ user.nb_abonnes|pluralize }}</span></div>
+        <div><b>{{ user.nb_abonnements }}</b><span>abonnement{{ user.nb_abonnements|pluralize }}</span></div>
+        <div><b>{{ user.posts_aimes.count }}</b><span>j'aime donné{{ user.posts_aimes.count|pluralize }}</span></div>
       </div>
-      <a href="{% url 'profile' %}" style="display:block;margin-top:1rem;text-align:center;padding:.6rem;background:rgba(190,140,60,.1);border:1px solid rgba(190,140,60,.2);border-radius:12px;color:var(--brown-dark);font-size:.82rem;font-weight:700;text-decoration:none;transition:all .18s;" onmouseover="this.style.background='rgba(190,140,60,.18)'" onmouseout="this.style.background='rgba(190,140,60,.1)'">Voir mon profil →</a>
+      <a href="{% url 'profile' %}" class="w-btn w-btn--ghost w-btn--block">Voir mon profil</a>
     </div>
-    <div class="side-card">
-      <div class="side-section-title">Écrire</div>
-      <p style="font-size:.82rem;color:#7a6856;line-height:1.5;margin:0 0 .9rem;">Racontez votre histoire ou partagez votre expertise avec toute la communauté.</p>
-      <div style="display:flex;flex-direction:column;gap:.5rem;">
-        <a href="{% url 'post_write' %}?type=blog" style="display:block;text-align:center;padding:.65rem;border-radius:12px;background:linear-gradient(135deg,#c79a52,#9c6f2f);color:#fff;font-size:.84rem;font-weight:800;text-decoration:none;">Écrire un blog</a>
-        <a href="{% url 'post_write' %}?type=article" style="display:block;text-align:center;padding:.65rem;border-radius:12px;border:1.5px solid rgba(96,122,92,.45);background:rgba(96,122,92,.08);color:#3f5a3c;font-size:.84rem;font-weight:800;text-decoration:none;">Écrire un article</a>
-      </div>
+
+    <div class="w-card w-card--dark pf-write">
+      <h3>Racontez votre histoire</h3>
+      <p>Un blog pour un récit personnel, un article pour partager ce que vous savez.</p>
+      <a href="{% url 'post_write' %}?type=blog" class="w-btn w-btn--light w-btn--block">Écrire un blog</a>
+      <a href="{% url 'post_write' %}?type=article" class="w-btn w-btn--line w-btn--block">Écrire un article</a>
     </div>
+
     {% if popular_tags %}
-    <div class="side-card">
-      <div class="side-section-title">Sujets populaires</div>
-      <div style="display:flex;flex-wrap:wrap;gap:.45rem;">
-        {% for tag in popular_tags %}<a href="?tag={{ tag|urlencode }}" class="art-tag" style="font-size:.78rem;padding:.3rem .8rem;{% if tag == active_tag %}background:rgba(190,140,60,.22);color:#7a5218;{% endif %}">{{ tag }}</a>{% endfor %}
-      </div>
+    <div class="w-card pf-tags">
+      <h3>Sujets du moment</h3>
+      <div>{% for tag in popular_tags %}<a href="?tag={{ tag|urlencode }}" class="art-chip {% if tag == active_tag %}is-on{% endif %}">{{ tag }}</a>{% endfor %}</div>
     </div>
     {% endif %}
-    <div class="side-card">
-      <div class="side-section-title">Navigation</div>
-      <div style="display:flex;flex-direction:column;gap:.25rem;">
-        <a href="{% url 'dashboard' %}" class="side-nav-link"><div class="nav-img-icon"><img src="{% static 'images/espace-bien-etre.jpg' %}" alt=""></div>Tableau de bord</a>
-        <a href="{% url 'forum_home' %}" class="side-nav-link"><div class="nav-img-icon"><img src="{% static 'images/forum.jpg' %}" alt=""></div>Forum communautaire</a>
-        <a href="{% url 'ressources_home' %}" class="side-nav-link"><div class="nav-img-icon"><img src="{% static 'images/ressources.jpg' %}" alt=""></div>Ressources</a>
-        {% if user.psychologue_profile %}
-        <a href="{% url 'psychologue_dashboard' %}" class="side-nav-link"><div class="nav-img-icon"><img src="{% static 'images/psychologue.jpg' %}" alt=""></div>Dashboard Psy</a>
-        {% else %}
-        <a href="{% url 'psychologues_list' %}" class="side-nav-link"><div class="nav-img-icon"><img src="{% static 'images/psychologue.jpg' %}" alt=""></div>Spécialistes</a>
-        {% endif %}
-      </div>
-    </div>
-  </div>
+  </aside>
 </div>
 
-<!-- ====== MODAL CRÉER POST ====== -->
-<div class="modal-overlay" id="createPostModal">
-  <div class="modal-box">
-    <div class="modal-head">
-      <h4>Créer un post</h4>
-      <button class="modal-close-btn" onclick="closeCreateModal()">✕</button>
+<!-- Nouvelle publication -->
+<div class="w-modal" id="createPostModal" role="dialog" aria-modal="true">
+  <div class="w-modal-box">
+    <div class="w-modal-head">
+      <h2>Nouvelle publication</h2>
+      <button class="w-x" onclick="closeCreateModal()" aria-label="Fermer">&times;</button>
     </div>
-    <div class="modal-author-row">
-      <div class="av av-md {% if user.psychologue_profile %}av-psy{% endif %}">{{ user.pseudonyme|first|upper }}</div>
-      <div>
-        <div class="m-name">{{ user.pseudonyme }}</div>
-        <div class="m-sub">{% if user.psychologue_profile %}{{ user.psychologue_profile.get_type_specialiste_display }}{% else %}Membre{% endif %} · Public</div>
-      </div>
+    <div class="pf-modal-author">
+      <span class="w-av">{% if user.photo %}<img src="{{ user.photo.url }}" alt="">{% else %}{{ user.pseudonyme|first|upper }}{% endif %}</span>
+      <div><strong>{{ user.pseudonyme }}</strong><small>Visible par toute la communauté</small></div>
     </div>
-    <textarea class="modal-textarea" id="postContent"
-              placeholder="Partagez vos pensées, conseils, expériences..."
+    <textarea class="modal-textarea" id="postContent" placeholder="Une pensée, un conseil, un moment de votre journée…"
               oninput="updatePublishBtn(); updateCharCount(this, 'createCharCount', 1000)"></textarea>
     <div class="char-count" id="createCharCount">0 / 1000</div>
     <div class="media-preview-wrap" id="mediaPreviewWrap">
       <img id="imgPreview" src="" alt="" style="display:none;">
       <video id="videoPreview" controls style="display:none;"></video>
-      <button class="media-remove-btn" onclick="removeMedia()">✕</button>
+      <button class="media-remove-btn" onclick="removeMedia()" aria-label="Retirer le média">&times;</button>
     </div>
-    <div class="modal-footer">
-      <div style="display:flex;gap:.5rem;">
-        <label class="upload-label photo" for="postImageInput">
-          <svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
-          Photo
+    <div class="pf-modal-foot">
+      <div class="w-row-flex" style="gap:4px;">
+        <label class="pf-act" for="postImageInput">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="9" cy="9" r="2"/><path d="m21 15-4.5-4.5L6 21"/></svg>Photo
           <input type="file" id="postImageInput" accept="image/*" style="display:none;" onchange="selectMedia('image',event)">
         </label>
-        <label class="upload-label video" for="postVideoInput">
-          <svg viewBox="0 0 24 24"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/></svg>
-          Vidéo
+        <label class="pf-act" for="postVideoInput">
+          <svg viewBox="0 0 24 24"><rect x="2" y="5" width="14" height="14" rx="3"/><path d="m22 8-6 4 6 4z"/></svg>Vidéo
           <input type="file" id="postVideoInput" accept="video/mp4,video/webm,video/quicktime" style="display:none;" onchange="selectMedia('video',event)">
         </label>
       </div>
-      <button class="btn-publish" id="publishBtn" onclick="submitPost()" disabled>Publier</button>
+      <button class="w-btn" id="publishBtn" onclick="submitPost()" disabled>Publier</button>
     </div>
   </div>
 </div>
 
-<!-- ====== MODAL MODIFIER POST ====== -->
-<div class="modal-overlay" id="editPostModal">
-  <div class="modal-box">
-    <div class="modal-head">
-      <h4>Modifier le post</h4>
-      <button class="modal-close-btn" onclick="closeEditModal()">✕</button>
+<!-- Modifier -->
+<div class="w-modal" id="editPostModal" role="dialog" aria-modal="true">
+  <div class="w-modal-box">
+    <div class="w-modal-head">
+      <h2>Modifier la publication</h2>
+      <button class="w-x" onclick="closeEditModal()" aria-label="Fermer">&times;</button>
     </div>
-    <div class="modal-author-row">
-      <div class="av av-md {% if user.psychologue_profile %}av-psy{% endif %}">{{ user.pseudonyme|first|upper }}</div>
-      <div>
-        <div class="m-name">{{ user.pseudonyme }}</div>
-        <div class="m-sub">Modification en cours</div>
-      </div>
-    </div>
-    <textarea class="modal-textarea" id="editContent"
-              placeholder="Modifiez votre texte..."
+    <textarea class="modal-textarea" id="editContent" placeholder="Votre texte…"
               oninput="updateCharCount(this, 'editCharCount', 1000); updateEditBtn()"></textarea>
     <div class="char-count" id="editCharCount">0 / 1000</div>
-    <div class="modal-footer" style="justify-content:flex-end;gap:.8rem;">
-      <button class="btn-cancel-del" onclick="closeEditModal()">Annuler</button>
-      <button class="btn-publish" id="editBtn" onclick="submitEdit()">Enregistrer</button>
+    <div class="pf-modal-foot" style="justify-content:flex-end;">
+      <button class="w-btn w-btn--ghost" onclick="closeEditModal()">Annuler</button>
+      <button class="w-btn" id="editBtn" onclick="submitEdit()">Enregistrer</button>
     </div>
   </div>
 </div>
 
-<!-- ====== DELETE MODAL ====== -->
-<div class="modal-overlay" id="deleteModal">
-  <div class="delete-box">
-    <div class="delete-box-body">
-      <div class="del-icon-wrap"><svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></div>
-      <h4>Supprimer ce post ?</h4>
-      <p>Cette action est irréversible.</p>
-    </div>
-    <div class="delete-box-footer">
-      <button class="btn-cancel-del" onclick="closeDeleteModal()">Annuler</button>
-      <button class="btn-confirm-del" id="confirmDeleteBtn">Supprimer</button>
+<!-- Supprimer -->
+<div class="w-modal" id="deleteModal" role="dialog" aria-modal="true">
+  <div class="w-modal-box" style="width:min(420px,100%);text-align:center;">
+    <h2 class="w-h3" style="font-size:28px;margin-bottom:8px;">Supprimer cette publication ?</h2>
+    <p class="w-text">Elle disparaîtra pour tout le monde, avec ses commentaires. Cette action ne peut pas être annulée.</p>
+    <div class="w-form-actions" style="justify-content:center;margin-top:20px;">
+      <button class="w-btn w-btn--ghost" onclick="closeDeleteModal()">Garder</button>
+      <button class="w-btn w-btn--danger" id="confirmDeleteBtn">Supprimer</button>
     </div>
   </div>
 </div>
 
-<!-- TOAST -->
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" role="status"></div>
 
 {% endblock %}
 
@@ -837,7 +462,7 @@ function submitEdit() {
     if (!editingPostId) return;
     const content = document.getElementById('editContent').value.trim();
     const btn = document.getElementById('editBtn');
-    btn.disabled = true; btn.textContent = 'Enregistrement...';
+    btn.disabled = true; btn.textContent = 'Enregistrement…';
     fetch(`/posts/${editingPostId}/edit/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-CSRFToken': CSRF },
@@ -848,10 +473,12 @@ function submitEdit() {
             if (bodyEl) {
                 const authorEl = bodyEl.querySelector('strong');
                 const authorName = authorEl ? authorEl.textContent : '';
-                bodyEl.innerHTML = `<strong>${authorName}</strong> ${d.contenu}`;
+                bodyEl.textContent = '';
+                const st = document.createElement('strong'); st.textContent = authorName;
+                bodyEl.append(st, ' ' + content);
             }
             closeEditModal();
-            showToast('✓ Post modifié avec succès');
+            showToast('Votre publication a été mise à jour');
         }
         btn.disabled = false; btn.textContent = 'Enregistrer';
     });
@@ -897,7 +524,7 @@ function updatePublishBtn() {
 /* ===== SUBMIT POST ===== */
 function submitPost() {
     const btn = document.getElementById('publishBtn');
-    btn.disabled = true; btn.textContent = 'Publication...';
+    btn.disabled = true; btn.textContent = 'Publication…';
     const fd = new FormData();
     fd.append('contenu', document.getElementById('postContent').value.trim());
     fd.append('csrfmiddlewaretoken', CSRF);
@@ -908,7 +535,7 @@ function submitPost() {
     fetch('{% url "create_post" %}', { method: 'POST', body: fd })
         .then(r => r.json()).then(d => {
             if (d.success) { closeCreateModal(); location.reload(); }
-            else { showToast('Erreur : ' + d.message); btn.disabled = false; btn.textContent = 'Publier'; }
+            else { showToast('La publication a échoué : ' + d.message); btn.disabled = false; btn.textContent = 'Publier'; }
         });
 }
 
@@ -925,7 +552,7 @@ function toggleLike(id) {
                 setTimeout(() => svg.classList.remove('heart-anim'), 320);
             } else { btn.classList.remove('liked'); }
             if (d.nb_likes > 0) {
-                countEl.style.display = ''; countEl.innerHTML = `<span class="likes-emojis">❤️</span> ${d.nb_likes} j'aime`;
+                countEl.style.display = ''; countEl.innerHTML = `<span class="likes-emojis">&#9829;</span> ${d.nb_likes} j'aime`;
             } else { countEl.style.display = 'none'; }
         });
 }
@@ -947,12 +574,16 @@ function submitComment(id) {
             input.value = '';
             const form = input.closest('.comment-form');
             const el = document.createElement('div'); el.className = 'comment-item';
-            el.innerHTML = `<div class="av av-sm">${d.auteur[0].toUpperCase()}</div>
+            el.innerHTML = `<span class="w-av w-av--sm"></span>
               <div class="comment-bubble">
-                <span class="comment-author">${d.auteur}</span>
-                <div class="comment-text">${d.contenu}</div>
-                <div class="comment-time">${d.date}</div>
+                <span class="comment-author"></span>
+                <div class="comment-text"></div>
+                <div class="comment-time"></div>
               </div>`;
+            el.querySelector('.w-av').textContent = (d.auteur || '?')[0].toUpperCase();
+            el.querySelector('.comment-author').textContent = d.auteur;
+            el.querySelector('.comment-text').textContent = text;
+            el.querySelector('.comment-time').textContent = d.date;
             form.parentNode.insertBefore(el, form);
         });
 }
@@ -963,7 +594,7 @@ function sharePost(id, path) {
     if (navigator.share) {
         navigator.share({ title: 'Wanaag Corner', url });
     } else {
-        navigator.clipboard.writeText(url).then(() => showToast('🔗 Lien copié dans le presse-papiers'));
+        navigator.clipboard.writeText(url).then(() => showToast('Lien copié'));
     }
 }
 
@@ -973,13 +604,8 @@ function followFromPost(userId, btn) {
         .then(r => r.json()).then(d => {
             if (!d.success) return;
             document.querySelectorAll(`[id="fpost-${userId}"]`).forEach(b => {
-                if (d.following) {
-                    b.style.background = 'rgba(190,140,60,.1)'; b.style.color = '#ab7e36';
-                    b.style.borderColor = 'rgba(190,140,60,.3)'; b.textContent = '✓ Abonné';
-                } else {
-                    b.style.background = 'transparent'; b.style.color = 'var(--brown-light)';
-                    b.style.borderColor = 'rgba(190,140,60,.3)'; b.textContent = '+ Suivre';
-                }
+                b.classList.toggle('following', !!d.following);
+                b.textContent = d.following ? 'Abonné·e' : 'Suivre';
             });
         });
 }
@@ -1010,7 +636,7 @@ document.getElementById('confirmDeleteBtn').addEventListener('click', () => {
                 const card = document.getElementById(`post-${postToDelete}`);
                 card.style.transition = 'all .3s'; card.style.opacity = '0'; card.style.transform = 'scale(.95) translateY(-10px)';
                 setTimeout(() => card.remove(), 310);
-                closeDeleteModal(); showToast('Post supprimé');
+                closeDeleteModal(); showToast('Publication supprimée');
             }
         });
 });
