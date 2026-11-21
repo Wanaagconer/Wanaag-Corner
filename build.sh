@@ -8,6 +8,10 @@ pip install -r requirements.txt
 python manage.py collectstatic --no-input
 python manage.py migrate
 
+# Peuple l'application avec des données de démonstration (utilitaire
+# ponctuel, à retirer de build.sh une fois exécuté).
+python manage.py seed_demo_data
+
 # Crée le premier compte admin si les variables DJANGO_SUPERUSER_* sont
 # présentes et qu'aucun superuser n'existe encore (sans échouer le build
 # si le compte existe déjà).
